@@ -15,6 +15,7 @@
       scale: Number,
       period: String,
       series: [Array, String, Number],
+      echartsIndex: [String, Number]
     },
     mounted() {
       this.init();
@@ -51,7 +52,7 @@
         const myChart = this.$echarts.init(chartView);
         let _this = this;
         myChart.on('click', function(params) {
-          _this.$emit("changeDataIndex", params.seriesIndex, params.dataIndex);
+          _this.$emit("changeDataIndex", _this.echartsIndex, params.dataIndex);
         });
         myChart.setOption({
           tooltip: {
@@ -101,10 +102,10 @@
               }
             },
             formatter(params) {
-              // console.log(params, 'params');
+              console.log(params, 'params');
               let relVal = `${params[0].name}<br/>`;
               params.forEach((ele,i) => {
-                relVal += `<span style="color: ${params[i].color}">${params[i].data}</span><br/>`;
+                relVal += `<span style="color: ${params[i].color}">${params[i].seriesName}: ${params[i].data}</span><br/>`;
               })
               relVal += `粒度：${TimeGranularity[period]}<br />`;
               return relVal;

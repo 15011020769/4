@@ -76,8 +76,8 @@
 </template>
 <script>
   import moment from "moment";
-  import TimeDropDown from '@/components/public/TimeDropDown' //引入时间组件
-  import echartLine from "@/components/public/echars-line"; //引入图标组件
+  import TimeDropDown from '@/components/public/TimeDropDown' //引入時間組件
+  import echartLine from "@/components/public/echars-line"; //引入圖標組件
   import {
     ErrorTips
   } from "@/components/ErrorTips";
@@ -109,7 +109,7 @@
             ]
           },
           {
-            name: '近24小时',
+            name: '近24小時',
             Time: 'Nearly_24_hours',
             TimeGranularity: [{
                 value: "60",
@@ -144,13 +144,13 @@
           }
         ],
         ID: this.$route.query.id,
-        BaseList: [], //全部指标列表
-        BaseListK: [], //用到的指标列表
+        BaseList: [], //全部指標列表
+        BaseListK: [], //用到的指標列表
         TableLoad: true,
         Period: '', //粒度
-        Time: {}, //监控传递时间
-        MonitorData: [], //监控数据
-        tableData: [], // 组合数据
+        Time: {}, //監控傳遞時間
+        MonitorData: [], //監控數據
+        tableData: [], // 組合數據
         available: [{
             MetricName: 'SlowQueries'
           },
@@ -221,7 +221,7 @@
         disName: {
           'BytesReceived': '內網入流量',
           'BytesSent': '內網出流量',
-          'Capacity': '磁碟佔用空間',
+          'Capacity': '磁盤占用空間',
           'ComCommit': '提交數',
           'ComDelete': '刪除數',
           'ComInsert': '插入數',
@@ -230,11 +230,11 @@
           'ComUpdate': '更新數',
           'ConnectionUseRate': '連接數利用率',
           'CpuUseRate': 'CPU利用率',
-          'CreatedTmpDiskTables': '磁碟臨時表數量',
+          'CreatedTmpDiskTables': '磁盤臨時表數量',
           'CreatedTmpFiles': '臨時文件數量',
           'CreatedTmpTables': '臨時表數量',
           'HandlerCommit': '內部提交數',
-          'HandlerReadRndNext': '讀下一行請求數',
+          'HandlerReadRndNext': '讀下壹行請求數',
           'HandlerRollback': '內部回滾數',
           'InnodbBufferPoolPagesFree': 'InnoDB空頁數',
           'InnodbBufferPoolPagesTotal': 'InnoDB總頁數',
@@ -247,8 +247,8 @@
           'InnodbDataWrites': 'InnoDB總寫入量',
           'InnodbDataWritten': 'InnoDB寫入量',
           'InnodbNumOpenFiles': '當前InnoDB打開表的數量',
-          'InnodbOsFileReads': 'innodb讀磁碟數量',
-          'InnodbOsFileWrites': 'innodb寫磁碟數量',
+          'InnodbOsFileReads': 'innodb讀磁盤數量',
+          'InnodbOsFileWrites': 'innodb寫磁盤數量',
           'InnodbOsFsyncs': 'innodb fsync數量',
           'InnodbRowsDeleted': 'InnoDB行刪除量',
           'InnodbRowsInserted': 'InnoDB行插入量',
@@ -262,12 +262,12 @@
           'KeyCacheUseRate': 'myisam緩存使用率',
           'KeyReads': '硬碟讀取數據塊次數',
           'KeyReadRequests': '鍵緩存讀取數據塊次數',
-          'KeyWrites': '數據塊寫入磁碟次數',
-          'KeyWriteRequests': '數據塊寫入鍵緩衝次數',
-          'LogCapacity': '日誌使用量',
+          'KeyWrites': '數據塊寫入磁盤次數',
+          'KeyWriteRequests': '數據塊寫入鍵緩沖次數',
+          'LogCapacity': '日志使用量',
           'MasterSlaveSyncDistance': '主從延遲距離',
           'MaxConnections': '最大連接數',
-          'MemoryUse': '內存佔用',
+          'MemoryUse': '內存占用',
           'MemoryUseRate': '內存利用率',
           'OpenedTables': '已經打開的表數',
           'OpenFiles': '打開文件總數',
@@ -278,13 +278,13 @@
           'QcacheInserts': '緩存寫入次數',
           'QcacheLowmemPrunes': '因內存不足刪除緩存次數',
           'QcacheNotCached': '查詢未被緩存次數',
-          'QcacheQueriesInCache': '以註冊到緩存內的查詢數',
+          'QcacheQueriesInCache': '以注冊到緩存內的查詢數',
           'QcacheTotalBlocks': '查詢緩存內的總塊數',
           'QcacheUseRate': '緩存使用率',
           'Qps': '每秒執行操作數',
           'Queries': '總請求數',
           'QueryRate': '查詢使用率',
-          'RealCapacity': '磁碟使用空間',
+          'RealCapacity': '磁盤使用空間',
           'SecondsBehindMaster': '主從延遲時間',
           'SelectCount': '查詢數',
           'SelectScan': '全表掃描數',
@@ -297,7 +297,7 @@
           'ThreadsCreated': '已創建的線程數',
           'ThreadsRunning': '運行的線程數',
           'Tps': '每秒執行事務數',
-          'VolumeRate': '磁碟利用率',
+          'VolumeRate': '磁盤利用率',
         },
         Company: {
           'BytesReceived': 'Byte/秒',
@@ -383,7 +383,7 @@
         Tips: {
           'BytesReceived': '內網入流量',
           'BytesSent': '內網出流量',
-          'Capacity': '磁碟佔用空間（包含數據及日誌空間使用量）',
+          'Capacity': '磁盤占用空間（包含數據及日志空間使用量）',
           'ComCommit': '提交數',
           'ComDelete': '刪除數',
           'ComInsert': '插入數',
@@ -392,11 +392,11 @@
           'ComUpdate': '更新數',
           'ConnectionUseRate': '連接數利用率',
           'CpuUseRate': 'CPU利用率',
-          'CreatedTmpDiskTables': '磁碟臨時表數量',
+          'CreatedTmpDiskTables': '磁盤臨時表數量',
           'CreatedTmpFiles': '臨時文件數量',
           'CreatedTmpTables': '臨時表數量',
           'HandlerCommit': '內部提交數',
-          'HandlerReadRndNext': '讀下一行請求數',
+          'HandlerReadRndNext': '讀下壹行請求數',
           'HandlerRollback': '內部回滾數',
           'InnodbBufferPoolPagesFree': 'InnoDB空頁數',
           'InnodbBufferPoolPagesTotal': 'InnoDB總頁數',
@@ -409,8 +409,8 @@
           'InnodbDataWrites': 'InnoDB總寫入量',
           'InnodbDataWritten': 'InnoDB寫入量',
           'InnodbNumOpenFiles': '當前InnoDB打開表的數量',
-          'InnodbOsFileReads': 'innodb讀磁碟數量',
-          'InnodbOsFileWrites': 'innodb寫磁碟數量',
+          'InnodbOsFileReads': 'innodb讀磁盤數量',
+          'InnodbOsFileWrites': 'innodb寫磁盤數量',
           'InnodbOsFsyncs': 'innodb fsync數量',
           'InnodbRowsDeleted': 'InnoDB行刪除量',
           'InnodbRowsInserted': 'InnoDB行插入量',
@@ -424,12 +424,12 @@
           'KeyCacheUseRate': 'myisam緩存使用率',
           'KeyReads': '硬碟讀取數據塊次數',
           'KeyReadRequests': '鍵緩存讀取數據塊次數',
-          'KeyWrites': '數據塊寫入磁碟次數',
-          'KeyWriteRequests': '數據塊寫入鍵緩衝次數',
-          'LogCapacity': '日誌使用量',
+          'KeyWrites': '數據塊寫入磁盤次數',
+          'KeyWriteRequests': '數據塊寫入鍵緩沖次數',
+          'LogCapacity': '日志使用量',
           'MasterSlaveSyncDistance': '主從延遲距離',
           'MaxConnections': '最大連接數',
-          'MemoryUse': '內存佔用',
+          'MemoryUse': '內存占用',
           'MemoryUseRate': '內存利用率',
           'OpenedTables': '已經打開的表數',
           'OpenFiles': '打開文件總數',
@@ -440,13 +440,13 @@
           'QcacheInserts': '緩存寫入次數',
           'QcacheLowmemPrunes': '因內存不足刪除緩存次數',
           'QcacheNotCached': '查詢未被緩存次數',
-          'QcacheQueriesInCache': '以註冊到緩存內的查詢數',
+          'QcacheQueriesInCache': '以注冊到緩存內的查詢數',
           'QcacheTotalBlocks': '查詢緩存內的總塊數',
           'QcacheUseRate': '查詢緩存使用率',
           'Qps': '每秒執行操作數',
           'Queries': '總請求數',
           'QueryRate': '查詢使用率',
-          'RealCapacity': '磁碟使用空間（僅包含數據空間使用量）',
+          'RealCapacity': '磁盤使用空間（僅包含數據空間使用量）',
           'SecondsBehindMaster': '主從延遲時間',
           'SelectCount': '查詢數',
           'SelectScan': '全表掃描數',
@@ -459,7 +459,7 @@
           'ThreadsCreated': '已創建的線程數',
           'ThreadsRunning': '運行的線程數',
           'Tps': '每秒執行事務數',
-          'VolumeRate': '磁碟利用率',
+          'VolumeRate': '磁盤利用率',
         },
 
       }
@@ -495,7 +495,7 @@
       Initialization() {
 
       },
-      //获取基础指标详情
+      //獲取基礎指標詳情
       _GetBase() {
         let parms = {
           Version: '2018-07-24',
@@ -539,7 +539,7 @@
           }
         });
       },
-      //获取监控数据
+      //獲取監控數據
       _GetMonitorData(MetricName) {
         let parms = {
           Version: '2018-07-24',

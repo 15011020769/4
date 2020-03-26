@@ -7,14 +7,14 @@
       class="dialog-box"
     >
       <div class="title">
-        <h3>新建</h3>
+        <h3>{{ $t("CVM.Casegrouping.xj") }}</h3>
         <a href="javascript:;" @click="cancel()">
           <i class="el-icon-close"></i>
         </a>
       </div>
       <div class="dialog">
         <div class="p">
-          <span>分组名</span>
+          <span>{{ $t("CVM.Casegrouping.fzm") }}</span>
           <el-tooltip
             :disabled="groupingNameTips"
             placement="right"
@@ -26,7 +26,7 @@
             </div>
             <el-input
               v-model="groupingName"
-              placeholder="1-20个中英文字符或下划线"
+              :placeholder="$t('CVM.Casegrouping.placeholder3')"
               class="group-input"
               :class="{ 'cread-input': !groupingNameTips }"
               @input="GroupingNameInput"
@@ -35,7 +35,7 @@
           </el-tooltip>
         </div>
         <div class="p">
-          <span>分组类型</span>
+          <span>{{ $t("CVM.Casegrouping.fzlx") }}</span>
           <product-type-cpt
             v-on:PassData="passData"
             :searchParam="searchParam"
@@ -45,7 +45,7 @@
           />
         </div>
         <div class="p">
-          <span>添加至组</span>
+          <span>{{ $t("CVM.Casegrouping.tjzz") }}</span>
           <CamTransferCpt
             :productData="productListData"
             v-on:projectId="projectIds"
@@ -78,8 +78,8 @@ export default {
     return {
       groupingName: "",
       groupingNameTips: true,
-      nameTips: "分组名称不能为空",
-      groupingType: ["云服务器", "cvm_device"],
+      nameTips: "分組名稱不能爲空",
+      groupingType: ["雲伺服器", "cvm_device"],
       loadSign: true,
       pageSize: 20, // 分页条数
       pageIndex: 0, // 当前页码
@@ -144,10 +144,10 @@ export default {
     // 分组名
     GroupingNameInput() {
       if (this.groupingName === "") {
-        this.nameTips = "分组名称不能为空";
+        this.nameTips = "分組名稱不能爲空";
         this.groupingNameTips = false;
       } else if (this.groupingName.length == 20) {
-        this.nameTips = "分组名称不能超过 20 字";
+        this.nameTips = "分組名稱不能超過 20 字";
         this.groupingNameTips = false;
       } else {
         this.groupingNameTips = true;
@@ -161,7 +161,7 @@ export default {
       }
       if (this.multipleSelection.length === 0) {
         this.$message({
-          message: "请选择要添加组",
+          message: "請選擇要添加組",
           type: "error",
           showClose: true,
           duration: 0
@@ -252,16 +252,16 @@ export default {
           this.$parent.ListInit();
         } else {
           let ErrTips = {
-            FailedOperation: "操作失败。",
-            InternalError: "内部错误。",
-            "InternalError.ExeTimeout": "执行超时。",
-            InvalidParameter: "参数错误。",
-            "InvalidParameter.InvalidParameter": "参数错误。",
-            "InvalidParameter.InvalidParameterParam": "参数错误。",
-            InvalidParameterValue: "无效的参数值。",
-            LimitExceeded: "超过配额限制。",
-            MissingParameter: "缺少参数错误。",
-            UnknownParameter: "未知参数错误。",
+            FailedOperation: "操作失敗。",
+            InternalError: "內部錯誤。",
+            "InternalError.ExeTimeout": "執行超時。",
+            InvalidParameter: "參數錯誤。",
+            "InvalidParameter.InvalidParameter": "參數錯誤。",
+            "InvalidParameter.InvalidParameterParam": "參數錯誤。",
+            InvalidParameterValue: "無效的參數值。",
+            LimitExceeded: "超過配額限制。",
+            MissingParameter: "缺少參數錯誤。",
+            UnknownParameter: "未知參數錯誤。",
             UnsupportedOperation: "操作不支持。"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);

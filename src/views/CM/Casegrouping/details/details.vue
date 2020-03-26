@@ -9,7 +9,7 @@
       </div>
       <div class="details-headerTab">
         <el-tabs v-model="activeName" @tab-click="handleClick">
-          <el-tab-pane label="实例管理" name="1">
+          <el-tab-pane :label="$t('CVM.Casegrouping.slgl')" name="1">
             <div class="tab-box">
               <instance-management
                 :Rules="rules"
@@ -17,12 +17,12 @@
               ></instance-management>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="告警策略" name="2">
+          <el-tab-pane :label="$t('CVM.Casegrouping.gjcl')" name="2">
             <div class="tab-box">
               <alarm-strategy :Rules="rules" ref="child"></alarm-strategy>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="变更日志" name="3">
+          <el-tab-pane :label="$t('CVM.Casegrouping.bgrz')" name="3">
             <div class="tab-box">
               <change-log :Rules="rules" ref="child"></change-log>
             </div>

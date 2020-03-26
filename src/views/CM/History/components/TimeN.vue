@@ -74,10 +74,10 @@
         TimeGranularity: [],
         timevalueStart: null,
         timevalueEnd: null,
-        datetimeval: [], // 选择时间数据
-        visible: false, // 时间选择器的变化
-        datetim: true, // 时间选择器的变化
-        datetime: false, // 时间选择器的变化
+        datetimeval: [], // 選擇時間數據
+        visible: false, // 時間選擇器的變化
+        datetim: true, // 時間選擇器的變化
+        datetime: false, // 時間選擇器的變化
         Start_End: {
           StartTIme: "",
           EndTIme: ""
@@ -94,7 +94,7 @@
       this.initial()
     },
     methods: {
-      //初始化数据
+      //初始化數據
       initial() {
         this.TimeValue = this.TimeArr[0].Time
         if (this.TimeArr[0].TimeGranularity) {
@@ -105,7 +105,7 @@
           this.AcquisitionTime()
         ]
       },
-      //点击时间按钮
+      //點擊時間按鈕
       TimeChoice(item) {
         this.datetime = false;
         this.datetim = true;
@@ -116,11 +116,11 @@
         }
         this.AcquisitionTime()
       },
-      //切换粒度
+      //切換粒度
       SwitchGrain() {
         this.$emit("switchData", [this.grainValue, this.Start_End]);
       },
-      // 返回横坐标数组
+      // 返回橫坐標數組
       getXAxis(startTime, endTime) {
         let startTimeSec = new Date(startTime).getTime();
         let endTimeSec = new Date(endTime).getTime();
@@ -130,26 +130,26 @@
         }
         return XAxis;
       },
-      //根据字段获取响应时间
+      //根據字段獲取響應時間
       AcquisitionTime() {
         if (this.TimeValue === 'realTime') {
-          this.Start_End.EndTIme = moment(new Date()).format("YYYY/MM/DD HH:mm:ss"); //获取当前时间
+          this.Start_End.EndTIme = moment(new Date()).format("YYYY/MM/DD HH:mm:ss"); //獲取當前時間
           this.Start_End.StartTIme = moment(new Date()).subtract(1, 'hours').format("YYYY/MM/DD HH:mm:ss");;
           this.Start_End.XAxis = this.getXAxis(this.Start_End.StartTIme, this.Start_End.EndTIme);
         } else if (this.TimeValue === 'Nearly_24_hours') {
-          this.Start_End.EndTIme = moment(new Date()).format("YYYY/MM/DD HH:mm:ss"); //获取当前时间
+          this.Start_End.EndTIme = moment(new Date()).format("YYYY/MM/DD HH:mm:ss"); //獲取當前時間
           this.Start_End.StartTIme = moment(new Date()).subtract(1, 'days').format("YYYY/MM/DD HH:mm:ss");;
           this.Start_End.XAxis = this.getXAxis(this.Start_End.StartTIme, this.Start_End.EndTIme);
         } else if (this.TimeValue === 'Nearly_7_days') {
-          this.Start_End.EndTIme = moment(new Date()).format("YYYY/MM/DD HH:mm:ss"); //获取当前时间
+          this.Start_End.EndTIme = moment(new Date()).format("YYYY/MM/DD HH:mm:ss"); //獲取當前時間
           this.Start_End.StartTIme = moment(new Date()).subtract(6, 'days').format("YYYY/MM/DD HH:mm:ss");;
           this.Start_End.XAxis = this.getXAxis(this.Start_End.StartTIme, this.Start_End.EndTIme);
         } else if (this.TimeValue === 'Nearly_15_days') {
-          this.Start_End.EndTIme = moment(new Date()).format("YYYY/MM/DD HH:mm:ss"); //获取当前时间
+          this.Start_End.EndTIme = moment(new Date()).format("YYYY/MM/DD HH:mm:ss"); //獲取當前時間
           this.Start_End.StartTIme = moment(new Date()).subtract(14, 'days').format("YYYY/MM/DD HH:mm:ss");;
           this.Start_End.XAxis = this.getXAxis(this.Start_End.StartTIme, this.Start_End.EndTIme);
         } else if (this.TimeValue === 'Today') {
-          this.Start_End.EndTIme = moment(new Date()).format("YYYY/MM/DD HH:mm:ss"); //获取当前时间
+          this.Start_End.EndTIme = moment(new Date()).format("YYYY/MM/DD HH:mm:ss"); //獲取當前時間
           this.Start_End.StartTIme = moment(new Date()).startOf('day').format("YYYY/MM/DD HH:mm:ss");;
           this.Start_End.XAxis = this.getXAxis(this.Start_End.StartTIme, this.Start_End.EndTIme);
         } else if (this.TimeValue === 'Yesterday') {
@@ -157,7 +157,7 @@
           this.Start_End.EndTIme = moment().subtract(1, 'days').endOf('day').format("YYYY/MM/DD HH:mm:ss");
           this.Start_End.XAxis = this.getXAxis(this.Start_End.StartTIme, this.Start_End.EndTIme);
         } else if (this.TimeValue === 'Nearly_30_days') {
-          this.Start_End.EndTIme = moment(new Date()).format("YYYY/MM/DD HH:mm:ss"); //获取当前时间
+          this.Start_End.EndTIme = moment(new Date()).format("YYYY/MM/DD HH:mm:ss"); //獲取當前時間
           this.Start_End.StartTIme = moment(new Date()).subtract(29, 'days').format("YYYY/MM/DD HH:mm:ss");;
           this.Start_End.XAxis = this.getXAxis(this.Start_End.StartTIme, this.Start_End.EndTIme);
         }
@@ -165,9 +165,9 @@
         this.Start_End.EndTIme = moment(new Date(this.Start_End.EndTIme)).format("YYYY-MM-DD HH:mm:ss")
         this.$emit("switchData", [this.grainValue, this.Start_End]);
       },
-      // 确定按钮
+      // 確定按鈕
       Sure() {
-        this.TimeValue = '' //按钮样式去掉
+        this.TimeValue = '' //按鈕樣式去掉
         this.timevalueStart = moment(this.timevalueStart).format("YYYY/MM/DD HH:mm:ss")
         this.timevalueEnd = moment(this.timevalueEnd).format("YYYY/MM/DD HH:mm:ss")
         const startTime = moment(this.timevalueStart);
@@ -204,7 +204,7 @@
         this.Start_End.EndTIme = moment(new Date(this.timevalueEnd)).format("YYYY-MM-DD HH:mm:ss")
         this.$emit("switchData", [this.grainValue, this.Start_End]);
       },
-      // 选择时间
+      // 選擇時間
       SelectionTime() {
         this.datetime = false;
         this.datetim = true;

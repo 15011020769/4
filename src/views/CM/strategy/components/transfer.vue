@@ -4,13 +4,13 @@
       <div class="left">
         <!-- <p class="title">
           <b style="font-size:13px;">策略列表</b>
-          &nbsp;(共{{num}}条)
+          &nbsp;(共{{num}}條)
         </p>-->
         <div class="left-main border">
           <div class="seek" style="width:100%;">
             <el-input
               v-model="input"
-              placeholder="请输入内容"
+              placeholder="請輸入內容"
               @change="_inpVal"
               style="width:100%;"
             ></el-input>
@@ -27,12 +27,12 @@
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column
               prop="PolicyName"
-              label="ID/主机名"
+              label="ID/主機名"
               width="80"
             ></el-table-column>
             <el-table-column
               prop="Type"
-              label="网络类型"
+              label="網絡類型"
               width="180"
             ></el-table-column>
 
@@ -76,7 +76,7 @@
               label="策略名"
               width="80"
             ></el-table-column>
-            <el-table-column prop="Type" label="策略类型" width="180">
+            <el-table-column prop="Type" label="策略類型" width="180">
               <template slot-scope="scope">
                 <p>{{ type[scope.row.Type] }}</p>
               </template>
@@ -106,10 +106,10 @@ export default {
       policyNum: 10,
       page: 1,
       type: {
-        1: "自定义策略",
-        2: "预设策略"
+        1: "自定義策略",
+        2: "預設策略"
       },
-      tableTitle: "网络类型",
+      tableTitle: "網絡類型",
       optionPolicies: [
         {
           value: "All",
@@ -117,11 +117,11 @@ export default {
         },
         {
           value: "Local",
-          label: "自定义策略"
+          label: "自定義策略"
         },
         {
           value: "QCS",
-          label: "预设策略"
+          label: "預設策略"
         }
       ],
       rolePolicyType: ""

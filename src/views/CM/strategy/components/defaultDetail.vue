@@ -16,38 +16,38 @@
       </div>
       <ul>
         <li>
-          <span class="textColor">策略名称</span>
+          <span class="textColor">策略名稱</span>
           <p>
             <span>{{ basicNews.GroupName }}</span>
             <i class="el-icon-edit" @click="editInfo('name')"></i>
           </p>
         </li>
         <li>
-          <span class="textColor">策略类型</span>
+          <span class="textColor">策略類型</span>
           <p>
             <span>{{ basicNews.ShowName }}</span>
           </p>
         </li>
         <li v-if="basicNews.ProjectId != -1">
-          <span class="textColor">所属项目</span>
+          <span class="textColor">所屬項目</span>
           <p>
             <span>{{ basicNews.ProjectId | ProjectName }}</span>
           </p>
         </li>
         <li>
-          <span class="textColor">最后修改人</span>
+          <span class="textColor">最後修改人</span>
           <p>
             <span>{{ basicNews.LastEditUin }}</span>
           </p>
         </li>
         <li>
-          <span class="textColor">最后修改时间</span>
+          <span class="textColor">最後修改時間</span>
           <p>
             <span>{{ basicNews.UpdateTime }}</span>
           </p>
         </li>
         <li>
-          <span class="textColor">备注</span>
+          <span class="textColor">備注</span>
           <p>
             <span>{{ basicNews.Remark }}</span>
             <i class="el-icon-edit" @click="editInfo('remarks')"></i>
@@ -57,26 +57,26 @@
     </el-card>
     <el-card class="box-card">
       <div slot="header" class="clearfix" style="width:100%;display:flex;">
-        <h3>告警触发条件</h3>
+        <h3>告警觸發條件</h3>
         <a
           v-loading="gaoJingLoading"
           v-if="gaoJingLoading1"
           class="gao-jing-loading"
-          >编辑</a
+          >編輯</a
         >
         <a @click="editGaoJing" v-if="!gaoJingLoading1" class="gao-jing-loading"
-          >编辑</a
+          >編輯</a
         >
       </div>
       <div class="box-content">
         <p v-if="basicNews.ConditionsTemp">
           <span class="textColor" style="margin-right:20px;">
-            模板名称
+            模板名稱
           </span>
           {{ basicNews.ConditionsTemp.GroupName }}
         </p>
         <span class="textColor"
-          >指标告警（{{ basicNews.IsUnionRule === 0 ? "任意" : "所有" }}）</span
+          >指標告警（{{ basicNews.IsUnionRule === 0 ? "任意" : "所有" }}）</span
         >
         <div
           v-for="i in basicNews.ConditionsConfig"
@@ -85,10 +85,16 @@
         >
           <p>
             {{ i.MetricShowName }}
-            {{ i.CalcType | CalcType }} {{ i.CalcValue }}{{ i.Unit }}，持续{{
+            {{ i.CalcType | CalcType }} {{ i.CalcValue }}{{ i.Unit }}，持續{{
               i.ContinueTime / 60
-            }}分钟，按{{ i.AlarmNotifyPeriod | AlarmNotifyPeriod
-            }}{{ i.AlarmNotifyPeriod > 0 ? "重复告警" : "不重复告警" }}
+            }}分钟，
+            <span v-if="i.AlarmNotifyType != 1"
+              >按{{ i.AlarmNotifyPeriod | AlarmNotifyPeriod
+              }}{{ i.AlarmNotifyPeriod > 0 ? "重复告警" : "不重复告警" }}
+            </span>
+            <span v-else>
+              按周期指数递增重复告警
+            </span>
           </p>
         </div>
         <span class="textColor" v-if="basicNews.EventConfig">事件告警</span>
@@ -99,7 +105,7 @@
         >
           <p>
             {{ j.EventShowName }}，{{
-              j.AlarmNotifyPeriod > 0 ? "重复告警" : "不重复告警"
+              j.AlarmNotifyPeriod > 0 ? "重複告警" : "不重複告警"
             }}
           </p>
         </div>
@@ -107,13 +113,13 @@
     </el-card>
     <el-card class="box-card alarm-object">
       <div slot="header" class="clearfix">
-        <h3>告警对象</h3>
-        <a @click="editObject">编辑</a>
+        <h3>告警對象</h3>
+        <a @click="editObject">編輯</a>
       </div>
       <div class="box-content" v-if="!InstanceGroupShow.InstanceGroup">
         <el-row style="margin:10px 5px;padding-top:10px">
           <el-button type="primary" @click="AlarmObjectNews"
-            >新增对象</el-button
+            >新增對象</el-button
           >
           <el-button
             v-if="UniqueId.length > 0"
@@ -135,19 +141,19 @@
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" width="50"></el-table-column>
-          <el-table-column label="ID/主机名" v-if="ViewName === 'cvm_device'">
+          <el-table-column label="ID/主機名" v-if="ViewName === 'cvm_device'">
             <template slot-scope="scope">
               <p>{{ scope.row.InstanceId }}</p>
               <p>{{ scope.row.InstanceName }}</p>
             </template>
           </el-table-column>
-          <el-table-column label="状态" v-if="ViewName === 'cvm_device'">
+          <el-table-column label="狀態" v-if="ViewName === 'cvm_device'">
             <template slot-scope="scope">
               <span>{{ InstanceState(scope.row.InstanceState) }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="网络类型" v-if="ViewName === 'cvm_device'">
-            VPC 网络
+          <el-table-column label="網絡類型" v-if="ViewName === 'cvm_device'">
+            VPC 網絡
           </el-table-column>
           <el-table-column label="IP地址" v-if="ViewName === 'cvm_device'">
             <template slot-scope="scope">
@@ -156,7 +162,7 @@
                   v-for="(item, index) in scope.row.PrivateIpAddresses"
                   :key="index"
                 >
-                  {{ item }}(内网)
+                  {{ item }}(內網)
                 </span>
               </p>
               <p>
@@ -164,13 +170,13 @@
                   v-for="(item, index) in scope.row.PublicIpAddresses"
                   :key="index"
                 >
-                  {{ item }}(外网)
+                  {{ item }}(外網)
                 </span>
               </p>
             </template>
           </el-table-column>
           <!-- BS -->
-          <el-table-column label="ID/名称" v-if="ViewName === 'BS'">
+          <el-table-column label="ID/名稱" v-if="ViewName === 'BS'">
             <template slot-scope="scope">
               <p>{{ scope.row.DiskId }}</p>
               <p>{{ scope.row.DiskName }}</p>
@@ -181,31 +187,31 @@
               <span>{{ scope.row.DiskSize }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="硬盘类型" v-if="ViewName === 'BS'">
+          <el-table-column label="硬碟類型" v-if="ViewName === 'BS'">
             <template slot-scope="scope">
               <p>{{ scope.row.DiskType | DiskType }}</p>
               <p>{{ scope.row.DiskUsage | DiskUsage }}</p>
             </template>
           </el-table-column>
-          <el-table-column label="关联云主机ID" v-if="ViewName === 'BS'">
+          <el-table-column label="關聯雲主機ID" v-if="ViewName === 'BS'">
             <template slot-scope="scope">
               <p>{{ scope.row.InstanceId }}</p>
               <!-- <p>{{ scope.row. }}</p> -->
             </template>
           </el-table-column>
           <!-- VPN_GW -->
-          <el-table-column label="ID/名称" v-if="ViewName === 'VPN_GW'">
+          <el-table-column label="ID/名稱" v-if="ViewName === 'VPN_GW'">
             <template slot-scope="scope">
               <p>{{ scope.row.VpnGatewayId }}</p>
               <p>{{ scope.row.VpnGatewayName }}</p>
             </template>
           </el-table-column>
-          <el-table-column label="状态" v-if="ViewName === 'VPN_GW'">
+          <el-table-column label="狀態" v-if="ViewName === 'VPN_GW'">
             <template slot-scope="scope">
               <span>{{ VPN_GW_State(scope.row.State) }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="所属网络" v-if="ViewName === 'VPN_GW'">
+          <el-table-column label="所屬網絡" v-if="ViewName === 'VPN_GW'">
             <template slot-scope="scope">
               <p>{{ scope.row.VpcId }}</p>
               <!-- <p>{{scope.row.}}</p> -->
@@ -213,30 +219,30 @@
           </el-table-column>
 
           <!-- vpn_tunnel -->
-          <el-table-column label="ID/名称" v-if="ViewName === 'vpn_tunnel'">
+          <el-table-column label="ID/名稱" v-if="ViewName === 'vpn_tunnel'">
             <template slot-scope="scope">
               <p>{{ scope.row.VpnGatewayId }}</p>
               <p>{{ scope.row.VpnConnectionName }}</p>
             </template>
           </el-table-column>
-          <el-table-column label="状态" v-if="ViewName === 'vpn_tunnel'">
+          <el-table-column label="狀態" v-if="ViewName === 'vpn_tunnel'">
             <template slot-scope="scope">
               <span>{{ VPN_Tunnel_State(scope.row.State) }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="所属网络" v-if="ViewName === 'vpn_tunnel'">
+          <el-table-column label="所屬網絡" v-if="ViewName === 'vpn_tunnel'">
             <template slot-scope="scope">
               <p>{{ scope.row.VpcId }}</p>
               <!-- <p>{{scope.row.}}</p> -->
             </template>
           </el-table-column>
-          <el-table-column label="VPN网关" v-if="ViewName === 'vpn_tunnel'">
+          <el-table-column label="VPN網關" v-if="ViewName === 'vpn_tunnel'">
             <template slot-scope="scope">
               <p>{{ scope.row.VpnGatewayId }}</p>
               <!-- <p>{{scope.row.}}</p> -->
             </template>
           </el-table-column>
-          <el-table-column label="对端网关" v-if="ViewName === 'vpn_tunnel'">
+          <el-table-column label="對端網關" v-if="ViewName === 'vpn_tunnel'">
             <template slot-scope="scope">
               <p>{{ scope.row.CustomerGatewayId }}</p>
               <!-- <p>{{scope.row.}}</p> -->
@@ -244,43 +250,43 @@
           </el-table-column>
 
           <!-- nat_tc_stat -->
-          <el-table-column label="ID/名称" v-if="ViewName === 'nat_tc_stat'">
+          <el-table-column label="ID/名稱" v-if="ViewName === 'nat_tc_stat'">
             <template slot-scope="scope">
               <p>{{ scope.row.NatGatewayId }}</p>
               <p>{{ scope.row.NatGatewayName }}</p>
             </template>
           </el-table-column>
-          <el-table-column label="状态" v-if="ViewName === 'nat_tc_stat'">
+          <el-table-column label="狀態" v-if="ViewName === 'nat_tc_stat'">
             <template slot-scope="scope">
               <span>{{ VPN_Tunnel_State(scope.row.State) }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="私有网络" v-if="ViewName === 'nat_tc_stat'">
+          <el-table-column label="私有網絡" v-if="ViewName === 'nat_tc_stat'">
             <template slot-scope="scope">
               <p>{{ scope.row.VpcId }}</p>
               <!-- <p>{{scope.row.}}</p> -->
             </template>
           </el-table-column>
-          <el-table-column label="类型" v-if="ViewName === 'nat_tc_stat'">
+          <el-table-column label="類型" v-if="ViewName === 'nat_tc_stat'">
             <template slot-scope="scope">
               <p>小型</p>
-              <p>最大并发连接数{{ scope.row.maxConcurrent / 100 }}万</p>
+              <p>最大並發連接數{{ scope.row.maxConcurrent / 100 }}萬</p>
             </template>
           </el-table-column>
 
           <!-- DC_GW -->
-          <el-table-column label="ID/名称" v-if="ViewName === 'DC_GW'">
+          <el-table-column label="ID/名稱" v-if="ViewName === 'DC_GW'">
             <template slot-scope="scope">
               <p>{{ scope.row.DirectConnectGatewayId }}</p>
               <p>{{ scope.row.DirectConnectGatewayName }}</p>
             </template>
           </el-table-column>
-          <el-table-column label="NAT配置状态" v-if="ViewName === 'DC_GW'">
+          <el-table-column label="NAT配置狀態" v-if="ViewName === 'DC_GW'">
             <template slot-scope="scope">
               <span>{{ NAT_Status(scope.row.GatewayType) }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="所属网络" v-if="ViewName === 'DC_GW'">
+          <el-table-column label="所屬網絡" v-if="ViewName === 'DC_GW'">
             <template slot-scope="scope">
               <p>{{ scope.row.VpcId }}</p>
               <!-- <p>{{scope.row.}}</p> -->
@@ -288,92 +294,92 @@
           </el-table-column>
 
           <!-- EIP -->
-          <el-table-column label="ID/名称" v-if="ViewName === 'EIP'">
+          <el-table-column label="ID/名稱" v-if="ViewName === 'EIP'">
             <template slot-scope="scope">
               <p>{{ scope.row.AddressId }}</p>
             </template>
           </el-table-column>
-          <el-table-column label="弹性IP地址" v-if="ViewName === 'EIP'">
+          <el-table-column label="彈性IP地址" v-if="ViewName === 'EIP'">
             <template slot-scope="scope">
               <span>{{ scope.row.AddressIp }}</span>
             </template>
           </el-table-column>
 
           <!-- cdb_detail -->
-          <el-table-column label="ID/名称" v-if="ViewName === 'cdb_detail'">
+          <el-table-column label="ID/名稱" v-if="ViewName === 'cdb_detail'">
             <template slot-scope="scope">
               <p>{{ scope.row.InstanceId }}</p>
               <p>{{ scope.row.InstanceName }}</p>
             </template>
           </el-table-column>
-          <el-table-column label="状态" v-if="ViewName === 'cdb_detail'">
+          <el-table-column label="狀態" v-if="ViewName === 'cdb_detail'">
             <template slot-scope="scope">
               <p>{{ CDB_Status(scope.row.Status) }}</p>
             </template>
           </el-table-column>
-          <el-table-column label="内网IP/端口" v-if="ViewName === 'cdb_detail'">
+          <el-table-column label="內網IP/端口" v-if="ViewName === 'cdb_detail'">
             <template slot-scope="scope">
               <span>{{ scope.row.Vip }}</span>
               <p>{{ scope.row.Vport }}</p>
             </template>
           </el-table-column>
-          <el-table-column label="网络类型" v-if="ViewName === 'cdb_detail'">
+          <el-table-column label="網絡類型" v-if="ViewName === 'cdb_detail'">
             <template slot-scope="scope">
               VPC
             </template>
           </el-table-column>
-          <el-table-column label="类型" v-if="ViewName === 'cdb_detail'">
+          <el-table-column label="類型" v-if="ViewName === 'cdb_detail'">
             <template slot-scope="scope">
               {{ CDB_InstanceType(scope.row.InstanceType) }}
             </template>
           </el-table-column>
 
           <!-- REDIS-CLUSTER -->
-          <el-table-column label="ID/名称" v-if="ViewName === 'REDIS-CLUSTER'">
+          <el-table-column label="ID/名稱" v-if="ViewName === 'REDIS-CLUSTER'">
             <template slot-scope="scope">
               <p>{{ scope.row.InstanceId }}</p>
               <p>{{ scope.row.InstanceName }}</p>
             </template>
           </el-table-column>
-          <el-table-column label="状态" v-if="ViewName === 'REDIS-CLUSTER'">
+          <el-table-column label="狀態" v-if="ViewName === 'REDIS-CLUSTER'">
             <template slot-scope="scope">
               <p>{{ REDIS_Status(scope.row.Status) }}</p>
             </template>
           </el-table-column>
-          <el-table-column label="规格" v-if="ViewName === 'REDIS-CLUSTER'">
+          <el-table-column label="規格" v-if="ViewName === 'REDIS-CLUSTER'">
             <template slot-scope="scope">
               master-slave
             </template>
           </el-table-column>
-          <el-table-column label="内网地址" v-if="ViewName === 'REDIS-CLUSTER'">
+          <el-table-column label="內網地址" v-if="ViewName === 'REDIS-CLUSTER'">
             <template slot-scope="scope">
               {{ scope.row.WanIp }}
             </template>
           </el-table-column>
           <!-- dcchannel -->
-          <el-table-column label="名称/ID" v-if="ViewName === 'dcchannel'">
+          <el-table-column label="名稱/ID" v-if="ViewName === 'dcchannel'">
             <template slot-scope="scope">
               <p>{{ scope.row.DirectConnectTunnelId }}</p>
               <p>{{ scope.row.DirectConnectTunnelName }}</p>
             </template>
           </el-table-column>
-          <el-table-column label="物理专线" v-if="ViewName === 'dcchannel'">
+          <el-table-column label="物理專線" v-if="ViewName === 'dcchannel'">
             <template slot-scope="scope">
               <p>{{ dcchannel_Status(scope.row.State) }}</p>
             </template>
           </el-table-column>
-          <el-table-column label="私有网络" v-if="ViewName === 'dcchannel'">
+          <el-table-column label="私有網絡" v-if="ViewName === 'dcchannel'">
             <template slot-scope="scope">
               master-slave
             </template>
           </el-table-column>
-          <el-table-column label="关联专线网关" v-if="ViewName === 'dcchannel'">
+          <el-table-column label="關聯專線網關" v-if="ViewName === 'dcchannel'">
             <template slot-scope="scope">
               {{ scope.row.WanIp }}
             </template>
           </el-table-column>
           <!-- dcline -->
-          <el-table-column label="名称/ID" v-if="ViewName === 'dcline'">
+          <el-table-column label="名稱/ID" v-if="ViewName === 'dcline'">
             <template slot-scope="scope">
               <p>{{ scope.row.DirectConnectName }}</p>
               <p>{{ scope.row.DirectConnectId }}</p>
@@ -384,13 +390,13 @@
               <p>{{ scope.row.Location }}</p>
             </template>
           </el-table-column>
-          <el-table-column label="带宽" v-if="ViewName === 'dcline'">
+          <el-table-column label="帶寬" v-if="ViewName === 'dcline'">
             <template slot-scope="scope">
               <p>{{ scope.row.Bandwidth }}Mbps</p>
             </template>
           </el-table-column>
           <!-- COS -->
-          <el-table-column label="Bucket名称" v-if="ViewName === 'COS'">
+          <el-table-column label="Bucket名稱" v-if="ViewName === 'COS'">
             <template slot-scope="scope">
               <p>{{ scope.row.Name }}</p>
             </template>
@@ -400,7 +406,7 @@
               <p>{{ scope.row.zone.zone }}</p>
             </template>
           </el-table-column>
-          <el-table-column label="创建时间" v-if="ViewName === 'COS'">
+          <el-table-column label="創建時間" v-if="ViewName === 'COS'">
             <template slot-scope="scope">
               {{ CreationDate(scope.row.CreationDate) }}
             </template>
@@ -414,7 +420,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <!-- 分页 -->
+        <!-- 分頁 -->
         <div class="tke-page">
           <div class="block">
             <el-pagination
@@ -435,20 +441,20 @@
       >
         <ul>
           <li>
-            <span>实例组</span>
+            <span>實例組</span>
             <span>{{ InstanceGroupShow.InstanceGroup.GroupName }}</span>
             <a href="javascript:;" @click="unBindingInstance = true"
-              >解除绑定</a
+              >解除綁定</a
             >
           </li>
           <li>
-            <span>实例数</span>
+            <span>實例數</span>
             <span
-              >{{ InstanceGroupShow.InstanceGroup.InstanceSum }}个(启用告警：
-              {{ InstanceGroupShow.NoShieldedSum }}个)</span
+              >{{ InstanceGroupShow.InstanceGroup.InstanceSum }}個(啓用告警：
+              {{ InstanceGroupShow.NoShieldedSum }}個)</span
             >
             <a href="javascript:;" @click="retract = !retract">{{
-              retract ? "收起" : "展开"
+              retract ? "收起" : "展開"
             }}</a>
           </li>
           <li v-if="retract">
@@ -457,7 +463,7 @@
               <div class="left">
                 <div class="left-main border">
                   <!-- <div class="seek" style="">
-                    <el-select v-model="searchItem" placeholder="请选择">
+                    <el-select v-model="searchItem" placeholder="請選擇">
                       <el-option
                         v-for="item in searchItemOptions"
                         :key="item.value"
@@ -467,7 +473,7 @@
                       </el-option>
                     </el-select>
                     <el-input
-                      placeholder="请输入内容"
+                      placeholder="請輸入內容"
                       v-model="searchInput"
                       class="input-with-select"
                     >
@@ -486,7 +492,7 @@
                     v-loading="alarmInstanceLond"
                   >
                     <el-table-column
-                      label="ID/主机名"
+                      label="ID/主機名"
                       v-if="ViewName === 'cvm_device'"
                     >
                       <template slot-scope="scope">
@@ -495,7 +501,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column
-                      label="状态"
+                      label="狀態"
                       v-if="ViewName === 'cvm_device'"
                     >
                       <template slot-scope="scope">
@@ -505,10 +511,10 @@
                       </template>
                     </el-table-column>
                     <el-table-column
-                      label="网络类型"
+                      label="網絡類型"
                       v-if="ViewName === 'cvm_device'"
                     >
-                      VPC 网络
+                      VPC 網絡
                     </el-table-column>
                     <el-table-column
                       label="IP地址"
@@ -520,20 +526,20 @@
                             v-for="(item, index) in scope.row
                               .PrivateIpAddresses"
                             :key="index"
-                            >{{ item }}(内网)</span
+                            >{{ item }}(內網)</span
                           >
                         </p>
                         <p>
                           <span
                             v-for="(item, index) in scope.row.PublicIpAddresses"
                             :key="index"
-                            >{{ item }}(外网)</span
+                            >{{ item }}(外網)</span
                           >
                         </p>
                       </template>
                     </el-table-column>
                     <!-- BS -->
-                    <el-table-column label="ID/名称" v-if="ViewName === 'BS'">
+                    <el-table-column label="ID/名稱" v-if="ViewName === 'BS'">
                       <template slot-scope="scope">
                         <p>{{ scope.row.DiskId }}</p>
                         <p>{{ scope.row.DiskName }}</p>
@@ -544,14 +550,14 @@
                         <span>{{ scope.row.DiskSize }}</span>
                       </template>
                     </el-table-column>
-                    <el-table-column label="硬盘类型" v-if="ViewName === 'BS'">
+                    <el-table-column label="硬碟類型" v-if="ViewName === 'BS'">
                       <template slot-scope="scope">
                         <p>{{ scope.row.DiskType | DiskType }}</p>
                         <p>{{ scope.row.DiskUsage | DiskUsage }}</p>
                       </template>
                     </el-table-column>
                     <el-table-column
-                      label="关联云主机ID"
+                      label="關聯雲主機ID"
                       v-if="ViewName === 'BS'"
                     >
                       <template slot-scope="scope">
@@ -561,7 +567,7 @@
                     </el-table-column>
                     <!-- VPN_GW -->
                     <el-table-column
-                      label="ID/名称"
+                      label="ID/名稱"
                       v-if="ViewName === 'VPN_GW'"
                     >
                       <template slot-scope="scope">
@@ -569,13 +575,13 @@
                         <p>{{ scope.row.VpnGatewayName }}</p>
                       </template>
                     </el-table-column>
-                    <el-table-column label="状态" v-if="ViewName === 'VPN_GW'">
+                    <el-table-column label="狀態" v-if="ViewName === 'VPN_GW'">
                       <template slot-scope="scope">
                         <span>{{ VPN_GW_State(scope.row.State) }}</span>
                       </template>
                     </el-table-column>
                     <el-table-column
-                      label="所属网络"
+                      label="所屬網絡"
                       v-if="ViewName === 'VPN_GW'"
                     >
                       <template slot-scope="scope">
@@ -586,7 +592,7 @@
 
                     <!-- vpn_tunnel -->
                     <el-table-column
-                      label="ID/名称"
+                      label="ID/名稱"
                       v-if="ViewName === 'vpn_tunnel'"
                     >
                       <template slot-scope="scope">
@@ -595,7 +601,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column
-                      label="状态"
+                      label="狀態"
                       v-if="ViewName === 'vpn_tunnel'"
                     >
                       <template slot-scope="scope">
@@ -603,7 +609,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column
-                      label="所属网络"
+                      label="所屬網絡"
                       v-if="ViewName === 'vpn_tunnel'"
                     >
                       <template slot-scope="scope">
@@ -612,7 +618,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column
-                      label="VPN网关"
+                      label="VPN網關"
                       v-if="ViewName === 'vpn_tunnel'"
                     >
                       <template slot-scope="scope">
@@ -621,7 +627,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column
-                      label="对端网关"
+                      label="對端網關"
                       v-if="ViewName === 'vpn_tunnel'"
                     >
                       <template slot-scope="scope">
@@ -632,7 +638,7 @@
 
                     <!-- nat_tc_stat -->
                     <el-table-column
-                      label="ID/名称"
+                      label="ID/名稱"
                       v-if="ViewName === 'nat_tc_stat'"
                     >
                       <template slot-scope="scope">
@@ -641,7 +647,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column
-                      label="状态"
+                      label="狀態"
                       v-if="ViewName === 'nat_tc_stat'"
                     >
                       <template slot-scope="scope">
@@ -649,7 +655,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column
-                      label="私有网络"
+                      label="私有網絡"
                       v-if="ViewName === 'nat_tc_stat'"
                     >
                       <template slot-scope="scope">
@@ -658,20 +664,20 @@
                       </template>
                     </el-table-column>
                     <el-table-column
-                      label="类型"
+                      label="類型"
                       v-if="ViewName === 'nat_tc_stat'"
                     >
                       <template slot-scope="scope">
                         <p>小型</p>
                         <p>
-                          最大并发连接数{{ scope.row.maxConcurrent / 100 }}万
+                          最大並發連接數{{ scope.row.maxConcurrent / 100 }}萬
                         </p>
                       </template>
                     </el-table-column>
 
                     <!-- DC_GW -->
                     <el-table-column
-                      label="ID/名称"
+                      label="ID/名稱"
                       v-if="ViewName === 'DC_GW'"
                     >
                       <template slot-scope="scope">
@@ -680,7 +686,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column
-                      label="NAT配置状态"
+                      label="NAT配置狀態"
                       v-if="ViewName === 'DC_GW'"
                     >
                       <template slot-scope="scope">
@@ -688,7 +694,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column
-                      label="所属网络"
+                      label="所屬網絡"
                       v-if="ViewName === 'DC_GW'"
                     >
                       <template slot-scope="scope">
@@ -698,13 +704,13 @@
                     </el-table-column>
 
                     <!-- EIP -->
-                    <el-table-column label="ID/名称" v-if="ViewName === 'EIP'">
+                    <el-table-column label="ID/名稱" v-if="ViewName === 'EIP'">
                       <template slot-scope="scope">
                         <p>{{ scope.row.AddressId }}</p>
                       </template>
                     </el-table-column>
                     <el-table-column
-                      label="弹性IP地址"
+                      label="彈性IP地址"
                       v-if="ViewName === 'EIP'"
                     >
                       <template slot-scope="scope">
@@ -714,7 +720,7 @@
 
                     <!-- cdb_detail -->
                     <el-table-column
-                      label="ID/名称"
+                      label="ID/名稱"
                       v-if="ViewName === 'cdb_detail'"
                     >
                       <template slot-scope="scope">
@@ -723,7 +729,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column
-                      label="状态"
+                      label="狀態"
                       v-if="ViewName === 'cdb_detail'"
                     >
                       <template slot-scope="scope">
@@ -731,7 +737,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column
-                      label="内网IP/端口"
+                      label="內網IP/端口"
                       v-if="ViewName === 'cdb_detail'"
                     >
                       <template slot-scope="scope">
@@ -740,7 +746,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column
-                      label="网络类型"
+                      label="網絡類型"
                       v-if="ViewName === 'cdb_detail'"
                     >
                       <template slot-scope="scope">
@@ -748,7 +754,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column
-                      label="类型"
+                      label="類型"
                       v-if="ViewName === 'cdb_detail'"
                     >
                       <template slot-scope="scope">
@@ -758,7 +764,7 @@
 
                     <!-- REDIS-CLUSTER -->
                     <el-table-column
-                      label="ID/名称"
+                      label="ID/名稱"
                       v-if="ViewName === 'REDIS-CLUSTER'"
                     >
                       <template slot-scope="scope">
@@ -767,7 +773,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column
-                      label="状态"
+                      label="狀態"
                       v-if="ViewName === 'REDIS-CLUSTER'"
                     >
                       <template slot-scope="scope">
@@ -775,7 +781,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column
-                      label="规格"
+                      label="規格"
                       v-if="ViewName === 'REDIS-CLUSTER'"
                     >
                       <template slot-scope="scope">
@@ -783,7 +789,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column
-                      label="内网地址"
+                      label="內網地址"
                       v-if="ViewName === 'REDIS-CLUSTER'"
                     >
                       <template slot-scope="scope">
@@ -792,7 +798,7 @@
                     </el-table-column>
                     <!-- dcchannel -->
                     <el-table-column
-                      label="ID/名称"
+                      label="ID/名稱"
                       v-if="ViewName === 'dcchannel'"
                     >
                       <template slot-scope="scope">
@@ -801,7 +807,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column
-                      label="状态"
+                      label="狀態"
                       v-if="ViewName === 'dcchannel'"
                     >
                       <template slot-scope="scope">
@@ -809,7 +815,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column
-                      label="规格"
+                      label="規格"
                       v-if="ViewName === 'dcchannel'"
                     >
                       <template slot-scope="scope">
@@ -817,7 +823,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column
-                      label="内网地址"
+                      label="內網地址"
                       v-if="ViewName === 'dcchannel'"
                     >
                       <template slot-scope="scope">
@@ -826,7 +832,7 @@
                     </el-table-column>
                     <!-- dcline -->
                     <el-table-column
-                      label="名称/ID"
+                      label="名稱/ID"
                       v-if="ViewName === 'dcline'"
                     >
                       <template slot-scope="scope">
@@ -842,14 +848,14 @@
                         <p>{{ scope.row.Location }}</p>
                       </template>
                     </el-table-column>
-                    <el-table-column label="带宽" v-if="ViewName === 'dcline'">
+                    <el-table-column label="帶寬" v-if="ViewName === 'dcline'">
                       <template slot-scope="scope">
                         <p>{{ scope.row.Bandwidth }}Mbps</p>
                       </template>
                     </el-table-column>
                     <!-- COS -->
                     <el-table-column
-                      label="Bucket名称"
+                      label="Bucket名稱"
                       v-if="ViewName === 'COS'"
                     >
                       <template slot-scope="scope">
@@ -861,13 +867,13 @@
                         <p>{{ scope.row.zone.zone }}</p>
                       </template>
                     </el-table-column>
-                    <el-table-column label="创建时间" v-if="ViewName === 'COS'">
+                    <el-table-column label="創建時間" v-if="ViewName === 'COS'">
                       <template slot-scope="scope">
                         {{ CreationDate(scope.row.CreationDate) }}
                       </template>
                     </el-table-column>
 
-                    <el-table-column label="启用告警">
+                    <el-table-column label="啓用告警">
                       <template slot-scope="scope">
                         <el-switch
                           v-model="scope.row.IsShielded"
@@ -888,11 +894,11 @@
     </el-card>
     <el-card class="box-card alarm-object alarm-receiving-object">
       <div slot="header" class="clearfix">
-        <h3>告警接收对象</h3>
+        <h3>告警接收對象</h3>
       </div>
       <div class="box-content" style="margin-top:20px;">
         <el-row>
-          <el-button type="primary" @click="EditReceiveObject">编辑</el-button>
+          <el-button type="primary" @click="EditReceiveObject">編輯</el-button>
           <el-button @click="Remove('', 2)" v-if="remove.length > 0"
             >解除</el-button
           >
@@ -910,7 +916,7 @@
         >
           <el-table-column type="selection"> </el-table-column>
           <el-table-column
-            label="接收组"
+            label="接收組"
             v-if="
               receivingObjectData.length === 0 ||
                 ReceiverInfos.ReceiverType === 'group'
@@ -935,12 +941,12 @@
                 </span>
               </div>
               <div v-else>
-                未设置
+                未設置
               </div>
             </template>
           </el-table-column>
           <el-table-column
-            label="有效时段"
+            label="有效時段"
             v-if="
               receivingObjectData.length === 0 ||
                 ReceiverInfos.ReceiverType === 'group'
@@ -973,7 +979,7 @@
             </template>
           </el-table-column>
           <el-table-column
-            label="有效时段"
+            label="有效時段"
             v-if="ReceiverInfos.ReceiverType === 'user'"
           >
             {{ ReceiverInfos.StartTime | EndTime }} -
@@ -998,10 +1004,10 @@
     </el-card>
     <el-card class="box-card">
       <div slot="header" class="clearfix" style="width:100%;display:flex;">
-        <h3>回调接口</h3>
+        <h3>回調接口</h3>
       </div>
       <p class="tip">
-        填写公网可访问到的url作为回调接口地址(域名或IP[:端口][/path])，云监控将及时把告警信息推送到该地址。
+        填寫公網可訪問到的url作爲回調接口地址(域名或IP[:端口][/path])，雲監控將及時把告警信息推送到該地址。
       </p>
       <div
         class="box-content"
@@ -1019,9 +1025,9 @@
       <div class="Callback-box-content" v-if="basicNews.Callback">
         <span>{{ basicNews.Callback.CallbackUrl }}</span>
         <span v-if="Verification">
-          {{ basicNews.Callback.ValidFlag == 0 ? "" : "验证超时" }}</span
+          {{ basicNews.Callback.ValidFlag == 0 ? "" : "驗證超時" }}</span
         >
-        <span v-if="!Verification">验证中</span>
+        <span v-if="!Verification">驗證中</span>
         <i
           class="el-icon-refresh ml5"
           v-if="Verification"
@@ -1031,10 +1037,10 @@
         <i class="el-icon-error ml5" @click="CallBackSave(2)"></i>
         <div class="bg-box" style="width:40%;margin-top:16px;">
           <p>
-            回调域名通过验证后生效，请于Response Body中返回以下code。
+            回調域名通過驗證後生效，請于Response Body中返回以下code。
             <el-tooltip
               effect="light"
-              content="触发验证后推送请求三次，每次3s，累计9s未成功返回即验证超时。"
+              content="觸發驗證後推送請求三次，每次3s，累計9s未成功返回即驗證超時。"
               placement="top"
               ><i class="el-icon-info"></i>
             </el-tooltip>
@@ -1043,9 +1049,9 @@
         </div>
       </div>
     </el-card>
-    <!-- 修改名称 -->
+    <!-- 修改名稱 -->
     <el-dialog
-      title="修改告警策略名称"
+      title="修改告警策略名稱"
       :visible.sync="modifyNameDialogVisible"
       width="500px"
       custom-class="tke-dialog"
@@ -1053,20 +1059,20 @@
       <div class="edit-dialog">
         <el-input
           size="small"
-          placeholder="请输告警策略名称，20字以内"
+          placeholder="請輸告警策略名稱，20字以內"
           v-model="GroupName"
           @input="EditTips"
         ></el-input>
-        <p v-if="tipsShow">告警策略名称不能为空</p>
+        <p v-if="tipsShow">告警策略名稱不能爲空</p>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="NameSure()">确定</el-button>
+        <el-button type="primary" @click="NameSure()">確定</el-button>
         <el-button @click="modifyNameDialogVisible = false">取消</el-button>
       </span>
     </el-dialog>
-    <!-- 修改备注 -->
+    <!-- 修改備注 -->
     <el-dialog
-      title="修改告警策略备注"
+      title="修改告警策略備注"
       :visible.sync="modifyRemarksDialogVisible"
       width="600px"
       custom-class="tke-dialog"
@@ -1075,39 +1081,43 @@
         <el-input
           type="textarea"
           :rows="2"
-          placeholder="请输入告警策略备注，100字以内"
+          placeholder="請輸入告警策略備注，100字以內"
           v-model="remarksVal"
           maxlength="100"
         >
         </el-input>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="NameSure">确定</el-button>
+        <el-button type="primary" @click="NameSure">確定</el-button>
         <el-button @click="modifyRemarksDialogVisible = false">取消</el-button>
       </span>
     </el-dialog>
-    <!-- 告警触发条件编辑 -->
+    <!-- 告警觸發條件編輯 -->
     <el-dialog
-      title="修改告警触发条件"
+      title="修改告警觸發條件"
       :visible.sync="dialogEditGaojing"
       width="1024px"
     >
       <div>
         <div class="trigger-condition">
-          <span>触发条件</span>
+          <span>觸發條件</span>
           <div class="chufaContent">
             <div>
               <el-radio v-model="radioChufa" label="1" @change="chufaTemplate"
-                >触发条件模板</el-radio
+                >觸發條件模板</el-radio
               >
-              <a style="margin-left:15px;">新增触发条件模板</a>
+              <a
+                style="margin-left:15px;"
+                @click="$router.push({ path: '/Template' })"
+                >新增触发条件模板</a
+              >
               <div class="content" v-if="radioChufa == 1">
                 <p>
                   <el-select
                     v-model="nameVal"
                     style="width:150px;"
                     @change="TriggerChange"
-                    :disabled="nameVal === '当前策略下没有触发条件模板'"
+                    :disabled="nameVal === '當前策略下沒有觸發條件模板'"
                   >
                     <el-option
                       v-for="item in triggerCondition"
@@ -1119,12 +1129,12 @@
                   </el-select>
                   <a href="javascript:;" @click="AlarmTriggerCondition">刷新</a>
                 </p>
-                <div v-if="nameVal !== '当前策略下没有触发条件模板'">
+                <div v-if="nameVal !== '當前策略下沒有觸發條件模板'">
                   <p>
-                    <el-checkbox disabled>指标告警</el-checkbox>
+                    <el-checkbox disabled>指標告警</el-checkbox>
                   </p>
                   <p>
-                    <span>满足</span>
+                    <span>滿足</span>
                     <el-select
                       disabled
                       v-model="Conditions.IsUnionRule"
@@ -1138,9 +1148,9 @@
                         label-width="40px"
                       ></el-option>
                     </el-select>
-                    <span>条件时，触发告警</span>
+                    <span>條件時，觸發告警</span>
                   </p>
-                  <!-- 在这里进行便利，添加 -->
+                  <!-- 在這裏進行便利，添加 -->
                   <ul class="ul-one">
                     <li
                       v-for="(item, index) in Conditions.Conditions"
@@ -1231,11 +1241,11 @@
                         <el-popover placement="top" width="360" trigger="hover">
                           <div>
                             <p>
-                              重复通知：可以设置告警发生24小时内重复发送通知；超过24小时，每天告警一次，超过72小时，不再发送告警通知。
+                              重複通知：可以設置告警發生24小時內重複發送通知；超過24小時，每天告警壹次，超過72小時，不再發送告警通知。
                             </p>
                             <p style="margin-top:5px;">
-                              周期指数递增通知:
-                              告警持续时长到达告警统计周期的1，2，4，8，16，32...倍时发送告警通知
+                              周期指數遞增通知:
+                              告警持續時長到達告警統計周期的1，2，4，8，16，32...倍時發送告警通知
                             </p>
                           </div>
                           <i
@@ -1266,11 +1276,11 @@
                     <el-popover placement="top" width="360" trigger="hover">
                       <div>
                         <p>
-                          重复通知：可以设置告警发生24小时内重复发送通知；超过24小时，每天告警一次，超过72小时，不再发送告警通知。
+                          重複通知：可以設置告警發生24小時內重複發送通知；超過24小時，每天告警壹次，超過72小時，不再發送告警通知。
                         </p>
                         <p style="margin-top:5px;">
-                          周期指数递增通知:
-                          告警持续时长到达告警统计周期的1，2，4，8，16，32...倍时发送告警通知
+                          周期指數遞增通知:
+                          告警持續時長到達告警統計周期的1，2，4，8，16，32...倍時發送告警通知
                         </p>
                       </div>
                       <i
@@ -1281,14 +1291,14 @@
                     </el-popover>
                   </div>
                 </div>
-                <div v-if="nameVal !== '当前策略下没有触发条件模板'">
+                <div v-if="nameVal !== '當前策略下沒有觸發條件模板'">
                   <p v-if="basicNews.EventConfig">
                     <el-checkbox disabled v-if="Conditions.EventConditions">
                       事件告警
                     </el-checkbox>
                     <el-popover placement="right" trigger="hover">
                       <div>
-                        <p>各事件规则<a href="javascript:;">详情</a></p>
+                        <p>各事件規則<a href="javascript:;">詳情</a></p>
                       </div>
                       <i
                         class="el-icon-info"
@@ -1297,7 +1307,7 @@
                       ></i>
                     </el-popover>
                   </p>
-                  <!-- 在这里进行便利，添加 -->
+                  <!-- 在這裏進行便利，添加 -->
                   <ul>
                     <li v-for="(x, i) in Conditions.EventConditions" :key="i">
                       <div style="margin-left:15px;">
@@ -1316,7 +1326,7 @@
             </div>
             <div>
               <el-radio v-model="radioChufa" label="2" @change="config"
-                >配置触发条件</el-radio
+                >配置觸發條件</el-radio
               >
               <div class="content content-pz" v-if="radioChufa == 2">
                 <div>
@@ -1324,11 +1334,11 @@
                     <el-checkbox
                       v-model="formWrite.checkedZhibiao"
                       style="height:30px;"
-                      >指标告警</el-checkbox
+                      >指標告警</el-checkbox
                     >
                   </p>
                   <p>
-                    <span>满足</span>
+                    <span>滿足</span>
                     <el-select
                       v-model="formWrite.satisfyVal"
                       style="width:90px;margin:0 5px;"
@@ -1341,9 +1351,9 @@
                         label-width="40px"
                       ></el-option>
                     </el-select>
-                    <span>条件时，触发告警</span>
+                    <span>條件時，觸發告警</span>
                   </p>
-                  <!-- 在这里进行便利，添加 -->
+                  <!-- 在這裏進行便利，添加 -->
                   <ul class="ul-one ul-two">
                     <li v-for="(item, index) in formWrite.arr" :key="index">
                       <div>
@@ -1429,11 +1439,11 @@
                           >
                             <div>
                               <p>
-                                重复通知：可以设置告警发生24小时内重复发送通知；超过24小时，每天告警一次，超过72小时，不再发送告警通知。
+                                重複通知：可以設置告警發生24小時內重複發送通知；超過24小時，每天告警壹次，超過72小時，不再發送告警通知。
                               </p>
                               <p style="margin-top:5px;">
-                                周期指数递增通知:
-                                告警持续时长到达告警统计周期的1，2，4，8，16，32...倍时发送告警通知
+                                周期指數遞增通知:
+                                告警持續時長到達告警統計周期的1，2，4，8，16，32...倍時發送告警通知
                               </p>
                             </div>
                             <i
@@ -1469,11 +1479,11 @@
                       <el-popover placement="top" width="360" trigger="hover">
                         <div>
                           <p>
-                            重复通知：可以设置告警发生24小时内重复发送通知；超过24小时，每天告警一次，超过72小时，不再发送告警通知。
+                            重複通知：可以設置告警發生24小時內重複發送通知；超過24小時，每天告警壹次，超過72小時，不再發送告警通知。
                           </p>
                           <p style="margin-top:5px;">
-                            周期指数递增通知:
-                            告警持续时长到达告警统计周期的1，2，4，8，16，32...倍时发送告警通知
+                            周期指數遞增通知:
+                            告警持續時長到達告警統計周期的1，2，4，8，16，32...倍時發送告警通知
                           </p>
                         </div>
                         <i
@@ -1491,7 +1501,7 @@
                       事件告警
                       <el-popover placement="right" trigger="hover">
                         <div>
-                          <p>各事件规则<a href="javascript:;">详情</a></p>
+                          <p>各事件規則<a href="javascript:;">詳情</a></p>
                         </div>
                         <i
                           class="el-icon-info"
@@ -1537,22 +1547,22 @@
         <el-button @click="dialogEditGaojing = false">取 消</el-button>
       </div>
     </el-dialog>
-    <!-- 告警对象编辑 -->
+    <!-- 告警對象編輯 -->
     <el-dialog
-      title="编辑告警对象"
+      title="編輯告警對象"
       :visible.sync="dialogEditObject"
       width="1024px"
     >
       <div class="edit-alarm-object">
         <el-radio-group v-model="editAlarmObjectRadio">
-          <p><el-radio label="1">全部对象</el-radio></p>
+          <p><el-radio label="1">全部對象</el-radio></p>
           <p>
             <el-radio label="2"
-              >选择部分对象
-              <!-- (已选{{ multipleSelection.length }}个) -->
+              >選擇部分對象
+              <!-- (已選{{ multipleSelection.length }}個) -->
             </el-radio>
           </p>
-          <p><el-radio label="3">选择实例组</el-radio></p>
+          <p><el-radio label="3">選擇實例組</el-radio></p>
         </el-radio-group>
         <div class="table" v-if="editAlarmObjectRadio == 2">
           <CamTransferCpt
@@ -1582,14 +1592,14 @@
         <el-button @click="dialogEditObject = false">取 消</el-button>
       </div>
     </el-dialog>
-    <!-- 告警对象-新增对象 -->
+    <!-- 告警對象-新增對象 -->
     <el-dialog
-      title="关联告警对象"
+      title="關聯告警對象"
       :visible.sync="alarmObjectNews"
       width="1024px"
     >
       <div class="edit-alarm-object-news">
-        <p>选择部分对象</p>
+        <p>選擇部分對象</p>
         <div class="table">
           <CamTransferCpt
             :productData="productListData"
@@ -1607,7 +1617,7 @@
         <el-button @click="alarmObjectNews = false">取 消</el-button>
       </div>
     </el-dialog>
-    <!-- 告警对象移出 -->
+    <!-- 告警對象移出 -->
     <el-dialog
       :title="alarmObjecTitle"
       :visible.sync="alarmObjectRemovalVisible"
@@ -1615,7 +1625,7 @@
       custom-class="tke-dialog"
     >
       <div class="edit-dialog">
-        解除后，将不会收到告警
+        解除後，將不會收到告警
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="AlarmObjectRemovalSure"
@@ -1624,15 +1634,15 @@
         <el-button @click="alarmObjectRemovalVisible = false">取消</el-button>
       </div>
     </el-dialog>
-    <!-- 告警对象全部移出 -->
+    <!-- 告警對象全部移出 -->
     <el-dialog
-      title="确定解除当前地域下所有实例？"
+      title="確定解除當前地域下所有實例？"
       :visible.sync="alarmObjectRemovalAllVisible"
       width="500px"
       custom-class="tke-dialog"
     >
       <div class="edit-dialog">
-        解除后，将不会收到告警
+        解除後，將不會收到告警
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="AlarmObjectRemovalAllSure"
@@ -1643,15 +1653,15 @@
         >
       </div>
     </el-dialog>
-    <!-- 告警接收对象 编辑 -->
+    <!-- 告警接收對象 編輯 -->
     <el-dialog
-      title="告警接收对象"
+      title="告警接收對象"
       :visible.sync="editReceiveObjectVisuble"
       width="800px"
       custom-class="tke-dialog"
     >
       <div class="edit-receive-object">
-        <p>您可到访问管理控制台修改用户和用户组信息</p>
+        <p>您可到訪問管理控制台修改用戶和用戶組信息</p>
         <div>
           <Cam @camClick="camFun"></Cam>
         </div>
@@ -1661,9 +1671,9 @@
         <el-button @click="editReceiveObjectVisuble = false">取消</el-button>
       </div>
     </el-dialog>
-    <!-- 回调接口 -->
+    <!-- 回調接口 -->
     <el-dialog
-      title="回调接口"
+      title="回調接口"
       :visible.sync="callbackInterface"
       width="550px"
       class="callback-dialog-box"
@@ -1672,7 +1682,7 @@
         <div class="text-http">
           <el-select
             v-model="httpVal"
-            placeholder="请选择"
+            placeholder="請選擇"
             @change="HttpTypeChange"
           >
             <el-option
@@ -1704,23 +1714,23 @@
                     item.Url.length
                   )
                 }}
-                <span>{{ item.ValidFlag == 0 ? "" : "验证超时" }}</span>
+                <span>{{ item.ValidFlag == 0 ? "" : "驗證超時" }}</span>
               </p>
             </li>
             <li v-if="httpOption.length === 0">
-              无数据
+              無數據
             </li>
           </ul>
         </div>
         <p>
-          填写公网可访问到的url作为回调接口地址(域名或IP[:端口][/path])，云监控将及时把告警信息推送到该地址。
+          填寫公網可訪問到的url作爲回調接口地址(域名或IP[:端口][/path])，雲監控將及時把告警信息推送到該地址。
         </p>
         <div class="bg-box">
           <p>
-            回调域名通过验证后生效，请于Response Body中返回以下code。
+            回調域名通過驗證後生效，請于Response Body中返回以下code。
             <el-tooltip
               effect="light"
-              content="触发验证后推送请求三次，每次3s，累计9s未成功返回即验证超时。"
+              content="觸發驗證後推送請求三次，每次3s，累計9s未成功返回即驗證超時。"
               placement="top"
               ><i class="el-icon-info"></i>
             </el-tooltip>
@@ -1733,24 +1743,24 @@
         <el-button @click="callbackInterface = false">取 消</el-button>
       </div>
     </el-dialog>
-    <!-- 告警对象 解除绑定 -->
+    <!-- 告警對象 解除綁定 -->
     <el-dialog
-      title="确定解绑告警策略"
+      title="確定解綁告警策略"
       :visible.sync="unBindingInstance"
       width="600px"
       custom-class="tke-dialog"
     >
       <div>
-        解绑后，策略将不再对实例分组生效
+        解綁後，策略將不再對實例分組生效
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="UnBindingInstance"
-          >确定解绑</el-button
+          >確定解綁</el-button
         >
         <el-button @click="unBindingInstance = false">取消</el-button>
       </div>
     </el-dialog>
-    <!-- 告警接收对象 解除 -->
+    <!-- 告警接收對象 解除 -->
     <el-dialog
       :title="relieveTitle"
       :visible.sync="relieveDialogVisible"
@@ -1758,10 +1768,10 @@
       custom-class="tke-dialog"
     >
       <div>
-        确认解除告警接收人关联
+        確認解除告警接收人關聯
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="Receive">确定</el-button>
+        <el-button type="primary" @click="Receive">確定</el-button>
         <el-button @click="relieveDialogVisible = false">取消</el-button>
       </div>
     </el-dialog>
@@ -1843,21 +1853,21 @@ export default {
       project,
       _ReceiverUserList,
       editBeizhuFlag: false,
-      dialogFormVisible: false, //基本信息组件弹框
-      dialogEditGaojing: false, //编辑告警弹框组件
-      dialogEditObject: false, //编辑告警弹框组件
+      dialogFormVisible: false, //基本信息組件彈框
+      dialogEditGaojing: false, //編輯告警彈框組件
+      dialogEditObject: false, //編輯告警彈框組件
       formLabelWidth: "120px",
       modifyNameDialogVisible: false,
       tipsShow: false,
       modifyRemarksDialogVisible: false,
       remarksVal: "",
-      showQudao1: false, //渠道选择1显示开关
-      showQudao2: false, //渠道选择2显示开关
-      errorTip1: false, //触发条件模板错误提示
-      errorTip2: true, //配置触发条件错误提示
+      showQudao1: false, //渠道選擇1顯示開關
+      showQudao2: false, //渠道選擇2顯示開關
+      errorTip1: false, //觸發條件模板錯誤提示
+      errorTip2: true, //配置觸發條件錯誤提示
       triggerInput: "", //新增接收
-      radio: "1", //选择告警对象类型
-      radioChufa: "2", //触发条件单选
+      radio: "1", //選擇告警對象類型
+      radioChufa: "2", //觸發條件單選
       input: "",
       input1: "",
       alarmObjectData: [],
@@ -1866,27 +1876,27 @@ export default {
       receivingObjectData: [],
       receiving: [],
       callbackInterface: false,
-      //分页
-      total: 0, //总条数
-      pageSize: 10, // 分页条数
-      pageIndex: 0, // 当前页码
-      // 告警对象
+      //分頁
+      total: 0, //總條數
+      pageSize: 10, // 分頁條數
+      pageIndex: 0, // 當前頁碼
+      // 告警對象
       alarmObjectNews: false,
       alarmObjectRemovalVisible: false,
-      alarmObjecTitle: "确定解除与该告警对象的关联？",
+      alarmObjecTitle: "確定解除與該告警對象的關聯？",
       UniqueId: "",
       alarmObjectRemovalAllVisible: false,
-      // 修改触发条件
+      // 修改觸發條件
       nameVal: "",
       triggerCondition: [],
       describeContactListLength: "",
-      // 告警接收对象
+      // 告警接收對象
       relieveDialogVisible: false,
       relieveTitle: "",
       remove: "",
       receivingObjectLoad: true,
       describeContactList: [],
-      // 编辑告警触发条件
+      // 編輯告警觸發條件
       gaoJingLoading: true,
       gaoJingLoading1: true,
       Conditions: [],
@@ -1894,11 +1904,11 @@ export default {
       cycle: [
         {
           value: 60,
-          label: "统计周期1分钟"
+          label: "統計周期1分鍾"
         },
         {
           value: 300,
-          label: "统计周期5分钟"
+          label: "統計周期5分鍾"
         }
       ],
       satisfy: [
@@ -1971,107 +1981,107 @@ export default {
       continuousCycleOpt: [
         {
           value: 1,
-          label: "持续1个周期"
+          label: "持續1個周期"
         },
         {
           value: 2,
-          label: "持续2个周期"
+          label: "持續2個周期"
         },
         {
           value: 3,
-          label: "持续3个周期"
+          label: "持續3個周期"
         },
         {
           value: 4,
-          label: "持续4个周期"
+          label: "持續4個周期"
         },
         {
           value: 5,
-          label: "持续5个周期"
+          label: "持續5個周期"
         }
       ],
       warningOpt: [
         {
           value: 0,
-          label: "不重复"
+          label: "不重複"
         },
         {
           value: 300,
-          label: "每5分钟警告一次"
+          label: "每5分鍾警告壹次"
         },
         {
           value: 600,
-          label: "每10分钟警告一次"
+          label: "每10分鍾警告壹次"
         },
         {
           value: 900,
-          label: "每15分钟警告一次"
+          label: "每15分鍾警告壹次"
         },
         {
           value: 1800,
-          label: "每30分钟警告一次"
+          label: "每30分鍾警告壹次"
         },
         {
           value: 3600,
-          label: "每1小时警告一次"
+          label: "每1小時警告壹次"
         },
         {
           value: 7200,
-          label: "每2小时警告一次"
+          label: "每2小時警告壹次"
         },
         {
           value: 10800,
-          label: "每3小时警告一次"
+          label: "每3小時警告壹次"
         },
         {
           value: 21600,
-          label: "每6小时警告一次"
+          label: "每6小時警告壹次"
         },
         {
           value: 43200,
-          label: "每12小时警告一次"
+          label: "每12小時警告壹次"
         },
         {
           value: 86400,
-          label: "每1天警告一次"
+          label: "每1天警告壹次"
         },
         {
           value: 60,
-          label: "周期指数递增"
+          label: "周期指數遞增"
         }
       ],
       eventOpt: [
         {
           value: "1",
-          label: "磁盘只读"
+          label: "磁盤只讀"
         },
         {
           value: "2",
-          label: "内核故障"
+          label: "內核故障"
         },
         {
           value: "3",
-          label: "内存oom"
+          label: "內存oom"
         },
         {
           value: "4",
-          label: "ping不可达"
+          label: "ping不可達"
         },
         {
           value: "5",
-          label: "机器重启"
+          label: "機器重啓"
         },
         {
           value: "6",
-          label: "外网出带宽超限导致丢包"
+          label: "外網出帶寬超限導致丟包"
         },
         {
           value: "7",
-          label: "agent上报超时"
+          label: "agent上報超時"
         },
         {
           value: "8",
-          label: "子机nvme设备error"
+          label: "子機nvme設備error"
         }
       ],
       productListData: {},
@@ -2091,14 +2101,14 @@ export default {
       editReceiveObjectVisuble: false,
       Verification: true,
       loading: true,
-      cam: {} // cam组件的值
+      cam: {} // cam組件的值
     };
   },
   components: { Header, CamTransferCpt, ProductTypeCpt, Cam },
   mounted() {
     this.DetailsInit();
     this.Project();
-    // 告警对象列表
+    // 告警對象列表
     this.AlarmObjectList();
     this.AlarmTriggerCondition();
     this.GaoJingGrouping();
@@ -2132,7 +2142,7 @@ export default {
     CAM_loading(val) {
       this.loading = val;
     },
-    //选择右侧表格数据
+    //選擇右側表格數據
     selectDatas(val) {
       console.log(val);
       this.multipleSelection = val;
@@ -2176,17 +2186,17 @@ export default {
                       );
                     } else {
                       let ErrTips = {
-                        FailedOperation: "操作失败。",
-                        InternalError: "内部错误。",
-                        InvalidParameter: "参数错误。",
-                        LimitExceeded: "超过配额限制。",
-                        MissingParameter: "缺少参数错误。",
-                        ResourceInUse: "资源被占用。",
-                        ResourceInsufficient: "资源不足。",
-                        ResourceNotFound: "资源不存在。",
-                        ResourceUnavailable: "资源不可用。",
-                        UnauthorizedOperation: "未授权操作。",
-                        UnknownParameter: "未知参数错误。",
+                        FailedOperation: "操作失敗。",
+                        InternalError: "內部錯誤。",
+                        InvalidParameter: "參數錯誤。",
+                        LimitExceeded: "超過配額限制。",
+                        MissingParameter: "缺少參數錯誤。",
+                        ResourceInUse: "資源被占用。",
+                        ResourceInsufficient: "資源不足。",
+                        ResourceNotFound: "資源不存在。",
+                        ResourceUnavailable: "資源不可用。",
+                        UnauthorizedOperation: "未授權操作。",
+                        UnknownParameter: "未知參數錯誤。",
                         UnsupportedOperation: "操作不支持。"
                       };
                       let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -2204,76 +2214,78 @@ export default {
                 .ReceiverUserList;
               this.describeContactList = [];
               this.receivingObjectLoad = true;
-              var setTime = setInterval(() => {
-                this.receivingObjectData = [];
-                var arr = [];
-                this.Offset++;
-                let params = {
-                  Version: "2018-07-24",
-                  Module: "monitor",
-                  Limit: 100,
-                  Offset: this.Offset
-                };
-                this.axios
-                  .post(CM_ALARM_RECEIVE_OBJECT_LIST, params)
-                  .then(res => {
-                    if (res.Response.Error === undefined) {
-                      arr = res.Response.List;
-                      this.describeContactListLength = res.Response.TotalNum;
-                      for (let i in arr) {
-                        this.describeContactList.push(arr[i]);
-                      }
-                      for (let i in _ReceiverUserList) {
-                        for (let j in this.describeContactList) {
-                          if (
-                            _ReceiverUserList[i] ==
-                            this.describeContactList[j].Uid
-                          ) {
-                            this.receivingObjectData.push(
-                              this.describeContactList[j]
-                            );
-                          }
+              // var setTime = setInterval(() => {
+              this.receivingObjectData = [];
+              var arr = [];
+              this.Offset++;
+              let params = {
+                Version: "2018-07-24",
+                Module: "monitor",
+                Limit: 100,
+                Offset: 1
+              };
+              this.axios
+                .post(CM_ALARM_RECEIVE_OBJECT_LIST, params)
+                .then(res => {
+                  if (res.Response.Error === undefined) {
+                    arr = res.Response.List;
+                    this.describeContactListLength = res.Response.TotalNum;
+                    for (let i in arr) {
+                      this.describeContactList.push(arr[i]);
+                    }
+                    for (let i in _ReceiverUserList) {
+                      for (let j in this.describeContactList) {
+                        if (
+                          _ReceiverUserList[i] ==
+                          this.describeContactList[j].Uid
+                        ) {
+                          this.receivingObjectData.push(
+                            this.describeContactList[j]
+                          );
                         }
                       }
-                      console.log(
-                        "this.receivingObjectData",
-                        this.receivingObjectData
-                      );
-                      if (
-                        this.Offset ==
-                        Math.ceil(Number(this.describeContactListLength) / 100)
-                      ) {
-                        console.log(
-                          Number(this.describeContactListLength / 100)
-                        );
-                        clearInterval(setTime);
-                        this.receivingObjectLoad = false;
-                      }
-                    } else {
-                      let ErrTips = {
-                        FailedOperation: "操作失败。",
-                        InternalError: "内部错误。",
-                        InvalidParameter: "参数错误。",
-                        LimitExceeded: "超过配额限制。",
-                        MissingParameter: "缺少参数错误。",
-                        ResourceInUse: "资源被占用。",
-                        ResourceInsufficient: "资源不足。",
-                        ResourceNotFound: "资源不存在。",
-                        ResourceUnavailable: "资源不可用。",
-                        UnauthorizedOperation: "未授权操作。",
-                        UnknownParameter: "未知参数错误。",
-                        UnsupportedOperation: "操作不支持。"
-                      };
-                      let ErrOr = Object.assign(ErrorTips, ErrTips);
-                      this.$message({
-                        message: ErrOr[res.Response.Error.Code],
-                        type: "error",
-                        showClose: true,
-                        duration: 0
-                      });
                     }
-                  });
-              }, 1000);
+                    this.receivingObjectLoad = false;
+                    console.log(
+                      "this.receivingObjectData",
+                      this.receivingObjectData
+                    );
+                    // if (
+                    //   this.Offset ==
+                    //   Math.ceil(Number(this.describeContactListLength) / 100)
+                    // ) {
+                    //   console.log(
+                    //     Number(this.describeContactListLength / 100)
+                    //   );
+                    //   clearInterval(setTime);
+                    //   this.receivingObjectLoad = false;
+                    //   return false;
+                    // }
+                  } else {
+                    let ErrTips = {
+                      FailedOperation: "操作失敗。",
+                      InternalError: "內部錯誤。",
+                      InvalidParameter: "參數錯誤。",
+                      LimitExceeded: "超過配額限制。",
+                      MissingParameter: "缺少參數錯誤。",
+                      ResourceInUse: "資源被占用。",
+                      ResourceInsufficient: "資源不足。",
+                      ResourceNotFound: "資源不存在。",
+                      ResourceUnavailable: "資源不可用。",
+                      UnauthorizedOperation: "未授權操作。",
+                      UnknownParameter: "未知參數錯誤。",
+                      UnsupportedOperation: "操作不支持。"
+                    };
+                    let ErrOr = Object.assign(ErrorTips, ErrTips);
+                    this.$message({
+                      message: ErrOr[res.Response.Error.Code],
+                      type: "error",
+                      showClose: true,
+                      duration: 0
+                    });
+                  }
+                });
+              // }, 1000);
             }
           } else {
             this.receivingObjectData = [];
@@ -2282,45 +2294,45 @@ export default {
         } else {
           let ErrTips = {
             "AuthFailure.UnauthorizedOperation":
-              "请求未授权。请参考 CAM 文档对鉴权的说明。",
+              "請求未授權。請參考 CAM 文檔對鑒權的說明。",
             DryRunOperation:
-              "DryRun 操作，代表请求将会是成功的，只是多传了 DryRun 参数。",
-            FailedOperation: "	操作失败。",
-            "FailedOperation.AlertFilterRuleDeleteFailed": "删除过滤条件失败。",
-            "FailedOperation.AlertPolicyCreateFailed": "创建告警策略失败。",
-            "FailedOperation.AlertPolicyDeleteFailed": "告警策略删除失败。",
-            "FailedOperation.AlertPolicyDescribeFailed": "告警策略查询失败。",
-            "FailedOperation.AlertPolicyModifyFailed": "告警策略修改失败。",
+              "DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。",
+            FailedOperation: "	操作失敗。",
+            "FailedOperation.AlertFilterRuleDeleteFailed": "刪除過濾條件失敗。",
+            "FailedOperation.AlertPolicyCreateFailed": "創建告警策略失敗。",
+            "FailedOperation.AlertPolicyDeleteFailed": "告警策略刪除失敗。",
+            "FailedOperation.AlertPolicyDescribeFailed": "告警策略查詢失敗。",
+            "FailedOperation.AlertPolicyModifyFailed": "告警策略修改失敗。",
             "FailedOperation.AlertTriggerRuleDeleteFailed":
-              "删除触发条件失败。",
-            "FailedOperation.DbQueryFailed": "数据库查询失败。",
-            "FailedOperation.DbRecordCreateFailed": "创建数据库记录失败。",
-            "FailedOperation.DbRecordDeleteFailed": "数据库记录删除失败。",
-            "FailedOperation.DbRecordUpdateFailed": "数据库记录更新失败。",
-            "FailedOperation.DbTransactionBeginFailed": "数据库事务开始失败。",
-            "FailedOperation.DbTransactionCommitFailed": "数据库事务提交失败。",
-            "FailedOperation.DimQueryRequestFailed": "请求维度查询服务失败。",
-            "FailedOperation.DruidQueryFailed": "查询分析数据失败。",
-            "FailedOperation.DuplicateName": "名字重复。",
+              "刪除觸發條件失敗。",
+            "FailedOperation.DbQueryFailed": "數據庫查詢失敗。",
+            "FailedOperation.DbRecordCreateFailed": "創建數據庫記錄失敗。",
+            "FailedOperation.DbRecordDeleteFailed": "數據庫記錄刪除失敗。",
+            "FailedOperation.DbRecordUpdateFailed": "數據庫記錄更新失敗。",
+            "FailedOperation.DbTransactionBeginFailed": "數據庫事務開始失敗。",
+            "FailedOperation.DbTransactionCommitFailed": "數據庫事務提交失敗。",
+            "FailedOperation.DimQueryRequestFailed": "請求維度查詢服務失敗。",
+            "FailedOperation.DruidQueryFailed": "查詢分析數據失敗。",
+            "FailedOperation.DuplicateName": "名字重複。",
             "FailedOperation.ServiceNotEnabled":
-              "服务未启用，开通服务后方可使用。",
-            InternalError: "内部错误。",
-            "InternalError.ExeTimeout": "执行超时。",
-            InvalidParameter: "参数错误。",
-            "InvalidParameter.InvalidParameter": "参数错误。",
-            "InvalidParameter.InvalidParameterParam": "参数错误。",
-            InvalidParameterValue: "无效的参数值。",
-            LimitExceeded: "超过配额限制。",
+              "服務未啓用，開通服務後方可使用。",
+            InternalError: "內部錯誤。",
+            "InternalError.ExeTimeout": "執行超時。",
+            InvalidParameter: "參數錯誤。",
+            "InvalidParameter.InvalidParameter": "參數錯誤。",
+            "InvalidParameter.InvalidParameterParam": "參數錯誤。",
+            InvalidParameterValue: "無效的參數值。",
+            LimitExceeded: "超過配額限制。",
             "LimitExceeded.MetricQuotaExceeded":
-              "指标数量达到配额限制，禁止含有未注册指标的请求。",
-            MissingParameter: "	缺少参数错误。",
-            ResourceInUse: "资源被占用。",
-            ResourceInsufficient: "资源不足。",
-            ResourceNotFound: "资源不存在。",
-            ResourceUnavailable: "资源不可用。",
-            ResourcesSoldOut: "资源售罄。",
-            UnauthorizedOperation: "未授权操作。",
-            UnknownParameter: "未知参数错误。",
+              "指標數量達到配額限制，禁止含有未注冊指標的請求。",
+            MissingParameter: "	缺少參數錯誤。",
+            ResourceInUse: "資源被占用。",
+            ResourceInsufficient: "資源不足。",
+            ResourceNotFound: "資源不存在。",
+            ResourceUnavailable: "資源不可用。",
+            ResourcesSoldOut: "資源售罄。",
+            UnauthorizedOperation: "未授權操作。",
+            UnknownParameter: "未知參數錯誤。",
             UnsupportedOperation: "操作不支持。"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -2333,7 +2345,7 @@ export default {
         }
       });
     },
-    // 项目
+    // 項目
     Project() {
       this.axios.get(ALL_PROJECT).then(res => {
         if (res.codeDesc === "Success") {
@@ -2341,8 +2353,8 @@ export default {
           project = arr;
         } else {
           let ErrTips = {
-            InternalError: "内部错误",
-            UnauthorizedOperation: "未授权操作"
+            InternalError: "內部錯誤",
+            UnauthorizedOperation: "未授權操作"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -2362,7 +2374,7 @@ export default {
         this.tipsShow = false;
       }
     },
-    // 编辑告警对象
+    // 編輯告警對象
     editObject() {
       this.multipleSelection = [];
       this.dialogEditObject = true;
@@ -2371,7 +2383,7 @@ export default {
       this.alarmObjectNews = true;
       this.editAlarmObjectRadio = "2";
     },
-    // 选择实例组
+    // 選擇實例組
     GaoJingGrouping() {
       let param = {
         Version: "2018-07-24",
@@ -2389,16 +2401,16 @@ export default {
           }
         } else {
           let ErrTips = {
-            FailedOperation: "操作失败。",
-            InternalError: "内部错误。",
-            "InternalError.ExeTimeout": "执行超时。",
-            InvalidParameter: "参数错误。",
-            "InvalidParameter.InvalidParameter": "参数错误。",
-            "InvalidParameter.InvalidParameterParam": "参数错误。",
-            InvalidParameterValue: "无效的参数值。",
-            LimitExceeded: "超过配额限制。",
-            MissingParameter: "缺少参数错误。",
-            UnknownParameter: "未知参数错误。",
+            FailedOperation: "操作失敗。",
+            InternalError: "內部錯誤。",
+            "InternalError.ExeTimeout": "執行超時。",
+            InvalidParameter: "參數錯誤。",
+            "InvalidParameter.InvalidParameter": "參數錯誤。",
+            "InvalidParameter.InvalidParameterParam": "參數錯誤。",
+            InvalidParameterValue: "無效的參數值。",
+            LimitExceeded: "超過配額限制。",
+            MissingParameter: "缺少參數錯誤。",
+            UnknownParameter: "未知參數錯誤。",
             UnsupportedOperation: "操作不支持。"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -2507,16 +2519,16 @@ export default {
           this.AlarmObjectList();
         } else {
           let ErrTips = {
-            FailedOperation: "操作失败。",
-            InternalError: "内部错误。",
-            "InternalError.ExeTimeout": "执行超时。",
-            InvalidParameter: "参数错误。",
-            "InvalidParameter.InvalidParameter": "参数错误。",
-            "InvalidParameter.InvalidParameterParam": "参数错误。",
-            InvalidParameterValue: "无效的参数值。",
-            LimitExceeded: "超过配额限制。",
-            MissingParameter: "缺少参数错误。",
-            UnknownParameter: "未知参数错误。",
+            FailedOperation: "操作失敗。",
+            InternalError: "內部錯誤。",
+            "InternalError.ExeTimeout": "執行超時。",
+            InvalidParameter: "參數錯誤。",
+            "InvalidParameter.InvalidParameter": "參數錯誤。",
+            "InvalidParameter.InvalidParameterParam": "參數錯誤。",
+            InvalidParameterValue: "無效的參數值。",
+            LimitExceeded: "超過配額限制。",
+            MissingParameter: "缺少參數錯誤。",
+            UnknownParameter: "未知參數錯誤。",
             UnsupportedOperation: "操作不支持。"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -2530,7 +2542,7 @@ export default {
       });
     },
     editGaoJing() {
-      // 编辑告警触发条件
+      // 編輯告警觸發條件
       this.dialogEditGaojing = true;
       console.log(this.basicNews);
       if (this.basicNews.ConditionsTemp) {
@@ -2541,6 +2553,7 @@ export default {
           var _ConditionsConfig = this.basicNews.ConditionsConfig;
           var _typeVal = "";
           var _max = "";
+          var _AlarmNotifyPeriod = "";
           this.formWrite.arr = [];
           for (let i in _ConditionsConfig) {
             for (let j in this.typeOpt) {
@@ -2553,6 +2566,12 @@ export default {
               }
             }
 
+            if (_ConditionsConfig[i].AlarmNotifyType == 1) {
+              _AlarmNotifyPeriod = 60;
+            } else {
+              _AlarmNotifyPeriod = _ConditionsConfig[i].AlarmNotifyPeriod;
+            }
+            console.log(_AlarmNotifyPeriod);
             this.formWrite.arr.push({
               max: _max,
               typeVal: _typeVal,
@@ -2563,13 +2582,13 @@ export default {
               continuousCycleVal:
                 Number(_ConditionsConfig[i].ContinueTime) /
                 Number(_ConditionsConfig[i].Period),
-              warningVal: _ConditionsConfig[i].AlarmNotifyPeriod
+              warningVal: _AlarmNotifyPeriod
             });
           }
         }
       }
     },
-    // 告警触发条件
+    // 告警觸發條件
     AlarmTriggerCondition() {
       let param = {
         Version: "2018-07-24",
@@ -2585,7 +2604,7 @@ export default {
           } else {
             this.nameVal =
               this.triggerCondition.length === 0
-                ? "当前策略下没有触发条件模板"
+                ? "當前策略下沒有觸發條件模板"
                 : this.triggerCondition[0].GroupID;
           }
 
@@ -2593,45 +2612,45 @@ export default {
         } else {
           let ErrTips = {
             "AuthFailure.UnauthorizedOperation":
-              "请求未授权。请参考 CAM 文档对鉴权的说明。",
+              "請求未授權。請參考 CAM 文檔對鑒權的說明。",
             DryRunOperation:
-              "DryRun 操作，代表请求将会是成功的，只是多传了 DryRun 参数。",
-            FailedOperation: "操作失败。",
-            "FailedOperation.AlertFilterRuleDeleteFailed": "删除过滤条件失败。",
-            "FailedOperation.AlertPolicyCreateFailed": "创建告警策略失败。",
-            "FailedOperation.AlertPolicyDeleteFailed": "告警策略删除失败。",
-            "FailedOperation.AlertPolicyDescribeFailed": "告警策略查询失败。",
-            "FailedOperation.AlertPolicyModifyFailed": "告警策略修改失败。",
+              "DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。",
+            FailedOperation: "操作失敗。",
+            "FailedOperation.AlertFilterRuleDeleteFailed": "刪除過濾條件失敗。",
+            "FailedOperation.AlertPolicyCreateFailed": "創建告警策略失敗。",
+            "FailedOperation.AlertPolicyDeleteFailed": "告警策略刪除失敗。",
+            "FailedOperation.AlertPolicyDescribeFailed": "告警策略查詢失敗。",
+            "FailedOperation.AlertPolicyModifyFailed": "告警策略修改失敗。",
             "FailedOperation.AlertTriggerRuleDeleteFailed":
-              "删除触发条件失败。",
-            "FailedOperation.DbQueryFailed": "数据库查询失败。",
-            "FailedOperation.DbRecordCreateFailed": "创建数据库记录失败。",
-            "FailedOperation.DbRecordDeleteFailed": "数据库记录删除失败。",
-            "FailedOperation.DbRecordUpdateFailed": "数据库记录更新失败。",
-            "FailedOperation.DbTransactionBeginFailed": "数据库事务开始失败。",
-            "FailedOperation.DbTransactionCommitFailed": "数据库事务提交失败。",
-            "FailedOperation.DimQueryRequestFailed": "	请求维度查询服务失败。",
-            "FailedOperation.DruidQueryFailed": "查询分析数据失败。",
-            "FailedOperation.DuplicateName": "名字重复。",
+              "刪除觸發條件失敗。",
+            "FailedOperation.DbQueryFailed": "數據庫查詢失敗。",
+            "FailedOperation.DbRecordCreateFailed": "創建數據庫記錄失敗。",
+            "FailedOperation.DbRecordDeleteFailed": "數據庫記錄刪除失敗。",
+            "FailedOperation.DbRecordUpdateFailed": "數據庫記錄更新失敗。",
+            "FailedOperation.DbTransactionBeginFailed": "數據庫事務開始失敗。",
+            "FailedOperation.DbTransactionCommitFailed": "數據庫事務提交失敗。",
+            "FailedOperation.DimQueryRequestFailed": "	請求維度查詢服務失敗。",
+            "FailedOperation.DruidQueryFailed": "查詢分析數據失敗。",
+            "FailedOperation.DuplicateName": "名字重複。",
             "FailedOperation.ServiceNotEnabled":
-              "服务未启用，开通服务后方可使用。",
-            InternalError: "内部错误。",
-            "InternalError.ExeTimeout": "执行超时。",
-            InvalidParameter: "参数错误。",
-            "InvalidParameter.InvalidParameter": "参数错误。",
-            "InvalidParameter.InvalidParameterParam": "参数错误。",
-            InvalidParameterValue: "无效的参数值。",
-            LimitExceeded: "超过配额限制。",
+              "服務未啓用，開通服務後方可使用。",
+            InternalError: "內部錯誤。",
+            "InternalError.ExeTimeout": "執行超時。",
+            InvalidParameter: "參數錯誤。",
+            "InvalidParameter.InvalidParameter": "參數錯誤。",
+            "InvalidParameter.InvalidParameterParam": "參數錯誤。",
+            InvalidParameterValue: "無效的參數值。",
+            LimitExceeded: "超過配額限制。",
             "LimitExceeded.MetricQuotaExceeded":
-              "指标数量达到配额限制，禁止含有未注册指标的请求。",
-            MissingParameter: "缺少参数错误。",
-            ResourceInUse: "资源被占用。",
-            ResourceInsufficient: "资源不足。",
-            ResourceNotFound: "资源不存在。",
-            ResourceUnavailable: "资源不可用。",
-            ResourcesSoldOut: "资源售罄。",
-            UnauthorizedOperation: "未授权操作。",
-            UnknownParameter: "未知参数错误。",
+              "指標數量達到配額限制，禁止含有未注冊指標的請求。",
+            MissingParameter: "缺少參數錯誤。",
+            ResourceInUse: "資源被占用。",
+            ResourceInsufficient: "資源不足。",
+            ResourceNotFound: "資源不存在。",
+            ResourceUnavailable: "資源不可用。",
+            ResourcesSoldOut: "資源售罄。",
+            UnauthorizedOperation: "未授權操作。",
+            UnknownParameter: "未知參數錯誤。",
             UnsupportedOperation: "操作不支持。"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -2652,51 +2671,60 @@ export default {
           this.Conditions = this.triggerCondition[i];
         }
       }
+      console.log(this.Conditions.Conditions);
       for (let j in this.Conditions.Conditions) {
         this.ContinueTime.push({
           value: this.Conditions.Conditions[j].ContinueTime,
           label:
-            "持续" +
+            "持續" +
             Number(this.Conditions.Conditions[j].ContinueTime) /
               Number(this.Conditions.Conditions[j].Period) +
-            "个周期"
+            "個周期"
         });
-        if (
-          (this.Conditions.Conditions[j].AlarmNotifyPeriod / 60 / 60) % 1 ==
-          0
-        ) {
+        console.log(this.Conditions.Conditions[j].AlarmNotifyType);
+        if (this.Conditions.Conditions[j].AlarmNotifyType == 1) {
+          this.Conditions.Conditions[j].AlarmNotifyPeriod = "周期指数递增";
+        } else {
           if (
-            (this.Conditions.Conditions[j].AlarmNotifyPeriod / 60 / 60 / 24) %
-              1 ==
+            (this.Conditions.Conditions[j].AlarmNotifyPeriod / 60 / 60) % 1 ==
+            0
+          ) {
+            if (
+              (this.Conditions.Conditions[j].AlarmNotifyPeriod / 60 / 60 / 24) %
+                1 ==
+              0
+            ) {
+              this.AlarmNotifyPeriod.push({
+                value: this.Conditions.Conditions[j].AlarmNotifyPeriod,
+                label:
+                  "每" +
+                  this.Conditions.Conditions[j].AlarmNotifyPeriod /
+                    60 /
+                    60 /
+                    24 +
+                  "天警告一次"
+              });
+            } else {
+              this.AlarmNotifyPeriod.push({
+                value: this.Conditions.Conditions[j].AlarmNotifyPeriod,
+                label:
+                  "每" +
+                  this.Conditions.Conditions[j].AlarmNotifyPeriod / 60 / 60 +
+                  "小时警告一次"
+              });
+            }
+          } else if (
+            (this.Conditions.Conditions[j].AlarmNotifyPeriod / 60) % 1 ==
             0
           ) {
             this.AlarmNotifyPeriod.push({
               value: this.Conditions.Conditions[j].AlarmNotifyPeriod,
               label:
                 "每" +
-                this.Conditions.Conditions[j].AlarmNotifyPeriod / 60 / 60 / 24 +
-                "天警告一次"
-            });
-          } else {
-            this.AlarmNotifyPeriod.push({
-              value: this.Conditions.Conditions[j].AlarmNotifyPeriod,
-              label:
-                "每" +
-                this.Conditions.Conditions[j].AlarmNotifyPeriod / 60 / 60 +
-                "小时警告一次"
+                this.Conditions.Conditions[j].AlarmNotifyPeriod / 60 +
+                "分钟警告一次"
             });
           }
-        } else if (
-          (this.Conditions.Conditions[j].AlarmNotifyPeriod / 60) % 1 ==
-          0
-        ) {
-          this.AlarmNotifyPeriod.push({
-            value: this.Conditions.Conditions[j].AlarmNotifyPeriod,
-            label:
-              "每" +
-              this.Conditions.Conditions[j].AlarmNotifyPeriod / 60 +
-              "分钟警告一次"
-          });
         }
       }
       let newobj = {};
@@ -2715,7 +2743,7 @@ export default {
         []
       );
     },
-    // 告警触发条件保存
+    // 告警觸發條件保存
     GaoJingKeepBtn() {
       let param = {
         Version: "2018-07-24",
@@ -2744,7 +2772,7 @@ export default {
             _Conditions[i].AlarmNotifyType;
           param["Conditions." + i + ".AlarmNotifyPeriod"] =
             _Conditions[i].AlarmNotifyPeriod;
-          param["Conditions." + i + ".RuleId"] = _Conditions[i].RuleID;
+          // param["Conditions." + i + ".RuleId"] = _Conditions[i].RuleID;
         }
         for (let j in _EventConfig) {
           param["EventConditions." + j + ".EventId"] = Number(
@@ -2754,7 +2782,7 @@ export default {
             _EventConfig[j].AlarmNotifyType;
           param["EventConditions." + j + ".AlarmNotifyPeriod"] =
             _EventConfig[j].AlarmNotifyPeriod;
-          param["EventConditions." + j + ".RuleId"] = _EventConfig[j].RuleID;
+          // param["EventConditions." + j + ".RuleId"] = _EventConfig[j].RuleID;
         }
       } else {
         param["IsUnionRule"] = this.formWrite.satisfyVal;
@@ -2800,45 +2828,45 @@ export default {
         } else {
           let ErrTips = {
             "AuthFailure.UnauthorizedOperation":
-              "	请求未授权。请参考 CAM 文档对鉴权的说明。",
+              "	請求未授權。請參考 CAM 文檔對鑒權的說明。",
             DryRunOperation:
-              "DryRun 操作，代表请求将会是成功的，只是多传了 DryRun 参数。",
-            FailedOperation: "操作失败。",
-            "FailedOperation.AlertFilterRuleDeleteFailed": "删除过滤条件失败。",
-            "FailedOperation.AlertPolicyCreateFailed": "创建告警策略失败。",
-            "FailedOperation.AlertPolicyDeleteFailed": "告警策略删除失败。",
-            "FailedOperation.AlertPolicyDescribeFailed": "告警策略查询失败。",
-            "FailedOperation.AlertPolicyModifyFailed": "告警策略修改失败。",
+              "DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。",
+            FailedOperation: "操作失敗。",
+            "FailedOperation.AlertFilterRuleDeleteFailed": "刪除過濾條件失敗。",
+            "FailedOperation.AlertPolicyCreateFailed": "創建告警策略失敗。",
+            "FailedOperation.AlertPolicyDeleteFailed": "告警策略刪除失敗。",
+            "FailedOperation.AlertPolicyDescribeFailed": "告警策略查詢失敗。",
+            "FailedOperation.AlertPolicyModifyFailed": "告警策略修改失敗。",
             "FailedOperation.AlertTriggerRuleDeleteFailed":
-              "删除触发条件失败。",
-            "FailedOperation.DbQueryFailed": "数据库查询失败。",
-            "FailedOperation.DbRecordCreateFailed": "创建数据库记录失败。",
-            "FailedOperation.DbRecordDeleteFailed": "数据库记录删除失败。",
-            "FailedOperation.DbRecordUpdateFailed": "数据库记录更新失败。",
-            "FailedOperation.DbTransactionBeginFailed": "数据库事务开始失败。",
-            "FailedOperation.DbTransactionCommitFailed": "数据库事务提交失败。",
-            "FailedOperation.DimQueryRequestFailed": "请求维度查询服务失败。",
-            "FailedOperation.DruidQueryFailed": "查询分析数据失败。",
-            "FailedOperation.DuplicateName": "名字重复。",
+              "刪除觸發條件失敗。",
+            "FailedOperation.DbQueryFailed": "數據庫查詢失敗。",
+            "FailedOperation.DbRecordCreateFailed": "創建數據庫記錄失敗。",
+            "FailedOperation.DbRecordDeleteFailed": "數據庫記錄刪除失敗。",
+            "FailedOperation.DbRecordUpdateFailed": "數據庫記錄更新失敗。",
+            "FailedOperation.DbTransactionBeginFailed": "數據庫事務開始失敗。",
+            "FailedOperation.DbTransactionCommitFailed": "數據庫事務提交失敗。",
+            "FailedOperation.DimQueryRequestFailed": "請求維度查詢服務失敗。",
+            "FailedOperation.DruidQueryFailed": "查詢分析數據失敗。",
+            "FailedOperation.DuplicateName": "名字重複。",
             "FailedOperation.ServiceNotEnabled":
-              "服务未启用，开通服务后方可使用。",
-            InternalError: "内部错误。",
-            "InternalError.ExeTimeout": "执行超时。",
-            InvalidParameter: "参数错误。",
-            "InvalidParameter.InvalidParameter": "参数错误。",
-            "InvalidParameter.InvalidParameterParam": "参数错误。",
-            InvalidParameterValue: "无效的参数值。",
-            LimitExceeded: "超过配额限制。",
+              "服務未啓用，開通服務後方可使用。",
+            InternalError: "內部錯誤。",
+            "InternalError.ExeTimeout": "執行超時。",
+            InvalidParameter: "參數錯誤。",
+            "InvalidParameter.InvalidParameter": "參數錯誤。",
+            "InvalidParameter.InvalidParameterParam": "參數錯誤。",
+            InvalidParameterValue: "無效的參數值。",
+            LimitExceeded: "超過配額限制。",
             "LimitExceeded.MetricQuotaExceeded":
-              "指标数量达到配额限制，禁止含有未注册指标的请求。",
-            MissingParameter: "缺少参数错误。",
-            ResourceInUse: "资源被占用。",
-            ResourceInsufficient: "资源不足。",
-            ResourceNotFound: "资源不存在。",
-            ResourceUnavailable: "资源不可用。",
-            ResourcesSoldOut: "资源售罄。",
-            UnauthorizedOperation: "未授权操作。",
-            UnknownParameter: "未知参数错误。",
+              "指標數量達到配額限制，禁止含有未注冊指標的請求。",
+            MissingParameter: "缺少參數錯誤。",
+            ResourceInUse: "資源被占用。",
+            ResourceInsufficient: "資源不足。",
+            ResourceNotFound: "資源不存在。",
+            ResourceUnavailable: "資源不可用。",
+            ResourcesSoldOut: "資源售罄。",
+            UnauthorizedOperation: "未授權操作。",
+            UnknownParameter: "未知參數錯誤。",
             UnsupportedOperation: "操作不支持。"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -2852,7 +2880,7 @@ export default {
       });
     },
     editInfo(name) {
-      //编辑备注
+      //編輯備注
       if (name === "name") {
         this.modifyNameDialogVisible = true;
         this.GroupName = this.basicNews.GroupName;
@@ -2886,14 +2914,14 @@ export default {
           this.DetailsInit();
           if (this.editName === "name") {
             this.$message({
-              message: "修改名称成功",
+              message: "修改名稱成功",
               type: "success",
               showClose: true,
               duration: 0
             });
           } else {
             this.$message({
-              message: "修改备注成功",
+              message: "修改備注成功",
               type: "success",
               showClose: true,
               duration: 0
@@ -2901,16 +2929,16 @@ export default {
           }
         } else {
           let ErrTips = {
-            FailedOperation: "操作失败。",
-            InternalError: "内部错误。",
-            "InternalError.ExeTimeout": "执行超时。",
-            InvalidParameter: "参数错误。",
-            "InvalidParameter.InvalidParameter": "参数错误。",
-            "InvalidParameter.InvalidParameterParam": "参数错误。",
-            InvalidParameterValue: "无效的参数值。",
-            LimitExceeded: "超过配额限制。",
-            MissingParameter: "缺少参数错误。",
-            UnknownParameter: "未知参数错误。",
+            FailedOperation: "操作失敗。",
+            InternalError: "內部錯誤。",
+            "InternalError.ExeTimeout": "執行超時。",
+            InvalidParameter: "參數錯誤。",
+            "InvalidParameter.InvalidParameter": "參數錯誤。",
+            "InvalidParameter.InvalidParameterParam": "參數錯誤。",
+            InvalidParameterValue: "無效的參數值。",
+            LimitExceeded: "超過配額限制。",
+            MissingParameter: "缺少參數錯誤。",
+            UnknownParameter: "未知參數錯誤。",
             UnsupportedOperation: "操作不支持。"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -2923,7 +2951,7 @@ export default {
         }
       });
     },
-    // 告警对象列表
+    // 告警對象列表
     async AlarmObjectList() {
       this.alarmObjecLoad = true;
       this.alarmInstanceLond = true;
@@ -2976,14 +3004,14 @@ export default {
                   this.alarmInstanceLond = false;
                 } else {
                   let ErrTips = {
-                    FailedOperation: "操作失败",
-                    InternalError: "内部错误",
+                    FailedOperation: "操作失敗",
+                    InternalError: "內部錯誤",
                     "InternalError.Param": "Param。",
                     "InternalError.PublicClusterOpNotSupport":
-                      "集群不支持当前操作。",
-                    InvalidParameter: "参数错误",
-                    ResourceNotFound: "资源不存在",
-                    ResourceUnavailable: "资源不可用"
+                      "集群不支持當前操作。",
+                    InvalidParameter: "參數錯誤",
+                    ResourceNotFound: "資源不存在",
+                    ResourceUnavailable: "資源不可用"
                   };
                   let ErrOr = Object.assign(ErrorTips, ErrTips);
                   this.$message({
@@ -3030,9 +3058,9 @@ export default {
                 } else {
                   let ErrTips = {
                     "InvalidVpnGatewayId.Malformed":
-                      "无效的VPN网关,VPN实例ID不合法。",
+                      "無效的VPN網關,VPN實例ID不合法。",
                     "InvalidVpnGatewayId.NotFound":
-                      "无效的VPN网关,VPN实例不存在，请再次核实您输入的资源信息是否正确。"
+                      "無效的VPN網關,VPN實例不存在，請再次核實您輸入的資源信息是否正確。"
                   };
                   let ErrOr = Object.assign(ErrorTips, ErrTips);
                   this.$message({
@@ -3079,9 +3107,9 @@ export default {
                 } else {
                   let ErrTips = {
                     "InvalidVpnGatewayId.Malformed":
-                      "无效的VPN网关,VPN实例ID不合法。",
+                      "無效的VPN網關,VPN實例ID不合法。",
                     "InvalidVpnGatewayId.NotFound":
-                      "无效的VPN网关,VPN实例不存在，请再次核实您输入的资源信息是否正确。"
+                      "無效的VPN網關,VPN實例不存在，請再次核實您輸入的資源信息是否正確。"
                   };
                   let ErrOr = Object.assign(ErrorTips, ErrTips);
                   this.$message({
@@ -3127,9 +3155,9 @@ export default {
                   this.alarmInstanceLond = false;
                 } else {
                   let ErrTips = {
-                    "InvalidParameter.Coexist": "参数不支持同时指定。",
-                    "InvalidParameterValue.Malformed": "入参格式不合法。",
-                    ResourceNotFound: "	资源不存在。"
+                    "InvalidParameter.Coexist": "參數不支持同時指定。",
+                    "InvalidParameterValue.Malformed": "入參格式不合法。",
+                    ResourceNotFound: "	資源不存在。"
                   };
                   let ErrOr = Object.assign(ErrorTips, ErrTips);
                   this.$message({
@@ -3221,10 +3249,10 @@ export default {
                   this.alarmInstanceLond = false;
                 } else {
                   let ErrTips = {
-                    "InvalidParameter.Coexist": "参数不支持同时指定。",
-                    InvalidParameterValue: "参数值不合法。",
-                    "InvalidParameterValue.Malformed": "入参格式不合法。",
-                    "InvalidParameterValue.TooLong": "无效参数值。参数值太长。"
+                    "InvalidParameter.Coexist": "參數不支持同時指定。",
+                    InvalidParameterValue: "參數值不合法。",
+                    "InvalidParameterValue.Malformed": "入參格式不合法。",
+                    "InvalidParameterValue.TooLong": "無效參數值。參數值太長。"
                   };
                   let ErrOr = Object.assign(ErrorTips, ErrTips);
                   this.$message({
@@ -3271,7 +3299,7 @@ export default {
                   this.alarmInstanceLond = false;
                 } else {
                   let ErrTips = {
-                    InvalidParameter: "入参不合法。"
+                    InvalidParameter: "入參不合法。"
                   };
                   let ErrOr = Object.assign(ErrorTips, ErrTips);
                   this.$message({
@@ -3317,12 +3345,12 @@ export default {
                   this.alarmInstanceLond = false;
                 } else {
                   let ErrTips = {
-                    CdbError: "后端错误或者流程错误。",
-                    "InternalError.DatabaseAccessError": "数据库内部错误。",
-                    "InternalError.DesError": "系统内部错误。",
-                    InvalidParameter: "参数错误。",
-                    "InvalidParameter.InstanceNotFound": "实例不存在。",
-                    "OperationDenied.WrongStatus": "后端任务状态非法。"
+                    CdbError: "後端錯誤或者流程錯誤。",
+                    "InternalError.DatabaseAccessError": "數據庫內部錯誤。",
+                    "InternalError.DesError": "系統內部錯誤。",
+                    InvalidParameter: "參數錯誤。",
+                    "InvalidParameter.InstanceNotFound": "實例不存在。",
+                    "OperationDenied.WrongStatus": "後端任務狀態非法。"
                   };
                   let ErrOr = Object.assign(ErrorTips, ErrTips);
                   this.$message({
@@ -3369,12 +3397,12 @@ export default {
                 } else {
                   let ErrTips = {
                     "InternalError.DbOperationFailed":
-                      "统一的 DB 操作错误，可以是 update insert select..。",
-                    InvalidParameter: "参数错误",
-                    "InvalidParameter.EmptyParam": "参数为空。",
-                    "InvalidParameter.InvalidParameter": "业务参数错误。",
-                    "InvalidParameter.PermissionDenied": "接口没有cam权限。",
-                    "UnauthorizedOperation.NoCAMAuthed": "无cam 权限。"
+                      "統壹的 DB 操作錯誤，可以是 update insert select..。",
+                    InvalidParameter: "參數錯誤",
+                    "InvalidParameter.EmptyParam": "參數爲空。",
+                    "InvalidParameter.InvalidParameter": "業務參數錯誤。",
+                    "InvalidParameter.PermissionDenied": "接口沒有cam權限。",
+                    "UnauthorizedOperation.NoCAMAuthed": "無cam 權限。"
                   };
                   let ErrOr = Object.assign(ErrorTips, ErrTips);
                   this.$message({
@@ -3424,10 +3452,10 @@ export default {
                   this.alarmInstanceLond = false;
                 } else {
                   let ErrTips = {
-                    InternalError: "内部错误",
-                    ResourceNotFound: "资源不存在",
+                    InternalError: "內部錯誤",
+                    ResourceNotFound: "資源不存在",
                     "ResourceNotFound.DirectConnectTunnelIdIsNotExist":
-                      "专用通道不存在。"
+                      "專用通道不存在。"
                   };
                   let ErrOr = Object.assign(ErrorTips, ErrTips);
                   this.$message({
@@ -3475,16 +3503,16 @@ export default {
                   this.alarmInstanceLond = false;
                 } else {
                   let ErrTips = {
-                    FailedOperation: "操作失败。",
-                    InternalError: "内部错误。",
-                    "InternalError.ExeTimeout": "执行超时。",
-                    InvalidParameter: "参数错误。",
-                    "InvalidParameter.InvalidParameter": "参数错误。",
-                    "InvalidParameter.InvalidParameterParam": "参数错误。",
-                    InvalidParameterValue: "无效的参数值。",
-                    LimitExceeded: "超过配额限制。",
-                    MissingParameter: "缺少参数错误。",
-                    UnknownParameter: "未知参数错误。",
+                    FailedOperation: "操作失敗。",
+                    InternalError: "內部錯誤。",
+                    "InternalError.ExeTimeout": "執行超時。",
+                    InvalidParameter: "參數錯誤。",
+                    "InvalidParameter.InvalidParameter": "參數錯誤。",
+                    "InvalidParameter.InvalidParameterParam": "參數錯誤。",
+                    InvalidParameterValue: "無效的參數值。",
+                    LimitExceeded: "超過配額限制。",
+                    MissingParameter: "缺少參數錯誤。",
+                    UnknownParameter: "未知參數錯誤。",
                     UnsupportedOperation: "操作不支持。"
                   };
                   let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -3531,47 +3559,47 @@ export default {
         } else {
           let ErrTips = {
             "AuthFailure.UnauthorizedOperation":
-              "请求未授权。请参考 CAM 文档对鉴权的说明。",
+              "請求未授權。請參考 CAM 文檔對鑒權的說明。",
             DryRunOperation:
-              "DryRun 操作，代表请求将会是成功的，只是多传了 DryRun 参数。",
-            FailedOperation: "	操作失败。",
-            "FailedOperation.AlertFilterRuleDeleteFailed": "删除过滤条件失败。",
-            "FailedOperation.AlertPolicyCreateFailed": "创建告警策略失败。",
-            "FailedOperation.AlertPolicyDeleteFailed": "告警策略删除失败。",
-            "FailedOperation.AlertPolicyDescribeFailed": "告警策略查询失败。",
-            "FailedOperation.AlertPolicyModifyFailed": "告警策略修改失败。",
+              "DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。",
+            FailedOperation: "	操作失敗。",
+            "FailedOperation.AlertFilterRuleDeleteFailed": "刪除過濾條件失敗。",
+            "FailedOperation.AlertPolicyCreateFailed": "創建告警策略失敗。",
+            "FailedOperation.AlertPolicyDeleteFailed": "告警策略刪除失敗。",
+            "FailedOperation.AlertPolicyDescribeFailed": "告警策略查詢失敗。",
+            "FailedOperation.AlertPolicyModifyFailed": "告警策略修改失敗。",
             "FailedOperation.AlertTriggerRuleDeleteFailed":
-              "删除触发条件失败。",
-            "FailedOperation.DbQueryFailed": "数据库查询失败。",
-            "FailedOperation.DbRecordCreateFailed": "创建数据库记录失败。",
-            "FailedOperation.DbRecordDeleteFailed": "数据库记录删除失败。",
-            "FailedOperation.DbRecordUpdateFailed": "数据库记录更新失败。",
-            "FailedOperation.DbTransactionBeginFailed": "数据库事务开始失败。",
-            "FailedOperation.DbTransactionCommitFailed": "数据库事务提交失败。",
-            "FailedOperation.DimQueryRequestFailed": "请求维度查询服务失败。",
-            "FailedOperation.DivisionByZero": "被除数为0。",
-            "FailedOperation.DruidQueryFailed": "查询分析数据失败。",
+              "刪除觸發條件失敗。",
+            "FailedOperation.DbQueryFailed": "數據庫查詢失敗。",
+            "FailedOperation.DbRecordCreateFailed": "創建數據庫記錄失敗。",
+            "FailedOperation.DbRecordDeleteFailed": "數據庫記錄刪除失敗。",
+            "FailedOperation.DbRecordUpdateFailed": "數據庫記錄更新失敗。",
+            "FailedOperation.DbTransactionBeginFailed": "數據庫事務開始失敗。",
+            "FailedOperation.DbTransactionCommitFailed": "數據庫事務提交失敗。",
+            "FailedOperation.DimQueryRequestFailed": "請求維度查詢服務失敗。",
+            "FailedOperation.DivisionByZero": "被除數爲0。",
+            "FailedOperation.DruidQueryFailed": "查詢分析數據失敗。",
             "FailedOperation.DruidTableNotFound": "druid表不存在。",
-            "FailedOperation.DuplicateName": "名字重复。",
+            "FailedOperation.DuplicateName": "名字重複。",
             "FailedOperation.ServiceNotEnabled":
-              "服务未启用，开通服务后方可使用。",
-            InternalError: "内部错误。",
-            "InternalError.ExeTimeout": "执行超时。",
-            InvalidParameter: "参数错误。",
-            "InvalidParameter.InvalidParameter": "参数错误。",
-            "InvalidParameter.InvalidParameterParam": "参数错误。",
-            InvalidParameterValue: "无效的参数值。",
-            LimitExceeded: "超过配额限制。",
+              "服務未啓用，開通服務後方可使用。",
+            InternalError: "內部錯誤。",
+            "InternalError.ExeTimeout": "執行超時。",
+            InvalidParameter: "參數錯誤。",
+            "InvalidParameter.InvalidParameter": "參數錯誤。",
+            "InvalidParameter.InvalidParameterParam": "參數錯誤。",
+            InvalidParameterValue: "無效的參數值。",
+            LimitExceeded: "超過配額限制。",
             "LimitExceeded.MetricQuotaExceeded":
-              "指标数量达到配额限制，禁止含有未注册指标的请求。",
-            MissingParameter: "缺少参数错误。",
-            ResourceInUse: "资源被占用。",
-            ResourceInsufficient: "资源不足。",
-            ResourceNotFound: "资源不存在。",
-            ResourceUnavailable: "资源不可用。",
-            ResourcesSoldOut: "资源售罄。",
-            UnauthorizedOperation: "未授权操作。",
-            UnknownParameter: "未知参数错误。",
+              "指標數量達到配額限制，禁止含有未注冊指標的請求。",
+            MissingParameter: "缺少參數錯誤。",
+            ResourceInUse: "資源被占用。",
+            ResourceInsufficient: "資源不足。",
+            ResourceNotFound: "資源不存在。",
+            ResourceUnavailable: "資源不可用。",
+            ResourcesSoldOut: "資源售罄。",
+            UnauthorizedOperation: "未授權操作。",
+            UnknownParameter: "未知參數錯誤。",
             UnsupportedOperation: "操作不支持。"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -3584,14 +3612,14 @@ export default {
         }
       });
     },
-    // 告警对象移除
+    // 告警對象移除
     AlarmObjectRemoval(row, index) {
       if (index == 1) {
-        this.alarmObjecTitle = "确定解除与该告警对象的关联？";
+        this.alarmObjecTitle = "確定解除與該告警對象的關聯？";
         this.UniqueId = row.UniqueId;
       } else {
         this.alarmObjecTitle =
-          "已选择" + this.UniqueId.length + "个告警对象，确定要解除关联？";
+          "已選擇" + this.UniqueId.length + "個告警對象，確定要解除關聯？";
       }
       this.alarmObjectRemovalVisible = true;
     },
@@ -3687,15 +3715,15 @@ export default {
         } else {
           let ErrTips = {
             "AuthFailure.UnauthorizedOperation":
-              "请求未授权。请参考 CAM 文档对鉴权的说明。",
-            FailedOperation: "操作失败。",
-            InternalError: "内部错误。",
-            InvalidParameter: "参数错误。",
-            "InvalidParameter.InvalidParameter": "参数错误。",
-            "InvalidParameter.InvalidParameterParam": "参数错误。",
-            InvalidParameterValue: "无效的参数值。",
-            LimitExceeded: "超过配额限制。",
-            MissingParameter: "缺少参数错误。"
+              "請求未授權。請參考 CAM 文檔對鑒權的說明。",
+            FailedOperation: "操作失敗。",
+            InternalError: "內部錯誤。",
+            InvalidParameter: "參數錯誤。",
+            "InvalidParameter.InvalidParameter": "參數錯誤。",
+            "InvalidParameter.InvalidParameterParam": "參數錯誤。",
+            InvalidParameterValue: "無效的參數值。",
+            LimitExceeded: "超過配額限制。",
+            MissingParameter: "缺少參數錯誤。"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -3707,7 +3735,7 @@ export default {
         }
       });
     },
-    // 解除绑定
+    // 解除綁定
     UnBindingInstance() {
       let param = {
         Version: "2018-07-24",
@@ -3723,15 +3751,15 @@ export default {
         } else {
           let ErrTips = {
             "AuthFailure.UnauthorizedOperation":
-              "请求未授权。请参考 CAM 文档对鉴权的说明。",
-            FailedOperation: "操作失败。",
-            InternalError: "内部错误。",
-            InvalidParameter: "参数错误。",
-            "InvalidParameter.InvalidParameter": "参数错误。",
-            "InvalidParameter.InvalidParameterParam": "参数错误。",
-            InvalidParameterValue: "无效的参数值。",
-            LimitExceeded: "超过配额限制。",
-            MissingParameter: "缺少参数错误。"
+              "請求未授權。請參考 CAM 文檔對鑒權的說明。",
+            FailedOperation: "操作失敗。",
+            InternalError: "內部錯誤。",
+            InvalidParameter: "參數錯誤。",
+            "InvalidParameter.InvalidParameter": "參數錯誤。",
+            "InvalidParameter.InvalidParameterParam": "參數錯誤。",
+            InvalidParameterValue: "無效的參數值。",
+            LimitExceeded: "超過配額限制。",
+            MissingParameter: "缺少參數錯誤。"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -3773,45 +3801,45 @@ export default {
         } else {
           let ErrTips = {
             "AuthFailure.UnauthorizedOperation":
-              "请求未授权。请参考 CAM 文档对鉴权的说明。",
+              "請求未授權。請參考 CAM 文檔對鑒權的說明。",
             DryRunOperation:
-              "DryRun 操作，代表请求将会是成功的，只是多传了 DryRun 参数。",
-            FailedOperation: "操作失败。",
-            "FailedOperation.AlertFilterRuleDeleteFailed": "删除过滤条件失败。",
-            "FailedOperation.AlertPolicyCreateFailed": "创建告警策略失败。",
-            "FailedOperation.AlertPolicyDeleteFailed": "告警策略删除失败。",
-            "FailedOperation.AlertPolicyDescribeFailed": "告警策略查询失败。",
-            "FailedOperation.AlertPolicyModifyFailed": "告警策略修改失败。",
+              "DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。",
+            FailedOperation: "操作失敗。",
+            "FailedOperation.AlertFilterRuleDeleteFailed": "刪除過濾條件失敗。",
+            "FailedOperation.AlertPolicyCreateFailed": "創建告警策略失敗。",
+            "FailedOperation.AlertPolicyDeleteFailed": "告警策略刪除失敗。",
+            "FailedOperation.AlertPolicyDescribeFailed": "告警策略查詢失敗。",
+            "FailedOperation.AlertPolicyModifyFailed": "告警策略修改失敗。",
             "FailedOperation.AlertTriggerRuleDeleteFailed":
-              "删除触发条件失败。",
-            "FailedOperation.DbQueryFailed": "数据库查询失败。",
-            "FailedOperation.DbRecordCreateFailed": "创建数据库记录失败。",
-            "FailedOperation.DbRecordDeleteFailed": "数据库记录删除失败。",
-            "FailedOperation.DbRecordUpdateFailed": "数据库记录更新失败。",
-            "FailedOperation.DbTransactionBeginFailed": "数据库事务开始失败。",
-            "FailedOperation.DbTransactionCommitFailed": "数据库事务提交失败。",
-            "FailedOperation.DimQueryRequestFailed": "请求维度查询服务失败。",
-            "FailedOperation.DruidQueryFailed": "查询分析数据失败。",
-            "FailedOperation.DuplicateName": "名字重复。",
+              "刪除觸發條件失敗。",
+            "FailedOperation.DbQueryFailed": "數據庫查詢失敗。",
+            "FailedOperation.DbRecordCreateFailed": "創建數據庫記錄失敗。",
+            "FailedOperation.DbRecordDeleteFailed": "數據庫記錄刪除失敗。",
+            "FailedOperation.DbRecordUpdateFailed": "數據庫記錄更新失敗。",
+            "FailedOperation.DbTransactionBeginFailed": "數據庫事務開始失敗。",
+            "FailedOperation.DbTransactionCommitFailed": "數據庫事務提交失敗。",
+            "FailedOperation.DimQueryRequestFailed": "請求維度查詢服務失敗。",
+            "FailedOperation.DruidQueryFailed": "查詢分析數據失敗。",
+            "FailedOperation.DuplicateName": "名字重複。",
             "FailedOperation.ServiceNotEnabled":
-              "服务未启用，开通服务后方可使用。",
-            InternalError: "内部错误。",
-            "InternalError.ExeTimeout": "执行超时。",
-            InvalidParameter: "参数错误。",
-            "InvalidParameter.InvalidParameter": "参数错误。",
-            "InvalidParameter.InvalidParameterParam": "参数错误。",
-            InvalidParameterValue: "无效的参数值。",
-            LimitExceeded: "超过配额限制。",
+              "服務未啓用，開通服務後方可使用。",
+            InternalError: "內部錯誤。",
+            "InternalError.ExeTimeout": "執行超時。",
+            InvalidParameter: "參數錯誤。",
+            "InvalidParameter.InvalidParameter": "參數錯誤。",
+            "InvalidParameter.InvalidParameterParam": "參數錯誤。",
+            InvalidParameterValue: "無效的參數值。",
+            LimitExceeded: "超過配額限制。",
             "LimitExceeded.MetricQuotaExceeded":
-              "指标数量达到配额限制，禁止含有未注册指标的请求。",
-            MissingParameter: "缺少参数错误。",
-            ResourceInUse: "资源被占用。",
-            ResourceInsufficient: "资源不足。",
-            ResourceNotFound: "资源不存在。",
-            ResourceUnavailable: "资源不可用。",
-            ResourcesSoldOut: "资源售罄。",
-            UnauthorizedOperation: "未授权操作。",
-            UnknownParameter: "未知参数错误。",
+              "指標數量達到配額限制，禁止含有未注冊指標的請求。",
+            MissingParameter: "缺少參數錯誤。",
+            ResourceInUse: "資源被占用。",
+            ResourceInsufficient: "資源不足。",
+            ResourceNotFound: "資源不存在。",
+            ResourceUnavailable: "資源不可用。",
+            ResourcesSoldOut: "資源售罄。",
+            UnauthorizedOperation: "未授權操作。",
+            UnknownParameter: "未知參數錯誤。",
             UnsupportedOperation: "操作不支持。"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -3844,45 +3872,45 @@ export default {
         } else {
           let ErrTips = {
             "AuthFailure.UnauthorizedOperation":
-              "请求未授权。请参考 CAM 文档对鉴权的说明。",
+              "請求未授權。請參考 CAM 文檔對鑒權的說明。",
             DryRunOperation:
-              "DryRun 操作，代表请求将会是成功的，只是多传了 DryRun 参数。",
-            FailedOperation: "操作失败。",
-            "FailedOperation.AlertFilterRuleDeleteFailed": "删除过滤条件失败。",
-            "FailedOperation.AlertPolicyCreateFailed": "创建告警策略失败。",
-            "FailedOperation.AlertPolicyDeleteFailed": "告警策略删除失败。",
-            "FailedOperation.AlertPolicyDescribeFailed": "告警策略查询失败。",
-            "FailedOperation.AlertPolicyModifyFailed": "告警策略修改失败。",
+              "DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。",
+            FailedOperation: "操作失敗。",
+            "FailedOperation.AlertFilterRuleDeleteFailed": "刪除過濾條件失敗。",
+            "FailedOperation.AlertPolicyCreateFailed": "創建告警策略失敗。",
+            "FailedOperation.AlertPolicyDeleteFailed": "告警策略刪除失敗。",
+            "FailedOperation.AlertPolicyDescribeFailed": "告警策略查詢失敗。",
+            "FailedOperation.AlertPolicyModifyFailed": "告警策略修改失敗。",
             "FailedOperation.AlertTriggerRuleDeleteFailed":
-              "删除触发条件失败。",
-            "FailedOperation.DbQueryFailed": "数据库查询失败。",
-            "FailedOperation.DbRecordCreateFailed": "创建数据库记录失败。",
-            "FailedOperation.DbRecordDeleteFailed": "数据库记录删除失败。",
-            "FailedOperation.DbRecordUpdateFailed": "数据库记录更新失败。",
-            "FailedOperation.DbTransactionBeginFailed": "数据库事务开始失败。",
-            "FailedOperation.DbTransactionCommitFailed": "数据库事务提交失败。",
-            "FailedOperation.DimQueryRequestFailed": "请求维度查询服务失败。",
-            "FailedOperation.DruidQueryFailed": "查询分析数据失败。",
-            "FailedOperation.DuplicateName": "名字重复。",
+              "刪除觸發條件失敗。",
+            "FailedOperation.DbQueryFailed": "數據庫查詢失敗。",
+            "FailedOperation.DbRecordCreateFailed": "創建數據庫記錄失敗。",
+            "FailedOperation.DbRecordDeleteFailed": "數據庫記錄刪除失敗。",
+            "FailedOperation.DbRecordUpdateFailed": "數據庫記錄更新失敗。",
+            "FailedOperation.DbTransactionBeginFailed": "數據庫事務開始失敗。",
+            "FailedOperation.DbTransactionCommitFailed": "數據庫事務提交失敗。",
+            "FailedOperation.DimQueryRequestFailed": "請求維度查詢服務失敗。",
+            "FailedOperation.DruidQueryFailed": "查詢分析數據失敗。",
+            "FailedOperation.DuplicateName": "名字重複。",
             "FailedOperation.ServiceNotEnabled":
-              "服务未启用，开通服务后方可使用。",
-            InternalError: "内部错误。",
-            "InternalError.ExeTimeout": "执行超时。",
-            InvalidParameter: "参数错误。",
-            "InvalidParameter.InvalidParameter": "参数错误。",
-            "InvalidParameter.InvalidParameterParam": "参数错误。",
-            InvalidParameterValue: "无效的参数值。",
-            LimitExceeded: "超过配额限制。",
+              "服務未啓用，開通服務後方可使用。",
+            InternalError: "內部錯誤。",
+            "InternalError.ExeTimeout": "執行超時。",
+            InvalidParameter: "參數錯誤。",
+            "InvalidParameter.InvalidParameter": "參數錯誤。",
+            "InvalidParameter.InvalidParameterParam": "參數錯誤。",
+            InvalidParameterValue: "無效的參數值。",
+            LimitExceeded: "超過配額限制。",
             "LimitExceeded.MetricQuotaExceeded":
-              "指标数量达到配额限制，禁止含有未注册指标的请求。",
-            MissingParameter: "缺少参数错误。",
-            ResourceInUse: "资源被占用。",
-            ResourceInsufficient: "资源不足。",
-            ResourceNotFound: "资源不存在。",
-            ResourceUnavailable: "资源不可用。",
-            ResourcesSoldOut: "资源售罄。",
-            UnauthorizedOperation: "未授权操作。",
-            UnknownParameter: "未知参数错误。",
+              "指標數量達到配額限制，禁止含有未注冊指標的請求。",
+            MissingParameter: "缺少參數錯誤。",
+            ResourceInUse: "資源被占用。",
+            ResourceInsufficient: "資源不足。",
+            ResourceNotFound: "資源不存在。",
+            ResourceUnavailable: "資源不可用。",
+            ResourcesSoldOut: "資源售罄。",
+            UnauthorizedOperation: "未授權操作。",
+            UnknownParameter: "未知參數錯誤。",
             UnsupportedOperation: "操作不支持。"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -3895,23 +3923,23 @@ export default {
         }
       });
     },
-    // 分页
+    // 分頁
     handleCurrentChange(val) {
       this.pageIndex = val - 1;
       this.ListInit();
       this.pageIndex += 1;
     },
     handleSizeChange(val) {
-      // console.log(`每页 ${val} 条`);
+      // console.log(`每頁 ${val} 條`);
       this.pageSize = val;
       this.ListInit();
     },
-    // 告警接收对象 编辑
+    // 告警接收對象 編輯
     EditReceiveObject() {
       this.editReceiveObjectVisuble = true;
     },
 
-    // 获取cam组件的值
+    // 獲取cam組件的值
     camFun(val) {
       this.cam = val;
       console.log(this.cam);
@@ -3933,13 +3961,13 @@ export default {
           for (let i in this.cam.channel) {
             if (this.cam.channel[i] === "郵件") {
               param["ReceiverInfos.0.NotifyWay." + i] = "EMAIL";
-            } else if (this.cam.channel[i] === "簡訊") {
+            } else if (this.cam.channel[i] === "間訊") {
               param["ReceiverInfos.0.NotifyWay." + i] = "SMS";
             }
           }
         } else {
           this.$message({
-            message: "请选择接收渠道 ",
+            message: "請選擇接收渠道 ",
             type: "error",
             showClose: true,
             duration: 0
@@ -3979,13 +4007,13 @@ export default {
           for (let i in this.cam.channel) {
             if (this.cam.channel[i] === "郵件") {
               param["ReceiverInfos.0.NotifyWay." + i] = "EMAIL";
-            } else if (this.cam.channel[i] === "簡訊") {
+            } else if (this.cam.channel[i] === "間訊") {
               param["ReceiverInfos.0.NotifyWay." + i] = "SMS";
             }
           }
         } else {
           this.$message({
-            message: "请选择接收渠道 ",
+            message: "請選擇接收渠道 ",
             type: "error",
             showClose: true,
             duration: 0
@@ -4010,34 +4038,34 @@ export default {
           this.DetailsInit();
         } else {
           let ErrTips = {
-            "AuthFailure.InvalidSecretId": "密钥非法（不是云 API 密钥类型）。",
-            "AuthFailure.MFAFailure": "MFA 错误。",
-            "AuthFailure.SecretIdNotFound": "密钥不存在。",
-            "AuthFailure.SignatureExpire": "签名过期。",
-            "AuthFailure.SignatureFailure": "签名错误。",
-            "AuthFailure.TokenFailure	token": "错误。",
-            "AuthFailure.UnauthorizedOperation": "请求未 CAM 授权。",
+            "AuthFailure.InvalidSecretId": "密鑰非法（不是雲 API 密鑰類型）。",
+            "AuthFailure.MFAFailure": "MFA 錯誤。",
+            "AuthFailure.SecretIdNotFound": "密鑰不存在。",
+            "AuthFailure.SignatureExpire": "簽名過期。",
+            "AuthFailure.SignatureFailure": "簽名錯誤。",
+            "AuthFailure.TokenFailure	token": "錯誤。",
+            "AuthFailure.UnauthorizedOperation": "請求未 CAM 授權。",
             DryRunOperation:
-              "DryRun 操作，代表请求将会是成功的，只是多传了 DryRun 参数。",
-            FailedOperation: "操作失败。",
-            InternalError: "内部错误。",
+              "DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。",
+            FailedOperation: "操作失敗。",
+            InternalError: "內部錯誤。",
             InvalidAction: "接口不存在。",
-            InvalidParameter: "参数错误。",
-            InvalidParameterValue: "参数取值错误。",
-            LimitExceeded: "超过配额限制。",
-            MissingParameter: "缺少参数错误。",
+            InvalidParameter: "參數錯誤。",
+            InvalidParameterValue: "參數取值錯誤。",
+            LimitExceeded: "超過配額限制。",
+            MissingParameter: "缺少參數錯誤。",
             NoSuchVersion: "接口版本不存在。",
-            RequestLimitExceeded: "请求的次数超过了频率限制。",
-            ResourceInUse: "资源被占用。",
-            ResourceInsufficient: "资源不足。",
-            ResourceNotFound: "资源不存在。",
-            ResourceUnavailable: "资源不可用。",
-            UnauthorizedOperation: "未授权操作。",
-            UnknownParameter: "未知参数错误。",
+            RequestLimitExceeded: "請求的次數超過了頻率限制。",
+            ResourceInUse: "資源被占用。",
+            ResourceInsufficient: "資源不足。",
+            ResourceNotFound: "資源不存在。",
+            ResourceUnavailable: "資源不可用。",
+            UnauthorizedOperation: "未授權操作。",
+            UnknownParameter: "未知參數錯誤。",
             UnsupportedOperation: "操作不支持。",
             UnsupportedProtocol:
-              "HTTPS 请求方法错误，只支持 GET 和 POST 请求。",
-            UnsupportedRegion: "接口不支持所传地域。"
+              "HTTPS 請求方法錯誤，只支持 GET 和 POST 請求。",
+            UnsupportedRegion: "接口不支持所傳地域。"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -4049,20 +4077,20 @@ export default {
         }
       });
     },
-    // 告警接收对象 select
+    // 告警接收對象 select
     receivingSelectionChange(val) {
       console.log(val);
       this.remove = val;
     },
-    // 告警接收对象 解除
+    // 告警接收對象 解除
     Remove(row, index) {
       if (index == 1) {
         this.remove = [];
         this.remove = row;
-        this.relieveTitle = "确定解除与该$接收人的关联？";
+        this.relieveTitle = "確定解除與該$接收人的關聯？";
       } else {
         this.relieveTitle =
-          "已选择" + this.remove.length + "个告警接收人，确定要解除关联？";
+          "已選擇" + this.remove.length + "個告警接收人，確定要解除關聯？";
       }
       this.relieveDialogVisible = true;
     },
@@ -4149,41 +4177,41 @@ export default {
           this.relieveDialogVisible = false;
           this.DetailsInit();
           this.$message({
-            message: "告警接收对象解除成功",
+            message: "告警接收對象解除成功",
             type: "success",
             showClose: true,
             duration: 0
           });
         } else {
           let ErrTips = {
-            "AuthFailure.InvalidSecretId": "密钥非法（不是云 API 密钥类型）。",
-            "AuthFailure.MFAFailure": "MFA 错误。",
-            "AuthFailure.SecretIdNotFound": "密钥不存在。",
-            "AuthFailure.SignatureExpire": "签名过期。",
-            "AuthFailure.SignatureFailure": "签名错误。",
-            "AuthFailure.TokenFailure	token": "错误。",
-            "AuthFailure.UnauthorizedOperation": "请求未 CAM 授权。",
+            "AuthFailure.InvalidSecretId": "密鑰非法（不是雲 API 密鑰類型）。",
+            "AuthFailure.MFAFailure": "MFA 錯誤。",
+            "AuthFailure.SecretIdNotFound": "密鑰不存在。",
+            "AuthFailure.SignatureExpire": "簽名過期。",
+            "AuthFailure.SignatureFailure": "簽名錯誤。",
+            "AuthFailure.TokenFailure	token": "錯誤。",
+            "AuthFailure.UnauthorizedOperation": "請求未 CAM 授權。",
             DryRunOperation:
-              "DryRun 操作，代表请求将会是成功的，只是多传了 DryRun 参数。",
-            FailedOperation: "操作失败。",
-            InternalError: "内部错误。",
+              "DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。",
+            FailedOperation: "操作失敗。",
+            InternalError: "內部錯誤。",
             InvalidAction: "接口不存在。",
-            InvalidParameter: "参数错误。",
-            InvalidParameterValue: "参数取值错误。",
-            LimitExceeded: "超过配额限制。",
-            MissingParameter: "缺少参数错误。",
+            InvalidParameter: "參數錯誤。",
+            InvalidParameterValue: "參數取值錯誤。",
+            LimitExceeded: "超過配額限制。",
+            MissingParameter: "缺少參數錯誤。",
             NoSuchVersion: "接口版本不存在。",
-            RequestLimitExceeded: "请求的次数超过了频率限制。",
-            ResourceInUse: "资源被占用。",
-            ResourceInsufficient: "资源不足。",
-            ResourceNotFound: "资源不存在。",
-            ResourceUnavailable: "资源不可用。",
-            UnauthorizedOperation: "未授权操作。",
-            UnknownParameter: "未知参数错误。",
+            RequestLimitExceeded: "請求的次數超過了頻率限制。",
+            ResourceInUse: "資源被占用。",
+            ResourceInsufficient: "資源不足。",
+            ResourceNotFound: "資源不存在。",
+            ResourceUnavailable: "資源不可用。",
+            UnauthorizedOperation: "未授權操作。",
+            UnknownParameter: "未知參數錯誤。",
             UnsupportedOperation: "操作不支持。",
             UnsupportedProtocol:
-              "HTTPS 请求方法错误，只支持 GET 和 POST 请求。",
-            UnsupportedRegion: "接口不支持所传地域。"
+              "HTTPS 請求方法錯誤，只支持 GET 和 POST 請求。",
+            UnsupportedRegion: "接口不支持所傳地域。"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -4197,15 +4225,15 @@ export default {
     },
 
     chufaTemplate() {
-      //触发条件模板
+      //觸發條件模板
     },
     config() {
-      //配置触发条件
+      //配置觸發條件
       this.showChufa1 = false;
       this.showChufa2 = true;
     },
     addZhibiao() {
-      //添加触发条件的指标告警
+      //添加觸發條件的指標告警
       this.formWrite.index++;
       if (this.formWrite.index + 1 === this.formWrite.arr.length) {
         this.formWrite.index = 0;
@@ -4227,7 +4255,7 @@ export default {
       this.formWrite.arr.splice(index, 1);
     },
     addShijian() {
-      //添加触发条件的事件告警
+      //添加觸發條件的事件告警
       this.formWrite.gaoIndex++;
       if (this.formWrite.gaoIndex + 1 === this.formWrite.gaoArr.length) {
         this.formWrite.gaoIndex = 0;
@@ -4251,7 +4279,7 @@ export default {
       }
     },
     callbackEdit() {
-      // 回调接口配置
+      // 回調接口配置
       this.callbackInterface = true;
       let param = {
         Version: "2018-07-24",
@@ -4285,7 +4313,7 @@ export default {
         this.httpCode = this.httpCodes;
       }
     },
-    // 回调接口
+    // 回調接口
     HttpHistroy() {
       this.httpOption = [];
       this.httpOption1 = [];
@@ -4332,7 +4360,7 @@ export default {
       this.httpOption = this.httpOption1;
       var _arr = [];
       for (let i in this.httpOption) {
-        //如果字符串中不包含目标字符会返回-1
+        //如果字符串中不包含目標字符會返回-1
         if (this.httpOption[i].Url.indexOf(this.httpInput) >= 0) {
           _arr.push(this.httpOption[i]);
         }
@@ -4442,7 +4470,7 @@ export default {
       this.httpCode = item.VerifyCode;
       this.httpShow = false;
     },
-    // 回调接口 保存
+    // 回調接口 保存
     CallBackSave(val) {
       let param = {
         Version: "2018-07-24",
@@ -4501,46 +4529,46 @@ export default {
         }
       });
     },
-    // 状态
+    // 狀態
     InstanceState(val) {
       if (val === "PENDING") {
-        return "创建中";
+        return "創建中";
       } else if (val === "LAUNCH_FAILED") {
-        return "创建失败";
+        return "創建失敗";
       } else if (val === "RUNNING") {
-        return "运行中";
+        return "運行中";
       } else if (val === "STOPPED") {
-        return "关机";
+        return "關機";
       } else if (val === "STARTING") {
-        return "关机中";
+        return "關機中";
       } else if (val === "REBOOTING") {
-        return "重启中";
+        return "重啓中";
       } else if (val === "SHUTDOWN") {
-        return "停止待销毁";
+        return "停止待銷毀";
       } else if (val === "TERMINATING") {
-        return "销毁中";
+        return "銷毀中";
       }
     },
     VPN_GW_State(val) {
       if (val === "PENDING") {
-        return "生产中";
+        return "生産中";
       } else if (val === "DELETING") {
-        return "删除中";
+        return "刪除中";
       } else if (val === "AVAILABLE") {
-        return "运行中";
+        return "運行中";
       }
     },
     VPN_Tunnel_State(val) {
       if (val === "PENDING") {
-        return "生产中";
+        return "生産中";
       } else if (val === "DELETING") {
-        return "删除中";
+        return "刪除中";
       } else if (val === "AVAILABLE") {
-        return "运行中";
+        return "運行中";
       } else if (val === "UPDATING") {
-        return "升级中";
+        return "升級中";
       } else if (val === "FAILE") {
-        return "失败";
+        return "失敗";
       }
     },
     NAT_Status(val) {
@@ -4552,13 +4580,13 @@ export default {
     },
     CDB_Status(val) {
       if (val == 0) {
-        return "创建中";
+        return "創建中";
       } else if (val == 1) {
-        return "运行中";
+        return "運行中";
       } else if (val == 4) {
-        return "隔离中";
+        return "隔離中";
       } else if (val == 5) {
-        return "已隔离";
+        return "已隔離";
       }
     },
     REDIS_Status(val) {
@@ -4567,27 +4595,27 @@ export default {
       } else if (val == 1) {
         return "流程中";
       } else if (val == 2) {
-        return "运行中";
+        return "運行中";
       } else if (val == -2) {
-        return "已隔离";
+        return "已隔離";
       } else if (val == -3) {
-        return "待删除";
+        return "待刪除";
       }
     },
     CDB_InstanceType(val) {
       if (val == 1) {
-        return "主实例";
+        return "主實例";
       } else if (val == 2) {
-        return "灾备实例";
+        return "災備實例";
       } else if (val == 3) {
-        return "只读实例";
+        return "只讀實例";
       }
     },
     dcchannel_Status(val) {
       if (val == "AVAILABLE") {
-        return "就绪或者已连接";
+        return "就緒或者已連接";
       } else if (val == "PENDING") {
-        return "申请中";
+        return "申請中";
       } else if (val == "ALLOCATING") {
         return "配置中";
       } else if (val == "ALLOCATED") {
@@ -4595,54 +4623,54 @@ export default {
       } else if (val == "ALTERING") {
         return "修改中";
       } else if (val == "DELETING") {
-        return "删除中";
+        return "刪除中";
       } else if (val == "DELETED") {
-        return "删除完成";
+        return "刪除完成";
       } else if (val == "COMFIRMING") {
         return "待接受";
       } else if (val == "REJECTED") {
-        return "拒绝";
+        return "拒絕";
       }
     },
     dcline_Status(val) {
       if (val == "PENDING") {
-        return "申请中";
+        return "申請中";
       } else if (val == "REJECTED") {
-        return "申请驳回";
+        return "申請駁回";
       } else if (val == "TOPAY") {
         return "待付款";
       } else if (val == "PAID") {
         return "已付款";
       } else if (val == "ALLOCATED") {
-        return "建设中";
+        return "建設中";
       } else if (val == "AVAILABLE") {
-        return "已开通";
+        return "已開通";
       } else if (val == "DELETING") {
-        return "删除中";
+        return "刪除中";
       } else if (val == "DELETED") {
-        return "已删除";
+        return "已刪除";
       }
     }
   },
   filters: {
-    // 状态
+    // 狀態
     InstanceState(val) {
       if (val === "PENDING") {
-        return "创建中";
+        return "創建中";
       } else if (val === "LAUNCH_FAILED") {
-        return "创建失败";
+        return "創建失敗";
       } else if (val === "RUNNING") {
-        return "运行中";
+        return "運行中";
       } else if (val === "STOPPED") {
-        return "关机";
+        return "關機";
       } else if (val === "STARTING") {
-        return "关机中";
+        return "關機中";
       } else if (val === "REBOOTING") {
-        return "重启中";
+        return "重啓中";
       } else if (val === "SHUTDOWN") {
-        return "停止待销毁";
+        return "停止待銷毀";
       } else if (val === "TERMINATING") {
-        return "销毁中";
+        return "銷毀中";
       }
     },
     EndTime(val) {
@@ -4677,17 +4705,17 @@ export default {
       } else if (value == 6) {
         return "!=";
       } else if (value == 7) {
-        return "日同比上涨";
+        return "日同比上漲";
       } else if (value == 8) {
         return "日同比下降";
       } else if (value == 9) {
-        return "周同比上涨";
+        return "周同比上漲";
       } else if (value == 10) {
         return "周同比下降";
       } else if (value == 11) {
-        return "周期环比上涨";
+        return "周期環比上漲";
       } else if (value == 12) {
-        return "周期环比下降";
+        return "周期環比下降";
       }
     },
     AlarmNotifyPeriod(val) {
@@ -4695,26 +4723,26 @@ export default {
         if ((val / 60 / 60 / 24) % 1 == 0) {
           return val / 60 / 60 / 24 + "天";
         } else {
-          return val / 60 / 60 + "小时";
+          return val / 60 / 60 + "小時";
         }
       } else if ((val / 60) % 1 == 0) {
-        return val / 60 + "分钟";
+        return val / 60 + "分鍾";
       }
     },
     NotifyWay(val) {
       if (val === "EMAIL") {
-        return "邮件";
+        return "郵件";
       } else if (val === "SMS") {
         return "短信";
       } else if (val === "WECHAT") {
         return "微信";
       } else if (val === "CALL") {
-        return "电话";
+        return "電話";
       }
     },
     ProjectName(val) {
       if (val == 0) {
-        return "默认项目";
+        return "默認項目";
       }
       for (let i in project) {
         if (val == project[i].projectId) {

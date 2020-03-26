@@ -5,7 +5,9 @@
         <div class="btn">
           <div>
             <el-row>
-              <el-button type="primary" @click="AddBtn">新增</el-button>
+              <el-button type="primary" @click="AddBtn">{{
+                $t("CVM.Casegrouping.xz")
+              }}</el-button>
               <el-button disabled v-if="multipleSelection1.length === 0"
                 >移出</el-button
               >
@@ -27,19 +29,28 @@
             height="500px"
           >
             <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column label="ID/主机名" v-if="viewName === 'cvm_device'">
+            <el-table-column
+              :label="$t('CVM.Casegrouping.zjm')"
+              v-if="viewName === 'cvm_device'"
+            >
               <template slot-scope="scope">
                 <p>{{ scope.row.InstanceId }}</p>
                 <p>{{ scope.row.InstanceName }}</p>
               </template>
             </el-table-column>
-            <el-table-column label="状态" v-if="viewName === 'cvm_device'">
+            <el-table-column
+              :label="$t('CVM.Casegrouping.zt')"
+              v-if="viewName === 'cvm_device'"
+            >
               <template slot-scope="scope">
                 <span>{{ InstanceState(scope.row.InstanceState) }}</span>
               </template>
             </el-table-column>
-            <el-table-column label="网络类型" v-if="viewName === 'cvm_device'">
-              VPC 网络
+            <el-table-column
+              :label="$t('CVM.Casegrouping.wllx')"
+              v-if="viewName === 'cvm_device'"
+            >
+              VPC 類型
             </el-table-column>
             <el-table-column label="IP地址" v-if="viewName === 'cvm_device'">
               <template slot-scope="scope">
@@ -48,7 +59,7 @@
                     v-for="(item, index) in scope.row.PrivateIpAddresses"
                     :key="index"
                   >
-                    {{ item }}(内网)</span
+                    {{ item }}(内網)</span
                   >
                 </p>
                 <p>
@@ -56,15 +67,15 @@
                     v-for="(item, index) in scope.row.PublicIpAddresses"
                     :key="index"
                   >
-                    {{ item }}(外网)</span
+                    {{ item }}(外網)</span
                   >
                 </p>
               </template>
             </el-table-column>
             <el-table-column label="地域" v-if="viewName === 'cvm_device'">
-              台湾台北
+              台灣台北
             </el-table-column>
-            <el-table-column label="ID/名称" v-if="viewName === 'BS'">
+            <el-table-column label="ID/名稱" v-if="viewName === 'BS'">
               <template slot-scope="scope">
                 <p>{{ scope.row.DiskId }}</p>
                 <p>{{ scope.row.DiskName }}</p>
@@ -75,125 +86,125 @@
                 <span>{{ scope.row.DiskSize }}</span>
               </template>
             </el-table-column>
-            <el-table-column label="硬盘类型" v-if="viewName === 'BS'">
+            <el-table-column label="硬碟類型" v-if="viewName === 'BS'">
               <template slot-scope="scope">
                 <p>{{ scope.row.DiskType | DiskType }}</p>
                 <p>{{ scope.row.DiskUsage | DiskUsage }}</p>
               </template>
             </el-table-column>
-            <el-table-column label="关联云主机ID" v-if="viewName === 'BS'">
+            <el-table-column label="關聯雲主機ID" v-if="viewName === 'BS'">
               <template slot-scope="scope">
                 <p>{{ scope.row.InstanceId }}</p>
                 <!-- <p>{{ scope.row. }}</p> -->
               </template>
             </el-table-column>
             <el-table-column label="地域" v-if="viewName === 'BS'">
-              台湾台北
+              台灣台北
             </el-table-column>
             <!-- VPN_GW -->
-            <el-table-column label="ID/名称" v-if="viewName === 'VPN_GW'">
+            <el-table-column label="ID/名稱" v-if="viewName === 'VPN_GW'">
               <template slot-scope="scope">
                 <p>{{ scope.row.VpnGatewayId }}</p>
                 <p>{{ scope.row.VpnGatewayName }}</p>
               </template>
             </el-table-column>
-            <el-table-column label="状态" v-if="viewName === 'VPN_GW'">
+            <el-table-column label="狀態" v-if="viewName === 'VPN_GW'">
               <template slot-scope="scope">
                 <span>{{ VPN_GW_State(scope.row.State) }}</span>
               </template>
             </el-table-column>
-            <el-table-column label="所属网络" v-if="viewName === 'VPN_GW'">
+            <el-table-column label="所屬網路" v-if="viewName === 'VPN_GW'">
               <template slot-scope="scope">
                 <p>{{ scope.row.VpcId }}</p>
                 <!-- <p>{{scope.row.}}</p> -->
               </template>
             </el-table-column>
             <el-table-column label="地域" v-if="viewName === 'VPN_GW'">
-              台湾台北
+              台灣台北
             </el-table-column>
             <!-- vpn_tunnel -->
-            <el-table-column label="ID/名称" v-if="viewName === 'vpn_tunnel'">
+            <el-table-column label="ID/名稱" v-if="viewName === 'vpn_tunnel'">
               <template slot-scope="scope">
                 <p>{{ scope.row.VpnGatewayId }}</p>
                 <p>{{ scope.row.VpnConnectionName }}</p>
               </template>
             </el-table-column>
-            <el-table-column label="状态" v-if="viewName === 'vpn_tunnel'">
+            <el-table-column label="狀態" v-if="viewName === 'vpn_tunnel'">
               <template slot-scope="scope">
                 <span>{{ VPN_Tunnel_State(scope.row.State) }}</span>
               </template>
             </el-table-column>
-            <el-table-column label="所属网络" v-if="viewName === 'vpn_tunnel'">
+            <el-table-column label="所屬網路" v-if="viewName === 'vpn_tunnel'">
               <template slot-scope="scope">
                 <p>{{ scope.row.VpcId }}</p>
                 <!-- <p>{{scope.row.}}</p> -->
               </template>
             </el-table-column>
-            <el-table-column label="VPN网关" v-if="viewName === 'vpn_tunnel'">
+            <el-table-column label="VPN網關" v-if="viewName === 'vpn_tunnel'">
               <template slot-scope="scope">
                 <p>{{ scope.row.VpnGatewayId }}</p>
                 <!-- <p>{{scope.row.}}</p> -->
               </template>
             </el-table-column>
-            <el-table-column label="对端网关" v-if="viewName === 'vpn_tunnel'">
+            <el-table-column label="對端網關" v-if="viewName === 'vpn_tunnel'">
               <template slot-scope="scope">
                 <p>{{ scope.row.CustomerGatewayId }}</p>
                 <!-- <p>{{scope.row.}}</p> -->
               </template>
             </el-table-column>
             <el-table-column label="地域" v-if="viewName === 'vpn_tunnel'">
-              台湾台北
+              台灣台北
             </el-table-column>
             <!-- nat_tc_stat -->
-            <el-table-column label="ID/名称" v-if="viewName === 'nat_tc_stat'">
+            <el-table-column label="ID/名稱" v-if="viewName === 'nat_tc_stat'">
               <template slot-scope="scope">
                 <p>{{ scope.row.NatGatewayId }}</p>
                 <p>{{ scope.row.NatGatewayName }}</p>
               </template>
             </el-table-column>
-            <el-table-column label="状态" v-if="viewName === 'nat_tc_stat'">
+            <el-table-column label="狀態" v-if="viewName === 'nat_tc_stat'">
               <template slot-scope="scope">
                 <span>{{ VPN_Tunnel_State(scope.row.State) }}</span>
               </template>
             </el-table-column>
-            <el-table-column label="私有网络" v-if="viewName === 'nat_tc_stat'">
+            <el-table-column label="私有網路" v-if="viewName === 'nat_tc_stat'">
               <template slot-scope="scope">
                 <p>{{ scope.row.VpcId }}</p>
                 <!-- <p>{{scope.row.}}</p> -->
               </template>
             </el-table-column>
-            <el-table-column label="类型" v-if="viewName === 'nat_tc_stat'">
+            <el-table-column label="類型" v-if="viewName === 'nat_tc_stat'">
               <template slot-scope="scope">
                 <p>小型</p>
-                <p>最大并发连接数{{ scope.row.maxConcurrent / 100 }}万</p>
+                <p>最大併發連接數{{ scope.row.maxConcurrent / 100 }}萬</p>
               </template>
             </el-table-column>
             <el-table-column label="地域" v-if="viewName === 'nat_tc_stat'">
-              台湾台北
+              台灣台北
             </el-table-column>
             <!-- DC_GW -->
-            <el-table-column label="ID/名称" v-if="viewName === 'DC_GW'">
+            <el-table-column label="ID/名稱" v-if="viewName === 'DC_GW'">
               <template slot-scope="scope">
                 <p>{{ scope.row.DirectConnectGatewayId }}</p>
                 <p>{{ scope.row.DirectConnectGatewayName }}</p>
               </template>
             </el-table-column>
-            <el-table-column label="NAT配置状态" v-if="viewName === 'DC_GW'">
+            <el-table-column label="NAT配置狀態" v-if="viewName === 'DC_GW'">
               <template slot-scope="scope">
                 <span>{{ NAT_Status(scope.row.GatewayType) }}</span>
               </template>
             </el-table-column>
-            <el-table-column label="所属网络" v-if="viewName === 'DC_GW'">
+            <el-table-column label="所屬網路" v-if="viewName === 'DC_GW'">
               <template slot-scope="scope">
                 <p>{{ scope.row.VpcId }}</p>
                 <!-- <p>{{scope.row.}}</p> -->
               </template>
             </el-table-column>
             <el-table-column label="地域" v-if="viewName === 'DC_GW'">
-              台湾台北
+              台灣台北
             </el-table-column>
             <!-- EIP -->
-            <el-table-column label="ID/名称" v-if="viewName === 'EIP'">
+            <el-table-column label="ID/名稱" v-if="viewName === 'EIP'">
               <template slot-scope="scope">
                 <p>{{ scope.row.AddressId }}</p>
               </template>
@@ -204,22 +215,22 @@
               </template>
             </el-table-column>
             <el-table-column label="地域" v-if="viewName === 'EIP'">
-              台湾台北
+              台灣台北
             </el-table-column>
             <!-- cdb_detail -->
-            <el-table-column label="ID/名称" v-if="viewName === 'cdb_detail'">
+            <el-table-column label="ID/名稱" v-if="viewName === 'cdb_detail'">
               <template slot-scope="scope">
                 <p>{{ scope.row.InstanceId }}</p>
                 <p>{{ scope.row.InstanceName }}</p>
               </template>
             </el-table-column>
-            <el-table-column label="状态" v-if="viewName === 'cdb_detail'">
+            <el-table-column label="狀態" v-if="viewName === 'cdb_detail'">
               <template slot-scope="scope">
                 <p>{{ CDB_Status(scope.row.Status) }}</p>
               </template>
             </el-table-column>
             <el-table-column
-              label="内网IP/端口"
+              label="内網IP/端口"
               v-if="viewName === 'cdb_detail'"
             >
               <template slot-scope="scope">
@@ -227,22 +238,22 @@
                 <p>{{ scope.row.Vport }}</p>
               </template>
             </el-table-column>
-            <el-table-column label="网络类型" v-if="viewName === 'cdb_detail'">
+            <el-table-column label="網路類型" v-if="viewName === 'cdb_detail'">
               <template slot-scope="scope">
                 VPC
               </template>
             </el-table-column>
-            <el-table-column label="类型" v-if="viewName === 'cdb_detail'">
+            <el-table-column label="類型" v-if="viewName === 'cdb_detail'">
               <template slot-scope="scope">
                 {{ CDB_InstanceType(scope.row.InstanceType) }}
               </template>
             </el-table-column>
             <el-table-column label="地域" v-if="viewName === 'cdb_detail'">
-              台湾台北
+              台灣台北
             </el-table-column>
             <!-- REDIS-CLUSTER -->
             <el-table-column
-              label="ID/名称"
+              label="ID/名稱"
               v-if="viewName === 'REDIS-CLUSTER'"
             >
               <template slot-scope="scope">
@@ -250,18 +261,18 @@
                 <p>{{ scope.row.InstanceName }}</p>
               </template>
             </el-table-column>
-            <el-table-column label="状态" v-if="viewName === 'REDIS-CLUSTER'">
+            <el-table-column label="狀態" v-if="viewName === 'REDIS-CLUSTER'">
               <template slot-scope="scope">
                 <p>{{ REDIS_Status(scope.row.Status) }}</p>
               </template>
             </el-table-column>
-            <el-table-column label="规格" v-if="viewName === 'REDIS-CLUSTER'">
+            <el-table-column label="規格" v-if="viewName === 'REDIS-CLUSTER'">
               <template slot-scope="scope">
                 master-slave
               </template>
             </el-table-column>
             <el-table-column
-              label="内网地址"
+              label="内網地址"
               v-if="viewName === 'REDIS-CLUSTER'"
             >
               <template slot-scope="scope">
@@ -269,32 +280,32 @@
               </template>
             </el-table-column>
             <el-table-column label="地域" v-if="viewName === 'REDIS-CLUSTER'">
-              台湾台北
+              台灣台北
             </el-table-column>
             <!-- dcchannel -->
-            <el-table-column label="ID/名称" v-if="viewName === 'dcchannel'">
+            <el-table-column label="ID/名稱" v-if="viewName === 'dcchannel'">
               <template slot-scope="scope">
                 <p>{{ scope.row.DirectConnectTunnelId }}</p>
                 <p>{{ scope.row.DirectConnectTunnelName }}</p>
               </template>
             </el-table-column>
-            <el-table-column label="状态" v-if="viewName === 'dcchannel'">
+            <el-table-column label="狀態" v-if="viewName === 'dcchannel'">
               <template slot-scope="scope">
                 <p>{{ dcchannel_Status(scope.row.State) }}</p>
               </template>
             </el-table-column>
-            <el-table-column label="规格" v-if="viewName === 'dcchannel'">
+            <el-table-column label="規格" v-if="viewName === 'dcchannel'">
               <template slot-scope="scope">
                 master-slave
               </template>
             </el-table-column>
-            <el-table-column label="内网地址" v-if="viewName === 'dcchannel'">
+            <el-table-column label="内網地址" v-if="viewName === 'dcchannel'">
               <template slot-scope="scope">
                 {{ scope.row.WanIp }}
               </template>
             </el-table-column>
             <!-- dcline -->
-            <el-table-column label="名称/ID" v-if="viewName === 'dcline'">
+            <el-table-column label="名稱/ID" v-if="viewName === 'dcline'">
               <template slot-scope="scope">
                 <p>{{ scope.row.DirectConnectName }}</p>
                 <p>{{ scope.row.DirectConnectId }}</p>
@@ -305,13 +316,13 @@
                 <p>{{ scope.row.Location }}</p>
               </template>
             </el-table-column>
-            <el-table-column label="带宽" v-if="viewName === 'dcline'">
+            <el-table-column label="頻寬" v-if="viewName === 'dcline'">
               <template slot-scope="scope">
                 <p>{{ scope.row.Bandwidth }}Mbps</p>
               </template>
             </el-table-column>
             <!-- COS -->
-            <el-table-column label="Bucket名称" v-if="viewName === 'COS'">
+            <el-table-column label="Bucket名稱" v-if="viewName === 'COS'">
               <template slot-scope="scope">
                 <p>{{ scope.row.Name }}</p>
               </template>
@@ -321,7 +332,7 @@
                 <p>{{ scope.row.zone.zone }}</p>
               </template>
             </el-table-column>
-            <el-table-column label="创建时间" v-if="viewName === 'COS'">
+            <el-table-column label="創建時間" v-if="viewName === 'COS'">
               <template slot-scope="scope">
                 {{ CreationDate(scope.row.CreationDate) }}
               </template>
@@ -395,16 +406,16 @@
       </el-dialog>
       <!-- 移出 -->
       <el-dialog
-        title="确定移出所选实例？"
+        title="確定移出所選實例？"
         :visible.sync="rulesEditorByVal.rulesEditorState"
         width="500px"
         custom-class="tke-dialog"
       >
         <div>
-          移出后，该组之前绑定的告警策略将与该实例解绑，该组后续所涉及的操作将不会对该实例生效。
+          移出後，該組之前綁定的告警策略將與該實例解綁，該組後續所涉及的操作將不會對該實例生效。
         </div>
         <div slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="DeleteList()">确定移出</el-button>
+          <el-button type="primary" @click="DeleteList()">確定移出</el-button>
           <el-button @click="rulesEditorByVal.rulesEditorState = false"
             >取消</el-button
           >
@@ -413,18 +424,18 @@
       <!-- 批量移出 -->
       <el-dialog
         :title="
-          '已选择' + multipleSelection1.length + '个实例，确定要解除关联？'
+          '已選擇' + multipleSelection1.length + '個實例，確定要解除關聯？'
         "
         :visible.sync="allDelete"
         width="500px"
         custom-class="tke-dialog"
       >
         <div>
-          移出后，该组之前绑定的告警策略将与该实例解绑，该组后续所涉及的操作将不会对该实例生效。
+          移出後，該組之前綁定的告警策略將與該實例解綁，該組後續所涉及的操作將不會對該實例生效。
         </div>
         <div slot="footer" class="dialog-footer">
           <el-button type="primary" @click="DeleteList()"
-            >确定移出所选实例</el-button
+            >確萣簃炪葰選實唎</el-button
           >
           <el-button @click="allDelete = false">取消</el-button>
         </div>
@@ -568,8 +579,8 @@ export default {
           }
         } else {
           let ErrTips = {
-            InternalError: "内部错误",
-            UnauthorizedOperation: "未授权操作"
+            InternalError: "內部錯誤",
+            UnauthorizedOperation: "未授權操作"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -623,14 +634,14 @@ export default {
                   this.loadShow = false;
                 } else {
                   let ErrTips = {
-                    FailedOperation: "操作失败",
-                    InternalError: "内部错误",
+                    FailedOperation: "操作失敗",
+                    InternalError: "內部錯誤",
                     "InternalError.Param": "Param。",
                     "InternalError.PublicClusterOpNotSupport":
-                      "集群不支持当前操作。",
-                    InvalidParameter: "参数错误",
-                    ResourceNotFound: "资源不存在",
-                    ResourceUnavailable: "资源不可用"
+                      "集群不支持當前操作。",
+                    InvalidParameter: "參數錯誤",
+                    ResourceNotFound: "資源不存在",
+                    ResourceUnavailable: "資源不可用"
                   };
                   let ErrOr = Object.assign(ErrorTips, ErrTips);
                   this.$message({
@@ -671,9 +682,9 @@ export default {
                 } else {
                   let ErrTips = {
                     "InvalidVpnGatewayId.Malformed":
-                      "无效的VPN网关,VPN实例ID不合法。",
+                      "無效的VPN網關,VPN實例ID不合法。",
                     "InvalidVpnGatewayId.NotFound":
-                      "无效的VPN网关,VPN实例不存在，请再次核实您输入的资源信息是否正确。"
+                      "無效的VPN網關,VPN實例不存在，請再次核實您輸入的資源信息是否正確。"
                   };
                   let ErrOr = Object.assign(ErrorTips, ErrTips);
                   this.$message({
@@ -715,9 +726,9 @@ export default {
                 } else {
                   let ErrTips = {
                     "InvalidVpnGatewayId.Malformed":
-                      "无效的VPN网关,VPN实例ID不合法。",
+                      "無效的VPN網關,VPN實例ID不合法。",
                     "InvalidVpnGatewayId.NotFound":
-                      "无效的VPN网关,VPN实例不存在，请再次核实您输入的资源信息是否正确。"
+                      "無效的VPN網關,VPN實例不存在，請再次核實您輸入的資源信息是否正確。"
                   };
                   let ErrOr = Object.assign(ErrorTips, ErrTips);
                   this.$message({
@@ -756,9 +767,9 @@ export default {
                   this.loadShow = false;
                 } else {
                   let ErrTips = {
-                    "InvalidParameter.Coexist": "参数不支持同时指定。",
-                    "InvalidParameterValue.Malformed": "入参格式不合法。",
-                    ResourceNotFound: "	资源不存在。"
+                    "InvalidParameter.Coexist": "參數不支持同時指定。",
+                    "InvalidParameterValue.Malformed": "入參格式不合法。",
+                    ResourceNotFound: "資源不存在。"
                   };
                   let ErrOr = Object.assign(ErrorTips, ErrTips);
                   this.$message({
@@ -837,10 +848,10 @@ export default {
                   this.loadShow = false;
                 } else {
                   let ErrTips = {
-                    "InvalidParameter.Coexist": "参数不支持同时指定。",
-                    InvalidParameterValue: "参数值不合法。",
-                    "InvalidParameterValue.Malformed": "入参格式不合法。",
-                    "InvalidParameterValue.TooLong": "无效参数值。参数值太长。"
+                    "InvalidParameter.Coexist": "參數不支持同時指定。",
+                    InvalidParameterValue: "參數值不合法。",
+                    "InvalidParameterValue.Malformed": "入參格式不合法。",
+                    "InvalidParameterValue.TooLong": "無效參數值。參數值太長。"
                   };
                   let ErrOr = Object.assign(ErrorTips, ErrTips);
                   this.$message({
@@ -880,7 +891,7 @@ export default {
                   this.loadShow = false;
                 } else {
                   let ErrTips = {
-                    InvalidParameter: "入参不合法。"
+                    InvalidParameter: "入參不合法。"
                   };
                   let ErrOr = Object.assign(ErrorTips, ErrTips);
                   this.$message({
@@ -919,12 +930,12 @@ export default {
                   this.loadShow = false;
                 } else {
                   let ErrTips = {
-                    CdbError: "后端错误或者流程错误。",
-                    "InternalError.DatabaseAccessError": "数据库内部错误。",
-                    "InternalError.DesError": "系统内部错误。",
-                    InvalidParameter: "参数错误。",
-                    "InvalidParameter.InstanceNotFound": "实例不存在。",
-                    "OperationDenied.WrongStatus": "后端任务状态非法。"
+                    CdbError: "後端錯誤或者流程錯誤。",
+                    "InternalError.DatabaseAccessError": "數據庫內部錯誤。",
+                    "InternalError.DesError": "系統內部錯誤。",
+                    InvalidParameter: "參數錯誤。",
+                    "InvalidParameter.InstanceNotFound": "實例不存在。",
+                    "OperationDenied.WrongStatus": "後端任務狀態非法。"
                   };
                   let ErrOr = Object.assign(ErrorTips, ErrTips);
                   this.$message({
@@ -964,12 +975,12 @@ export default {
                 } else {
                   let ErrTips = {
                     "InternalError.DbOperationFailed":
-                      "统一的 DB 操作错误，可以是 update insert select..。",
-                    InvalidParameter: "参数错误",
-                    "InvalidParameter.EmptyParam": "参数为空。",
-                    "InvalidParameter.InvalidParameter": "业务参数错误。",
-                    "InvalidParameter.PermissionDenied": "接口没有cam权限。",
-                    "UnauthorizedOperation.NoCAMAuthed": "无cam 权限。"
+                      "統壹的 DB 操作錯誤，可以是 update insert select..。",
+                    InvalidParameter: "參數錯誤",
+                    "InvalidParameter.EmptyParam": "參數爲空。",
+                    "InvalidParameter.InvalidParameter": "業務參數錯誤。",
+                    "InvalidParameter.PermissionDenied": "接口沒有cam權限。",
+                    "UnauthorizedOperation.NoCAMAuthed": "無cam 權限。"
                   };
                   let ErrOr = Object.assign(ErrorTips, ErrTips);
                   this.$message({
@@ -1013,10 +1024,10 @@ export default {
                   this.loadShow = false;
                 } else {
                   let ErrTips = {
-                    InternalError: "内部错误",
-                    ResourceNotFound: "资源不存在",
+                    InternalError: "內部錯誤",
+                    ResourceNotFound: "資源不存在",
                     "ResourceNotFound.DirectConnectTunnelIdIsNotExist":
-                      "专用通道不存在。"
+                      "專用通道不存在。"
                   };
                   let ErrOr = Object.assign(ErrorTips, ErrTips);
                   this.$message({
@@ -1059,16 +1070,16 @@ export default {
                   this.loadShow = false;
                 } else {
                   let ErrTips = {
-                    FailedOperation: "操作失败。",
-                    InternalError: "内部错误。",
-                    "InternalError.ExeTimeout": "执行超时。",
-                    InvalidParameter: "参数错误。",
-                    "InvalidParameter.InvalidParameter": "参数错误。",
-                    "InvalidParameter.InvalidParameterParam": "参数错误。",
-                    InvalidParameterValue: "无效的参数值。",
-                    LimitExceeded: "超过配额限制。",
-                    MissingParameter: "缺少参数错误。",
-                    UnknownParameter: "未知参数错误。",
+                    FailedOperation: "操作失敗。",
+                    InternalError: "內部錯誤。",
+                    "InternalError.ExeTimeout": "執行超時。",
+                    InvalidParameter: "參數錯誤。",
+                    "InvalidParameter.InvalidParameter": "參數錯誤。",
+                    "InvalidParameter.InvalidParameterParam": "參數錯誤。",
+                    InvalidParameterValue: "無效的參數值。",
+                    LimitExceeded: "超過配額限制。",
+                    MissingParameter: "缺少參數錯誤。",
+                    UnknownParameter: "未知參數錯誤。",
                     UnsupportedOperation: "操作不支持。"
                   };
                   let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -1115,46 +1126,46 @@ export default {
         }
       });
     },
-    // 状态
+    // 狀態
     InstanceState(val) {
       if (val === "PENDING") {
-        return "创建中";
+        return "創建中";
       } else if (val === "LAUNCH_FAILED") {
-        return "创建失败";
+        return "創建失敗";
       } else if (val === "RUNNING") {
-        return "运行中";
+        return "運行中";
       } else if (val === "STOPPED") {
-        return "关机";
+        return "關機";
       } else if (val === "STARTING") {
-        return "关机中";
+        return "關機中";
       } else if (val === "REBOOTING") {
-        return "重启中";
+        return "重啓中";
       } else if (val === "SHUTDOWN") {
-        return "停止待销毁";
+        return "停止待銷毀";
       } else if (val === "TERMINATING") {
-        return "销毁中";
+        return "銷毀中";
       }
     },
     VPN_GW_State(val) {
       if (val === "PENDING") {
-        return "生产中";
+        return "生産中";
       } else if (val === "DELETING") {
         return "删除中";
       } else if (val === "AVAILABLE") {
-        return "运行中";
+        return "運行中";
       }
     },
     VPN_Tunnel_State(val) {
       if (val === "PENDING") {
-        return "生产中";
+        return "生産中";
       } else if (val === "DELETING") {
         return "删除中";
       } else if (val === "AVAILABLE") {
-        return "运行中";
+        return "運行中";
       } else if (val === "UPDATING") {
-        return "升级中";
+        return "升級中";
       } else if (val === "FAILE") {
-        return "失败";
+        return "失敗";
       }
     },
     NAT_Status(val) {
@@ -1166,13 +1177,13 @@ export default {
     },
     CDB_Status(val) {
       if (val == 0) {
-        return "创建中";
+        return "創建中";
       } else if (val == 1) {
-        return "运行中";
+        return "運行中";
       } else if (val == 4) {
-        return "隔离中";
+        return "隔離中";
       } else if (val == 5) {
-        return "已隔离";
+        return "已隔離";
       }
     },
     REDIS_Status(val) {
@@ -1181,27 +1192,27 @@ export default {
       } else if (val == 1) {
         return "流程中";
       } else if (val == 2) {
-        return "运行中";
+        return "運行中";
       } else if (val == -2) {
-        return "已隔离";
+        return "已隔離";
       } else if (val == -3) {
         return "待删除";
       }
     },
     CDB_InstanceType(val) {
       if (val == 1) {
-        return "主实例";
+        return "主實例";
       } else if (val == 2) {
-        return "灾备实例";
+        return "災備實例";
       } else if (val == 3) {
-        return "只读实例";
+        return "只讀實例";
       }
     },
     dcchannel_Status(val) {
       if (val == "AVAILABLE") {
-        return "就绪或者已连接";
+        return "就緒或者已連接";
       } else if (val == "PENDING") {
-        return "申请中";
+        return "申請中";
       } else if (val == "ALLOCATING") {
         return "配置中";
       } else if (val == "ALLOCATED") {
@@ -1215,22 +1226,22 @@ export default {
       } else if (val == "COMFIRMING") {
         return "待接受";
       } else if (val == "REJECTED") {
-        return "拒绝";
+        return "拒絕";
       }
     },
     dcline_Status(val) {
       if (val == "PENDING") {
-        return "申请中";
+        return "申請中";
       } else if (val == "REJECTED") {
-        return "申请驳回";
+        return "申請駁回";
       } else if (val == "TOPAY") {
         return "待付款";
       } else if (val == "PAID") {
         return "已付款";
       } else if (val == "ALLOCATED") {
-        return "建设中";
+        return "建設中";
       } else if (val == "AVAILABLE") {
-        return "已开通";
+        return "已開通";
       } else if (val == "DELETING") {
         return "删除中";
       } else if (val == "DELETED") {
@@ -1258,7 +1269,7 @@ export default {
     save() {
       if (this.multipleSelection.length === 0) {
         this.$message({
-          message: "请选择要添加组",
+          message: "請選擇要添加組",
           type: "error",
           showClose: true,
           duration: 0
@@ -1350,16 +1361,16 @@ export default {
           this.ListInit();
         } else {
           let ErrTips = {
-            FailedOperation: "操作失败。",
-            InternalError: "内部错误。",
-            "InternalError.ExeTimeout": "执行超时。",
-            InvalidParameter: "参数错误。",
-            "InvalidParameter.InvalidParameter": "参数错误。",
-            "InvalidParameter.InvalidParameterParam": "参数错误。",
-            InvalidParameterValue: "无效的参数值。",
-            LimitExceeded: "超过配额限制。",
-            MissingParameter: "缺少参数错误。",
-            UnknownParameter: "未知参数错误。",
+            FailedOperation: "操作失敗。",
+            InternalError: "內部錯誤。",
+            "InternalError.ExeTimeout": "執行超時。",
+            InvalidParameter: "參數錯誤。",
+            "InvalidParameter.InvalidParameter": "參數錯誤。",
+            "InvalidParameter.InvalidParameterParam": "參數錯誤。",
+            InvalidParameterValue: "無效的參數值。",
+            LimitExceeded: "超過配額限制。",
+            MissingParameter: "缺少參數錯誤。",
+            UnknownParameter: "未知參數錯誤。",
             UnsupportedOperation: "操作不支持。"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -1446,17 +1457,17 @@ export default {
           this.tableData = res.Response.InstanceSet;
         } else {
           let ErrTips = {
-            InternalServerError: "操作内部错误。",
-            InvalidFilter: "无效的过滤器。",
-            "InvalidFilterValue.LimitExceeded": "Filter参数值数量超过限制。",
+            InternalServerError: "操作內部錯誤。",
+            InvalidFilter: "無效的過濾器。",
+            "InvalidFilterValue.LimitExceeded": "Filter參數值數量超過限制。",
             "InvalidHostId.Malformed":
-              "无效CDH ID。指定的CDH ID格式错误。例如ID长度错误host-1122。",
+              "無效CDH ID。指定的CDH ID格式錯誤。例如ID長度錯誤host-1122。",
             "InvalidInstanceId.Malformed":
-              "无效实例ID。指定的实例ID格式错误。例如实例ID长度错误ins-1122。",
-            InvalidParameter: "无效参数。参数不合要求或者参数不被支持等。",
+              "無效實例ID。指定的實例ID格式錯誤。例如實例ID長度錯誤ins-1122。",
+            InvalidParameter: "無效參數。參數不合要求或者參數不被支持等。",
             InvalidParameterValue:
-              "无效参数值。参数值格式错误或者参数值不被支持等。",
-            "InvalidParameterValue.LimitExceeded": "参数值数量超过限制。",
+              "無效參數值。參數值格式錯誤或者參數值不被支持等。",
+            "InvalidParameterValue.LimitExceeded": "參數值數量超過限制。",
             "InvalidZone.MismatchRegion": "指定的zone不存在。"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);

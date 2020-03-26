@@ -19,7 +19,7 @@
           <span style>告警接收組</span>
           <p class="tip">
             您可到
-            <a @click="Console" style="cursor: pointer;">訪問管理控制台</a>修改用戶和用戶組信息
+            <a @click="Console" style="cursor: pointer;">訪問管理控制台</a>修改用護和用護組信息
             <br />
           </p>
         </div> -->
@@ -33,15 +33,15 @@
 </template>
 <script>
 import Header from "./Header";
-import { ErrorTips } from "@/components/ErrorTips.js"; //公共错误码
+import { ErrorTips } from "@/components/ErrorTips.js"; //公共錯誤碼
 import Cam from "./Cam1";
 
 import { EDIT_CUSTON_MESSAGE } from "@/constants/CM-lxx.js";
 export default {
   data() {
     return {
-      multipleSelection: [], //穿梭框数据
-      checked1: "", //邮件
+      multipleSelection: [], //穿梭框數據
+      checked1: "", //郵件
       checked2: "", //短信
       input: "",
       input1: "",
@@ -49,23 +49,23 @@ export default {
       options: [],
       values: "",
       cam: {},
-      dataObj: {}, //编辑传的对象
+      dataObj: {}, //編輯傳的對象
       formInline: {
-        strategy_name: "", //策略名称
-        textarea: "", //备注
-        strategy: "云服务器-基础监控",
+        strategy_name: "", //策略名稱
+        textarea: "", //備注
+        strategy: "雲伺服器-基礎監控",
         strategy_kind: [
           {
             value: 0,
-            name: "云服务器-基础监控"
+            name: "雲伺服器-基礎監控"
           }
-        ], //策略类型
-        alarm: "", //策略类型
-        projectName: "默认项目",
+        ], //策略類型
+        alarm: "", //策略類型
+        projectName: "默認項目",
         project: [
           {
             value: 0,
-            name: "默认项目"
+            name: "默認項目"
           }
         ]
       }
@@ -83,12 +83,12 @@ export default {
     Console(){
       //訪問管理控制台
     },
-    // 获取cam组件的值
+    // 獲取cam組件的值
     camFun(data) {
       this.cam = data;
       console.log(this.cam);
     },
-    //确定
+    //確定
     save() {
       if (this.cam.selectUserGroup.length == 0) {
         this.$message({
@@ -134,7 +134,7 @@ export default {
       this.axios.post(EDIT_CUSTON_MESSAGE, param).then(res => {
         if (res.Response.Error === undefined) {
           this.$message({
-            message: "编辑成功",
+            message: "編輯成功",
             type: "success",
             showClose: true,
             duration: 0
@@ -145,16 +145,16 @@ export default {
           this.loadShow = false;
         } else {
           let ErrTips = {
-            FailedOperation: "操作失败。",
-            InternalError: "内部错误。",
-            InvalidParameter: "参数错误。",
-            ResourceInUse: "资源被占用。",
-            ResourceInsufficient: "资源不足。",
-            ResourceNotFound: "资源不存在。",
-            ResourceUnavailable: "资源不可用。",
-            ResourcesSoldOut: "资源售罄。",
-            UnauthorizedOperation: "未授权操作。",
-            UnknownParameter: "未知参数错误。"
+            FailedOperation: "操作失敗。",
+            InternalError: "內部錯誤。",
+            InvalidParameter: "參數錯誤。",
+            ResourceInUse: "資源被占用。",
+            ResourceInsufficient: "資源不足。",
+            ResourceNotFound: "資源不存在。",
+            ResourceUnavailable: "資源不可用。",
+            ResourcesSoldOut: "資源售罄。",
+            UnauthorizedOperation: "未授權操作。",
+            UnknownParameter: "未知參數錯誤。"
           };
           this.loadShow = false;
           let ErrOr = Object.assign(ErrorTips, ErrTips);

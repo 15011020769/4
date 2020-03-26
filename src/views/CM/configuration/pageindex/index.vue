@@ -1,27 +1,27 @@
 <template>
     <div class="newdialog">
       <el-dialog
-            title="配置指标统计方式"
+            title="配置指標統計方式"
             :visible.sync="dialogVisible"
             width="40%">
             <div class="content">
                 <div class="explain" style="margin-bottom:20px;">
                     <p>
-                    请对指标指定统计方法和统计周期
+                    請對指標指定統計方法和統計周期
                     </p>
                 </div>
                 <div class="table">
                     <el-table :data="gridData">
-                        <el-table-column property="date" label="指标" width="190"></el-table-column>
-                        <el-table-column property="name" label="统计方法" width="130"></el-table-column>
-                        <el-table-column property="address" label="统计周期" width="100"></el-table-column>
+                        <el-table-column property="date" label="指標" width="190"></el-table-column>
+                        <el-table-column property="name" label="統計方法" width="130"></el-table-column>
+                        <el-table-column property="address" label="統計周期" width="100"></el-table-column>
                         <el-table-column property="address" label="操作"></el-table-column>
                     </el-table>
                 </div>
             </div>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="cancel">取 消</el-button>
-                <el-button type="primary" @click="save">确 定</el-button>
+                <el-button type="primary" @click="save">確 定</el-button>
             </span>
         </el-dialog>
     </div>
@@ -53,7 +53,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-    
+
   .newdialog{
     width: 100%;
     height: 100%;

@@ -9,22 +9,29 @@
         </p>
       </div> -->
       <div class="box">
-        <div class="table_top"> 
+        <div class="table_top">
           <div class="type_data">
-            <TimeDropDown :TimeArr='TimeArr' :classsvalue="values" :Datecontrol='Datecontrol' :Graincontrol='Graincontrol' :Difference="Difference"
-      v-on:switchData="GetDat" />
+            <TimeDropDown
+              :TimeArr="TimeArr"
+              :classsvalue="values"
+              :Datecontrol="Datecontrol"
+              :Graincontrol="Graincontrol"
+              :Difference="Difference"
+              v-on:switchData="GetDat"
+            />
           </div>
           <div class="writeput">
             <!-- 搜索 -->
             <SEARCH
-              :isSHows = "true"
-             :searchOptions="searchOptions"
-             :searchValue="searchValue" 
-             :searchInput="searchInput" 
+              :isSHows="true"
+              :searchOptions="searchOptions"
+              :searchValue="searchValue"
+              :searchInput="searchInput"
               @changeValue="changeValue"
-              @changeinput="changeinput" 
-              @clicksearch="clicksearch" 
-              @exportExcel="exportExcel">
+              @changeinput="changeinput"
+              @clicksearch="clicksearch"
+              @exportExcel="exportExcel"
+            >
             </SEARCH>
           </div>
           <div class="icons">
@@ -34,95 +41,152 @@
         </div>
         <div class="table_head">
           <div class="table_head_left">
-            <div :class="OverViewBgcolor === 1 ? 'error hoverBgcolor' : 'error'" @click="overViewClick('Type',1,true)">
+            <div
+              :class="OverViewBgcolor === 1 ? 'error hoverBgcolor' : 'error'"
+              @click="overViewClick('Type', 1, true)"
+            >
               <p>異常事件</p>
               <p>
-                <span>{{unNormalEventAmount}}</span>个
+                <span>{{ unNormalEventAmount }}</span
+                >個
               </p>
             </div>
-            <div :class="OverViewBgcolor === 2 ? 'noerror hoverBgcolor' : 'noerror'" @click="overViewClick('Status',2,true)">
-              <p>未恢復異常事件</p>
+            <div
+              :class="
+                OverViewBgcolor === 2 ? 'noerror hoverBgcolor' : 'noerror'
+              "
+              @click="overViewClick('Status', 2, true)"
+            >
+              <p>未恢複異常事件</p>
               <p style="color:red">
-                <span>{{unRecoverAmount}}</span>个
+                <span>{{ unRecoverAmount }}</span
+                >個
               </p>
             </div>
-            <div :class="OverViewBgcolor === 3 ? 'nopageerror hoverBgcolor' : 'nopageerror'" @click="overViewClick('IsAlarmConfig',3,true)">
+            <div
+              :class="
+                OverViewBgcolor === 3
+                  ? 'nopageerror hoverBgcolor'
+                  : 'nopageerror'
+              "
+              @click="overViewClick('IsAlarmConfig', 3, true)"
+            >
               <p>未配置告警異常事件</p>
               <p>
-                <span>{{unConfigAlarmAmount}}</span>个
+                <span>{{ unConfigAlarmAmount }}</span
+                >個
               </p>
             </div>
           </div>
           <div class="table_head_right">
-            <div :class="OverViewBgcolor === 4 ? 'pages hoverBgcolor' : 'pages'" @click="overViewClick('Type',4,true)">
+            <div
+              :class="OverViewBgcolor === 4 ? 'pages hoverBgcolor' : 'pages'"
+              @click="overViewClick('Type', 4, true)"
+            >
               <p>狀態變更</p>
               <p>
-                <span>{{statusChangeAmount}}</span>个
+                <span>{{ statusChangeAmount }}</span
+                >個
               </p>
             </div>
           </div>
         </div>
         <div class="table">
-          <el-table :data="tableData" v-loading="loadShow" style="width: 100%" height="450" :empty-text="$t('CVM.clBload.zwsj')">
-            <el-table-column prop="EventCName" label="事件" width="90"></el-table-column>
+          <el-table
+            :data="tableData"
+            v-loading="loadShow"
+            style="width: 100%"
+            height="450"
+            :empty-text="$t('CVM.clBload.zwsj')"
+          >
+            <el-table-column
+              prop="EventCName"
+              label="事件"
+              width="90"
+            ></el-table-column>
             <el-table-column prop label="類型" width="100">
               <template slot-scope="scope">
-                <p>{{scope.row.Type === 'abnormal' ? '異常事件' : '状态变更'}}</p>
+                <p>
+                  {{ scope.row.Type === "abnormal" ? "異常事件" : "狀態變更" }}
+                </p>
               </template>
             </el-table-column>
-            <el-table-column prop="ProductCName" label="產品類型" width="90"></el-table-column>
+            <el-table-column
+              prop="ProductCName"
+              label="產品類型"
+              width="90"
+            ></el-table-column>
             <el-table-column prop label="地域" width="90">
               <template slot-scope="scope">
-                <p>{{scope.row.Region === 'tpe' ? '台灣台北' : ''}}</p>
+                <p>{{ scope.row.Region === "tpe" ? "台灣台北" : "" }}</p>
               </template>
             </el-table-column>
             <el-table-column prop label="影響對象" width="205">
               <template slot-scope="scope">
-                <p>{{scope.row.InstanceId}}</p>
-                <p>{{scope.row.InstanceName}}</p>
+                <p>{{ scope.row.InstanceId }}</p>
+                <p>{{ scope.row.InstanceName }}</p>
               </template>
             </el-table-column>
             <el-table-column prop label="對象詳情" width="220">
               <template slot-scope="scope">
-                <div v-for="(items,index) in scope.row.Dimensions" :key="index">
-                  <p><span>{{items.Name}}：</span>{{items.Value}}</p>
+                <div
+                  v-for="(items, index) in scope.row.Dimensions"
+                  :key="index"
+                >
+                  <p>
+                    <span>{{ items.Name }}：</span>{{ items.Value }}
+                  </p>
                 </div>
               </template>
             </el-table-column>
             <el-table-column prop label="狀態" width="50">
               <template slot-scope="scope">
-                <p>{{scope.row.Status == "recover" ? "已恢復" : scope.row.Status == "alarm" ? "未恢復" : "-"}}</p>
+                <p>
+                  {{
+                    scope.row.Status == "recover"
+                      ? "已恢複"
+                      : scope.row.Status == "alarm"
+                      ? "未恢複"
+                      : "-"
+                  }}
+                </p>
               </template>
             </el-table-column>
             <el-table-column prop label="開始時間" width="132">
               <template slot-scope="scope">
-                  <p>{{getConvDate(scope.row.StartTime)}}</p>
+                <p>{{ getConvDate(scope.row.StartTime) }}</p>
               </template>
             </el-table-column>
             <el-table-column prop label="更新時間" width="132">
               <template slot-scope="scope">
-                  <p>{{getConvDate(scope.row.UpdateTime)}}</p>
+                <p>{{ getConvDate(scope.row.UpdateTime) }}</p>
               </template>
             </el-table-column>
             <el-table-column prop="alarm" label="告警配置" width="132">
               <template slot-scope="scope">
-                  <p><span style="cursor:default">{{scope.row.IsAlarmConfig == 1 ? '已配置' : '未配置'}}</span>
-                  <span class="New_Configuration"><a @click="jump(scope.row.InstanceId)">新增配置</a></span></p>
+                <p>
+                  <span style="cursor:default">{{
+                    scope.row.IsAlarmConfig == 1 ? "已配置" : "未配置"
+                  }}</span>
+                  <span class="New_Configuration"
+                    ><a @click="jump(scope.row.InstanceId)">新增配置</a></span
+                  >
+                </p>
               </template>
             </el-table-column>
           </el-table>
 
-          <!-- 分页 -->
+          <!-- 分頁 -->
           <div class="Right-style pagstyle">
             <el-pagination
-                @size-change="handleSizeChange"
-                @current-change="handleCurrentChange"
-                :current-page="pageIndex"
-                :page-sizes="[10, 20, 50, 100]"
-                :page-size="pageSize"
-                layout="total, sizes, prev, pager, next"
-                :total="TotalCount"
-              ></el-pagination>
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+              :current-page="pageIndex"
+              :page-sizes="[10, 20, 50, 100]"
+              :page-size="pageSize"
+              layout="total, sizes, prev, pager, next"
+              :total="TotalCount"
+            ></el-pagination>
           </div>
         </div>
       </div>
@@ -133,84 +197,83 @@
 
 <script>
 import Header from "@/components/public/Head";
-import TimeDropDown from '@/components/public/TimeDropDown';
+import TimeDropDown from "@/components/public/TimeDropDown";
 import Dialog from "./custom/custom";
 import SEARCH from "@/components/public/SEARCH";
 import Loading from "@/components/public/Loading";
-import { ErrorTips } from "@/components/ErrorTips.js"; //公共错误码
+import { ErrorTips } from "@/components/ErrorTips.js"; //公共錯誤碼
 import { PRODUCT_EVENT_LIST } from "@/constants";
 
 export default {
   name: "product",
   data() {
     return {
-      // 概览
+      // 概覽
       OverViewBgcolorTrigger: false,
       OverViewBgcolor: 0,
-      statusChangeAmount: 0, // 状态变更
-      unConfigAlarmAmount: 0, // 未配置异常事件
-      unNormalEventAmount: 0, // 异常事件
-      unRecoverAmount: 0, // 未恢复异常事件
+      statusChangeAmount: 0, // 狀態變更
+      unConfigAlarmAmount: 0, // 未配置異常事件
+      unNormalEventAmount: 0, // 異常事件
+      unRecoverAmount: 0, // 未恢複異常事件
 
       activeName: "first",
-      // 时间控件
+      // 時間控件
       Datecontrol: true,
       Graincontrol: false,
-      Difference: 'D',
+      Difference: "D",
       values: 13,
 
-      dialogVisible: false, //弹框
+      dialogVisible: false, //彈框
       searchInput: "", //搜索框的值
       searchOptions: [
-          {
-            value: "InstanceId.0",
-            label: "影響對象ID"
-          },
-          // {
-          //   value: "EventName.0",
-          //   label: "事件名"
-          // },
-          // {
-          //   value: "Status.0",
-          //   label: "告警配置状态"
-          // },
-          // {
-          //   value: "Type.0",
-          //   label: "事件类型"
-          // },
+        {
+          value: "InstanceId.0",
+          label: "影響對象ID"
+        }
+        // {
+        //   value: "EventName.0",
+        //   label: "事件名"
+        // },
+        // {
+        //   value: "Status.0",
+        //   label: "告警配置狀態"
+        // },
+        // {
+        //   value: "Type.0",
+        //   label: "事件類型"
+        // },
       ],
-      searchValue: "", //inp输入的值
+      searchValue: "", //inp輸入的值
 
-      loadShow: true, // 加载是否显示
+      loadShow: true, // 加載是否顯示
       tableData: [],
-      StartTime: "", //起始时间
-      EndTime: "", //结束时间
-      //分页
-      TotalCount: 0, //总条数
-      pageSize: 10, // 分页条数
-      pageIndex: 0, // 当前页码
+      StartTime: "", //起始時間
+      EndTime: "", //結束時間
+      //分頁
+      TotalCount: 0, //總條數
+      pageSize: 10, // 分頁條數
+      pageIndex: 0, // 當前頁碼
       TimeArr: [
-          
-          {
-            name: '近7天',
-            Time: 'Nearly_7_days',
-            TimeGranularity: [{
-                value: "3600",
-                label: "1小時"
-              },
-              {
-                value: "86400",
-                label: "1天"
-              }
-            ]
-          },
-           {
-            name: '近30天',
-            Time: 'Nearly_30_days',
-          },
-        ]
-      }
-    
+        {
+          name: "近7天",
+          Time: "Nearly_7_days",
+          TimeGranularity: [
+            {
+              value: "3600",
+              label: "1小時"
+            },
+            {
+              value: "86400",
+              label: "1天"
+            }
+          ]
+        },
+        {
+          name: "近30天",
+          Time: "Nearly_30_days"
+        }
+      ]
+    };
   },
   components: {
     Header,
@@ -220,32 +283,32 @@ export default {
   },
 
   methods: {
-    // 获取时间戳
+    // 獲取時間戳
     GetDat(data) {
-        let StartTIme = new Date(data[1].StartTIme);
-        let EndTIme = new Date(data[1].EndTIme);
+      let StartTIme = new Date(data[1].StartTIme);
+      let EndTIme = new Date(data[1].EndTIme);
 
-        this.StartTime = StartTIme.getTime()/1000;
-        this.EndTime = EndTIme.getTime()/1000;
-        this.getProductList();
-      },
-      // 将时间戳转为日期格式
-    getConvDate(data){
-        var _data = data;
-          _data = data*1000
-        const time = new Date(_data);    
-        const Y = time.getFullYear();
-        const Mon = time.getMonth() + 1;
-        const Day = time.getDate();
-        const H = time.getHours();
-        const Min = time.getMinutes();
-        const S = time.getSeconds();
-          return `${Y}-${Mon}-${Day} ${H}:${Min}:${S}`
-      },
-    //获取数据
+      this.StartTime = StartTIme.getTime() / 1000;
+      this.EndTime = EndTIme.getTime() / 1000;
+      this.getProductList();
+    },
+    // 將時間戳轉爲日期格式
+    getConvDate(data) {
+      var _data = data;
+      _data = data * 1000;
+      const time = new Date(_data);
+      const Y = time.getFullYear();
+      const Mon = time.getMonth() + 1;
+      const Day = time.getDate();
+      const H = time.getHours();
+      const Min = time.getMinutes();
+      const S = time.getSeconds();
+      return `${Y}-${Mon}-${Day} ${H}:${Min}:${S}`;
+    },
+    //獲取數據
     getProductList(events) {
       let types = typeof data;
-      this.loadShow = true; //加载
+      this.loadShow = true; //加載
       const params = {
         Region: localStorage.getItem("regionv2"),
         Version: "2018-07-24",
@@ -253,44 +316,43 @@ export default {
         Limit: this.pageSize,
         Offset: this.pageIndex,
         StartTime: this.StartTime,
-        EndTime: this.EndTime,
+        EndTime: this.EndTime
       };
-     if (this.searchInput !== "" && this.searchValue !== "") {
-        params[this.searchValue] =  this.searchInput
-     }
-     switch (events) {
-            case 1: 
-            console.log(events)
-             params['Type.0'] = "abnormal";
-              break;
-            case 2: 
-            console.log(events)
-              params['Status.0'] = "alarm";
-              break;
-            case 3: 
-            console.log(events)
-              params['IsAlarmConfig'] = 0;
-              break;
-            case 4: 
-            console.log(events)
-              params['Type.0'] = "status_change";
-              break;
-          }
-     
+      if (this.searchInput !== "" && this.searchValue !== "") {
+        params[this.searchValue] = this.searchInput;
+      }
+      switch (events) {
+        case 1:
+          console.log(events);
+          params["Type.0"] = "abnormal";
+          break;
+        case 2:
+          console.log(events);
+          params["Status.0"] = "alarm";
+          break;
+        case 3:
+          console.log(events);
+          params["IsAlarmConfig"] = 0;
+          break;
+        case 4:
+          console.log(events);
+          params["Type.0"] = "status_change";
+          break;
+      }
+
       //  monitor2/DescribeProductEventList   //接口
       // console.log(JSON.stringify(params));
       this.axios.post(PRODUCT_EVENT_LIST, params).then(res => {
         if (res.Response.Error === undefined) {
-          this.tableData = res.Response.Events; //列表数据
+          this.tableData = res.Response.Events; //列表數據
           this.TotalCount = res.Response.Total;
-          this.loadShow = false; //取消加载
+          this.loadShow = false; //取消加載
           this.showNameSpaceModal = false;
-          
-          this.statusChangeAmount = res.Response.OverView.StatusChangeAmount; // 状态变更
-          this.unConfigAlarmAmount = res.Response.OverView.UnConfigAlarmAmount; // 未配置异常事件
-          this.unNormalEventAmount = res.Response.OverView.UnNormalEventAmount; // 异常事件
-          this.unRecoverAmount = res.Response.OverView.UnRecoverAmount; // 未恢复异常事件
-          
+
+          this.statusChangeAmount = res.Response.OverView.StatusChangeAmount; // 狀態變更
+          this.unConfigAlarmAmount = res.Response.OverView.UnConfigAlarmAmount; // 未配置異常事件
+          this.unNormalEventAmount = res.Response.OverView.UnNormalEventAmount; // 異常事件
+          this.unRecoverAmount = res.Response.OverView.UnRecoverAmount; // 未恢複異常事件
         } else {
           this.loadShow = false;
           let ErrTips = {};
@@ -304,18 +366,18 @@ export default {
         }
       });
     },
-    // 分页
+    // 分頁
     handleCurrentChange(val) {
       this.pageIndex = val - 1;
       this.getProductList();
       this.pageIndex += 1;
     },
     handleSizeChange(val) {
-      // console.log(`每页 ${val} 条`);
+      // console.log(`每頁 ${val} 條`);
       this.pageSize = val;
       this.getProductList();
     },
-    //弹框
+    //彈框
     dialog() {
       this.dialogVisible = true;
     },
@@ -325,75 +387,73 @@ export default {
     save() {
       this.dialogVisible = false;
     },
-    // 概览
-    overViewClick (events,num,Trigger) {
-        if (this.OverViewBgcolor != num) {
-          this.OverViewBgcolor = num;
+    // 概覽
+    overViewClick(events, num, Trigger) {
+      if (this.OverViewBgcolor != num) {
+        this.OverViewBgcolor = num;
+        this.getProductList(this.OverViewBgcolor);
+      } else {
+        switch (this.OverViewBgcolor) {
+          case 1:
+            this.OverViewBgcolorTrigger = !Trigger;
+            break;
+          case 2:
+            this.OverViewBgcolorTrigger = !Trigger;
+            break;
+          case 3:
+            this.OverViewBgcolorTrigger = !Trigger;
+            break;
+          case 4:
+            this.OverViewBgcolorTrigger = !Trigger;
+            break;
+        }
+        if (!this.OverViewBgcolorTrigger) {
+          this.OverViewBgcolor = 0;
           this.getProductList(this.OverViewBgcolor);
-        }else {
-          switch (this.OverViewBgcolor) {
-            case 1: 
-              this.OverViewBgcolorTrigger= !Trigger;
-              break;
-            case 2: 
-              this.OverViewBgcolorTrigger= !Trigger;
-              break;
-            case 3: 
-              this.OverViewBgcolorTrigger= !Trigger;
-              break;
-            case 4: 
-              this.OverViewBgcolorTrigger= !Trigger;
-              break;
-          }
-          if (!this.OverViewBgcolorTrigger) {
-            this.OverViewBgcolor = 0;
-            this.getProductList(this.OverViewBgcolor);
-          }
-        }       
-    },
-    
-    //导出表格
-      exportExcel() {
-        return '';
-      },
-    //选择搜索条件
-      changeValue(val) {
-        this.searchValue = val;
-      },
-      changeinput(val) {
-        this.searchInput = val;
-        if (this.searchInput === "") {
-          this.currpage = 1;
-          this.getProductList();
         }
-      },
-      clicksearch(val) {
-        this.currpage = 1;
-        this.searchInput = val;
-        if (this.searchInput !== "" && this.searchValue !== "") {
-          this.getProductList();
-          
-        } else {
-          this.$message.error("請輸入正確搜索信息");
-        }
-      },
-      jump(id) {
-        this.$router.push({
-          name: "strategy",
-          query: {
-            id
-          }
-        });
       }
-    
+    },
+
+    //導出表格
+    exportExcel() {
+      return "";
+    },
+    //選擇搜索條件
+    changeValue(val) {
+      this.searchValue = val;
+    },
+    changeinput(val) {
+      this.searchInput = val;
+      if (this.searchInput === "") {
+        this.currpage = 1;
+        this.getProductList();
+      }
+    },
+    clicksearch(val) {
+      this.currpage = 1;
+      this.searchInput = val;
+      if (this.searchInput !== "" && this.searchValue !== "") {
+        this.getProductList();
+      } else {
+        this.$message.error("請輸入正確搜索信息");
+      }
+    },
+    jump(id) {
+      this.$router.push({
+        name: "strategy",
+        query: {
+          id
+        }
+      });
+    }
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
 .product-wrap >>> .el-button,
 .product-wrap >>> .el-input__inner {
-  height: 30px; 
+  height: 30px;
   border-radius: 0;
   padding-top: 0;
   line-height: 30px;
@@ -435,7 +495,7 @@ export default {
       font-size: 16px;
       align-items: center;
     }
-    
+
     .type_data {
       margin-top: 0px;
     }
@@ -477,16 +537,16 @@ export default {
         flex: 4;
       }
       .error:hover {
-         background: rgb(242, 242, 242);
-         cursor: pointer;
+        background: rgb(242, 242, 242);
+        cursor: pointer;
       }
       .noerror:hover {
-         background: rgb(242, 242, 242);
-         cursor: pointer;
+        background: rgb(242, 242, 242);
+        cursor: pointer;
       }
       .nopageerror:hover {
-         background: rgb(242, 242, 242);
-         cursor: pointer;
+        background: rgb(242, 242, 242);
+        cursor: pointer;
       }
     }
     .table_head_right {
@@ -498,17 +558,16 @@ export default {
         padding: 10px;
       }
       .pages:hover {
-         background: rgb(242, 242, 242);
-         cursor: pointer;
+        background: rgb(242, 242, 242);
+        cursor: pointer;
       }
     }
-    
   }
   .table {
     width: 100%;
     background: white;
     box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.32);
-    .New_Configuration :hover{
+    .New_Configuration :hover {
       cursor: pointer;
     }
   }
@@ -549,6 +608,6 @@ export default {
   margin: 0 5px;
 }
 .hoverBgcolor {
-      background: rgb(242, 242, 242);
+  background: rgb(242, 242, 242);
 }
-</style>  
+</style>

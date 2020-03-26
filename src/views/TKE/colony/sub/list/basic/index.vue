@@ -203,7 +203,7 @@
             <el-option
               v-for="item in osList"
               :key="item.Id"
-              :label="item.Alias"
+              :label="item.OsName"
               :value="item"
             ></el-option>
           </el-select>
@@ -663,10 +663,10 @@ export default {
                   OsName: res.data.images[i].OsName,
                   ImageId: res.data.images[i].ImageId,
                   OsCustomizeType: res.data.images[i].CustomizeType
-
                 }
                 this.os = res.data.images[i];
-                osList.push(osobj);
+                // osList.push(osobj);
+                osList.push(res.data.images[i]);
               }
             }
           }
@@ -694,7 +694,6 @@ export default {
           if(res.Response.ImageInstanceSet.length > 0) {
             for(let i = 0; i<res.Response.ImageInstanceSet.length; i++) {
               let currOs = res.Response.ImageInstanceSet[i].OsName;
-              debugger
               if(currOs.substring(0, 6).toLowerCase() === osString.substring(0, 6).toLowerCase()) {
                 
                 // this.os = res.data.ImageInstanceSet[i];
@@ -702,8 +701,8 @@ export default {
               }
             }
           }
-          debugger
           this.osList.push(osList);
+          console.log(this.osList);
         } else {
           this.loadShow = false;
           let ErrTips = {};
@@ -904,7 +903,8 @@ export default {
       let param = {
         Version: "2018-05-25",
         ClusterId: this.clusterId,
-        OsCustomizeType: this.os.CustomizeType,
+        // OsCustomizeType: this.os.CustomizeType,
+        OsCustomizeType: this.os.OsCustomizeType,
         ImageId: this.os.OsName
       }
 

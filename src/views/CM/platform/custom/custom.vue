@@ -1,13 +1,13 @@
 <template>
     <div class="newdialog">
          <el-dialog
-            title="自定义列表字段"
+            title="自定義列表字段"
             :visible.sync="dialogVisible"
             width="40%">
             <div class="content">
               <div class="explain" style="margin-bottom:20px;">
                 <p>
-                  请选择您想显示的列表详细信息，最多勾选7个字段，已勾选7个
+                  請選擇您想顯示的列表詳細信息，最多勾選7個字段，已勾選7個
                 </p>
               </div>
               <div class="checkbox">
@@ -20,18 +20,18 @@
             </div>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="cancel">取 消</el-button>
-                <el-button type="primary" @click="save">确 定</el-button>
+                <el-button type="primary" @click="save">確 定</el-button>
             </span>
         </el-dialog>
     </div>
 </template>
 
 <script>
-  const options = ['事件', '地域',"状态","影响对象","开始时间","更新时间","事件类型"];
+  const options = ['事件', '地域',"狀態","影響對象","開始時間","更新時間","事件類型"];
   export default {
     data() {
       return {
-        checkedlist: [ '事件', '地域',"状态","影响对象","开始时间","更新时间","事件类型"],
+        checkedlist: [ '事件', '地域',"狀態","影響對象","開始時間","更新時間","事件類型"],
         cities: options,
       };
     },

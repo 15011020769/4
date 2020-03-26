@@ -3,22 +3,22 @@
     <el-card class="card1">
       <h4 class="title-text">基本信息</h4>
       <el-form class="form form_container" label-position='left' label-width="120px" size="mini">
-        <el-form-item label="模板名称" class="form-item">
+        <el-form-item label="模板名稱" class="form-item">
           <div class="item-text">
             {{infoData.GroupName}}
             <!-- <i class="el-icon-edit" @click="openName(infoData.GroupName)" style="cursor:pointer"></i> -->
           </div>
         </el-form-item>
-        <el-form-item label="策略类型">
+        <el-form-item label="策略類型">
           <div class="item-text">{{infoData.ViewName | ViewName}}</div>
         </el-form-item>
-        <el-form-item label="最后修改人">
+        <el-form-item label="最後修改人">
           <div class="item-text">{{infoData.LastEditUin}}</div>
         </el-form-item>
-        <el-form-item label="最后修改时间">
+        <el-form-item label="最後修改時間">
           <div class="item-text">{{infoData?infoData.UpdateTime : '' | formatDate}}</div>
         </el-form-item>
-        <el-form-item label="备注">
+        <el-form-item label="備注">
           <div class="item-text">
             <span>{{infoData.Remark||'-'}}</span>
             <!-- <i class="el-icon-edit" @click="openRemark(infoData.Remark)" style="cursor:pointer"></i> -->
@@ -27,43 +27,43 @@
       </el-form>
     </el-card>
     <el-card class="card2">
-      <h4 class="title-text">告警触发条件
-        <!-- <span @click="openEdit()" style="cursor:pointer">编辑</span> -->
+      <h4 class="title-text">告警觸發條件
+        <!-- <span @click="openEdit()" style="cursor:pointer">編輯</span> -->
       </h4>
-      <p class="text-color1">指标告警(任意)</p>
+      <p class="text-color1">指標告警(任意)</p>
       <p class="text-color2" v-for="(it) in infoData.Conditions" :key="it.MetricDisplayName">
-        <!-- {{ `${it.metricShowName}>${it.calcValue}${it.unit},持续${it.continueTime}秒,按${it.calcType}天重复告警` }} -->
-        {{ `${it.MetricDisplayName}${it.CalcType||'-'}${it.CalcValue||'-'}${it.Unit||''},持续${it.ContinueTime/60}分钟,${it.alarm}` }}
+        <!-- {{ `${it.metricShowName}>${it.calcValue}${it.unit},持續${it.continueTime}秒,按${it.calcType}天重複告警` }} -->
+        {{ `${it.MetricDisplayName}${it.CalcType||'-'}${it.CalcValue||'-'}${it.Unit||''},持續${it.ContinueTime/60}分鍾,${it.alarm}` }}
       </p>
       <p class="text-color1" v-if="infoData.EventConditions&&infoData.EventConditions.length>0">事件告警</p>
       <p class="text-color2" v-for="(it) in infoData.EventConditions" :key="it.EventDisplayName">
-        {{ `${it.EventDisplayName},不重复告警` }}
+        {{ `${it.EventDisplayName},不重複告警` }}
       </p>
     </el-card>
     <el-card class="card3">
-      <h4 class="title-text">关联告警策略</h4>
+      <h4 class="title-text">關聯告警策略</h4>
       <el-table :data="infoData.PolicyGroups">
-        <el-table-column label="策略名称" prop="GroupName">
+        <el-table-column label="策略名稱" prop="GroupName">
           <template slot-scope="scope">
             <a :href="`#/strategy/createdetail?groupId=${scope.row.GroupID}`" class="gpn">{{scope.row.GroupName}}</a>
           </template>
         </el-table-column>
-        <el-table-column label="所属项目">
+        <el-table-column label="所屬項目">
           <template slot-scope="scope">
             {{ scope.row.ProjectID | ProjectName }}
           </template>
         </el-table-column>
-        <el-table-column label="已启用/实例数">
+        <el-table-column label="已啓用/實例數">
            <template slot-scope="scope">
               <p>{{scope.row.TotalInstanceCount+' / '+scope.row.NoShieldedInstanceCount}}</p>
-              <!-- <p>{{'组: '+scope.row.instanceGroup.groupName}}</p> -->
+              <!-- <p>{{'組: '+scope.row.instanceGroup.groupName}}</p> -->
            </template>
         </el-table-column>
         <el-table-column label="告警渠道">
           <template slot-scope="scope">
             <div v-for="(item,i) in scope.row.ReceiverInfos" :key="i">
               <!-- +item.ReceiverGroupList.length||0 -->
-              <p>接收组:&nbsp;{{item.ReceiverGroupList?''+item.ReceiverGroupList.length+'个':'0个'}}</p>
+              <p>接收組:&nbsp;{{item.ReceiverGroupList?''+item.ReceiverGroupList.length+'個':'0個'}}</p>
               <p>有效期:&nbsp;{{'00:00:00 - 23:59:59'}}</p>
               <!-- <p>{{'渠道:'}}<span v-for="it in channelList" :key="it">{{it+' '}}</span></p> -->
               <p>渠道:<span v-for="key in item.NotifyWay" :key="key">&nbsp; {{key|notifyChannel}}</span></p>
@@ -72,29 +72,28 @@
           <!-- <span v-else>{{'-'}}</span> -->
         </el-table-column>
       </el-table>
-      <div class="number">共 {{infoData.PolicyGroups?infoData.PolicyGroups.length:0}} 项</div>
+      <div class="number">共 {{infoData.PolicyGroups?infoData.PolicyGroups.length:0}} 項</div>
     </el-card>
-    <!-- 修改名称弹框 -->
-    <el-dialog class="dil" :visible.sync="showDelDialog1" width="25%" title="修改条件模板名称">
-      <!-- <p style="color:#444;font-weight:bolder;margin-bottom:30px">修改条件模板名称</p> -->
+    <!-- 修改名稱彈框 -->
+    <el-dialog class="dil" :visible.sync="showDelDialog1" width="25%" title="修改條件模板名稱">
+      <!-- <p style="color:#444;font-weight:bolder;margin-bottom:30px">修改條件模板名稱</p> -->
       <div>
         <el-input maxlength="20" v-model="editGroupName" style="width:200px;margin-top:20px" size="small"></el-input>
-        <p v-if="editGroupName==''" class="edit-text-tips">条件模板名称不能为空</p>
-        <p v-if="editGroupName.length==20" class="edit-text-tips">条件模板名称不能超过20个字符</p>
+        <p v-if="editGroupName==''" class="edit-text-tips">條件模板名稱不能爲空</p>
+        <p v-if="editGroupName.length==20" class="edit-text-tips">條件模板名稱不能超過20個字符</p>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitName()">保 存</el-button>
         <el-button @click="showDelDialog1 = false">取 消</el-button>
       </span>
     </el-dialog>
-    <!-- 修改备注弹框 -->
-    <el-dialog class="dil" :visible.sync="showDelDialog2" width="35%" title="修改条件模板备注">
-      <!-- <p style="color:#444;font-weight:bolder;margin-bottom:30px">修改条件模板备注</p> -->
+    <el-dialog class="dil" :visible.sync="showDelDialog2" width="35%" title="修改條件模板備注">
+      <!-- <p style="color:#444;font-weight:bolder;margin-bottom:30px">修改條件模板備注</p> -->
       <!-- <el-form :model="infoData" :rules="rules" ref="form"> -->
         <!-- <el-form-item prop="remark"> -->
           <div>
           <el-input type="textarea" rows="5" maxlength="100" v-model="editRemark" show-word-limit></el-input>
-          <p v-if="editRemark.length==100" class="edit-text-tips">条件模板备注不能超过100个字符</p>
+          <p v-if="editRemark.length==100" class="edit-text-tips">條件模板備注不能超過100個字符</p>
           </div>
         <!-- </el-form-item> -->
       <!-- </el-form> -->
@@ -106,25 +105,26 @@
     <!-- 告警触发条件编辑弹框 -->
      <!-- @open="loadShow=true" -->
     <el-dialog class="dil" @open="openEditloadShow=true" :visible.sync="showDelDialog3" width="65%">
-      <p class="title">修改触发条件</p>
+      <p class="title">修改觸發條件</p>
       <p class="rowCont" style="display: flex;margin-bottom:20px" v-show="showProductType">
-        <span>策略类型</span>
+        <span>策略類型</span>
         <product-type-cpt v-on:PassData="passData" :projectId='projectId' :searchParam='searchParam'
+    <!-- 修改备注弹框 -->
         :productValue='productValue'/>
          <!-- @loading="isLoading"  -->
       </P>
       <div>
         <div style="display:flex">
-          <span style="display: inline-block;width: 80px;">触发条件</span>
+          <span style="display: inline-block;width: 80px;">觸發條件</span>
           <div>
             <div>
               <p style="line-height:30px;">
-                <el-checkbox v-model="checkedZhibiao" :checked="checkedZhibiao" @change="isDisabledZB()">指标告警</el-checkbox>
+                <el-checkbox v-model="checkedZhibiao" :checked="checkedZhibiao" @change="isDisabledZB()">指標告警</el-checkbox>
               </p>
             </div>
             <div class="color">
               <p>
-                <span>满足</span>
+                <span>滿足</span>
                 <el-select :disabled="isDisabled" v-model="UnionRule" style="width:90px;margin:0 5px;" size="small">
                   <el-option
                     v-for="(item,index) in meetConditions"
@@ -134,7 +134,7 @@
                     label-width="40px"
                   ></el-option>
                 </el-select>
-                <span>条件时，触发告警</span>
+                <span>條件時，觸發告警</span>
               </p>
               <ul v-loading="openEditloadShow">
                 <!-- <li style="display:flex;align-items: center;cursor: pointer;"> -->
@@ -171,7 +171,7 @@
                         label-width="40px"
                       ></el-option>
                     </el-select>&nbsp;
-                      <!-- placeholder="指标" -->
+                      <!-- placeholder="指標" -->
                     <input :disabled="isDisabled"
                       style="height: 30px;line-height: 30px;padding:0 10px;width:60px;border: 1px solid #dcdfe6;"
                       value="0"
@@ -205,8 +205,8 @@
                     </el-select>
                     <el-popover v-if="UnionRule!==1" placement="top" trigger="hover" width="300">
                       <div>
-                        <p style="font-size:12px">重复通知：可以设置告警发生24小时内重复发送通知；超过24小时，每天告警一次，超过72小时，不再发送告警通知。</p>
-                        <p style="font-size:12px">周期指数递增通知: 告警持续时长到达告警统计周期的1，2，4，8，16，32...倍时发送告警通知</p>
+                        <p style="font-size:12px">重複通知：可以設置告警發生24小時內重複發送通知；超過24小時，每天告警壹次，超過72小時，不再發送告警通知。</p>
+                        <p style="font-size:12px">周期指數遞增通知: 告警持續時長到達告警統計周期的1，2，4，8，16，32...倍時發送告警通知</p>
                       </div>
                       <i slot="reference" class="el-icon-info" style="color:#888; margin:0 5px;"></i>
                     </el-popover>
@@ -215,7 +215,7 @@
                 </li>
                 <a @click="addZhibiao" style="cursor:pointer">添加</a>
                 <p style="color:red" v-if="isRepeated"><i class="el-icon-info"
-                   style="color:#888; margin:0 5px;color:red"></i>请勿重复配置</p>
+                   style="color:#888; margin:0 5px;color:red"></i>請勿重複配置</p>
               </ul>
               <p v-if="UnionRule==1">
                 <span style="width:30px">then</span>&nbsp;
@@ -230,8 +230,8 @@
                 </el-select>
                 <el-popover placement="top" trigger="hover" width="300" style="width:22px;height:22px">
                   <div>
-                    <p style="font-size:12px">重复通知：可以设置告警发生24小时内重复发送通知；超过24小时，每天告警一次，超过72小时，不再发送告警通知。</p>
-                    <p style="font-size:12px">周期指数递增通知: 告警持续时长到达告警统计周期的1，2，4，8，16，32...倍时发送告警通知</p>
+                    <p style="font-size:12px">重複通知：可以設置告警發生24小時內重複發送通知；超過24小時，每天告警壹次，超過72小時，不再發送告警通知。</p>
+                    <p style="font-size:12px">周期指數遞增通知: 告警持續時長到達告警統計周期的1，2，4，8，16，32...倍時發送告警通知</p>
                   </div>
                   <i slot="reference" class="el-icon-info" style="color:#888; margin:0 5px;"></i>
                 </el-popover>
@@ -263,7 +263,7 @@
                 <i class="rubbish-icon"></i>
               </ul>
             </div> -->
-            <p class="red-text">{{`该告警触发条件模板已经关联了${infoData.PolicyGroups?infoData.PolicyGroups.length:0}个策略，若修改，修改内容将应用到所有已关联的告警策略上`}}</p>
+            <p class="red-text">{{`該告警觸發條件模板已經關聯了${infoData.PolicyGroups?infoData.PolicyGroups.length:0}個策略，若修改，修改內容將應用到所有已關聯的告警策略上`}}</p>
           </div>
         </div>
         <div style="display:flex;align-items:center;justify-content:center;margin-top:20px">
@@ -309,33 +309,33 @@ export default {
       editGroupName: '', // 编辑的模板名称
       editRemark: '', // 编辑的备注
       Conditions: [], // 策略类型
-      tongjiZQ: [{ label: '统计周期1分钟', value: 60 }, { label: '统计周期5分钟', value: 300 }],
+      tongjiZQ: [{ label: '統計周期1分鍾', value: 60 }, { label: '統計周期5分鍾', value: 300 }],
       SymbolList: ['>', '>=', '<', '<=', '=', '!='], // 符号数组
       continuePeriod: [// 持续周期
-        { label: '持续1个周期', value: 1 },
-        { label: '持续2个周期', value: 2 },
-        { label: '持续3个周期', value: 3 },
-        { label: '持续4个周期', value: 4 },
-        { label: '持续5个周期', value: 5 }
+        { label: '持續1個周期', value: 1 },
+        { label: '持續2個周期', value: 2 },
+        { label: '持續3個周期', value: 3 },
+        { label: '持續4個周期', value: 4 },
+        { label: '持續5個周期', value: 5 }
       ],
       jinggaoZQ: [// 警告周期
-        { label: '不重复', value: 0 },
-        { label: '每5分钟警告一次', value: 300 },
-        { label: '每10分钟警告一次', value: 600 },
-        { label: '每15分钟警告一次', value: 900 },
-        { label: '每30分钟警告一次', value: 1800 },
-        { label: '每1小时警告一次', value: 3600 },
-        { label: '每2小时警告一次', value: 7200 },
-        { label: '每3小时警告一次', value: 10800 },
-        { label: '每6小时警告一次', value: 21600 },
-        { label: '每12小时警告一次', value: 43200 },
-        { label: '每1天警告一次', value: 86400 },
-        { label: '周期指数递增', value: 1 }
+        { label: '不重複', value: 0 },
+        { label: '每5分鍾警告壹次', value: 300 },
+        { label: '每10分鍾警告壹次', value: 600 },
+        { label: '每15分鍾警告壹次', value: 900 },
+        { label: '每30分鍾警告壹次', value: 1800 },
+        { label: '每1小時警告壹次', value: 3600 },
+        { label: '每2小時警告壹次', value: 7200 },
+        { label: '每3小時警告壹次', value: 10800 },
+        { label: '每6小時警告壹次', value: 21600 },
+        { label: '每12小時警告壹次', value: 43200 },
+        { label: '每1天警告壹次', value: 86400 },
+        { label: '周期指數遞增', value: 1 }
       ],
       formInline: {
-        jieshou: '接收组',
+        jieshou: '接收組',
         jieshouArr: [
-          { value: '0', name: '接收组' },
+          { value: '0', name: '接收組' },
           {
             value: '1',
             name: '接收人'
@@ -423,7 +423,7 @@ export default {
       await this.getDetailInfo()
       // await this.getPolicyGroupList()
     },
-    // 获取策略类型
+    // 獲取策略類型
     async getPolicyType  () {
       // this.loadShow = true
       // let params = {
@@ -458,8 +458,8 @@ export default {
           this.allProjectName = res.data
         } else {
           let ErrTips = {
-            InternalError: '内部错误',
-            UnauthorizedOperation: '未授权操作'
+            InternalError: '內部錯誤',
+            UnauthorizedOperation: '未授權操作'
           }
           let ErrOr = Object.assign(ErrorTips, ErrTips)
           this.$message({
@@ -493,9 +493,9 @@ export default {
             this.indexAry = ele.Conditions// 编辑触发条件
             this.indexAry.forEach((item,i)=>{
               let time = item.Period / 60// 编辑触发条件
-              item['Period'] = `统计周期${time}分钟`// 编辑触发条件
               let num = item.ContinueTime / (time * 60)// 编辑触发条件
-              item['ContinuePeriod'] = `持续${num}个周期`// 编辑触发条件
+              item['Period'] = `統計周期${time}分鍾`// 編輯觸發條件
+              item['ContinuePeriod'] = `持續${num}個周期`// 編輯觸發條件
               let time1 = item.AlarmNotifyPeriod / 60
               let time2 = item.AlarmNotifyPeriod / (60 * 60)
               if (item.AlarmNotifyPeriod == 0 && item.AlarmNotifyType == 0) {
@@ -516,24 +516,24 @@ export default {
               let time1 = item.AlarmNotifyPeriod / 60
               let time2 = item.AlarmNotifyPeriod / (60 * 60)
               if (item.AlarmNotifyPeriod == 0 && item.AlarmNotifyType == 0) {
-                item.alarm = '不重复告警'
+                item.alarm = '不重複告警'
               } else if (item.AlarmNotifyType == 1) {
-                item.alarm = '按周期指数递增重复告警'
+                item.alarm = '按周期指數遞增重複告警'
               } else if (item.AlarmNotifyPeriod > 0 && time1 < 30) {
-                item.alarm = `按${time1}分钟重复告警`
+                item.alarm = `按${time1}分鍾重複告警`
               } else if (item.AlarmNotifyPeriod > 0 && time1 > 30 && time2 < 24) {
-                item.alarm = `按${time2}小时重复告警`
+                item.alarm = `按${time2}小時重複告警`
               } else {
-                item.alarm = '按1天重复告警'
+                item.alarm = '按1天重複告警'
               }
             })
             this.infoData = ele
-            if (ele.IsUnionRule === 0) { // 编辑触发条件
+            if (ele.IsUnionRule === 0) { // 編輯觸發條件
               this.UnionRule = 0
             } else if (ele.IsUnionRule === 1) {
               this.UnionRule = 1
             }
-            this.eventAry = ele.EventConditions// 编辑触发条件
+            this.eventAry = ele.EventConditions// 編輯觸發條件
           })
           // this.infoData = msg[0]
           this.loadShow = false
@@ -560,7 +560,7 @@ export default {
         this.openEditloadShow = false
       })
     },
-    // 保存编辑条件模板
+    // 保存編輯條件模板
     submitEdit () {
     //   let { GroupID, GroupName, ViewName } = this.infoData
     //   let params = {
@@ -573,14 +573,14 @@ export default {
     //   }
     //   this.indexAry.forEach((ele, i) => {
     //     params[`Conditions.${i}.CalcValue`] = Number(ele.CalcValue)// 百分比
-    //     params[`Conditions.${i}.MetricID`] = ele.MetricID// 指标类型id值
-    //     params[`Conditions.${i}.CalcPeriod`] = ele.Period// 统计周期
-    //     params[`Conditions.${i}.ContinuePeriod`] = ele.ContinuePeriod// 持续周期
+    //     params[`Conditions.${i}.MetricID`] = ele.MetricID// 指標類型id值
+    //     params[`Conditions.${i}.CalcPeriod`] = ele.Period// 統計周期
+    //     params[`Conditions.${i}.ContinuePeriod`] = ele.ContinuePeriod// 持續周期
     //     this.SymbolList.forEach((item3, index) => {
     //       var CT
     //       if (ele.CalcType == item3) {
     //         CT = index + 1
-    //         params[`Conditions.${i}.CalcType`] = CT// 符号
+    //         params[`Conditions.${i}.CalcType`] = CT// 符號
     //       }
     //     })
     //     this.jinggaoZQ.forEach(item4 => {
@@ -608,7 +608,7 @@ export default {
     //     }
     //   })
     },
-    // 获取策略组列表(未完成  参数有误)
+    // 獲取策略組列表(未完成  參數有誤)
     async getPolicyGroupList () {
       this.loadShow = true
       let params = {
@@ -628,7 +628,7 @@ export default {
             if (ele.receiverInfos.length > 0) {
               ele.receiverInfos.notifyWay.forEach(item => {
                 if (item === 'EMAIL') {
-                  this.channelList.push('邮件')
+                  this.channelList.push('郵件')
                 } else if (item === 'SMS') {
                   this.channelList.push('短信')
                 } else if (item === 'WECHAT') {
@@ -653,11 +653,11 @@ export default {
         }
       })
     },
-    openName (name) { // 修改名字弹框
+    openName (name) { // 修改名字彈框
       this.editGroupName = name
       this.showDelDialog1 = true
     },
-    // 修改名称
+    // 修改名稱
     async submitName () {
       let params = {
         Version: '2018-07-24',
@@ -679,11 +679,11 @@ export default {
         })
       })
     },
-    openRemark (remark) { // 修改备注弹框
+    openRemark (remark) { // 修改備注彈框
       this.editRemark = remark
       this.showDelDialog2 = true
     },
-    // 修改备注
+    // 修改備注
     async submitRemark () {
       let params = {
         Version: '2018-07-24',
@@ -705,7 +705,7 @@ export default {
         })
       })
     },
-    // 是否禁用指标告警
+    // 是否禁用指標告警
     isDisabledZB () {
       if (this.checkedZhibiao) {
         this.isDisabled = false
@@ -721,12 +721,12 @@ export default {
         this.isDisGJ = true
       }
     },
-    // 格式化时间
+    // 格式化時間
     upTime (value) {
       // return moment(value).format('YYYY/MM/DD HH :mm:ss')
       return moment(value).format('HH :mm:ss')
     },
-    // 告警触发条件弹框(未完成)
+    // 告警觸發條件彈框(未完成)
     // openEdit () {
     //   this.showDelDialog3 = true
     //   let params = {
@@ -737,7 +737,7 @@ export default {
     //     // console.log(res)
     //   })
     // },
-    addZhibiao () { // 添加触发条件的指标告警
+    addZhibiao () { // 添加觸發條件的指標告警
       let { zhibiaoType } = this
       for (let i = 0; i < zhibiaoType.length; i++) {
         let result = this.indexAry.some(item => {
@@ -757,7 +757,7 @@ export default {
           return
         }
       }
-      // 如果不 return 就把数组第一个push进来
+      // 如果不 return 就把數組第壹個push進來
       this.indexAry.push({
         Period: 60,
         CalcType: '>',
@@ -769,32 +769,32 @@ export default {
       })
       // this.indexAry.push(
       //   {
-      //     Period: '统计周期1分钟',
+      //     Period: '統計周期1分鍾',
       //     CalcType: '>',
       //     CalcValue: '0',
-      //     ContinuePeriod: '持续1个周期',
-      //     alarm: '每1天警告一次'
+      //     ContinuePeriod: '持續1個周期',
+      //     alarm: '每1天警告壹次'
       //   }
       // )
     },
-    delZhibiao (it) { // 删除触发条件的指标告警
+    delZhibiao (it) { // 刪除觸發條件的指標告警
       var index = this.indexAry.indexOf(it)
       if (index !== -1) {
         this.indexAry.splice(index, 1)
       }
     },
-    addShijian () { // 添加触发条件的事件告警
+    addShijian () { // 添加觸發條件的事件告警
       this.eventAry.push(
         {
-          jieshou: '接收组',
+          jieshou: '接收組',
           jieshouArr: [
-            { value: '0', name: '接收组' },
+            { value: '0', name: '接收組' },
             {
               value: '1',
               name: '接收人'
             }
           ],
-          apiStr: 'http', // 接口回调
+          apiStr: 'http', // 接口回調
           apiArr: [
             {
               value: 0,
@@ -804,28 +804,28 @@ export default {
               value: 1,
               name: 'https'
             }
-          ], // 接口回调数据
-          strategy_name: '', // 策略名称
-          textareas: '', // 备注
-          strategy: '云服务器-基础监控',
+          ], // 接口回調數據
+          strategy_name: '', // 策略名稱
+          textareas: '', // 備注
+          strategy: '雲伺服器-基礎監控',
           strategy_kind: [
             {
               value: 0,
-              name: '云服务器-基础监控'
+              name: '雲伺服器-基礎監控'
             }
-          ], // 策略类型
-          alarm: '', // 策略类型
-          projectName: '默认项目',
+          ], // 策略類型
+          alarm: '', // 策略類型
+          projectName: '默認項目',
           project: [
             {
               value: 0,
-              name: '默认项目'
+              name: '默認項目'
             }
           ]
         }
       )
     },
-    delShijian (item) { // 删除触发条件的事件告警
+    delShijian (item) { // 刪除觸發條件的事件告警
       var index = this.eventAry.indexOf(item)
       if (index !== -1) {
         this.eventAry.splice(index, 1)
@@ -850,7 +850,7 @@ export default {
     },
     ProjectName (val) {
       if (val == 0) {
-        return '默认项目'
+        return '默認項目'
       }
       if (this.allProjectName) {
         for (let i in this.allProjectName) {
@@ -862,39 +862,39 @@ export default {
     },
     notifyChannel (val) {
       if (val === 'EMAIL') {
-        return '邮件'
+        return '郵件'
       } else if (val === 'SMS') {
         return '短信'
       } else if (val === 'WECHAT') {
         return '微信'
       } else if (val === 'CALL') {
-        return '电话'
+        return '電話'
       }
     },
     ViewName (val) {
       if (val) {
         if (val === 'cvm_device') {
-          return '云服务器'
+          return '雲伺服器'
         } else if (val === 'BS') {
-          return '云硬盘'
+          return '雲硬碟'
         } else if (val === 'VPN_GW') {
-          return 'VPN网关'
+          return 'VPN網關'
         } else if (val === 'vpn_tunnel') {
           return 'VPN通道'
         } else if (val === 'nat_tc_stat') {
-          return 'NAT网关'
+          return 'NAT網關'
         } else if (val === 'DC_GW') {
-          return '专线网关'
+          return '專線網關'
         } else if (val === 'cdb_detail') {
           return 'MYSQL'
         } else if (val === 'REDIS-CLUSTER') {
           return 'Redis'
         } else if (val === 'dcchannel') {
-          return '专用通道'
+          return '專用通道'
         } else if (val === 'dcline') {
-          return '物理专线'
+          return '物理專線'
         } else if (val === 'COS') {
-          return '对象存储'
+          return '對象存儲'
         }
       }
     }

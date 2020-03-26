@@ -14,6 +14,7 @@ import CMfilters from '@/filters/CMfilters.js'
 import i18n from './language/i18n.js' // 引入i18n包
 import { message } from '@/utils/resetMessage' // 重写element-ui的message方法
 import echarts from 'echarts'
+import locale from 'element-ui/lib/locale/lang/zh-TW'
 
 Vue.prototype.$echarts = echarts
 
@@ -23,7 +24,7 @@ for (let key in CMfilters) {
 
 
 Vue.config.productionTip = false
-Vue.use(ElementUI)
+Vue.use(ElementUI, { locale })
 Vue.use(VueCookie)
 Vue.prototype.$message = message // 覆盖原有的message方法
 // Vue.use(FileSaver)

@@ -2,7 +2,7 @@
   <div class='container-min' v-loading="loadShow">
     <el-card class="card">
       <el-table :data="transLogData">
-        <el-table-column prop label="变更时间">
+        <el-table-column prop label="變更時間">
           <span>{{upTime( this.information.updateTime)}}</span>
         </el-table-column>
         <el-table-column prop label="修改人">
@@ -10,8 +10,8 @@
             <span>{{scope.row.LastEditUin}}</span>
           </template>
         </el-table-column>
-        <el-table-column label="最后修改">
-          <span class="text" @click="showDelDialog=true">查看变更后详情</span>
+        <el-table-column label="最後修改">
+          <span class="text" @click="showDelDialog=true">查看變更後詳情</span>
         </el-table-column>
       </el-table>
       <!-- 分页 -->
@@ -29,33 +29,33 @@
     </el-card>
     <!-- 查看变更后详情弹窗 -->
     <el-dialog class="dil" :visible.sync="showDelDialog" width="50%">
-      <p style="color:#444;font-weight:800;margin-bottom:30px">变更后详情</p>
+      <p style="color:#444;font-weight:800;margin-bottom:30px">變更後詳情</p>
       <h4 class="title-text">基本信息</h4>
       <el-form>
-        <el-form-item label="模板名称">
+        <el-form-item label="模板名稱">
           <span class="text">{{information.groupName}}</span>
         </el-form-item>
-        <el-form-item label="策略类型">
+        <el-form-item label="策略類型">
           <span class="text">{{information.showName | ViewName}}</span>
         </el-form-item>
-        <el-form-item label="最后修改人">
+        <el-form-item label="最後修改人">
           <span class="text">{{information.lastEditUin}}</span>
         </el-form-item>
-        <el-form-item label="最后修改时间">
+        <el-form-item label="最後修改時間">
           <!-- formatDate -->
           <span class="text">{{upTime(information.updateTime)}}</span>
           <!-- <span class="text">{{information.updateTime|formatDate}}</span> -->
         </el-form-item>
       </el-form>
       <hr style="margin-bottom:20px;color:#ddd"/>
-      <h4 class="title-text">告警触发条件</h4>
-      <p class="text-color1">指标告警(任意)</p>
+      <h4 class="title-text">告警觸發條件</h4>
+      <p class="text-color1">指標告警(任意)</p>
       <p class="text-color2" v-for="(it) in IndexAlarm" :key="it.metricShowName">
-        {{ `${it.metricShowName}${it.calcType}${it.calcValue}${it.unit},持续${it.continueTime/60}分钟,${it.alarm}` }}
+        {{ `${it.metricShowName}${it.calcType}${it.calcValue}${it.unit},持續${it.continueTime/60}分鍾,${it.alarm}` }}
       </p>
       <p class="text-color1" v-if="EventAlarm&&EventAlarm.length">事件告警</p>
       <p class="text-color2" v-for="(it) in EventAlarm" :key="it.eventShowName">
-        {{ `${it.eventShowName},不重复告警` }}
+        {{ `${it.eventShowName},不重複告警` }}
       </p>
     </el-dialog>
   </div>
@@ -116,23 +116,23 @@ export default {
               let time1 = anp / 60
               let time2 = anp / (60 * 60)
               if (anp == 0 && item.alarmNotifyType == 0) {
-                item.alarm = '不重复告警'
+                item.alarm = '不重複告警'
               } else if (item.alarmNotifyType == 1) {
-                item.alarm = '按周期指数递增重复告警'
+                item.alarm = '按周期指數遞增重複告警'
               } else if (anp > 0 && time1 < 30) {
-                item.alarm = `按${time1}分钟重复告警`
+                item.alarm = `按${time1}分鍾重複告警`
               } else if (anp > 0 && time1 > 30 && time2 < 24) {
-                item.alarm = `按${time2}小时重复告警`
+                item.alarm = `按${time2}小時重複告警`
               } else {
-                item.alarm = '按1天重复告警'
+                item.alarm = '按1天重複告警'
               }
             })
-            this.information.groupName = it.groupName// 基本信息数据
+            this.information.groupName = it.groupName// 基本信息數據
             this.information.lastEditUin = it.lastEditUin
             this.information.showName = it.viewName
             this.information.updateTime = it.updateTime
-            this.IndexAlarm = it.conditionsConfig// 指标告警数据
-            this.EventAlarm = it.eventConfig// 事件告警数据
+            this.IndexAlarm = it.conditionsConfig// 指標告警數據
+            this.EventAlarm = it.eventConfig// 事件告警數據
           })
           if (msg) {
             this.transLogData = msg
@@ -141,14 +141,14 @@ export default {
         } else {
           this.loadShow = false
           let ErrTips = {
-            'FailedOperation': '操作失败。',
-            'InternalError': '内部错误。',
-            'InvalidParameter': '参数错误。',
-            'InvalidParameter.InvalidParameter': '参数错误。',
-            'InvalidParameter.InvalidParameterParam': '参数错误。',
-            'InvalidParameterValue': '无效的参数值。',
-            'LimitExceeded': '超过配额限制。',
-            'MissingParameter': '缺少参数错误。',
+            'FailedOperation': '操作失敗。',
+            'InternalError': '內部錯誤。',
+            'InvalidParameter': '參數錯誤。',
+            'InvalidParameter.InvalidParameter': '參數錯誤。',
+            'InvalidParameter.InvalidParameterParam': '參數錯誤。',
+            'InvalidParameterValue': '無效的參數值。',
+            'LimitExceeded': '超過配額限制。',
+            'MissingParameter': '缺少參數錯誤。',
             'UnsupportedOperation': '操作不支持。'
           }
           let ErrOr = Object.assign(ErrorTips, ErrTips)
@@ -175,27 +175,27 @@ export default {
     ViewName (val) {
       if (val) {
         if (val === 'cvm_device') {
-          return '云服务器'
+          return '雲伺服器'
         } else if (val === 'BS') {
-          return '云硬盘'
+          return '雲硬碟'
         } else if (val === 'VPN_GW') {
-          return 'VPN网关'
+          return 'VPN網關'
         } else if (val === 'vpn_tunnel') {
           return 'VPN通道'
         } else if (val === 'nat_tc_stat') {
-          return 'NAT网关'
+          return 'NAT網關'
         } else if (val === 'DC_GW') {
-          return '专线网关'
+          return '專線網關'
         } else if (val === 'cdb_detail') {
           return 'MYSQL'
         } else if (val === 'REDIS-CLUSTER') {
           return 'Redis'
         } else if (val === 'dcchannel') {
-          return '专用通道'
+          return '專用通道'
         } else if (val === 'dcline') {
-          return '物理专线'
+          return '物理專線'
         } else if (val === 'COS') {
-          return '对象存储'
+          return '對象存儲'
         }
       }
     }

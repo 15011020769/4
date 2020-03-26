@@ -1,8 +1,8 @@
 <template>
   <div class="history-wrap">
     <div class="head">
-      <Header title="监控视图">
-        <el-select v-model="value1" placeholder="请选择">
+      <Header title="監控視圖">
+        <el-select v-model="value1" placeholder="請選擇">
             <el-option
             v-for="item in option1"
             :key="item.value"
@@ -11,7 +11,7 @@
             </el-option>
         </el-select>
 
-         <el-select v-model="value2" placeholder="请选择">
+         <el-select v-model="value2" placeholder="請選擇">
             <el-option
             v-for="item in option2"
             :key="item.value"
@@ -20,7 +20,7 @@
             </el-option>
         </el-select>
 
-         <el-select v-model="value3" placeholder="请选择">
+         <el-select v-model="value3" placeholder="請選擇">
             <el-option
             v-for="item in option3"
             :key="item.value"
@@ -30,35 +30,35 @@
         </el-select>
       </Header>
       <el-tabs v-model="activeName" @tab-click="tabchange">
-        <el-tab-pane label="聚合维度(1)" name="first">
+        <el-tab-pane label="聚合維度(1)" name="first">
           <div class="history-main">
             <div class="explain" style="margin-bottom:20px;">
-                <p>新版自定义监控已灰度上线，目前处于内测阶段，如需使用可 <a href="">申请内测体验 </a> 。</p>
-                <p>若在使用过程中遇到任何问题，您可以通过加入自定义监控交流QQ群（793979710），我们将竭诚为您服务！</p>
+                <p>新版自定義監控已灰度上線，目前處于內測階段，如需使用可 <a href="">申請內測體驗 </a> 。</p>
+                <p>若在使用過程中遇到任何問題，您可以通過加入自定義監控交流QQ群（793979710），我們將竭誠爲您服務！</p>
             </div>
             <div class="box">
               <div class="table">
                 <el-table :data="tableData" style="width: 100%" height="450">
-                  <el-table-column prop="address" label="监控对象" width="180"></el-table-column>
-                  <el-table-column prop="address" label="监控"></el-table-column>
+                  <el-table-column prop="address" label="監控對象" width="180"></el-table-column>
+                  <el-table-column prop="address" label="監控"></el-table-column>
                 </el-table>
               </div>
             </div>
           </div>
         </el-tab-pane>
 
-        <el-tab-pane label="原始维度(1,2,3)" name="second">
+        <el-tab-pane label="原始維度(1,2,3)" name="second">
           <div class="history-main">
             <div class="explain" style="margin-bottom:20px;">
-                <p>新版自定义监控已灰度上线，目前处于内测阶段，如需使用可 <a href="">申请内测体验 </a> 。</p>
-                <p>若在使用过程中遇到任何问题，您可以通过加入自定义监控交流QQ群（793979710），我们将竭诚为您服务！</p>
+                <p>新版自定義監控已灰度上線，目前處于內測階段，如需使用可 <a href="">申請內測體驗 </a> 。</p>
+                <p>若在使用過程中遇到任何問題，您可以通過加入自定義監控交流QQ群（793979710），我們將竭誠爲您服務！</p>
             </div>
             <div class="box">
               <div class="table">
                 <el-table :data="tableData" style="width: 100%" height="450">
-                  <el-table-column prop="address" label="监控对象" width="180"></el-table-column>
-                  <el-table-column prop="address" label="监控" width="180"></el-table-column>
-                  <el-table-column prop="address" label="aa(5分钟，最大值)"></el-table-column>
+                  <el-table-column prop="address" label="監控對象" width="180"></el-table-column>
+                  <el-table-column prop="address" label="監控" width="180"></el-table-column>
+                  <el-table-column prop="address" label="aa(5分鍾，最大值)"></el-table-column>
                 </el-table>
               </div>
             </div>
@@ -80,7 +80,7 @@ export default {
       value1:"",
       value2:"",
       value3:"",
-      dialogVisible: false, //购买短信弹出框
+      dialogVisible: false, //購買短信彈出框
       input: "", //搜索框的值
       tableData: [],
       option1:[],
@@ -93,7 +93,7 @@ export default {
   },
   created() {},
   methods: {
-    //获取数据
+    //獲取數據
     GetDat(data) {
       console.log(data);
     },

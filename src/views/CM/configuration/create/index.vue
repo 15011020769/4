@@ -1,11 +1,11 @@
 <template>
   <div class="create-wrap">
-    <Header title="新增配置项"></Header>
+    <Header title="新增配置項"></Header>
     <div class="create-main">
       <div class="box">
         <div class="city">
           <span>地域</span>
-          <el-select v-model="values" placeholder="请选择">
+          <el-select v-model="values" placeholder="請選擇">
                 <el-option
                 v-for="item in options"
                 :key="item.value"
@@ -16,27 +16,27 @@
             </el-select>
         </div>
         <div class="namespace">
-          <span>命名空间</span>
-          <el-input v-model="input" placeholder="请输入命名空间"></el-input>
+          <span>命名空間</span>
+          <el-input v-model="input" placeholder="請輸入命名空間"></el-input>
         </div>
         <div class="dimension">
-          <span>维度</span>
-          <el-input v-model="input1" placeholder="请输入维度"></el-input>
+          <span>維度</span>
+          <el-input v-model="input1" placeholder="請輸入維度"></el-input>
         </div>
         <div class="montingindex">
-          <span>监控指标</span>
-          <p>同命名空间和维度下，监控指标不能重复。每个用户最多设置50个指标</p>
+          <span>監控指標</span>
+          <p>同命名空間和維度下，監控指標不能重複。每個用戶最多設置50個指標</p>
           <div class="table">
             <el-table :data="tableData" style="width: 80%;margin:0 auto;border:1px solid #ccc;">
-              <el-table-column prop="date" label="监控指标" width="270"></el-table-column>
-              <el-table-column prop="name" label="指标中文名" width="250"></el-table-column>
-              <el-table-column prop="address" label="单位" width="250"></el-table-column>
+              <el-table-column prop="date" label="監控指標" width="270"></el-table-column>
+              <el-table-column prop="name" label="指標中文名" width="250"></el-table-column>
+              <el-table-column prop="address" label="單位" width="250"></el-table-column>
               <el-table-column prop="address" label="操作"></el-table-column>
             </el-table>
           </div>
         </div>
         <div class="foot">
-          <el-button type="primary" size="small" @click="save">确定</el-button>
+          <el-button type="primary" size="small" @click="save">確定</el-button>
           <el-button  size="small" @click="cancel">取消</el-button>
         </div>
       </div>
@@ -59,7 +59,7 @@ export default {
     Header
   },
   methods: {
-      //确定
+      //確定
         save(){
             this.$router.push({
                 path:"/configuration",

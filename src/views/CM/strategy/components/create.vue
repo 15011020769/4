@@ -4,39 +4,39 @@
     <div class="create-main">
       <div class="box">
         <el-form class="create-form" :model="formInline" ref="form" label-position='left' label-width="70px" size="mini">
-          <el-form-item label="策略名称" prop='strategy_name' :rules="strategyNameValidator">
-            <el-input class="w200" v-model="formInline.strategy_name" placeholder="1-20个中英文字符或下划线"></el-input>
+          <el-form-item label="策略名稱" prop='strategy_name' :rules="strategyNameValidator">
+            <el-input class="w200" v-model="formInline.strategy_name" placeholder="1-20個中英文字符或下劃線"></el-input>
           </el-form-item>
-          <el-form-item label="备注" prop="textarea">
-            <el-input class="w420" :autosize="{ minRows: 5, maxRows: 2 }" type="textarea" placeholder="1-100个中英文字符或下划线" v-model="formInline.textarea" maxlength="100" show-word-limit></el-input>
+          <el-form-item label="備注" prop="textarea">
+            <el-input class="w420" :autosize="{ minRows: 5, maxRows: 2 }" type="textarea" placeholder="1-100個中英文字符或下劃線" v-model="formInline.textarea" maxlength="100" show-word-limit></el-input>
           </el-form-item>
-          <el-form-item label="策略类型">
+          <el-form-item label="策略類型">
             <product-type-cpt @PassData="passData" :searchParam="searchParam" :projectId="formInline.projectId" productValue="cvm_device" @loading="(e)=>loading=e"/>
           </el-form-item>
-          <el-form-item label="所属项目" prop="projectName">
+          <el-form-item label="所屬項目" prop="projectName">
             <el-select class="w200" v-model="formInline.projectId">
               <el-option v-for="(item, index) in formInline.project" :key="index" :label="item.projectName" :value="item.projectId" label-width="40px"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="告警对象">
+          <el-form-item label="告警對象">
             <p>
-              <el-radio v-model="radio" label="1">全部对象</el-radio>
+              <el-radio v-model="radio" label="1">全部對象</el-radio>
             </p>
             <p>
-              <el-radio v-model="radio" label="2">选择部分对象</el-radio>
+              <el-radio v-model="radio" label="2">選擇部分對象</el-radio>
             </p>
             <p>
-              <el-radio v-model="radio" label="3">选择实例组</el-radio>
-              <el-button type="text" size="mini" style="position: relative;margin-left: 20px" @click="$router.push({path: '/Casegrouping'})">新建实例组</el-button>
+              <el-radio v-model="radio" label="3">選擇實例組</el-radio>
+              <el-button type="text" size="mini" style="position: relative;margin-left: 20px" @click="$router.push({path: '/Casegrouping'})">新建實例組</el-button>
             </p>
           </el-form-item>
-          <!-- 告警对象-》选择部分对象 -->
+          <!-- 告警對象-》選擇部分對象 -->
           <div style="margin-bottom: 18px" v-show="radio==='2'">
             <div style="margin-left: 70px">
                 <cam-transfer-cpt v-loading="loading" :productData="product" isShowRight @projectId="projectIds" @searchParam="searchParams" @multipleSelection="selectDatas"></cam-transfer-cpt>
             </div>
           </div>
-          <!-- 告警对象-》 选择实例组 -->
+          <!-- 告警對象-》 選擇實例組 -->
           <div style="margin-bottom: 18px" v-show="radio==='3'">
             <div style="margin-left: 70px">
               <el-form-item label-width="0px">
@@ -47,31 +47,31 @@
               </el-form-item>
             </div>
           </div>
-          <!-- 触发条件 -->
+          <!-- 觸發條件 -->
           <div style="margin-bottom: 18px">
-            <label style="width: 70px;vertical-align: middle;float: left;padding: 0 12px 0 0;line-height: 28px">触发条件</label>
+            <label style="width: 70px;vertical-align: middle;float: left;padding: 0 12px 0 0;line-height: 28px">觸發條件</label>
             <div style="margin-left: 70px" v-loading="loading">
-              <!-- 触发条件模板 -->
+              <!-- 觸發條件模板 -->
               <div style="background-color: #f2f2f2;padding: 20px">
-                <el-radio v-model="radioChufa" label="1">触发条件模板</el-radio>
-                <el-button type="text" size="mini" style="margin-left: 20px" @click="$router.push({path: '/Template'})">新增触发条件模板</el-button>
+                <el-radio v-model="radioChufa" label="1">觸發條件模板</el-radio>
+                <el-button type="text" size="mini" style="margin-left: 20px" @click="$router.push({path: '/Template'})">新增觸發條件模板</el-button>
                 <div v-show="radioChufa === '1'" style="padding: 10px">
                   <el-form-item label-width="0px" style="margin-bottom: 0px">
-                    <el-select v-model="formInline.conditionsTemplateId" style="width:150px;" placeholder="当前策略下没有触发条件模板"
+                    <el-select v-model="formInline.conditionsTemplateId" style="width:150px;" placeholder="當前策略下沒有觸發條件模板"
                                @change="conditionTemplateChange" :disabled="!formInline.conditionsTemplateId">
                       <el-option v-for="(item, index) in formInline.conditionsTemplate" :key="index" :label="item.GroupName" :value="item.GroupID" label-width="40px"></el-option>
                     </el-select>
                     <el-button type="text" size="mini" style="margin-left: 20px" @click="describeConditionsTemplateList">刷新</el-button>
                   </el-form-item>
                   <div v-show="formInline.conditionsTemplateId">
-                    <p style="line-height: 28px"><el-checkbox disabled>指标告警</el-checkbox></p>
+                    <p style="line-height: 28px"><el-checkbox disabled>指標告警</el-checkbox></p>
                     <div style="padding-left: 21px">
                       <el-form-item label-width="0px">
-                        <span>满足</span>
+                        <span>滿足</span>
                         <el-select v-model="formInline.triggerCondition.IsUnionRule" style="margin: 0px 5px" disabled>
                           <el-option v-for="(item, index) in condition" :key="index" :label="item.label" :value="item.id" label-width="40px"></el-option>
                         </el-select>
-                        <span>条件时，触发告警</span>
+                        <span>條件時，觸發告警</span>
                       </el-form-item>
                       <div v-for="cItem in formInline.triggerCondition.Conditions" :key="cItem.RuleID">
                         <div class="indication-alarm">
@@ -92,7 +92,7 @@
                             </el-select>
                           </el-form-item>
                           <el-form-item label-width="0px" style="display: inline-block">
-                            <el-input style="vertical-align: baseline;width: 140px" placeholder="指标"
+                            <el-input style="vertical-align: baseline;width: 140px" placeholder="指標"
                                       value="0" min="0" max="100" type="number" v-model="cItem.CalcValue" disabled>
                               <template slot="append">{{cItem.Unit}}</template>
                             </el-input>
@@ -138,19 +138,19 @@
                   </div>
                 </div>
               </div>
-              <!-- 配置触发条件 -->
+              <!-- 配置觸發條件 -->
               <div style="background-color: #f2f2f2;padding: 20px;margin-top: 10px;">
-                <el-radio v-model="radioChufa" label="2">配置触发条件</el-radio>
-                <!--                <div class="tip">请至少配置1项触发条件</div>-->
+                <el-radio v-model="radioChufa" label="2">配置觸發條件</el-radio>
+                <!--                <div class="tip">請至少配置1項觸發條件</div>-->
                 <div v-show="radioChufa === '2'" style="padding: 10px">
-                  <p style="line-height: 28px"><el-checkbox checked disabled>指标告警</el-checkbox></p>
+                  <p style="line-height: 28px"><el-checkbox checked disabled>指標告警</el-checkbox></p>
                   <div style="padding-left: 21px">
                     <el-form-item label-width="0px">
-                      <span>满足</span>
+                      <span>滿足</span>
                       <el-select v-model="formInline.configTrigger.IsUnionRule" style="margin: 0px 5px">
                         <el-option v-for="(item, index) in condition" :key="index" :label="item.label" :value="item.id" label-width="40px"></el-option>
                       </el-select>
-                      <span>条件时，触发告警</span>
+                      <span>條件時，觸發告警</span>
                     </el-form-item>
                     <div v-for="(cItem, cIndex) in formInline.configTrigger.Conditions" :key="cItem.key">
                       <div class="indication-alarm">
@@ -171,7 +171,7 @@
                           </el-select>
                         </el-form-item>
                         <el-form-item label-width="0px" style="display: inline-block">
-                          <el-input style="vertical-align: baseline;width: 140px" placeholder="指标" value="0" min="0" max="100" type="number" v-model.number="cItem.CalcValue">
+                          <el-input style="vertical-align: baseline;width: 140px" placeholder="指標" value="0" min="0" max="100" type="number" v-model.number="cItem.CalcValue">
                             <template slot="append">{{cItem.Unit}}</template>
                           </el-input>
                         </el-form-item>
@@ -225,11 +225,11 @@
               <Cam @camClick="camFun"></Cam>
             </div>
           </div>
-          <!-- 接口回调 -->
+          <!-- 接口回調 -->
           <div style="margin-bottom: 18px">
             <div style="width: 70px;">
-              <label style="vertical-align: middle;float: left;padding: 0 12px 0 0;line-height: 28px">接口回调</label>
-              <!--<p>（选填）</p>-->
+              <label style="vertical-align: middle;float: left;padding: 0 12px 0 0;line-height: 28px">接口回調</label>
+              <!--<p>（選填）</p>-->
             </div>
             <div style="margin-left: 70px">
               <el-form-item style="display: inline-block" label-width="0px">
@@ -242,13 +242,13 @@
                   <el-option v-for="item in formInline.protocolValue === 'http'?httpOption:httpsOption"
                              :key="item.VerifyCode" :label="item.website" :value="item.VerifyCode">
                     <span>{{item.website}}</span>
-                    <span style="margin-left: 10px;color: #999999">{{item.ValidFlag===2?'请求超时': ''}}</span>
+                    <span style="margin-left: 10px;color: #999999">{{item.ValidFlag===2?'請求超時': ''}}</span>
                   </el-option>
                 </el-select>
               </el-form-item>
-              <p style="line-height: 28px">填写公网可访问到的url作为回调接口地址(域名或IP[:端口][/path])，云监控将及时把告警信息推送到该地址。</p>
+              <p style="line-height: 28px">填寫公網可訪問到的url作爲回調接口地址(域名或IP[:端口][/path])，雲監控將及時把告警信息推送到該地址。</p>
               <div style="margin-top: 10px;background-color: #fff4e3;color: #c07400;border: 1px solid #ffd18b;padding: 10px 20px;font-size: 12px;line-height: 28px;">
-                <p>回调域名通过验证后生效，请于Response Body中返回以下code。<i class="el-icon-info" style="margin:0 5px;color: #c07400;"></i></p>
+                <p>回調域名通過驗證後生效，請于Response Body中返回以下code。<i class="el-icon-info" style="margin:0 5px;color: #c07400;"></i></p>
                 <p style="margin: 10px 0;font-size: 16px;font-weight: 700;">{{formInline.callbackVerifyCode===''? httpCodes : formInline.callbackVerifyCode}}</p>
               </div>
             </div>
@@ -283,49 +283,49 @@ export default {
       strategyNameValidator: [{
         validator: (rule, value, callback) => {
           if (value === '') {
-            callback(new Error('策略名称不能为空'))
+            callback(new Error('策略名稱不能爲空'))
           } else if (value.length > 20) {
-            callback(new Error('策略名称不能超过20个字符'))
+            callback(new Error('策略名稱不能超過20個字符'))
           } else {
             callback()
           }
         },
         trigger: 'blur'
       }],
-      radio: '2', // 选择告警对象类型
-      radioChufa: '2', // 触发条件单选
+      radio: '2', // 選擇告警對象類型
+      radioChufa: '2', // 觸發條件單選
       options: [],
       formInline: {
-        protocolValue: 'http', // 接口回调
+        protocolValue: 'http', // 接口回調
         callbackVerifyCode: '',
-        strategy_name: '', // 策略名称
-        textarea: '', // 备注
-        strategy: '云服务器-基础监控',
+        strategy_name: '', // 策略名稱
+        textarea: '', // 備注
+        strategy: '雲伺服器-基礎監控',
         strategy_kind: [{
           value: 0,
-          name: '云服务器-基础监控'
-        }], // 策略类型
-        alarm: '', // 策略类型
-        project: [{ projectName: '默认项目', projectId: 0 }],
+          name: '雲伺服器-基礎監控'
+        }], // 策略類型
+        alarm: '', // 策略類型
+        project: [{ projectName: '默認項目', projectId: 0 }],
         projectId: 0,
         instanceGroup: [],
         instanceGroupId: '',
-        conditionsTemplate: [], // 触发条件模板下拉数组
+        conditionsTemplate: [], // 觸發條件模板下拉數組
         conditionsTemplateId: '',
         triggerCondition: {
           IsUnionRule: 0,
-          Conditions: [], // 触发条件-》指标告警
-          EventConditions: [] // 触发条件-》事件告警
+          Conditions: [], // 觸發條件-》指標告警
+          EventConditions: [] // 觸發條件-》事件告警
         },
         configTrigger: {
           IsUnionRule: 0,
-          Conditions: [], // 触发条件-》指标告警
-          EventConditions: [], // 触发条件-》事件告警
+          Conditions: [], // 觸發條件-》指標告警
+          EventConditions: [], // 觸發條件-》事件告警
           AlarmNotifyPeriod: 86400
         }
       },
       condition: [{ id: 0, label: '任意' }, { id: 1, label: '所有' }],
-      tongjiZQ: [{ id: 60, label: '统计周期1分钟' }, { id: 300, label: '统计周期5分钟' }],
+      tongjiZQ: [{ id: 60, label: '統計周期1分鍾' }, { id: 300, label: '統計周期5分鍾' }],
       symbolList: [
         { id: '1', label: '>' },
         { id: '2', label: '>=' },
@@ -333,38 +333,38 @@ export default {
         { id: '4', label: '<=' },
         { id: '5', label: '=' },
         { id: '6', label: '!=' }
-      ], // 符号数组
+      ], // 符號數組
       continuePeriod: [
-        { id: 1, label: '持续1个周期' },
-        { id: 2, label: '持续2个周期' },
-        { id: 3, label: '持续3个周期' },
-        { id: 4, label: '持续4个周期' },
-        { id: 5, label: '持续5个周期' }
-      ], // 持续周期
+        { id: 1, label: '持續1個周期' },
+        { id: 2, label: '持續2個周期' },
+        { id: 3, label: '持續3個周期' },
+        { id: 4, label: '持續4個周期' },
+        { id: 5, label: '持續5個周期' }
+      ], // 持續周期
       jinggaoZQ: [
-        { label: '不重复', id: 0 },
-        { label: '每5分钟警告一次', id: 300 },
-        { label: '每10分钟警告一次', id: 600 },
-        { label: '每15分钟警告一次', id: 900 },
-        { label: '每30分钟警告一次', id: 1800 },
-        { label: '每1小时警告一次', id: 3600 },
-        { label: '每2小时警告一次', id: 7200 },
-        { label: '每3小时警告一次', id: 10800 },
-        { label: '每6小时警告一次', id: 21600 },
-        { label: '每12小时警告一次', id: 43200 },
-        { label: '每1天警告一次', id: 86400 },
-        { label: '周期指数递增', id: 1 }
+        { label: '不重複', id: 0 },
+        { label: '每5分鍾警告壹次', id: 300 },
+        { label: '每10分鍾警告壹次', id: 600 },
+        { label: '每15分鍾警告壹次', id: 900 },
+        { label: '每30分鍾警告壹次', id: 1800 },
+        { label: '每1小時警告壹次', id: 3600 },
+        { label: '每2小時警告壹次', id: 7200 },
+        { label: '每3小時警告壹次', id: 10800 },
+        { label: '每6小時警告壹次', id: 21600 },
+        { label: '每12小時警告壹次', id: 43200 },
+        { label: '每1天警告壹次', id: 86400 },
+        { label: '周期指數遞增', id: 1 }
       ], // 警告周期
-      cam: {}, // cam组件的值
+      cam: {}, // cam組件的值
       projectId: 0,
       searchParam: {},
       product: {},
       loading: false,
-      httpCodes: '', // 回调的随机码
+      httpCodes: '', // 回調的隨機碼
       protocol: ['http', 'https'],
       httpOption: [],
       httpsOption: [],
-      saveResponseGroupId: '', // 新建响应回的GroupId
+      saveResponseGroupId: '', // 新建響應回的GroupId
       multipleSelection: []
     }
   },
@@ -480,7 +480,7 @@ export default {
         })
       })
     },
-    // 条件触发模板 更改
+    // 條件觸發模板 更改
     conditionTemplateChange: function (groupID) {
       if (groupID !== '') {
         let oneConditionsTemplate = this.formInline.conditionsTemplate.find(item => {
@@ -507,15 +507,15 @@ export default {
         }
       }
     },
-    // 获取 项目 列表
+    // 獲取 項目 列表
     getProjectsList: async function () {
       this.axios.get(ALL_PROJECT).then(res => {
         this.axiosUtils(res, () => {
-          this.formInline.project = [{ projectName: '默认项目', projectId: 0 }, ...res.data]
+          this.formInline.project = [{ projectName: '默認項目', projectId: 0 }, ...res.data]
         })
       })
     },
-    // 获取 选择实例组 列表
+    // 獲取 選擇實例組 列表
     describeInstanceGroupList: async function () {
       let params = {
         Version: '2018-07-24',
@@ -531,7 +531,7 @@ export default {
         })
       })
     },
-    // 获取 触发条件模板 列表
+    // 獲取 觸發條件模板 列表
     describeConditionsTemplateList: async function () {
       let params = {
         Version: '2018-07-24',
@@ -559,7 +559,7 @@ export default {
         if (valid) {
           if (radio === '2' && multipleSelection.length <= 0) {
             this.$message({
-              message: '请选择绑定对象',
+              message: '請選擇綁定對象',
               type: 'error',
               showClose: true,
               duration: 0
@@ -568,7 +568,7 @@ export default {
           }
           if (JSON.stringify(cam) === '{}' || (cam.selectUserGroup.length <= 0 && cam.selectUserList <= 0)) {
             this.$message({
-              message: '请选择接收对象',
+              message: '請選擇接收對象',
               type: 'error',
               showClose: true,
               duration: 0
@@ -576,7 +576,7 @@ export default {
             return
           } else if (cam.channel.length <= 0) {
             this.$message({
-              message: '请选择接收渠道 ',
+              message: '請選擇接收渠道 ',
               type: 'error',
               showClose: true,
               duration: 0
@@ -585,7 +585,7 @@ export default {
           }
           this.saveSubmit()
         } else {
-          console.error('有验证错误')
+          console.error('有驗證錯誤')
           return false
         }
       })
@@ -620,7 +620,7 @@ export default {
         // params.IsUnionRule = configTrigger.IsUnionRule
         Conditions.forEach((item, index) => {
           params[`Conditions.${index}.MetricId`] = item.MetricID
-          // todo 有问题，不知道给后台传的是什么值，文档上是 0.连续告警 1.指数告警
+          // todo 有問題，不知道給後台傳的是什麽值，文檔上是 0.連續告警 1.指數告警
           // params[`Conditions.${index}.AlarmNotifyType`] = item.AlarmNotifyType
           params[`Conditions.${index}.AlarmNotifyType`] = 0
           if (configTrigger.IsUnionRule === 0) {
@@ -642,7 +642,7 @@ export default {
           this.saveResponseGroupId = res.Response.GroupId
           Promise.all([this.saveOther()]).then(()=>{
             this.$message({
-              message: '创建告警策略成功',
+              message: '創建告警策略成功',
               type: 'success',
               showClose: true,
               duration: 2000

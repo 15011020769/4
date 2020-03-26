@@ -10,20 +10,20 @@
             style="width: 100%"
             @selection-change="handleSelectionChange"
           >
-            <el-table-column label="变更时间">
+            <el-table-column :label="$t('CVM.ChangeLog.bgsj')">
               <template slot-scope="scope">
                 <p>{{ scope.row.CreateTime | formatDate }}</p>
               </template>
             </el-table-column>
-            <el-table-column label="修改人">
+            <el-table-column :label="$t('CVM.ChangeLog.xgr')">
               <template slot-scope="scope">
                 {{ scope.row.LastEditUin }}
               </template>
             </el-table-column>
-            <el-table-column label="最后修改">
+            <el-table-column :label="$t('CVM.ChangeLog.zhxg')">
               <template slot-scope="scope">
                 <a href="javascript:;" @click="LookDeatils(scope.row)"
-                  >查看变更后详情</a
+                  >{{$t('CVM.ChangeLog.tips1')}}</a
                 >
               </template>
             </el-table-column>
@@ -47,32 +47,32 @@
     </div>
     <!-- 查看变更后详情 -->
     <div class="look-details">
-      <el-dialog title="变更后详情" :visible.sync="visible">
+      <el-dialog :title="$t('CVM.ChangeLog.bghxq')" :visible.sync="visible">
         <ul>
           <li>
-            <span>实例组名</span>
+            <span>{{ $t('CVM.ChangeLog.slzm')}}</span>
             <span>{{ details.groupName }}</span>
           </li>
           <li>
-            <span>实例数</span>
+            <span>{{ $t('CVM.ChangeLog.sls')}}</span>
             <span>{{ details.instanceSum }}个</span>
           </li>
           <li>
-            <span>修改人</span>
+            <span>{{ $t('CVM.ChangeLog.xgr')}}</span>
             <span>{{ details.lastEditUin }}</span>
           </li>
           <li>
-            <span>修改时间</span>
+            <span>{{ $t('CVM.ChangeLog.xgsj')}}</span>
             <span>{{ details.lastModifyTime | formatDate }}</span>
           </li>
           <li class="include-examples">
-            <span>包含实例</span>
+            <span>{{ $t('CVM.ChangeLog.bhsl')}}</span>
             <el-table
               :data="tableData"
               style="width: 100%"
               v-loading="loadShow"
             >
-              <el-table-column label="ID/主机名" width="180">
+              <el-table-column :label="$t('CVM.ChangeLog.zjm')" width="180">
                 <template slot-scope="scope">
                   <p>
                     {{ scope.row.InstanceId }}
@@ -81,8 +81,8 @@
                   <p>{{ scope.row.InstanceName }}</p>
                 </template>
               </el-table-column>
-              <el-table-column label="网络类型" width="180">
-                VPC 网络
+              <el-table-column :label="$t('CVM.ChangeLog.wllx')" width="180">
+                VPC 網絡
               </el-table-column>
               <el-table-column label="IP地址">
                 <template slot-scope="scope">
@@ -91,7 +91,7 @@
                       v-for="(item, index) in scope.row.PrivateIpAddresses"
                       :key="index"
                     >
-                      {{ item }}(内网)
+                      {{ item }}(內網)
                     </span>
                   </p>
                   <p>
@@ -99,13 +99,13 @@
                       v-for="(item, index) in scope.row.PublicIpAddresses"
                       :key="index"
                     >
-                      {{ item }}(外网)
+                      {{ item }}(外網)
                     </span>
                   </p>
                 </template>
               </el-table-column>
               <el-table-column prop="address" label="地域"
-                >台湾台北</el-table-column
+                >台灣台北</el-table-column
               >
             </el-table>
           </li>
@@ -194,13 +194,13 @@ export default {
           this.loadShow = false;
         } else {
           let ErrTips = {
-            FailedOperation: "操作失败",
-            InternalError: "内部错误",
+            FailedOperation: "操作失敗",
+            InternalError: "內部錯誤",
             "InternalError.Param": "Param。",
-            "InternalError.PublicClusterOpNotSupport": "集群不支持当前操作。",
-            InvalidParameter: "参数错误",
-            ResourceNotFound: "资源不存在",
-            ResourceUnavailable: "资源不可用"
+            "InternalError.PublicClusterOpNotSupport": "集群不支持當前操作。",
+            InvalidParameter: "參數錯誤",
+            ResourceNotFound: "資源不存在",
+            ResourceUnavailable: "資源不可用"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
