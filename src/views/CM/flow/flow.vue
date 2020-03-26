@@ -34,7 +34,7 @@
                   <el-table-column prop="times" label="時間" sortable>
                     <template slot-scope="scope">{{scope.row.times}}</template>
                   </el-table-column>
-                  <el-table-column prop="Points" label="外出頻寬">
+                  <el-table-column prop="Points" label="外網出頻寬">
                     <template slot-scope="scope">{{scope.row.Points}}Mbps</template>
                   </el-table-column>
                 </el-table>
