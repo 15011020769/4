@@ -296,13 +296,13 @@
                         <el-radio-button label="CLOUD_PREMIUM">{{$t('TKE.colony.gxnyp')}}</el-radio-button>
                         <el-radio-button label="CLOUD_SSD">{{$t('TKE.colony.yyp')}}</el-radio-button>
                       </el-radio-group>
-                      <div class="block" style="height: auto;" v-if="item.dataDiskType = 'CLOUD_PREMIUM'">
-                        <el-slider :min="10" :max="16000" :step="10" :show-tooltip="true" v-model="item.dataSize"
-                         show-input @change="changeDataDisk"></el-slider>
+                      <div class="block" style="height: auto;" v-if="item.dataDiskType === 'CLOUD_PREMIUM'">
+                        <el-slider :marks="markdata" :min="10"  :max="16000" :step="10" :show-tooltip="true" v-model="item.dataSize"
+                         show-input @change="changeDataDisk(i)"></el-slider>
                       </div>
                       <div class="block" style="height: auto;" v-else>
-                        <el-slider :min="100" :max="16000" :step="10" :show-tooltip="true" v-model="item.dataSize"
-                         show-input @change="changeDataDisk"></el-slider>
+                        <el-slider :min="100" :marks="marks" :max="16000" :step="10" :show-tooltip="true" v-model="item.dataSize"
+                         show-input @change="changeDataDisk1(i)"></el-slider>
                       </div>
                     </el-form-item>
                     <el-form-item :label="$t('TKE.colony.gshsz')" class="norms" style="padding-left: 10px;">
@@ -367,7 +367,7 @@
               </el-radio-group>
               <div style="overflow:hidden;margin-left:120px;">
                 <div class="block">
-                  <el-slider :min="0" :max="100" :step="1" v-model="nodeForm.internetMaxBandwidthOut" show-input
+                  <el-slider :min="0" :max="100" :step="1" :marks="markNet" v-model="nodeForm.internetMaxBandwidthOut" show-input
                   @change="changeInternet"></el-slider>
                 </div>
                 <div class="data-disk">
@@ -760,12 +760,20 @@ export default {
   data() {
     return {
       marks:{
-        0: '10',
-        100: '16000',
+        100: '100GB',
+        16000: '16000GB',
+      },
+      markNet:{
+        3: '1Mbps',
+        100: '500Mbps'
+      },
+      markdata:{
+        10: '10GB',
+        16000: '16000GB',
       },
       mark:{
-        60: '50G',
-        300: '500G'
+        50: '50GB',
+        500: '500GB'
       },//slider滑块
       loadShow: false,//是否显示加载
       clusterId: '',//集群id
@@ -1438,7 +1446,7 @@ export default {
     AddDataDisk(index) {
         this.nodeForm.buyDataDiskArr.push({
           dataDiskType: "CLOUD_PREMIUM",
-          dataSize: 100,
+          dataSize: 10,
           fomatAndMount: false,
           fileSystem: "ext4",
           filePath: "/var/lib/docker",
@@ -1481,12 +1489,62 @@ export default {
       this.costPrice();
     },
     changeSyetem() {
+      let size = String(this.nodeForm.systemSize);
+      let datasize = 0;
+      if(Number(size) < 50) {
+        this.nodeForm.systemSize = 50
+      } else if(Number(size) > 500) {
+        this.nodeForm.systemSize = 500
+      } else {
+        if(Number(size.substring(size.length-1,size.length)) > 4) {
+          datasize = size.substring(0,size.length-1)+'0';
+          this.nodeForm.systemSize = Number(datasize) + 10;
+        } else {
+          datasize = size.substring(0,size.length-1)+'0';
+          this.nodeForm.systemSize = Number(datasize);
+        }
+      }
+      this.costPrice();
+    },
+    changeDataDisk(index) {
+      let buyDataDiskArr = this.nodeForm.buyDataDiskArr;
+      let size = String(buyDataDiskArr[index].dataSize);
+      let datasize = 0;
+      if(Number(size) < 10) {
+        this.nodeForm.buyDataDiskArr[index].dataSize = 10
+      } else if(Number(size) > 16000) {
+        this.nodeForm.buyDataDiskArr[index].dataSize = 16000
+      } else {
+        if(Number(size.substring(size.length-1,size.length)) > 4) {
+          datasize = size.substring(0,size.length-1)+'0';
+          this.nodeForm.buyDataDiskArr[index].dataSize = Number(datasize) + 10;
+        } else {
+          datasize = size.substring(0,size.length-1)+'0';
+          this.nodeForm.buyDataDiskArr[index].dataSize = Number(datasize);
+        }
+      }
+      this.costPrice();
+    },
+    changeDataDisk1(index) {
+      let buyDataDiskArr = this.nodeForm.buyDataDiskArr;
+      let size = String(buyDataDiskArr[index].dataSize);
+      let datasize = 0;
+      if(Number(size) < 100) {
+        this.nodeForm.buyDataDiskArr[index].dataSize = 100
+      } else if(Number(size) > 16000) {
+        this.nodeForm.buyDataDiskArr[index].dataSize = 16000
+      } else {
+        if(Number(size.substring(size.length-1,size.length)) > 4) {
+          datasize = size.substring(0,size.length-1)+'0';
+          this.nodeForm.buyDataDiskArr[index].dataSize = Number(datasize) + 10;
+        } else {
+          datasize = size.substring(0,size.length-1)+'0';
+          this.nodeForm.buyDataDiskArr[index].dataSize = Number(datasize);
+        }
+      }
       this.costPrice();
     },
     changeDataDiskType() {
-      this.costPrice();
-    },
-    changeDataDisk() {
       this.costPrice();
     },
     changeInternetType() {
@@ -2046,7 +2104,7 @@ export default {
     line-height: 40px;
     font-size: 12px;
     color: #444;
-    overflow: hidden;
+    // overflow: hidden;
   }
   ::v-deep .el-form-item {
     margin-bottom: 0px;
