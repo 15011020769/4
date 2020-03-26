@@ -679,7 +679,7 @@ export default {
           this.blobToDataURI(blob, data => { //blob格式再转换为base64格式
             console.log('我是base64')
             console.log(data)
-            param.ZipFile = data
+            param.ZipFile = data.replace(/^data:application\/\w+;base64,/, "");  // 正则替换哈 imgData 为base64字符串
             this.updateCsliteFun(param) // 更新函数代码
           })
 
