@@ -9,7 +9,7 @@
     </div>
     <div class="explain">
       <p>
-        <span>如何檢視更多信息？</span>
+        <span>如何查看更多信息？</span>
       </p>
       <p>
         <span>&nbsp;&nbsp;{{$t('CAM.userList.userTest')}}</span>
@@ -117,7 +117,7 @@
             </el-form-item>
             <el-form-item>
               <el-link @click="details(scope.row)" type="primary">
-                <span>檢視用户详情></span>
+                <span>查看用户详情></span>
               </el-link>
             </el-form-item>
           </el-form>

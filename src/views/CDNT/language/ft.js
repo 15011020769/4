@@ -1,8 +1,8 @@
 module.exports = {
   CDNT: {
     report: {
-      0: '統計專案 ',
-      1: '全部專案 ',
+      0: '統計項目 ',
+      1: '全部項目 ',
       2: '統計域名 ',
       3: '全部域名 ',
       4: '報表類型 ',
@@ -131,7 +131,7 @@ module.exports = {
     upload: {
       deleteTip: '按 delete 鍵可刪除',
       delete: '刪除',
-      preview: '檢視圖片',
+      preview: '查看圖片',
       continue: '繼續上傳'
     },
     table: {

@@ -115,7 +115,7 @@ export default {
       this.metadataDocumentError = "";
       if (!file.name.endsWith(".xml")) {
         this.$refs.upload.clearFiles();
-        this.metadataDocumentError = "文件类型无效，请上传类型为xml的文件";
+        this.metadataDocumentError = "文檔类型无效，请上传类型为xml的文檔";
         return;
       }
 
@@ -134,7 +134,7 @@ export default {
             })
             .then(res => {
               if (res.Response.Error) {
-                this.metadataDocumentError = "元數據文件內容有誤";
+                this.metadataDocumentError = "元數據文檔內容有誤";
               } else {
                 this.base64encode = base64encode;
               }
@@ -146,7 +146,7 @@ export default {
             });
         } catch (err) {
           this.loading = false;
-          this.metadataDocumentError = "元數據文件內容有誤";
+          this.metadataDocumentError = "元數據文檔內容有誤";
           this.$refs.upload.clearFiles();
           console.log("======");
         }
@@ -186,7 +186,7 @@ export default {
     },
     updateSAMLMetadata() {
       if (!this.addModel.metadataDocument) {
-        this.metadataDocumentError = "請選擇元數據文件";
+        this.metadataDocumentError = "請選擇元數據文檔";
         return;
       }
       if (this.metadataDocumentError) return;

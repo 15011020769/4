@@ -43,7 +43,7 @@
                 <el-button
                   @click.native.prevent="detailsMesg(scope.row)"
                   type="text"
-                >檢視</el-button>
+                >查看</el-button>
               </template>
             </el-table-column> 
           </el-table>

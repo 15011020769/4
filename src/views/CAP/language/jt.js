@@ -11,7 +11,7 @@ module.exports = {
       zrqqsl: '昨日请求数量',
       zryzl: '昨日验证量',
       zreyljl: '昨日恶意拦截量',
-      ckxq: '檢視详情',
+      ckxq: '查看详情',
       yzmc: '验证名称',
       xcxyz: '如(小程序验证)',
       yzssym: '验证所属域名',
@@ -172,7 +172,7 @@ module.exports = {
         tabs: {
             tab1: '关联实例',
             tab1new: '新增实例',
-            tab1new1: '同地域带宽免费，点击檢視详情',
+            tab1new1: '同地域带宽免费，点击查看详情',
             tab1new2: '私有网络',
             tab1new3: '专线网关',
             tab1new4: '请选择',

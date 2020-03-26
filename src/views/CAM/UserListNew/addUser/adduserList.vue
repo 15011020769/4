@@ -199,7 +199,7 @@ export default {
           code: 1,
           title: "可訪問資源並接收消息",
           txt:
-            "該用戶可以登入控制台或通過 API 密鑰訪問您授予其許可權的台富雲資源，同時擁有接收消息等子帳號的全部功能"
+            "該用戶可以登錄控制台或通過 API 密鑰訪問您授予其許可權的台富雲資源，同時擁有接收消息等子帳號的全部功能"
         },
         {
           code: 0,
@@ -580,7 +580,7 @@ export default {
           if (this.ruleForm.loginRadio === "") {
             this.$message({
               showClose: true,
-              message: "請設置登入保護",
+              message: "請設置登錄保護",
               type: "error",
               duration: 0
             });

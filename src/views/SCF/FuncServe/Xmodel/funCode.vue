@@ -414,7 +414,7 @@ export default {
           this._Clone('address') // 获取地址
           if (res.Response.Status !== 'Active') {
             this.$message({
-              message: '執行方法handler上傳錯誤，請檢視執行方法handler說明，重新上傳',
+              message: '執行方法handler上傳錯誤，請查看執行方法handler說明，重新上傳',
               type: "error",
               showClose: true,
               duration: 0

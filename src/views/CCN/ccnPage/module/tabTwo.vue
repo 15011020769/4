@@ -6,7 +6,7 @@
       <p>
         <i class="el-icon-info"></i>注釋：Max、Min和Avg數值統計為當前折線圖內所有點的最大值、最小值和平均值
       </p>
-      <p @click="shua" class="shua">重新整理</p>
+      <p @click="shua" class="shua">刷新</p>
     </div>
     <div class="box-table">
       <!-- 表格 -->
@@ -168,7 +168,7 @@
         disName: {
           'InBandwidth': '入带宽',
           'InPkg': '入包量',
-          'OutBandwidth': '出頻寬',
+          'OutBandwidth': '出帶寬',
           'OutPkg': '出包量',
           'RegionInBandwidth': '地域總入帶寬',
           'RegionInPkg': '地域總入包量',

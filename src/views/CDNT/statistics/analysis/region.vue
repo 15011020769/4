@@ -147,7 +147,7 @@ export default {
         ["開始時間", moment(times[0]).format('YYYY-MM-DD')],
         ["結束時間", moment(times[1]).format('YYYY-MM-DD')],
         ["統計數據類型", AreaType === 'client' ? '用戶端地區' : '服務地區'],
-        ["統計專案", projectName || "全部專案"],
+        ["統計項目", projectName || "全部項目"],
         ["統計域名", domainName || "全部域名"],
         ["導出時間", moment().format('YYYYMMDDHHmmss')],
         [],

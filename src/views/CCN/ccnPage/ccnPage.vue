@@ -529,7 +529,7 @@
             this.axios.post(ATTACHCCN_INSTANCES, params2).then(res => {
               if (res.Response.Error) {
                 let ErrTips = {
-                  "InvalidParameterValue.CcnAttachBmvpcLimitExceeded": "指定雲聯閘道聯黑石私有網路數量達到上限",
+                  "InvalidParameterValue.CcnAttachBmvpcLimitExceeded": "指定雲聯網關聯黑石私有網路數量達到上限",
                   LimitExceeded: "超過配額限制",
                   ResourceNotFound: "資源不存在",
                   "UnsupportedOperation.CcnAttached": "實例已關聯CCN",

@@ -31,14 +31,14 @@
               <tr class="t-body" colspan="0" aria-rowspan="0">
                 <td>
                   <span v-if="allData1.goodsId === 100615">高防IP專業版新購</span>
-                  <span v-if="allData1.goodsId === 100616">高防IP專業版續約</span>
+                  <span v-if="allData1.goodsId === 100616">高防IP專業版續費</span>
                   <span v-if="allData1.goodsId === 100617">高防IP專業版升級</span>
                 </td>
                 <td>
                   <p v-if="allData1.address!==''"><span>地域{{allData1.address}}</span></p>
-                  <p v-if="allData1.savePeak!==''"><span>防護頻寬峰值：{{allData1.savePeak}}Gbps</span></p>
+                  <p v-if="allData1.savePeak!==''"><span>防護帶寬峰值：{{allData1.savePeak}}Gbps</span></p>
                   <p v-if="allData1.elasticPeak!==''"><span>彈性防護峰值：{{allData1.elasticPeak}}Gbps</span></p>
-                  <p v-if="allData1.autoPay!==''"><span>自動續約：{{allData1.autoPay}}</span></p>
+                  <p v-if="allData1.autoPay!==''"><span>自動續費：{{allData1.autoPay}}</span></p>
                   <p v-if="allData1.BusinessBroadband!==''"><span>業務寬頻(Mbps)：{{allData1.BusinessBroadband}}</span></p>
                   <p v-if="allData1.httpQPS!==''"><span>HTTP(QPS)：{{allData1.httpQPS}}</span></p>
                   <p v-if="allData1.httpsQPS!==''"><span>HTTPS(QPS)：{{allData1.httpsQPS}}</span></p>
@@ -68,7 +68,7 @@
         </div>
         <div class="bottomPay">
           <div class="pay-submit">
-            <!-- <span>購買/開通/續約 均可開票，購買成功後可前往 控制台 > 費用中心<a href="#">開發票</a></span> -->
+            <!-- <span>購買/開通/續費 均可開票，購買成功後可前往 控制台 > 費用中心<a href="#">開發票</a></span> -->
             <span class="allTotal">總計費用：<span class="allMoneySpan"> NT$<span>{{this.showPrice(allData1.payMoney,2)}}</span></span></span>
             <!-- <el-button class="payBtnOne">代理支付</el-button> -->
             <el-button class="payBtnTwo" @click="next">立即支付</el-button>

@@ -127,7 +127,7 @@ module.exports = {
       jcxx: '基础信息',
       mbhs: '模板函数',
       symbcjhs: '使用示例代码模板创建函数',
-      ckxq: '檢視详情',
+      ckxq: '查看详情',
       yy: '语言',
       zz: '作者',
       srcs: '输入参数',

@@ -42,15 +42,15 @@ module.exports = {
   price: '定價',
   document: '文件中心',
   console: '控制台',
-  login: '登入',
+  login: '登錄',
   register: '免費註冊',
   bill: '費用中心',
   userCenter: '用戶中心',
   info: '訊息中心',
   workorder: '我的工單',
   back: '帳號系統',
-  h: '登出',
+  h: '退出',
   hintTitle: '提示',
-  hintContent: '確定進行[登出]操作?',
+  hintContent: '確定進行[退出]操作?',
   lockText: '您的帳戶已鎖定，暫不支持購買'
 }

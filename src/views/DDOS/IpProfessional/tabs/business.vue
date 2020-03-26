@@ -122,8 +122,8 @@ export default {
         //   title: "Halfayear"
         // }
       ],
-      chartDes1: '入流量頻寬峰值',
-      chartDes2: '出流量頻寬峰值',
+      chartDes1: '入流量帶寬峰值',
+      chartDes2: '出流量帶寬峰值',
       chartValue1: '0bps',
       chartValue2: '0bps',
       // 一次最大只能查询30天，通过选择日期，可查询最大时间范围到半年，但是一次也只能查询30天
@@ -368,8 +368,8 @@ export default {
         params['IpList.' + 0] = this.ywTimeBtnSelect2
       }
       if (this.metricNameService === "traffic") {
-        this.chartDes1 = '入流量頻寬峰值'
-        this.chartDes2 = '出流量頻寬峰值'
+        this.chartDes1 = '入流量帶寬峰值'
+        this.chartDes2 = '出流量帶寬峰值'
         this.chartValue1 = '0bps'
         this.chartValue2 = '0bps'
       } else if (this.metricNameService === "pkg") {
@@ -650,7 +650,7 @@ export default {
         series: [
           {
             symbol: "none",
-            name: "入流量頻寬峰值",
+            name: "入流量帶寬峰值",
             type: "line",
             data: data1,
             itemStyle: {
@@ -663,7 +663,7 @@ export default {
           },
           {
             symbol: "none",
-            name: "出流量頻寬峰值",
+            name: "出流量帶寬峰值",
             type: "line",
             data: data2,
             itemStyle: {

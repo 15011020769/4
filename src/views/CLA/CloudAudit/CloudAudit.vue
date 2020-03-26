@@ -453,7 +453,7 @@
         this.loading = true;
         this.Loading();
       },
-      // 檢視事件
+      // 查看事件
       LookShows() {
         this.LookShow = true;
       },

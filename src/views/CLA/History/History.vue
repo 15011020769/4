@@ -16,7 +16,7 @@
         </p>
         <p>
           <span>{{ $t('CLA.total.lsjlts3') }}</span>
-          <!-- <a href="JavaScript:;">檢視COS计费详情。</a> -->
+          <!-- <a href="JavaScript:;">查看COS计费详情。</a> -->
         </p>
       </div>
       <div class="btn">

@@ -134,8 +134,8 @@ export default {
         } else {
           if (res.Response.DataInfoList.length != 0) {
             this.showEchart = true
-            this.legendText1 = res.Response.DataInfoList[0].ClientIp + '影音帧率'
-            this.legendText2 = res.Response.DataInfoList[0].ClientIp + '影音碼率'
+            this.legendText1 = res.Response.DataInfoList[0].ClientIp + '視頻帧率'
+            this.legendText2 = res.Response.DataInfoList[0].ClientIp + '視頻碼率'
             this.legendText3 = res.Response.DataInfoList[0].ClientIp + '音頻帧率'
             this.legendText4 = res.Response.DataInfoList[0].ClientIp + '音頻碼率'
             res.Response.DataInfoList.map(v => {

@@ -4,9 +4,9 @@ module.exports = {
     userList: {
       policyPlaceholder: "支持搜索策略名称/描述",
       listTitle: "用户列表",
-      listText: "如何檢視更多信息?",
+      listText: "如何查看更多信息?",
       listContext:
-        "访问管理对您的敏感信息进行安全升级保护，您可以点击列表中【详情】列下拉按钮【▶】檢視用户的身份安全状态、已加入组以及消息订阅等更多信息。您也可以点击用户名进入用户详细信息中檢視或编辑。",
+        "访问管理对您的敏感信息进行安全升级保护，您可以点击列表中【详情】列下拉按钮【▶】查看用户的身份安全状态、已加入组以及消息订阅等更多信息。您也可以点击用户名进入用户详细信息中查看或编辑。",
       listAdduser: "新增用户",
       lsitAddMore: "批量添加用户",
       deleteMore: "批量删除",
@@ -188,7 +188,7 @@ module.exports = {
       removeGrop: "移出该组",
       ge: "个",
       xxdy: "消息订阅",
-      ckyhxq: "檢視用户详情",
+      ckyhxq: "查看用户详情",
       userGroupPlaceholder: "请输入用户组名",
       userRemarkPlaceholder: "请输入备注"
     },
@@ -302,7 +302,7 @@ module.exports = {
       sureOubind: "确定解除",
       suerStr: "确 定",
       overChoose: "已选择的用户/组",
-      lookDetils: "檢視详情",
+      lookDetils: "查看详情",
       okDel: "确认是否解除？",
       removeStra: "解除后，以上策略关联的用户或用户组将失去对应的权限。",
       strUsers: "关联用户",
@@ -367,7 +367,7 @@ module.exports = {
       16: "天御业务安全防护相关通知",
       17: "云市场服务通知",
       18: "证书两码发放",
-      19: "管道服务通知",
+      19: "渠道服务通知",
       20: "URL安全解决方案",
       21: "官网服务通知",
       22: "SSL证书相关通知",

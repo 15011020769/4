@@ -604,7 +604,7 @@
             this.BucketSelect.name = this.detailData.CosBucketName;
           } else {
             let ErrTips = {
-              "InternalError.DescribeAuditError": "檢視跟蹤集詳情錯誤，請聯繫開發人員",
+              "InternalError.DescribeAuditError": "查看跟蹤集詳情錯誤，請聯繫開發人員",
               "ResourceNotFound.AuditNotExist": "跟蹤集不存在"
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
