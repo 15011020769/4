@@ -4733,7 +4733,7 @@ export default {
       if (val === "EMAIL") {
         return "郵件";
       } else if (val === "SMS") {
-        return "短信";
+        return "簡訊";
       } else if (val === "WECHAT") {
         return "微信";
       } else if (val === "CALL") {

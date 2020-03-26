@@ -185,7 +185,7 @@
           </div>
         </div>
         <!-- <div class="right">
-           当月已使用短信统计
+           当月已使用簡訊统计
           <div class="box">
             <div class="head">
               <h3 style="flex:1;">
@@ -219,7 +219,7 @@
         </div> -->
       </div>
     </div>
-    <!-- 购买短信 -->
+    <!-- 购买簡訊 -->
     <!-- <bugmsg :dialogVisible="dialogVisible" @cancel="cancel" @save="save" /> -->
   </div>
 </template>
@@ -245,7 +245,7 @@ export default {
   name: "overview",
   data() {
     return {
-      dialogVisible: false, //购买短信弹出框
+      dialogVisible: false, //购买簡訊弹出框
       region: "",
       tableData: [], //表格数据
       //下拉框
@@ -391,7 +391,7 @@ export default {
   },
 
   methods: {
-    //购买短信
+    //购买簡訊
     buyMessgae() {
       this.dialogVisible = true;
     },
@@ -409,7 +409,7 @@ export default {
         this.region = res.data[0].zone;
       });
     },
-    // 当月已使用短信统计
+    // 当月已使用簡訊统计
     // getSMS() {
     //   let params = {
     //     Version: "2018-07-24",

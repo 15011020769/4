@@ -75,7 +75,7 @@
       return {
         activeName: "first",
         value: 1,
-        dialogVisible: false, //购买短信弹出框
+        dialogVisible: false, //购买簡訊弹出框
         input: "", //搜索框的值
         tableData: [], // table数据
         TotalCount: 0, //总条数

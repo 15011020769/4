@@ -227,7 +227,7 @@ import {
 import { LIST_SUBACCOUNTS } from "@/constants";
 
 import Header from "@/components/public/Head";
-// const cityOptions = ["短信", "邮件", "站内信"];
+// const cityOptions = ["簡訊", "邮件", "站内信"];
 export default {
   name: "subscription",
   data() {

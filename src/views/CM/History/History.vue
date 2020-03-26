@@ -7,8 +7,8 @@
           <div class="history-main">
             <!-- <div class="explain" style="margin-bottom:20px;">
               <p>
-                當月短信配額已用 0 條，剩余 1000 條可用。
-                <a @click="buyMessgae">購買短信</a>
+                當月簡訊配額已用 0 條，剩余 1000 條可用。
+                <a @click="buyMessgae">購買簡訊</a>
               </p>
             </div>-->
             <div class="box">
@@ -87,7 +87,7 @@
                     <template slot-scope="scope">{{formatSeconds(scope.row.Duration)}}</template>
                   </el-table-column>
                   <el-table-column prop label="告警渠道" width="130">
-                    <template slot-scope="scope">郵件、短信</template>
+                    <template slot-scope="scope">郵件、簡訊</template>
                   </el-table-column>
                   <el-table-column prop label="告警狀態" width="100">
                     <template slot-scope="scope">
@@ -178,7 +178,7 @@
       </el-tabs>
     </div>
 
-    <!-- 購買短信 -->
+    <!-- 購買簡訊 -->
     <buymsg :dialogVisible="dialogVisible" @cancel="cancel" @save="save" />
     <!-- 配置表格顯示參數 -->
     <Dialog :dialogVisible1="dialogVisible1" @cancel="cancel1" @save1="save1" />
@@ -204,7 +204,7 @@ export default {
       loadShow: true, // 加载是否显示
       activeName: "first",
       value: 1,
-      dialogVisible: false, //购买短信弹出框
+      dialogVisible: false, //购买簡訊弹出框
       input: "", //搜索框的值
       tableData: [], //列表数据
       dialogVisible1: false, //设置显示参数弹框
@@ -456,7 +456,7 @@ export default {
       }
       return wbout;
     },
-    //購買短信
+    //購買簡訊
     buyMessgae() {
       this.dialogVisible = true;
     },

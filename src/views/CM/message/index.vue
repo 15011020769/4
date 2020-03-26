@@ -6,8 +6,8 @@
     <!-- <div class="overview-main">
       <div class="explain">
         <p>
-          当月短信配额已用0条，剩余1000条可用。
-          <a>购买短信</a>
+          当月簡訊配额已用0条，剩余1000条可用。
+          <a>购买簡訊</a>
         </p>
       </div>
     </div> -->
@@ -60,7 +60,7 @@
             <p v-if="scope.row.NotifyWay">
               <span v-for="(v,i) in scope.row.NotifyWay" :key="i">
                 <b v-if="v=='EMAIL'">邮件、</b>
-                <b v-if="v=='SMS'">短信、</b>
+                <b v-if="v=='SMS'">簡訊、</b>
                 <b v-if="v=='CALL'">站内信、</b>
               </span>
             </p>

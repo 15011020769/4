@@ -200,7 +200,7 @@
         retractChartFlag: false,
         value: 13, //时间
         timeBtnRadio: "上海", //事件选择单选
-        dialogVisible: false, //购买短信弹出框
+        dialogVisible: false, //购买簡訊弹出框
         region: "",
         tableData: [], //表格数据
         //下拉框

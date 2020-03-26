@@ -42,7 +42,7 @@ export default {
     return {
       multipleSelection: [], //穿梭框數據
       // checked1: "", //郵件
-      // checked2: "", //短信
+      // checked2: "", //簡訊
       input: "",
       input1: "",
       tableData: [],

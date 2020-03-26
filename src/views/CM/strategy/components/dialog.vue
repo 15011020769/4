@@ -8,7 +8,7 @@
     >
       <div class="dialog">
         <div class="explain">
-          <p>所購短信配額沒有使用限時，用完爲止</p>
+          <p>所購簡訊配額沒有使用限時，用完爲止</p>
         </div>
         <div class="dialog-main">
           <el-checkbox-group v-model="checkList">
@@ -45,7 +45,7 @@ export default {
       checkList: ["選中且禁用", "複選框 A"],
       msgPrice: 0,
       num: 100,
-      //購買短信 類型
+      //購買簡訊 類型
       liIndex: 0,
       btnArr: ["基礎告警", "雲撥測告警", "自定義監控告警", "自定義消息"]
     };

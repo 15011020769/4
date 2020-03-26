@@ -630,7 +630,7 @@ export default {
                 if (item === 'EMAIL') {
                   this.channelList.push('郵件')
                 } else if (item === 'SMS') {
-                  this.channelList.push('短信')
+                  this.channelList.push('簡訊')
                 } else if (item === 'WECHAT') {
                   this.channelList.push('微信')
                 }
@@ -864,7 +864,7 @@ export default {
       if (val === 'EMAIL') {
         return '郵件'
       } else if (val === 'SMS') {
-        return '短信'
+        return '簡訊'
       } else if (val === 'WECHAT') {
         return '微信'
       } else if (val === 'CALL') {

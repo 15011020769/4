@@ -469,7 +469,7 @@
           </div>
           <div>
             <p>
-              <span>短信</span>
+              <span>簡訊</span>
               <span>已開通數:{{ SMSOpen }},未開通數:{{ SMSClose }}</span>
             </p>
             <el-select v-model="SMSVal" placeholder="請選擇">
@@ -731,7 +731,7 @@ export default {
       ],
       emailOpen: 0,
       emailClose: 0,
-      // 短信
+      // 簡訊
       SMSVal: "1",
       SMSOpt: [
         {
@@ -1336,7 +1336,7 @@ export default {
       this.emailOpen = 0;
       this.emailClose = 0;
       this.emailVal = "1";
-      // 短信
+      // 簡訊
       this.SMSOpt = [
         {
           value: "1",
@@ -1647,7 +1647,7 @@ export default {
       if (val === "EMAIL") {
         return "郵件";
       } else if (val === "SMS") {
-        return "短信";
+        return "簡訊";
       } else if (val === "WECHAT") {
         return "微信";
       } else if (val === "CALL") {

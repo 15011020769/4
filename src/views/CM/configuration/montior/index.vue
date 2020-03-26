@@ -80,7 +80,7 @@ export default {
       value1:"",
       value2:"",
       value3:"",
-      dialogVisible: false, //購買短信彈出框
+      dialogVisible: false, //購買簡訊彈出框
       input: "", //搜索框的值
       tableData: [],
       option1:[],
