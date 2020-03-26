@@ -15,7 +15,7 @@
             <p>
               <el-checkbox label="策略名稱"></el-checkbox>
               <el-checkbox label="觸發條件"></el-checkbox>
-              <el-checkbox label="所屬項目"></el-checkbox>
+              <el-checkbox label="所屬專案"></el-checkbox>
               <el-checkbox label="策略類型" disabled></el-checkbox>
               <el-checkbox label="已啓用/實例數" disabled></el-checkbox>
               <el-checkbox label="最後修改"></el-checkbox>
@@ -138,4 +138,4 @@ export default {
 .dialog-footer {
   text-align: center;
 }
-</style>  
+</style>

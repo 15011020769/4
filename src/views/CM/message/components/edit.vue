@@ -61,11 +61,11 @@ export default {
           }
         ], //策略類型
         alarm: "", //策略類型
-        projectName: "默認項目",
+        projectName: "默認專案",
         project: [
           {
             value: 0,
-            name: "默認項目"
+            name: "默認專案"
           }
         ]
       }

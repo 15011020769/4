@@ -29,7 +29,7 @@
           </p>
         </li>
         <li v-if="basicNews.ProjectId != -1">
-          <span class="textColor">所屬項目</span>
+          <span class="textColor">所屬專案</span>
           <p>
             <span>{{ basicNews.ProjectId | ProjectName }}</span>
           </p>
@@ -4742,7 +4742,7 @@ export default {
     },
     ProjectName(val) {
       if (val == 0) {
-        return "默認項目";
+        return "默認專案";
       }
       for (let i in project) {
         if (val == project[i].projectId) {

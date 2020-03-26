@@ -13,7 +13,7 @@
           <el-form-item label="策略類型">
             <product-type-cpt @PassData="passData" :searchParam="searchParam" :projectId="formInline.projectId" productValue="cvm_device" @loading="(e)=>loading=e"/>
           </el-form-item>
-          <el-form-item label="所屬項目" prop="projectName">
+          <el-form-item label="所屬專案" prop="projectName">
             <el-select class="w200" v-model="formInline.projectId">
               <el-option v-for="(item, index) in formInline.project" :key="index" :label="item.projectName" :value="item.projectId" label-width="40px"></el-option>
             </el-select>
@@ -306,7 +306,7 @@ export default {
           name: '雲伺服器-基礎監控'
         }], // 策略類型
         alarm: '', // 策略類型
-        project: [{ projectName: '默認項目', projectId: 0 }],
+        project: [{ projectName: '默認專案', projectId: 0 }],
         projectId: 0,
         instanceGroup: [],
         instanceGroupId: '',
@@ -507,11 +507,11 @@ export default {
         }
       }
     },
-    // 獲取 項目 列表
+    // 獲取 專案 列表
     getProjectsList: async function () {
       this.axios.get(ALL_PROJECT).then(res => {
         this.axiosUtils(res, () => {
-          this.formInline.project = [{ projectName: '默認項目', projectId: 0 }, ...res.data]
+          this.formInline.project = [{ projectName: '默認專案', projectId: 0 }, ...res.data]
         })
       })
     },

@@ -174,7 +174,7 @@
             </el-popover>
           </template>
         </el-table-column>
-        <el-table-column label="所屬項目">
+        <el-table-column label="所屬專案">
           <template slot-scope="scope">
             {{ scope.row.ProjectId | ProjectName }}
           </template>
@@ -979,7 +979,7 @@ export default {
         }
       });
     },
-    // 項目
+    // 專案
     Project() {
       this.axios.get(ALL_PROJECT).then(res => {
         if (res.codeDesc === "Success") {
@@ -1656,7 +1656,7 @@ export default {
     },
     ProjectName(val) {
       if (val == 0) {
-        return "默認項目";
+        return "默認專案";
       }
       for (let i in project) {
         if (val == project[i].projectId) {

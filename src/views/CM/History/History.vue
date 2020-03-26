@@ -138,7 +138,7 @@
                       <div v-if="scope.row.Vpc=='1'">VPC網路</div>
                     </template>
                   </el-table-column>
-                  <el-table-column prop label="所屬項目" width="120">
+                  <el-table-column prop label="所屬專案" width="120">
                     <template slot-scope="scope">{{scope.row.ProjectName}}</template>
                   </el-table-column>
                   <el-table-column prop label="所屬實例組" width="180">

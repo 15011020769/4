@@ -777,7 +777,7 @@ export default {
       this.chartsObjects.forEach(item => {
         json.push({
           監控事件: item.Content,
-          項目: item.Type === "threshold" ? project : "-",
+          專案: item.Type === "threshold" ? project : "-",
           地域: "台灣台北",
           產品類型: product.label,
           // "類型": item.event === "evnet" ? "事件" : "阈值告警",   // 接口未提供該字段

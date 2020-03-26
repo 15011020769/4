@@ -48,7 +48,7 @@
             <a :href="`#/strategy/createdetail?groupId=${scope.row.GroupID}`" class="gpn">{{scope.row.GroupName}}</a>
           </template>
         </el-table-column>
-        <el-table-column label="所屬項目">
+        <el-table-column label="所屬專案">
           <template slot-scope="scope">
             {{ scope.row.ProjectID | ProjectName }}
           </template>
@@ -815,11 +815,11 @@ export default {
             }
           ], // 策略類型
           alarm: '', // 策略類型
-          projectName: '默認項目',
+          projectName: '默認專案',
           project: [
             {
               value: 0,
-              name: '默認項目'
+              name: '默認專案'
             }
           ]
         }
@@ -850,7 +850,7 @@ export default {
     },
     ProjectName (val) {
       if (val == 0) {
-        return '默認項目'
+        return '默認專案'
       }
       if (this.allProjectName) {
         for (let i in this.allProjectName) {

@@ -404,13 +404,13 @@ export default {
   name: "CamTransferCpt",
   data() {
     return {
-      projectSelectedOption: 0, //選擇了一個項目
+      projectSelectedOption: 0, //選擇了一個專案
       projectOptions: [
         {
           projectId: 0,
-          projectName: "默認項目"
+          projectName: "默認專案"
         }
-      ], //項目資源列表
+      ], //專案資源列表
       searchItem: "", //搜索项值
       multipleSelection: [],
       searchItemOptions: [], //搜索项数组
