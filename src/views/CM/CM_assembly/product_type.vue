@@ -210,10 +210,10 @@
               value: 'base_cpu_usage'
             },
             {
-              label: '内存使用量(MB)',
+              label: '記憶體使用量(MB)',
               value: 'mem_used'
             }, {
-              label: '内存利用率%',
+              label: '記憶體利用率%',
               value: 'mem_usage'
             },
             {
@@ -613,7 +613,7 @@
               value: 'cpu_use_rate'
             },
             {
-              label: '内存利用率(%)',
+              label: '記憶體利用率(%)',
               value: 'memory_use_rate'
             }
           ]
@@ -744,11 +744,11 @@
             },
             {
               value: 'storage_min',
-              label: '内存使用量(Mb)'
+              label: '記憶體使用量(Mb)'
             },
             {
               value: 'storage_us_min',
-              label: '内存使用率(%)'
+              label: '記憶體使用率(%)'
             }
           ]
           this._PassValue()
