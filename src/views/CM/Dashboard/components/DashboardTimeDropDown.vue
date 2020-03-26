@@ -336,7 +336,8 @@ export default {
         if (item.Time === Basis) {
           if (item.TimeGranularity) {
             this.TimeGranularity = item.TimeGranularity;
-            this.grainValue = item.TimeGranularity[0].value;
+            // this.grainValue = item.TimeGranularity[0].value;
+            this.grainValue = "86400";
           }
         }
       });
