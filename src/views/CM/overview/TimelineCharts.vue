@@ -89,25 +89,6 @@ export default {
         startTimeMoment.set("month", currentMoment.month());
         startTimeMoment.set("date", currentMoment.date());
 
-        // // “-”表示至今
-        // if (tempEndTime === "-") {
-        //   if (currentMoment.isSameOrAfter(todayMoment, "day")) {
-        //     todayMoment.set("year", currentMoment.year());
-        //     todayMoment.set("month", currentMoment.month());
-        //     todayMoment.set("date", currentMoment.date());
-        //     endTime = todayMoment.format("YYYY-MM-DD HH:mm:ss");
-        //   } else {
-        //     endTime = `${current} 23:59:59`;
-        //   }
-        // } else {
-        //   let endTimeMoment = moment(tempEndTime);
-        //   endTimeMoment.set("year", currentMoment.year());
-        //   endTimeMoment.set("month", currentMoment.month());
-        //   endTimeMoment.set("date", currentMoment.date());
-
-        //   endTime = endTimeMoment.format("YYYY-MM-DD HH:mm:ss");
-        // }
-
         contentData.push([
           startTimeMoment.format("YYYY-MM-DD HH:mm:ss"), // 用于显示x轴的值
           endTime, // 結束時間用於渲染bar
@@ -128,6 +109,15 @@ export default {
           textStyle: {
             align: "center"
           }
+        },
+        grid: {
+          left: "3%",
+          right: "10%",
+          bottom: "3%",
+          top: "8%",
+          containLabel: true,
+          backgroundColor: "#eee",
+          borderColor: "#ccc"
         },
         dataZoom: [
           {
