@@ -8,17 +8,17 @@
 </template>
 <script>
   import {
-    CVM_LIST, //雲伺服器列表
-    NAT_LIST, //NAT網關列表
-    VPN_LIST, //VPN網關列表
+    CVM_LIST, //云服务器列表
+    NAT_LIST, //NAT网关列表
+    VPN_LIST, //VPN网关列表
     VPNTD_LIST, //VPN通道列表
-    DCG_LIST, //專線網關列表
+    DCG_LIST, //专线网关列表
     MYSQL_LIST, //MYSQL列表
     REDIS_LIST, //REDIS列表
-    Physics_LIST, //物理專線列表
-    Private_LIST, //專線通道列表
-    OBJ_LIST, //對象存儲列表
-    DISK_LIST, //雲硬碟列表
+    Physics_LIST, //物理专线列表
+    Private_LIST, //专线通道列表
+    OBJ_LIST, //对象存储列表
+    DISK_LIST, //云硬碟列表
     CM_GROUPING_LIST_TYPE,
     ALL_PROJECT
   } from "@/constants";
@@ -77,10 +77,10 @@
             viewName: 'COS',
           }
         ],
-        Date: [], //各個産品數組
-        HeadConfig: {}, //頭部設置
-        SearchConfig: [], //搜索設置
-        Namespace: 'QCE/CVM', //各産品調取監控數據命名空間
+        Date: [], //各个产品数组
+        HeadConfig: {}, //头部设置
+        SearchConfig: [], //搜索设置
+        Namespace: 'QCE/CVM', //各产品调取监控数据命名空间
         MetricName: [],
         id: '',
         Pass: {},

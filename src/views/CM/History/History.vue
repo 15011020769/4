@@ -201,13 +201,13 @@ export default {
   name: "history",
   data() {
     return {
-      loadShow: true, // 加載是否顯示
+      loadShow: true, // 加载是否显示
       activeName: "first",
       value: 1,
-      dialogVisible: false, //購買短信彈出框
+      dialogVisible: false, //购买短信弹出框
       input: "", //搜索框的值
-      tableData: [], //列表數據
-      dialogVisible1: false, //設置顯示參數彈框
+      tableData: [], //列表数据
+      dialogVisible1: false, //设置显示参数弹框
       timeObjs: [],
       TimeArr: [
         {
@@ -267,10 +267,10 @@ export default {
           ]
         }
       ],
-      //分頁
-      totals: 0, //總條數
-      pageSize: 10, //每頁10條
-      pageIndex: 1, // 當前頁碼
+      //分页
+      totals: 0, //总条数
+      pageSize: 10, //每页10条
+      pageIndex: 1, // 当前页码
       StartTime: "",
       EndTime: "",
       Period: {}
@@ -283,7 +283,7 @@ export default {
     Dialog
   },
   created() {
-    this.getBasicsList(); //獲取基礎告警列表
+    this.getBasicsList(); //获取基础告警列表
   },
   methods: {
     GetDate(val) {
@@ -372,8 +372,8 @@ export default {
           Offset: (this.pageIndex - 1) * this.pageSize
         };
         params.ObjLike = this.input;
-        params.StartTime = Date.parse(this.StartTime) / 1000; //開始時間戳
-        params.EndTime = new Date(this.EndTime).getTime()/1000; //結束時間戳
+        params.StartTime = Date.parse(this.StartTime) / 1000; //开始时间戳
+        params.EndTime = new Date(this.EndTime).getTime()/1000; //结束时间戳
       } else {
         var params = {
           Region: localStorage.getItem("regionv2"),

@@ -424,7 +424,7 @@ export default {
         console.log(res);
         if (res.Response.Error === undefined) {
           this.$message({
-            message: "订阅成功",
+            message: "訂閱成功",
             type: "success",
             showClose: true,
             duration: 0

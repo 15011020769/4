@@ -1853,21 +1853,21 @@ export default {
       project,
       _ReceiverUserList,
       editBeizhuFlag: false,
-      dialogFormVisible: false, //基本信息組件彈框
-      dialogEditGaojing: false, //編輯告警彈框組件
-      dialogEditObject: false, //編輯告警彈框組件
+      dialogFormVisible: false, //基本信息组件弹框
+      dialogEditGaojing: false, //编辑告警弹框组件
+      dialogEditObject: false, //编辑告警弹框组件
       formLabelWidth: "120px",
       modifyNameDialogVisible: false,
       tipsShow: false,
       modifyRemarksDialogVisible: false,
       remarksVal: "",
-      showQudao1: false, //渠道選擇1顯示開關
-      showQudao2: false, //渠道選擇2顯示開關
-      errorTip1: false, //觸發條件模板錯誤提示
-      errorTip2: true, //配置觸發條件錯誤提示
+      showQudao1: false, //渠道选择1显示开关
+      showQudao2: false, //渠道选择2显示开关
+      errorTip1: false, //触发条件模板错误提示
+      errorTip2: true, //配置触发条件错误提示
       triggerInput: "", //新增接收
-      radio: "1", //選擇告警對象類型
-      radioChufa: "2", //觸發條件單選
+      radio: "1", //选择告警对象类型
+      radioChufa: "2", //触发条件单选
       input: "",
       input1: "",
       alarmObjectData: [],

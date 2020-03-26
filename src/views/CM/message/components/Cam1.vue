@@ -77,13 +77,13 @@ import { USER_GROUP, GET_GROUP, LIST_SUBACCOUNTS } from "@/constants";
 export default {
   data() {
     return {
-      triggerInput: "", // 查詢關鍵字
+      triggerInput: "", // 查询关键字
       tableData: [],
-      tableData2: [], // 接收組數據
-      loadingShow: true, // 接收組動畫
-      userListArr: [], // 接收人列表數組
-      userListLoading: "true", // 接收人加載動畫
-      qudaoCheckList: [], //渠道選擇
+      tableData2: [], // 接收组数据
+      loadingShow: true, // 接收组动画
+      userListArr: [], // 接收人列表数组
+      userListLoading: "true", // 接收人加载动画
+      qudaoCheckList: [], //渠道选择
       formInline: {
         jieshou: "0",
         jieshouArr: [
@@ -95,11 +95,11 @@ export default {
       },
       groupData: [],
       cam: {
-        // 此組件向外暴露的值
-        selectUserGroup: [], // 接收組 --> table表格選中
-        selectUserList: [], // 接收人 --> table表格選中
-        time: [], // 選中的時間
-        channel: [] // 選中的渠道
+        // 此组件向外暴露的值
+        selectUserGroup: [], // 接收组 --> table表格选中
+        selectUserList: [], // 接收人 --> table表格选中
+        time: [], // 选中的时间
+        channel: [] // 选中的渠道
       }
     };
   },

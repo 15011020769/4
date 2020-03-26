@@ -554,17 +554,17 @@ import {
   CM_ALARM_SET_DEFAULT,
   CM_GROUPING_LIST_EDIT,
   CM_ALARM_MODIFY_NOTIFY,
-  CVM_LIST, //雲伺服器列表
-  NAT_LIST, //NAT網關列表
-  VPN_LIST, //VPN網關列表
+  CVM_LIST, //云伺服器列表
+  NAT_LIST, //NAT网关列表
+  VPN_LIST, //VPN网关列表
   VPNTD_LIST, //VPN通道列表
-  DCG_LIST, //專線網關列表
+  DCG_LIST, //专线网关列表
   MYSQL_LIST, //MYSQL列表
   REDIS_LIST, //REDIS列表
-  Physics_LIST, //物理專線列表
-  Private_LIST, //專線通道列表
-  OBJ_LIST, //對象存儲列表
-  DISK_LIST //雲硬碟列表
+  Physics_LIST, //物理专线列表
+  Private_LIST, //专线通道列表
+  OBJ_LIST, //对象存储列表
+  DISK_LIST //云硬碟列表
 } from "@/constants";
 var project = [];
 export default {
@@ -682,22 +682,22 @@ export default {
             value: "2",
             name: "測試誤刪"
           }
-        ], //用戶名類型數據
-        product_value: "", //産品
+        ], //用户名类型数据
+        product_value: "", //产品
         strategy_value: "" //策略
       },
-      tableData: [], //表格數據
+      tableData: [], //表格数据
       loadShow: true,
       edit: false,
-      current: "", // 編輯
-      //分頁
-      total: 0, //總條數
-      pageSize: 10, // 分頁條數
-      pageIndex: 0, // 當前頁碼
-      operationFlag: -1, //按鈕禁用開關
+      current: "", // 编辑
+      //分页
+      total: 0, //总条数
+      pageSize: 10, // 分页条数
+      pageIndex: 0, // 当前页码
+      operationFlag: -1, //按钮禁用开关
       dataListLoading: false,
-      dialogVisible: false, //設置彈出框
-      defaultIconFlag: false, //鼠標事件
+      dialogVisible: false, //设置弹出框
+      defaultIconFlag: false, //鼠标事件
       deleteDialogVisible: false,
       deleteAllDialogVisible: false,
       deleteTableData: [],

@@ -208,22 +208,22 @@ export default {
   name: "product",
   data() {
     return {
-      // 概覽
+      // 概览
       OverViewBgcolorTrigger: false,
       OverViewBgcolor: 0,
-      statusChangeAmount: 0, // 狀態變更
-      unConfigAlarmAmount: 0, // 未配置異常事件
-      unNormalEventAmount: 0, // 異常事件
-      unRecoverAmount: 0, // 未恢複異常事件
+      statusChangeAmount: 0, // 状态变更
+      unConfigAlarmAmount: 0, // 未配置异常事件
+      unNormalEventAmount: 0, // 异常事件
+      unRecoverAmount: 0, // 未恢复异常事件
 
       activeName: "first",
-      // 時間控件
+      // 时间控件
       Datecontrol: true,
       Graincontrol: false,
       Difference: "D",
       values: 13,
 
-      dialogVisible: false, //彈框
+      dialogVisible: false, //弹框
       searchInput: "", //搜索框的值
       searchOptions: [
         {
@@ -243,16 +243,16 @@ export default {
         //   label: "事件類型"
         // },
       ],
-      searchValue: "", //inp輸入的值
+      searchValue: "", //inp输入的值
 
-      loadShow: true, // 加載是否顯示
+      loadShow: true, // 加载是否显示
       tableData: [],
-      StartTime: "", //起始時間
-      EndTime: "", //結束時間
-      //分頁
-      TotalCount: 0, //總條數
-      pageSize: 10, // 分頁條數
-      pageIndex: 0, // 當前頁碼
+      StartTime: "", //起始时间
+      EndTime: "", //结束时间
+      //分页
+      TotalCount: 0, //总条数
+      pageSize: 10, // 分页条数
+      pageIndex: 0, // 当前页码
       TimeArr: [
         {
           name: "近7天",
@@ -344,15 +344,15 @@ export default {
       // console.log(JSON.stringify(params));
       this.axios.post(PRODUCT_EVENT_LIST, params).then(res => {
         if (res.Response.Error === undefined) {
-          this.tableData = res.Response.Events; //列表數據
+          this.tableData = res.Response.Events; //列表数据
           this.TotalCount = res.Response.Total;
-          this.loadShow = false; //取消加載
+          this.loadShow = false; //取消加载
           this.showNameSpaceModal = false;
 
-          this.statusChangeAmount = res.Response.OverView.StatusChangeAmount; // 狀態變更
-          this.unConfigAlarmAmount = res.Response.OverView.UnConfigAlarmAmount; // 未配置異常事件
-          this.unNormalEventAmount = res.Response.OverView.UnNormalEventAmount; // 異常事件
-          this.unRecoverAmount = res.Response.OverView.UnRecoverAmount; // 未恢複異常事件
+          this.statusChangeAmount = res.Response.OverView.StatusChangeAmount; // 状态变更
+          this.unConfigAlarmAmount = res.Response.OverView.UnConfigAlarmAmount; // 未配置异常事件
+          this.unNormalEventAmount = res.Response.OverView.UnNormalEventAmount; // 异常事件
+          this.unRecoverAmount = res.Response.OverView.UnRecoverAmount; // 未恢复异常事件
         } else {
           this.loadShow = false;
           let ErrTips = {};

@@ -299,35 +299,34 @@ import Loading from "@/components/public/Loading";
 export default {
   data() {
     return {
-      loadShow: false, // 加載是否顯示
-      isChected: true, // 多選框是否選中
-      isDisabled: false, // 指標告警是否禁用
+      loadShow: false, // 加载是否显示
+      isChected: true, // 多选框是否选中
+      isDisabled: false, // 指标告警是否禁用
       isDisGJ: false, // 事件告警是否禁用
-      isRepeated: false, // 是否爲重複的指標告警條件
-      backShow: "true",
-      strategy_name: "", // 策略名稱
-      remark: "", // 備注信息
+      isRepeated: false, // 是否为重复的指标告警条件
+      backShow: 'true',
+      strategy_name: '', // 策略名称
+      remark: '', // 备注信息
       value1: new Date(2020, 1, 10, 18, 40),
       value2: new Date(2020, 1, 10, 18, 40),
 
-      showChufa1: false, // 觸發條件1顯示開關
-      showChufa2: true, // 觸發條件2顯示開關
+      showChufa1: false, // 触发条件1显示开关
+      showChufa2: true, // 触发条件2显示开关
 
-      showQudao1: false, // 渠道選擇1顯示開關
-      showQudao2: false, // 渠道選擇2顯示開關
+      showQudao1: false, // 渠道选择1显示开关
+      showQudao2: false, // 渠道选择2显示开关
 
-      errorTip1: false, // 觸發條件模板錯誤提示
-      errorTip2: true, // 配置觸發條件錯誤提示
+      errorTip1: false, // 触发条件模板错误提示
+      errorTip2: true, // 配置触发条件错误提示
       checkedZhibiao: true, // 指示告警
-      checkedUse: false, // 使用預置觸發條件
-      productData: [], // 策略類型
-      SymbolList: [">", ">=", "<", "<=", "=", "!="], // 符號數組
+      checkedUse: false, // 使用预置触发条件
+      productData: [], // 策略类型
+      SymbolList: ['>', '>=', '<', '<=', '=', '!='], // 符号数组
       formInline: {
-        strategy_name: "", // 策略名稱
-        textareas: "" // 備注
+        strategy_name: '', // 策略名称
+        textareas: '' // 备注
       },
-      indexAry: [
-        // 指標告警數組
+      indexAry: [ // 指标告警数组
         {
           Period: 60,
           CalcType: ">",
@@ -338,8 +337,7 @@ export default {
           alarm: 86400
         }
       ],
-      eventAry: [
-        // 事件告警數組
+      eventAry: [// 事件告警数组
         {
           jieshou: "接收組",
           jieshouArr: [
@@ -359,10 +357,10 @@ export default {
               value: 1,
               name: "https"
             }
-          ], // 接口回調數據
-          strategy_name: "", // 策略名稱
-          textareas: "", // 備注
-          strategy: "雲伺服器-基礎監控",
+          ], // 接口回调数据
+          strategy_name: '', // 策略名称
+          textareas: '', // 备注
+          strategy: '雲伺服器-基礎監控',
           strategy_kind: [
             {
               value: 0,
@@ -457,10 +455,10 @@ export default {
             required: true
           }
         ]
-      }, // 名稱和備注的驗證
-      show: this.dialogVisible, // 控制彈框顯示隱藏
-      all_alarm: 86400, // 滿足條件爲 所有 時告警值
-      view_name: "", // 策略視圖名稱
+      }, // 名称和备注的验证
+      show: this.dialogVisible, // 控制弹框显示隐藏
+      all_alarm: 86400, // 满足条件为 所有 时告警值
+      view_name: '', // 策略视图名称
       projectId: 0,
       searchParam: {},
       //  value: 'ins-6oz38wnu', label: 'instance-id'

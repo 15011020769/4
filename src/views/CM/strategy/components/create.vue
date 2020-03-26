@@ -292,14 +292,14 @@ export default {
         },
         trigger: 'blur'
       }],
-      radio: '2', // 選擇告警對象類型
-      radioChufa: '2', // 觸發條件單選
+      radio: '2', // 选择告警对象类型
+      radioChufa: '2', // 触发条件单选
       options: [],
       formInline: {
-        protocolValue: 'http', // 接口回調
+        protocolValue: 'http', // 接口回调
         callbackVerifyCode: '',
-        strategy_name: '', // 策略名稱
-        textarea: '', // 備注
+        strategy_name: '', // 策略名称
+        textarea: '', // 备注
         strategy: '雲伺服器-基礎監控',
         strategy_kind: [{
           value: 0,
@@ -310,17 +310,17 @@ export default {
         projectId: 0,
         instanceGroup: [],
         instanceGroupId: '',
-        conditionsTemplate: [], // 觸發條件模板下拉數組
+        conditionsTemplate: [], // 触发条件模板下拉数组
         conditionsTemplateId: '',
         triggerCondition: {
           IsUnionRule: 0,
-          Conditions: [], // 觸發條件-》指標告警
-          EventConditions: [] // 觸發條件-》事件告警
+          Conditions: [], // 触发条件-》指标告警
+          EventConditions: [] // 触发条件-》事件告警
         },
         configTrigger: {
           IsUnionRule: 0,
-          Conditions: [], // 觸發條件-》指標告警
-          EventConditions: [], // 觸發條件-》事件告警
+          Conditions: [], // 触发条件-》指标告警
+          EventConditions: [], // 触发条件-》事件告警
           AlarmNotifyPeriod: 86400
         }
       },

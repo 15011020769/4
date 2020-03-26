@@ -40,8 +40,8 @@ import { EDIT_CUSTON_MESSAGE } from "@/constants/CM-lxx.js";
 export default {
   data() {
     return {
-      multipleSelection: [], //穿梭框數據
-      checked1: "", //郵件
+      multipleSelection: [], //穿梭框数据
+      checked1: "", //邮件
       checked2: "", //短信
       input: "",
       input1: "",
@@ -49,10 +49,10 @@ export default {
       options: [],
       values: "",
       cam: {},
-      dataObj: {}, //編輯傳的對象
+      dataObj: {}, //编辑传的对象
       formInline: {
-        strategy_name: "", //策略名稱
-        textarea: "", //備注
+        strategy_name: "", //策略名称
+        textarea: "", //备注
         strategy: "雲伺服器-基礎監控",
         strategy_kind: [
           {
