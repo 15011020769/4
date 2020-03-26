@@ -91,7 +91,7 @@
         <el-table-column label="操作" width="110">
           <template slot-scope="scope">
             <el-button @click="onEdit(scope)" type="text" size="mini">加黑</el-button>
-            <el-button @click="goDetail(scope)" type="text" size="mini">{{t('檢視详情', 'WAF.ckxq')}}</el-button>
+            <el-button @click="goDetail(scope)" type="text" size="mini">{{t('查看详情', 'WAF.ckxq')}}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -261,7 +261,7 @@ export default {
       this.currentPage = val;
       this.getBotUbList()
     },
-    // 檢視详情
+    // 查看详情
     goDetail(scope) {
       this.$router.push({
         path: "/botDetail/ucb",

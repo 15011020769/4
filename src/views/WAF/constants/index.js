@@ -7,10 +7,10 @@ export const DOMAIN_STATE = {
   3: '過期',
   4: '正在綁定LB',
   5: '綁定LB成功',
-  6: '正在釋放LB',
-  7: '釋放LB失敗',
+  6: '正在解綁LB',
+  7: '解綁LB失敗',
   8: '綁定LB失敗',
-  9: '釋放LB成功',
+  9: '解綁LB成功',
   10: '內部錯誤',
 }
 /** 套餐包信息 */
@@ -494,7 +494,7 @@ export const ip_owner_list = [
   { value: "tencent.com", label: "騰訊雲" }
 ];
 //匹配欄位--IP類型 的匹配內容
-export const ip_type_list = [{ value: "idc", label: "網際網路數據中心（IDC）" },
+export const ip_type_list = [{ value: "idc", label: "互聯網數據中心（IDC）" },
 { value: "bs", label: "運營商基站" },
 { value: "unknown", label: "未知類型" }];
 export const ipRules = [
@@ -521,7 +521,7 @@ export const ipRules = [
     {
         id: "",
         key: "ip_owner", label: "IP所有者",
-        title: "IP所有者信息（當IP類型為IDC時有效），例如：tencent.com，可以在BOT詳情中檢視",
+        title: "IP所有者信息（當IP類型為IDC時有效），例如：tencent.com，可以在BOT詳情中查看",
         opoptions: ["belong", "not belong"], value: [],
         valueoptions: ip_owner_list,
         placeholder: "請選擇1個",
@@ -580,10 +580,10 @@ export const scene_flag_list = [
   { value: "brush_sms", label: "疑似刷簡訊介面" },
   { value: "brush_captcha", label: "疑似刷驗證碼介面" },
   { value: "reg_malicious", label: "疑似惡意註冊" },
-  { value: "credential_miss_user", label: "疑似登入行為，缺失用戶值" },
-  { value: "credential_without_user", label: "疑似登入行為，缺失用戶參數" },
-  { value: "credential_only_action", label: "疑似登入行為，缺失用戶和密碼" },
-  { value: "credential_user_password", label: "疑似登入行為，缺失登入動作" }
+  { value: "credential_miss_user", label: "疑似登錄行為，缺失用戶值" },
+  { value: "credential_without_user", label: "疑似登錄行為，缺失用戶參數" },
+  { value: "credential_only_action", label: "疑似登錄行為，缺失用戶和密碼" },
+  { value: "credential_user_password", label: "疑似登錄行為，缺失登錄動作" }
 ];
 export const advanceRules = [
   {
@@ -610,7 +610,7 @@ export const advanceRules = [
   {
       id: "",
       key: "sensitive_request_flag", label: "敏感介面訪問",
-      title: "判斷是否對敏感介面（如：簡訊介面、註冊介面、登入介面等）進行訪問",
+      title: "判斷是否對敏感介面（如：簡訊介面、註冊介面、登錄介面等）進行訪問",
       opoptions: ["yes", "no"]
   },
   {

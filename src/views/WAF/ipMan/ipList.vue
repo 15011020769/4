@@ -337,7 +337,7 @@ export default {
     closeTip() {
       this.tipShow = false;
     },
-    //点击檢視详情
+    //点击查看详情
     isShowTop() {
       if (this.flag) {
         this.arrowShow = false;

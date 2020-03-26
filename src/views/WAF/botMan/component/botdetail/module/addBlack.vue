@@ -2,7 +2,7 @@
   <div>
     <div class="newClear">
       <div class="topTip" v-if="tipShow">
-        <p style="width: 99%">{{t('加黑IP后，您可前往【IP管理-IP黑白名单】檢視', 'WAF.jhiph')}}</p>
+        <p style="width: 99%">{{t('加黑IP后，您可前往【IP管理-IP黑白名单】查看', 'WAF.jhiph')}}</p>
         <span class="el-icon-close" @click="closeTip"></span>
       </div>
        <div class="newClear newList">
@@ -143,7 +143,7 @@ export default {
         .then(resp => {
           this.generalRespHandler(resp, () => {
             this.$emit("success")
-          }, COMMON_ERROR, this.t('添加IP黑名单成功，您可以前往IP管理模块檢視。', 'WAF.tjipcg'))
+          }, COMMON_ERROR, this.t('添加IP黑名单成功，您可以前往IP管理模块查看。', 'WAF.tjipcg'))
         })
         .then(() => {
           this.loading = false
