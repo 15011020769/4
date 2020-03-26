@@ -1669,7 +1669,7 @@
       <div class="edit-receive-object">
         <p>您可到訪問管理控制台修改用戶和用戶組訊息</p>
         <div>
-          <Cam @camClick="camFun"></Cam>
+          <Cam @camClick="camFun" :selectedList="receivingObjectData" :type="ReceiverInfos.ReceiverType"></Cam>
         </div>
       </div>
       <div slot="footer" class="dialog-footer">
