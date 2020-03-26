@@ -151,15 +151,19 @@
                   <p>
                     {{ item.MetricShowName }}
                     {{ item.CalcType | CalcType }} {{ item.CalcValue
-                    }}{{ item.Unit }}，持續{{
-                      item.ContinueTime / 60
-                    }}分鍾，按{{ item.AlarmNotifyPeriod | AlarmNotifyPeriod
-                    }}{{
-                      item.AlarmNotifyPeriod > 0 ? "重複告警" : "不重複告警"
-                    }}
+                    }}{{ item.Unit }}，持續{{ item.ContinueTime / 60 }}分鍾，
+                    <span v-if="item.AlarmNotifyType != 1"
+                      >按{{ item.AlarmNotifyPeriod | AlarmNotifyPeriod
+                      }}{{
+                        item.AlarmNotifyPeriod > 0 ? "重复告警" : "不重复告警"
+                      }}
+                    </span>
+                    <span v-else>
+                      按周期指数递增重复告警
+                    </span>
                   </p>
                 </div>
-                <div
+                <!-- <div
                   v-for="(items, indexs) in scope.row.EventConditions"
                   :key="indexs"
                   class="trigger-condition"
@@ -169,7 +173,7 @@
                       items.AlarmNotifyPeriod > 0 ? "重複告警" : "不重複告警"
                     }}
                   </p>
-                </div>
+                </div> -->
               </div>
             </el-popover>
           </template>
@@ -1977,12 +1981,12 @@ a:hover {
   }
 }
 .trigger-condition {
-  p {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 1;
-    overflow: hidden;
-  }
+  // p {
+  //   display: -webkit-box;
+  //   -webkit-box-orient: vertical;
+  //   -webkit-line-clamp: 1;
+  //   overflow: hidden;
+  // }
 }
 .tke-page {
   padding: 20px;
