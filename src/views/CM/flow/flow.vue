@@ -23,7 +23,7 @@
                 <h3>外網出頻寬Mbps</h3>
                 <!-- <div class="echarts" style="width:100%" v-if="Points.length"> -->
                 <!-- <Ecarts/> -->
-                <EcharLine :xdata="true" :time="times" :opData="Points" :period="Period" style="height:300px;width:100%"
+                <EcharLine :xdata="true" :time="times" :opData="Points" :period="Period" style="height:300px;width:100%" :MetricName="'1300560919-外網出頻寬(Mbps)'"
                   v-if="times.length"></EcharLine>
                 <!-- </div> -->
               </div>
