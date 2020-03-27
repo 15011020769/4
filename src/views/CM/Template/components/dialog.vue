@@ -41,7 +41,6 @@
           :productValue="productValue"
           @loading="isLoading"
         />
-        <!-- <grouping-type @handleChangeChild="showMsgfromChild"></grouping-type> -->
         <!-- <el-checkbox v-model="checkedUse" style="margin-left:20px;">
           使用預置觸發條件
           <el-popover trigger="hover" placement="top"
@@ -50,9 +49,10 @@
           </el-popover>
         </el-checkbox> -->
       </p>
+      <div class="tips" v-if="!event.checkedGaojing&&isDisabled">请至少配置1项触发条件</div>
       <div class="rowCont cont">
         <span>觸發條件</span>
-        <div>
+        <div v-loading="loading">
           <div>
             <p>
               <el-checkbox
@@ -81,7 +81,7 @@
                 <span style="display:inline">條件時，觸發告警</span>
               </p>
               <!-- 在這裏進行便利，添加 -->
-              <ul v-loading="loading">
+              <ul>
                 <li
                   style="display:flex;align-items: center;cursor: pointer;"
                   v-for="(it, i) in indexAry"
@@ -252,36 +252,12 @@
               </p>
             </div>
           </div>
-          <!-- <div>
-            <p>
-              <el-checkbox v-model="checkedGaojing" :checked="checkedGaojing" @change="isDisabledGJ()">
-                事件告警
-                <i class="el-icon-info" style="color:#888; margin:0 5px;"></i>
-              </el-checkbox>
-            </p>
-            <ul class="color">
-              <li style="display:flex;align-items: center;cursor: pointer;" v-for="(item,i) in eventAry" :key="i">
-                <p>
-                  <el-select :disabled="isDisGJ" v-model="item.projectName" style="width:180px;margin:0 5px;">
-                    <el-option
-                      v-for="(item,index) in eventType"
-                      :key="index"
-                      :label="item"
-                      :value="item"
-                      label-width="40px"
-                    ></el-option>
-                  </el-select>
-                </p>
-                <i class="el-icon-error" style="color:#888; margin:0 5px;"
-                  @click="delShijian(item)" v-if="eventAry.length>1"></i>
-              </li>
-              <a @click="addShijian" style="cursor:pointer">添加</a>
-            </ul>
-          </div> -->
+          <!-- 事件告警 -->
+          <EventAlarm :eventData.sync="event"></EventAlarm>
         </div>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" :disabled="isRepeated" @click="save('form')"
+        <el-button type="primary" :disabled="!event.checkedGaojing&&isDisabled?!event.checkedGaojing||isDisabled:isRepeated" @click="save('form')"
           >保 存</el-button
         >
         <el-button @click="show = false">取 消</el-button>
@@ -292,6 +268,7 @@
 <script>
 // import GroupingType from '@/components/GroupingType'
 import ProductTypeCpt from "@/views/CM/CM_assembly/product_type";
+import EventAlarm from "@/views/CM/CM_assembly/EventAlarm";
 // import type from '@/views/CM/CM_assembly/product_type'
 import { NEWBUILD_TEMPLATE } from "@/constants/CM-yhs.js";
 import { ErrorTips } from "@/components/ErrorTips";
@@ -299,25 +276,29 @@ import Loading from "@/components/public/Loading";
 export default {
   data() {
     return {
+      event:{
+        IsEventRepeated:false,//添加事件告警类型是否重复
+        checkedGaojing: true, // 事件告警是否禁用
+        eventAry: [// 事件告警数组
+          {
+            EventId:39,
+            AlarmNotifyPeriod:0,
+            AlarmNotifyType:0,
+          }
+        ],
+        eventType: [//事件告警类型
+          {EventShowName:'磁盘只读',EventId: 39},
+          {EventShowName:'内核故障',EventId: 40}
+        ], // 事件告警類型
+      },
       loading:true,
       isChected: true, // 多选框是否选中
       isDisabled: false, // 指标告警是否禁用
-      isDisGJ: false, // 事件告警是否禁用
+      // isDisGJ: false, // 事件告警是否禁用
       isRepeated: false, // 是否为重复的指标告警条件
       backShow: 'true',
       strategy_name: '', // 策略名称
       remark: '', // 备注信息
-      value1: new Date(2020, 1, 10, 18, 40),
-      value2: new Date(2020, 1, 10, 18, 40),
-
-      showChufa1: false, // 触发条件1显示开关
-      showChufa2: true, // 触发条件2显示开关
-
-      showQudao1: false, // 管道选择1显示开关
-      showQudao2: false, // 管道选择2显示开关
-
-      errorTip1: false, // 触发条件範本错误提示
-      errorTip2: true, // 配置触发条件错误提示
       checkedZhibiao: true, // 指示告警
       checkedUse: false, // 使用预置触发条件
       productData: [], // 策略类型
@@ -337,46 +318,7 @@ export default {
           alarm: 86400
         }
       ],
-      eventAry: [// 事件告警数组
-        {
-          jieshou: "接收組",
-          jieshouArr: [
-            { value: "0", name: "接收組" },
-            {
-              value: "1",
-              name: "接收人"
-            }
-          ],
-          apiStr: "http", // 接口回調
-          apiArr: [
-            {
-              value: 0,
-              name: "http"
-            },
-            {
-              value: 1,
-              name: "https"
-            }
-          ], // 接口回调数据
-          strategy_name: '', // 策略名称
-          textareas: '', // 备注
-          strategy: '雲伺服器-基礎監控',
-          strategy_kind: [
-            {
-              value: 0,
-              name: "雲伺服器-基礎監控"
-            }
-          ], // 策略類型
-          alarm: "", // 策略類型
-          projectName: "預設專案",
-          project: [
-            {
-              value: 0,
-              name: "預設專案"
-            }
-          ]
-        }
-      ],
+      // eventAry: [],// 事件告警数组
       metting: 0, // 滿足條件
       meetConditions: [
         { label: "任意", value: 0 },
@@ -410,7 +352,7 @@ export default {
         { label: "週期指數遞增", value: 1 }
       ],
       zhibiaoType: [], // 指標告警類型
-      eventType: [], // 事件告警類型
+      // eventType: [], // 事件告警類型
       form: {
         name: "",
         region: "",
@@ -421,8 +363,15 @@ export default {
         resource: "",
         desc: ""
       },
-      checkedGaojing: "", // 告警
+      // checkedGaojing: "", // 告警
       // dialogFormVisible: false //監控面板的開關
+      show: this.dialogVisible, // 控制弹框显示隐藏
+      all_alarm: 86400, // 满足条件为 所有 时告警值
+      view_name: '', // 策略视图名称
+      projectId: 0,
+      searchParam: {},
+      //  value: 'ins-6oz38wnu', label: 'instance-id'
+      productValue: "cvm_device",
       rules: {
         strategy_name: [
           {
@@ -457,13 +406,6 @@ export default {
           }
         ]
       }, // 名称和备注的验证
-      show: this.dialogVisible, // 控制弹框显示隐藏
-      all_alarm: 86400, // 满足条件为 所有 时告警值
-      view_name: '', // 策略视图名称
-      projectId: 0,
-      searchParam: {},
-      //  value: 'ins-6oz38wnu', label: 'instance-id'
-      productValue: "cvm_device"
     };
   },
   watch: {
@@ -514,6 +456,7 @@ export default {
   },
   components: {
     // GroupingType,
+    EventAlarm,
     ProductTypeCpt,
     Loading
   },
@@ -544,6 +487,7 @@ export default {
     },
     // 新建完成保存
     async newBuild() {
+      if(!this.event.checkedGaojing||isDisabled) return
       let params = {
         Version: "2018-07-24",
         GroupName: this.formInline.strategy_name,
@@ -628,6 +572,7 @@ export default {
       // this.productData = item
       // this.zhibiaoType = item.MetricName
       this.zhibiaoType = item.Metrics;
+      this.event.eventType = item.EventMetrics
       this.productValue = item.productValue;
       this.$nextTick(() => {
         this.loading = false;
@@ -682,51 +627,14 @@ export default {
     },
     addShijian() {
       // 添加觸發條件的事件告警
-      this.eventAry.push({
-        jieshou: "接收組",
-        jieshouArr: [
-          { value: "0", name: "接收組" },
-          {
-            value: "1",
-            name: "接收人"
-          }
-        ],
-        apiStr: "http", // 接口回調
-        apiArr: [
-          {
-            value: 0,
-            name: "http"
-          },
-          {
-            value: 1,
-            name: "https"
-          }
-        ], // 接口回調數據
-        strategy_name: "", // 策略名稱
-        textareas: "", // 備注
-        strategy: "雲伺服器-基礎監控",
-        strategy_kind: [
-          {
-            value: 0,
-            name: "雲伺服器-基礎監控"
-          }
-        ], // 策略類型
-        alarm: "", // 策略類型
-        projectName: "預設專案",
-        project: [
-          {
-            value: 0,
-            name: "預設專案"
-          }
-        ]
-      });
+      // this.eventAry.push();
     },
     delShijian(item) {
       // 刪除觸發條件的事件告警
-      var index = this.eventAry.indexOf(item);
-      if (index !== -1) {
-        this.eventAry.splice(index, 1);
-      }
+      // var index = this.eventAry.indexOf(item);
+      // if (index !== -1) {
+      //   this.eventAry.splice(index, 1);
+      // }
     },
     // 指標告警是否禁用
     isDisabledZB() {
@@ -738,11 +646,11 @@ export default {
     },
     // 事件告警是否禁用
     isDisabledGJ() {
-      if (this.checkedGaojing) {
-        this.isDisGJ = false;
-      } else {
-        this.isDisGJ = true;
-      }
+      // if (this.checkedGaojing) {
+      //   this.isDisGJ = false;
+      // } else {
+      //   this.isDisGJ = true;
+      // }
     },
     // 錯誤提示
     errorPrompt(res) {
@@ -872,5 +780,15 @@ export default {
 }
 .mp {
   height: 28px;
+}
+.tips {
+  height:45px;
+  line-height:45px;
+  color: #b43537;
+  font-size: 14px;
+  background-color: #fcecec;
+  border:1px solid #f6b5b5;
+  padding: 0 20px;
+  margin-bottom:10px;
 }
 </style>

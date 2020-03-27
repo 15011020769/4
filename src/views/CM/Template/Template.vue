@@ -434,7 +434,6 @@ export default {
       }
       await this.axios.post(GET_CONDITIONSTEMPLATELIST, params).then(res => {
         if (res.Response.Error === undefined) {
-          // console.log(res)
           this.TotalCount = res.Response.Total
           let msg = res.Response.TemplateGroupList
           // let ct = this.Conditions
