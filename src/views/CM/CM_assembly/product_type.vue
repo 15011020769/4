@@ -91,6 +91,11 @@
       }
     },
     watch: {
+      productValue: {
+        handler: function (val) {
+          this.productValue1 = val
+        }
+      },
       productValue1() {
         this._Metrics()
       },
