@@ -246,7 +246,20 @@
           <template slot-scope="scope">
             <div v-if="scope.row.ReceiverInfos != undefined">
               <div v-for="(i, x) in scope.row.ReceiverInfos" :key="x">
-                <p>接收組：{{ i.ReceiverGroupList.length }}個</p>
+                <p v-if="i.ReceiverGroupList.length > 0">
+                  接收組：{{ i.ReceiverGroupList.length }}個
+                </p>
+                <p v-if="i.ReceiverUserList.length > 0">
+                  接收人：{{ i.ReceiverUserList.length }}個
+                </p>
+                <p
+                  v-if="
+                    i.ReceiverUserList.length === 0 &&
+                      i.ReceiverGroupList.length === 0
+                  "
+                >
+                  接收組：0個
+                </p>
                 <p>
                   有效期：{{ i.StartTime | EndTime }} -
                   {{ i.EndTime | EndTime }}
