@@ -2108,6 +2108,7 @@ export default {
       Verification: true,
       loading: true,
       addDis: false,
+      codeSure: true,
       cam: {} // cam元件的值
     };
   },
@@ -2391,13 +2392,18 @@ export default {
       }
     },
     isURL(str) {
-      if (str.substring(str.length - 4) !== ".com") {
+      var Expression = /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?/;
+      var objExp = new RegExp(Expression);
+      if (objExp.test(str) != true) {
         this.$message({
           message: "請輸入正確的url",
           type: "error",
           showClose: true,
           duration: 0
         });
+        this.codeSure = false;
+      } else {
+        this.codeSure = true;
       }
     },
     // 編輯告警對象
@@ -4497,7 +4503,7 @@ export default {
     },
     HttpHistroyBlur() {
       // this.httpShow = false;
-      this.isURL(this.httpVal + this.httpInput);
+      this.isURL(this.httpVal + "://" + this.httpInput);
     },
     leave() {
       this.httpShow = false;
@@ -4620,7 +4626,7 @@ export default {
     },
     // 回調接口 保存
     CallBackSave(val) {
-      if (str.substring(str.length - 4) !== ".com") {
+      if (!this.codeSure) {
         this.$message({
           message: "請輸入正確的url",
           type: "error",
