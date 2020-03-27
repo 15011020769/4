@@ -2,9 +2,9 @@
  <template>
    <div class="colony-main">
      <div class="tke-card tke-formpanel-wrap">
-       <h4 class="tke-formpanel-title">主机信息</h4>
+       <h4 class="tke-formpanel-title">{{$t('TKE.subList.zjxx')}}</h4>
        <el-form class="tke-form" label-position='left' label-width="120px" size="mini">
-         <el-form-item label="节点ID">
+         <el-form-item :label="`${$t('TKE.overview.jd')}ID`">
            <div class="tke-form-item_text">
              <span>
                <a :href="'../CVM/index.html#/cloudHost/cloudHostDetail/'+detail.InstanceId+'/1'" target="_self">
@@ -17,28 +17,28 @@
            <div class="tke-form-item_text"><span class="text-green"></span></div>
          </el-form-item>
          <el-form-item label="地域">
-           <div class="tke-form-item_text">港澳台地区(台灣台北)</div>
+           <div class="tke-form-item_text">{{$t('TKE.storage.gatdqtwtb')}}</div>
          </el-form-item>
          <el-form-item label="可用区">
-           <div class="tke-form-item_text">台北一区</div>
+           <div class="tke-form-item_text">{{$t('TKE.colony.tbyq')}}</div>
          </el-form-item>
          <el-form-item label="配置">
            <div class="tke-form-item_text">
              <span class="text-gray">CPU:</span> {{detail.CPU}} 核，
              <span class="text-gray">内存:</span> {{detail.Memory}} GB，
-             <span class="text-gray">带宽:</span> 1 Mbps，
-             <span class="text-gray">系统盘:</span> {{detail.SystemDisk.DiskSize}} GB(高性能云硬盘)</div>
+             <span class="text-gray">{{$t('TKE.colony.dk')}}:</span> 1 Mbps，
+             <span class="text-gray">{{$t('TKE.colony.xtp')}}:</span> {{detail.SystemDisk.DiskSize}} GB({{$t('TKE.colony.gxnyp')}})</div>
          </el-form-item>
          <el-form-item label="IP地址">
            <div class="tke-form-item_text">
-             <p>{{detail.PrivateIpAddresses[0]}} (外网)</p>
-             <p>{{detail.PublicIpAddresses[0]}} (内网)</p>
+             <p>{{detail.PrivateIpAddresses[0]}} ({{$t('TKE.colony.ww')}})</p>
+             <p>{{detail.PublicIpAddresses[0]}} ({{$t('TKE.colony.nw')}})</p>
            </div>
          </el-form-item>
-         <el-form-item label="操作系统">
+         <el-form-item :label="$t('TKE.colony.czxt')">
            <div class="tke-form-item_text">{{detail.OsName}}</div>
          </el-form-item>
-         <el-form-item label="创建时间">
+         <el-form-item :label="$t('TKE.overview.cjsj')">
            <div class="tke-form-item_text">{{detail.addTime}}</div>
          </el-form-item>
        </el-form>

@@ -13,40 +13,40 @@
         <!-- 右侧 -->
         <div class="grid-right"></div>
       </div>
-    </div>  
+    </div>
     <div class="colony-main">
 
       <div class="tke-card tke-formpanel-wrap mb60">
         <el-form  class="tke-form" :model="np" :rules="rules" ref="np" label-position='left' label-width="120px" size="mini">
-          <el-form-item label="名称" prop="spaceName">
-            <el-input class="w200" v-model="np.spaceName" placeholder="请输入Namespace名称"></el-input>
-            <p>最长63个字符，只能包含小写字母、数字及分隔符("-")，且必须以小写字母开头，数字或小写字母结尾</p>
+          <el-form-item :label="$t('TKE.overview.mc')" prop="spaceName">
+            <el-input class="w200" v-model="np.spaceName" :placeholder="`${$t('TKE.subList.qsru')}Namespace${$t('TKE.overview.mc')}`"></el-input>
+            <p>{{$t('TKE.overview.xz')}}</p>
           </el-form-item>
           <el-form-item label="描述">
              <el-input
                 class="w420"
                 type="textarea"
                 :rows="6"
-                placeholder="请输入描述信息，不超过1000个字符"
+                :placeholder="$t('TKE.subList.qsrmsxx')"
                 v-model="np.desc">
               </el-input>
           </el-form-item>
 
-          <el-form-item label="镜像仓库秘钥">
-            <el-checkbox disabled="" v-model="np.checked1">TKE镜像仓库访问凭证：{{secretNameMap.qcloudregistrykey}}</el-checkbox>
-            <el-checkbox disabled='' v-model="np.checked2">Tencent Hub镜像仓库访问凭证：{{secretNameMap.tencenthubkey}}</el-checkbox>
+          <el-form-item :label="$t('TKE.subList.jxckmy')">
+            <el-checkbox disabled="" v-model="np.checked1">TKE{{$t('TKE.subList.jxckfwpz')}}：{{secretNameMap.qcloudregistrykey}}</el-checkbox>
+            <el-checkbox disabled='' v-model="np.checked2">Tencent Hub{{$t('TKE.subList.jxckfwpz')}}：{{secretNameMap.tencenthubkey}}</el-checkbox>
           </el-form-item>
         </el-form>
 
         <!-- 底部 -->
         <div class="tke-formpanel-footer">
-          <el-button size="small" type="primary" @click="submitAdd('np')">创建Namespace</el-button>
+          <el-button size="small" type="primary" @click="submitAdd('np')">{{$t('TKE.subList.cjian')}}Namespace</el-button>
           <el-button size="small" @click="goBack">取消</el-button>
         </div>
       </div>
     </div>
 
-   
+
   </div>
 </template>
 
@@ -58,9 +58,9 @@ export default {
   data() {
     var validateName = (rule, value, callback) => {
       if (value === '') {
-        callback(new Error('请输入Namespace名称'));
+        callback(new Error('請輸入Namespace名稱'));
       } else if(value.length > 63) {
-        callback(new Error('Namespace名称不能超过63个字符'));
+        callback(new Error('Namespace名稱不能超過63個字元'));
       } else {
         callback();
       }
@@ -82,11 +82,11 @@ export default {
         spaceName: [
           {validator: validateName, trigger: "blur", required: true}
         ]
-      }  
+      }
     };
   },
   components: {
-    
+
   },
   created() {
     this.clusterId=this.$route.query.clusterId;
@@ -155,7 +155,7 @@ export default {
         if (res.Response.Error === undefined) {
           this.loadShow = false;
           this.$message({
-            message: '创建成功',
+            message: '創建成功',
             type: "success",
             showClose: true,
             duration: 0
@@ -164,7 +164,7 @@ export default {
         } else {
           this.loadShow = false;
           let ErrTips = {
-            
+
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({

@@ -6,11 +6,11 @@ let instanceContent = {
   addInstanceContent: function (n1='',n2='',n3='',n4='',n5='',n6='',n7='',n8='',n9='',a1=[],a2=[],t1=false,n10='',n11='',n12='',t2=false,t3=false,t4=false,v,v2,mountPoint) {
     let typeSelect=(val)=>{
         if(val.tcpSocket){
-            return "TCP端口检查"
+            return "TCP端口檢查"
         }else if(val.httpGet){
-          return 'HTTP请求检查'
+          return 'HTTP請求檢查'
         }else if(val.exec){
-          return '执行命令检查'
+          return '執行命令檢查'
         }
     }
     let inspectPortSelect=(val)=>{
@@ -46,7 +46,7 @@ let instanceContent = {
       surviveExamine: t2, // 存活检查
       readyToCheck: t3, // 就绪检查
       surviveExamineContent: {
-        inspectMethodOption: ['TCP端口检查', 'HTTP请求检查', '执行命令检查'], // 检查方法
+        inspectMethodOption: ['TCP端口檢查', 'HTTP請求檢查', '執行命令檢查'], // 检查方法
         inspectMethodValue: typeSelect(v),
         inspectProtocolOption: ['HTTP', 'HTTPS'], // 检查协议
         inspectProtocolValue: v.httpGet?v.httpGet.scheme:'HTTP',
@@ -60,7 +60,7 @@ let instanceContent = {
         unhealthyThreshold: v.failureThreshold?v.failureThreshold:v.unhealthyThreshold // 不健康阀值
       },
       readyToCheckContent: {
-        inspectMethodOption: ['TCP端口检查', 'HTTP请求检查', '执行命令检查'], // 检查方法
+        inspectMethodOption: ['TCP端口檢查', 'HTTP請求檢查', '執行命令檢查'], // 检查方法
         inspectMethodValue: typeSelect(v2),
         inspectProtocolOption: ['HTTP', 'HTTPS'], // 检查协议
         inspectProtocolValue:v2.httpGet?v2.httpGet.scheme:'HTTP',
@@ -100,8 +100,8 @@ let instanceContent = {
       surviveExamine: false, // 存活检查
       readyToCheck: false, // 就绪检查
       surviveExamineContent: {
-        inspectMethodOption: ['TCP端口检查', 'HTTP请求检查', '执行命令检查'], // 检查方法
-        inspectMethodValue: 'TCP端口检查',
+        inspectMethodOption: ['TCP端口檢查', 'HTTP請求檢查', '執行命令檢查'], // 检查方法
+        inspectMethodValue: 'TCP端口檢查',
         inspectProtocolOption: ['HTTP', 'HTTPS'], // 检查协议
         inspectProtocolValue: '',
         executiveOrder: '', // 执行命令
@@ -114,8 +114,8 @@ let instanceContent = {
         unhealthyThreshold: '' // 不健康阀值
       },
       readyToCheckContent: {
-        inspectMethodOption: ['TCP端口检查', 'HTTP请求检查', '执行命令检查'], // 检查方法
-        inspectMethodValue: 'TCP端口检查',
+        inspectMethodOption: ['TCP端口檢查', 'HTTP請求檢查', '執行命令檢查'], // 检查方法
+        inspectMethodValue: 'TCP端口檢查',
         inspectProtocolOption: ['HTTP', 'HTTPS'], // 检查协议
         inspectProtocolValue: '',
         executiveOrder: '', // 执行命令
@@ -133,7 +133,7 @@ let instanceContent = {
       mountPoint:[],//挂载点数据
     })
   },
-  
+
   editInstanceContent: function (index) {
     this.wl.instanceContent[index].editStatus = !this.wl.instanceContent[index].editStatus
   },
@@ -397,7 +397,7 @@ let validateAll={
         portPathRules:[{
           validator:(rule, value, callback)=>{
             if (value === '') {
-              callback(new Error('请再次输入密码'));
+              callback(new Error('請再次輸入密碼'));
             }else {
               callback()
             }
@@ -408,7 +408,7 @@ let validateAll={
       }
     }
 }
-// let 
+// let
 export default {
   ...validateAll,
   methods: {

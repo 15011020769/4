@@ -25,9 +25,9 @@
     <div class="tke-detial-nav">
       <router-link class="nav-item" :to="{name:'masteretcdDetailPod',query: {clusterId: clusterId,node: node}}">Pod管理</router-link>
       <router-link class="nav-item" :to="{name:'masteretcdDetailEvent',query: {clusterId: clusterId,node: node}}">事件</router-link>
-      <router-link class="nav-item" :to="{name:'masteretcdDetailInfo',query: {clusterId: clusterId,detail: detail}}">详情</router-link>
+      <router-link class="nav-item" :to="{name:'masteretcdDetailInfo',query: {clusterId: clusterId,detail: detail}}">{{$t('TKE.overview.xq')}}</router-link>
       <router-link class="nav-item" :to="{name:'masteretcdDetailYaml',query: {clusterId: clusterId,node: node}}">YAML</router-link>
-    </div> 
+    </div>
 
     <!-- 子页面 -->
     <keep-alive>
@@ -35,7 +35,7 @@
           <router-view></router-view>
         </transition>
     </keep-alive>
-   
+
   </div>
 </template>
 
@@ -52,7 +52,7 @@ export default {
     };
   },
   components: {
-    
+
   },
   created() {
     // 从路由获取集群id
@@ -72,7 +72,7 @@ export default {
     goColonyList(){
       this.$router.push({
         name:'colony',
-        
+
       })
     },
   }

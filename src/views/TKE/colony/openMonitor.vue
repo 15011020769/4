@@ -7,7 +7,7 @@
         <div class="grid-left">
           <span class="goback" @click="goBack">
             <i class="el-icon-back"></i>
-            <span>集群({{name}}) / 监控</span>
+            <span>集群({{name}}) / {{$t('TKE.colony.jk')}}</span>
           </span>
         </div>
       </div>
@@ -190,7 +190,7 @@ export default {
     }
   },
   watch:{
-    
+
   },
   components: {
     TimeDropDown,
@@ -242,7 +242,7 @@ export default {
       console.log(this.valueLast)
       this.getPodList()
     },
-   
+
     getDataJob(){
       this.loadShow = true;
       const param = {
@@ -616,7 +616,7 @@ export default {
         }
       })
     },
-    
+
   },
 };
 </script>

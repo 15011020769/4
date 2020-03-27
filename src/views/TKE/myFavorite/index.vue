@@ -272,7 +272,7 @@ export default {
       if (val == 1) {
         return 'Docker Hub'
       } else {
-        return '用户公开'
+        return '用戶公開'
       }
     },
     regionIds:function(val){

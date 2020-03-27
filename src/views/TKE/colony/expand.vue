@@ -275,7 +275,7 @@
                 <el-radio-button label="CLOUD_SSD">{{$t('TKE.colony.yyp')}}</el-radio-button>
               </el-radio-group>
               <div class="block">
-                <el-slider :min="50" :max="500" :step="10" :show-tooltip="true" v-model="nodeForm.systemSize" 
+                <el-slider :min="50" :max="500" :step="10" :show-tooltip="true" v-model="nodeForm.systemSize"
                     show-input @change="changeSyetem" :marks="mark"></el-slider>
               </div>
             </div>
@@ -307,7 +307,7 @@
                     </el-form-item>
                     <el-form-item :label="$t('TKE.colony.gshsz')" class="norms" style="padding-left: 10px;">
                       <el-checkbox v-model="item.fomatAndMount" @change="isFomatMount">
-                        {{$t('TKE.colony.gshbgz')}}          
+                        {{$t('TKE.colony.gshbgz')}}
                       </el-checkbox>
                       <div v-if="item.fomatAndMount" style="display: flex;width:440px">
                         <!-- <div style="width:600px"> -->
@@ -321,9 +321,9 @@
                           </el-option>
                         </el-select>
                         <!-- <div class='box-form'> -->
-                        
+
                         <el-input v-model="item.filePath" :placeholder="$t('TKE.colony.qsrgzlj')" @blur="getInput()" :class='[item.rule? "box-form" : ""]' ></el-input>
-                        <el-tooltip class="item" effect="light" content="挂载路径不可重复" placement="top">
+                        <el-tooltip class="item" effect="light" :content="$t('TKE.colony.gzljbkcf')" placement="top">
                           <i class="el-icon-info" v-if="item.rule"></i>
                         </el-tooltip>
                         </div>
@@ -343,7 +343,7 @@
                 class="add-data-disk" style="margin-top: 10px;"
                 v-if="nodeForm.dataDiskShow"
               >
-                <el-button :disabled="nodeForm.buyDataDiskArr.length >19?true:false" @click="AddDataDisk()" style="color: #006eff;">{{$t('TKE.colony.tjsjp')}}</el-button> 
+                <el-button :disabled="nodeForm.buyDataDiskArr.length >19?true:false" @click="AddDataDisk()" style="color: #006eff;">{{$t('TKE.colony.tjsjp')}}</el-button>
               </div>
             </div>
           </div>
@@ -499,7 +499,7 @@
                     class="hide"
                     :class="{ active: item.error }"
                     effect="light"
-                    :content="item.error ? '安全组重复' : ''"
+                    :content="item.error ? '安全組重複' : ''"
                     placement="right"
                   >
                     <i class="el-icon-warning-outline ml5"></i>
@@ -670,7 +670,7 @@
           <el-form-item :label="$t('TKE.colony.sjp')">
             <p v-if="!nodeForm.isShowDataDisk">{{$t('TKE.colony.zbgm')}}</p>
             <p v-else>{{nodeForm.buyDataDiskArr | buyDataDiskArr}}</p>
-            
+
           </el-form-item>
           <el-form-item :label="$t('TKE.colony.gwdk')" class="tke-fourth-broadband">
             <p>{{nodeForm.internetChargeType | internetChargeType}} ({{nodeForm.internetMaxBandwidthOut}}Mbps)</p>
@@ -713,7 +713,7 @@
               <span class="tke-second-cost-num">{{nodeForm.totalPrice}}</span
               ><span class="tke-second-cost-h">元</span
               >
-            
+
             </div>
           </el-form-item>
           <el-form-item :label="$t('TKE.colony.zjfy')" v-else>
@@ -820,7 +820,7 @@ export default {
             value: "CLOUD_SSD",
             label: "SSD雲硬碟"
           }
-        ], 
+        ],
         latticeSetOpt: [
           { value: "ext3", label: "ext3" },
           { value: "ext4", label: "ext4" },
@@ -836,7 +836,7 @@ export default {
         instanceName: '',//实例名称
         loginSettings: 'relation',//登录方式
         keyIds: '',//ssh秘钥id
-        password: '',//密码 
+        password: '',//密码
         confirmPassword: '',//确认密码
         securityId: '',//安全组id
         securityService: true,//云服务器
@@ -1039,9 +1039,9 @@ export default {
     AdvancedSettingBtn() {
       this.nodeForm.advancedSettingShow = !this.nodeForm.advancedSettingShow;
     },
-    //获取镜像 
+    //获取镜像
     async getImagesList() {
-      
+
     },
     //获取集群信息
     async getColonyInfo () {
@@ -1072,7 +1072,7 @@ export default {
         let paramImage = {
           Version: "2018-05-25"
         }
-        
+
         await this.axios.post(TKE_OPERAT_SYSTEM, paramImage).then(resImage => {
           if(resImage.Response.Error === undefined) {
             let images = resImage.Response.ImageInstanceSet;
@@ -1170,7 +1170,7 @@ export default {
     //获取可用区机型配置信息
     async getDescribeZoneInstanceConfigInfos() {
       let param = {
-        Version: "2017-03-12"        
+        Version: "2017-03-12"
       }
       param["Filters.0.Name"] = "zone";
       param["Filters.0.Values.0"] = "ap-taipei-1";
@@ -1308,7 +1308,7 @@ export default {
       } else {
         this.loadShow = false;
         let ErrTips = {
-          
+
         };
         let ErrOr = Object.assign(ErrorTips, ErrTips);
         this.$message({
@@ -1358,10 +1358,10 @@ export default {
       } else if(example !== 'all' && cpu === 'all' && memory === 'all') {
         zoneInfoFilters = zoneInfoList.filter( res => res.InstanceFamily === example);
       } else if(example !== 'all' && cpu !== 'all' && memory === 'all') {
-        zoneInfoFilters = zoneInfoList.filter( 
+        zoneInfoFilters = zoneInfoList.filter(
           res => res.InstanceFamily === example && res.Cpu === cpu);
       } else if(example !== 'all' && cpu !== 'all' && memory !== 'all') {
-        zoneInfoFilters = zoneInfoList.filter( 
+        zoneInfoFilters = zoneInfoList.filter(
           res => res.InstanceFamily === example && res.Cpu === cpu && res.Memory === memory);
       } else if (example !== 'all' && cpu === 'all' && memory !== 'all') {
         zoneInfoFilters = zoneInfoList.filter(res => res.InstanceFamily === example && res.Memory === memory);
@@ -1428,7 +1428,7 @@ export default {
           for(let keys in arr){
             if(key == arr[keys]){
                 this.nodeForm.buyDataDiskArr[key]['rule'] = true
-            } 
+            }
           }
         }
         console.log(this.nodeForm.buyDataDiskArr)
@@ -1465,7 +1465,7 @@ export default {
     // ----------------------------------------- 第三步 -------------------------------------
     // 登录方式
     LoginMode(val) {
-      
+
     },
     // 第三步 上一步
     thirdPrev() {
@@ -1728,7 +1728,7 @@ export default {
       };
       let buyDataDisks = this.nodeForm.buyDataDiskArr;
       if(buyDataDisks.length > 0) {
-        
+
         let dataDisks = [];
         for(let i = 0; i < buyDataDisks.length; i++) {
           let buyDataDisk = {
@@ -1743,7 +1743,7 @@ export default {
       if(this.nodeForm.containerChecked) {
         containerInput = this.nodeForm.containerInput;
       }
-      
+
       let param = {
         Version: '2018-05-25',
         ClusterId: this.clusterId,
@@ -1775,7 +1775,7 @@ export default {
           param["InstanceAdvancedSettings.Labels.0.Name"] = "";
           param["InstanceAdvancedSettings.Labels.0.Value"] = "";
         }
-      }  
+      }
       // param["InstanceAdvancedSettings.Kubelet.0"] = "";
 
       let buyDataDiskArr = this.nodeForm.buyDataDiskArr;
@@ -1853,7 +1853,7 @@ export default {
         "Placement.Zone": "ap-taipei-1",
         "SystemDisk.DiskSize": Number(this.nodeForm.systemSize),
         "SystemDisk.DiskType": this.nodeForm.systemDiskType,
-        Version: "2017-03-12", 
+        Version: "2017-03-12",
         PurchaseSource: "MC"
       }
       //公网

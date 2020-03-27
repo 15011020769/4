@@ -85,7 +85,7 @@
                 <el-switch class="ml10" v-model="autoRefresh" @change="changeSwitch()" ></el-switch>
                 <span>{{autoRefresh ? '已註冊' : '未註冊'}}</span>
               </div>
-              
+
               <div class="tke-form-item_text" v-else><span>{{$t('TKE.subList.dqswglylw')}}</span></div>
             </el-form-item>
             <el-form-item label="ipvs支持">
@@ -97,7 +97,7 @@
     </el-row>
 
     <div class="tke-card tke-formpanel-wrap mt10">
-      <h4 class="tke-formpanel-title">集群APIServer信息</h4>
+      <h4 class="tke-formpanel-title">集群APIServer{{$t('TKE.overview.xx')}}</h4>
       <el-form  class="tke-form"  label-position='left' label-width="130px" size="mini">
         <el-form-item label="访问地址">
           <div class="tke-form-item_text"><span>https://{{security.Domain}}</span></div>
@@ -277,7 +277,7 @@
         <el-button @click="unRegister">取 消</el-button>
       </div>
     </el-dialog>
-    
+
   </div>
 </template>
 
@@ -286,8 +286,8 @@ import subTitle from '@/views/TKE/components/subTitle'
 import Loading from '@/components/public/Loading'
 import moment from 'moment';
 import { ErrorTips } from "@/components/ErrorTips";
-import { CLUSTERS_SECURITY, TKE_COLONY_LIST, ALL_PROJECT, UPDATE_CLUSTER_NAME, 
-  UPDATE_PROJECT, CLUSTER_VERSION, CLUSTER_OS, UPDATE_OS,CLUSTERS_INSTANCES, 
+import { CLUSTERS_SECURITY, TKE_COLONY_LIST, ALL_PROJECT, UPDATE_CLUSTER_NAME,
+  UPDATE_PROJECT, CLUSTER_VERSION, CLUSTER_OS, UPDATE_OS,CLUSTERS_INSTANCES,
   TKE_CCN_ROUTES, ADD_CIDE_TO_CCN, CLOSE_CIDE_TO_CCN, TKE_COLONY_DES,TKE_WORKER_METWORK,OPEN_INTRANET,
   ClOSE_INTRANET,PRIVATE_IMAGE,PUBLIC_IMAGE } from '@/constants'
 export default {
@@ -328,7 +328,7 @@ export default {
             validator: (rule, value, callback) => {
               if (value === '') {
                 callback(new Error('集群名稱不能為空'))
-              } else if (value.length >60) { 
+              } else if (value.length >60) {
               // else if (!(/^[a-z][a-z\d-]*$/.test(value))) {
                 callback(new Error('集群名稱不能大於60個字符'))
               } else {
@@ -582,7 +582,7 @@ export default {
       } else {
         this.loadShow = false;
         let ErrTips = {
-          
+
         };
         let ErrOr = Object.assign(ErrorTips, ErrTips);
         this.$message({
@@ -686,7 +686,7 @@ export default {
       let param = {
         Version: "2018-05-25"
       }
-      
+
       let osString = this.clusterInfo.ClusterOs;
       let osList = [];
       this.axios.post(PUBLIC_IMAGE, param).then(res => {
@@ -695,7 +695,7 @@ export default {
             for(let i = 0; i<res.Response.ImageInstanceSet.length; i++) {
               let currOs = res.Response.ImageInstanceSet[i].OsName;
               if(currOs.substring(0, 6).toLowerCase() === osString.substring(0, 6).toLowerCase()) {
-                
+
                 // this.os = res.data.ImageInstanceSet[i];
                 osList.push(res.Response.ImageInstanceSet[i]);
               }
@@ -732,7 +732,7 @@ export default {
         ClusterId: this.clusterId,
         ClusterName: this.ruleForm.name
       }
-      
+
       await this.axios.post(TKE_COLONY_DES, param).then(res => {
         if(res.Response.Error === undefined) {
           this.getColonyInfo();
@@ -922,7 +922,7 @@ export default {
         } else {
           this.loadShow = false;
           let ErrTips = {
-            
+
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -1039,7 +1039,7 @@ export default {
     upTime(value) {
       return moment(value).format("YYYY-MM-DD HH:mm:ss");
     }
-  }  
+  }
 }
 </script>
 

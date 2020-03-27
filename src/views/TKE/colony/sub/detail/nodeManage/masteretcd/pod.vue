@@ -10,16 +10,16 @@
       <!-- 右侧 -->
       <div class="tool">
         <div class="searchRight">
-          <el-select placeholder="请选择" v-model="ChoiceValue">
+          <el-select :placeholder="$t('TKE.overview.qxz')" v-model="ChoiceValue">
             <el-option v-for="item in searchOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
-          <el-input v-model="searchValue" class="searchs" placeholder="请输入内容" @change="_searchchange">
+          <el-input v-model="searchValue" class="searchs" :placeholder="$t('TKE.colony.qsrnr')" @change="_searchchange">
           </el-input>
           <el-button class="el-icon-search" size="small" @click="_search"></el-button>
         </div>
       </div>
     </div>
-    
+
     <!-- 数据列表展示 -->
     <div class="tke-card mt10">
       <el-table
@@ -30,7 +30,7 @@
         <el-table-column type="expand" prop="container">
           <template slot-scope="scope">
             <el-table border :data="scope.row.spec.containers" >
-                <el-table-column prop="" label="容器名称" >
+                <el-table-column prop="" :label="`容器${$t('TKE.overview.mc')}`">
                   <template slot-scope="scope1">
                     <span>{{scope1.row.name}}</span>
                   </template>
@@ -40,7 +40,7 @@
                     <span>{{scope1.row.containerID}}</span>
                   </template>
                 </el-table-column>
-                <el-table-column prop="" label="镜像版本号" >
+                <el-table-column prop="" :label="$t('TKE.overview.jx')+$t('TkE.overview.bbh')" >
                   <template slot-scope="scope1">
                     <span>{{scope1.row.imageID}}</span>
                   </template>
@@ -65,12 +65,12 @@
                     <span>{{scope1.row.resources && scope1.row.resources.limits && scope1.row.resources.limits.memory && scope1.row.resources.limits.memory || '无限制'}}</span>
                   </template>
                 </el-table-column>
-                <el-table-column prop="" label="重启次数" >
+                <el-table-column prop="" label="重啟次數" >
                   <template>
                     <span>{{scope.row.restart}}</span>
                   </template>
                 </el-table-column>
-                <el-table-column prop="" label="状态" >
+                <el-table-column prop="" :label="$t('TKE.overview.zt')" >
                   <template>
                     <span class="text-green">{{scope.row.status.phase}}</span>
                   </template>
@@ -83,7 +83,7 @@
           width="55">
         </el-table-column>
         <el-table-column
-          label="实例名称"
+          :label="$t('TKE.colony.slmc')"
           >
           <template slot-scope="scope">
             <span>{{scope.row.metadata.name}}</span>
@@ -91,7 +91,7 @@
         </el-table-column>
         <el-table-column
           prop=""
-          label="状态"
+          :label="$t('TKE.overview.zt')"
           >
           <template slot-scope="scope">
               <span :class="[scope.row.redStatus?'text-red':'text-green']">{{scope.row.status.phase}}</span>
@@ -99,7 +99,7 @@
         </el-table-column>
         <el-table-column
           prop=""
-          label="实例所在节点IP"
+          label="實例所在節點IP"
           >
           <template slot-scope="scope">
               <span>{{scope.row.status.hostIP}}</span>
@@ -107,7 +107,7 @@
         </el-table-column>
         <el-table-column
           prop=""
-          label="实例IP"
+          label="實例IP"
           >
           <template slot-scope="scope">
             <span>{{scope.row.status.podIP}}</span>
@@ -132,7 +132,7 @@
         </el-table-column>
         <el-table-column
           prop=""
-          label="命名空间"
+          :label="$t('TKE.overview.mmkj')"
           >
           <template slot-scope="scope">
             <span>{{scope.row.metadata.namespace}}</span>
@@ -140,7 +140,7 @@
         </el-table-column>
         <el-table-column
           prop=""
-          label="所属工作负载"
+          label="所屬工作負載"
           >
           <template slot-scope="scope">
             <p>{{scope.row.metadata.ownerReferences && scope.row.metadata.ownerReferences[0].name}}</p>
@@ -149,7 +149,7 @@
         </el-table-column>
         <el-table-column
           prop=""
-          label="创建时间"
+          :label="$t('TKE.overview.cjsj')"
           >
           <template slot-scope="scope">
             <p>{{scope.row.addTime}}</p>
@@ -157,7 +157,7 @@
         </el-table-column>
         <el-table-column
           prop=""
-          label="重启次数"
+          label="重啟次數"
           >
           <template slot-scope="scope">
             <span>{{scope.row.restart}}</span>
@@ -172,7 +172,7 @@
           </template>
         </el-table-column> -->
       </el-table>
-      
+
 
       <!-- 分页 -->
       <div class="tke-page">
@@ -189,24 +189,24 @@
         </div>
       </div>
     </div>
-    <el-dialog title="销毁实例" :visible.sync="showReconstModal" width="35%">
+    <el-dialog title="銷毀實例" :visible.sync="showReconstModal" width="35%">
       <div>
-        <p style="color:black;">您确定要销毁实例{{podName}}吗？</p>
-        <p style="color:#888;">实例销毁重建后将不可恢复，请提前备份好数据。</p>
+        <p style="color:black;">您確定要銷毀實例{{podName}}嗎？</p>
+        <p style="color:#888;">實例銷毀重建後將不可恢復，請提前備份好數據。</p>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="deleteReconst()">确 定</el-button>
+        <el-button type="primary" @click="deleteReconst()">{{$t('TKE.overview.qd')}}</el-button>
         <el-button @click="showReconstModal = false">取 消</el-button>
       </span>
     </el-dialog>
-    <el-dialog title="容器登录" :visible.sync="showRemoteLoginModal" width="35%">
-      <div>该实例下共有<span style="color:#ff9d00;">{{this.podLoginList.length || 0}}个</span>容器</div>
+    <el-dialog :title="`容器${$t('TKE.mirrorDetail.dl')}`" :visible.sync="showRemoteLoginModal" width="35%">
+      <div>該實例下共有<span style="color:#ff9d00;">{{this.podLoginList.length || 0}}个</span>容器</div>
           <el-collapse-transition>
             <el-table :data="podLoginList" height="200">
-              <el-table-column property="name" label="容器名称" width="200"></el-table-column>
-              <el-table-column property="" label="状态" width="150"></el-table-column>
+              <el-table-column property="name" label="容器名稱" width="200"></el-table-column>
+              <el-table-column property="" :label="$t('TKE.overview.zt')" width="150"></el-table-column>
               <el-table-column label="操作" width="150">
-                <a href="">登录</a>
+                <a href="">{{$t('TKE.mirrorDetail.dl')}}</a>
               </el-table-column>
             </el-table>
           </el-collapse-transition>
@@ -249,17 +249,17 @@ export default {
       searchOptions: [
         {
           value: "podname",
-          label: "Pod名称"
+          label: "Pod名稱"
         },
         {
           value: "status",
-          label: "状态"
+          label: "狀態"
         },
         {
           value: "namespace",
-          label: "命名空间"
+          label: "命名空間"
         }
-        
+
       ],
       searchType: "", //下拉选中的值
       searchInput: "", //输入的搜索关键字
@@ -308,9 +308,9 @@ export default {
               if(o.spec && o.spec.containers.length > 0) {
                 for(var i = 0; i < o.spec.containers.length; i++) {
                   let containers = o.spec.containers[i];
-                  cpu += containers.resources && containers.resources.requests && containers.resources.requests.cpu 
+                  cpu += containers.resources && containers.resources.requests && containers.resources.requests.cpu
                     && Number(containers.resources.requests.cpu.substring(0,containers.resources.requests.cpu.length - 1)) || 0;
-                  memory += containers.resources && containers.resources.requests && containers.resources.requests.memory 
+                  memory += containers.resources && containers.resources.requests && containers.resources.requests.memory
                     && Number(containers.resources.requests.memory.substring(0,containers.resources.requests.memory.length - 1)) || 0;
                 }
               }
@@ -318,7 +318,7 @@ export default {
                 for(var j = 0; j < o.status.containerStatuses.length; j++) {
                   let containerStatuses = o.status.containerStatuses[j];
                   restart += containerStatuses.restartCount;
-                }  
+                }
               }
               if(cpu > 0) {
                 o.cpu = cpu/1000 + '核';
@@ -342,11 +342,11 @@ export default {
             this.list = response.items;
             this.total = response.items.length;
             console.log(this.list);
-          } 
+          }
         } else {
           this.loadShow = false;
           let ErrTips = {
-            
+
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -364,7 +364,7 @@ export default {
         this.getPodList();
       } else {
         this.$message({
-          message: '请选择过滤条件且输入搜索值',
+          message: '請選擇過濾條件且輸入搜索值',
           type: "warning",
           showClose: true,
           duration: 0
@@ -423,7 +423,7 @@ export default {
           this.showReconstModal = false;
           this.getPodList();
           this.$message({
-            message: '删除成功',
+            message: '刪除成功',
             type: "success",
             showClose: true,
             duration: 0
@@ -431,7 +431,7 @@ export default {
         } else {
           this.loadShow = false;
           let ErrTips = {
-            
+
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
