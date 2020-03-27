@@ -434,7 +434,8 @@ export default {
         });
         if (this.BaseListKd.length == val.length) {
           this.tableData1 = this.BaseListKd;
-        }
+          console.log(this.tableData1);
+          }
       }
     }
   },
@@ -579,12 +580,12 @@ export default {
       let parms = {
         Version: "2017-03-12",
         Region: localStorage.getItem("regionv2"),
-        Namespace: "QCE/BLOCK_STORAGE",
+        Namespace: "qce/block_storage",
         Period: this.Period,
         StartTime: this.Time.StartTIme,
         EndTime: this.Time.EndTIme,
         MetricName: MetricName,
-        "Dimensions.0.unInstanceId": this.$route.query.DiskId
+        "Dimensions.0.diskId": this.$route.query.DiskId
       };
       this.axios.post(All_MONITOR, parms).then(data => {
         if (data.Response.Error == undefined) {
@@ -600,6 +601,7 @@ export default {
               timestamps = timestamps  + (this.Period- 0)
           }
           this.MonitorData1.push(data.Response);
+          console.log(this.MonitorData1)
         } else {
           this.$message({
             message: ErrorTips[data.Response.Error.Code],
