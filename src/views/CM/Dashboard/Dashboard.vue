@@ -93,7 +93,7 @@
           </div>
           <div class="chartContent" v-show="item.openChartFlag">
             <el-table :data="item.Instances" :id="'exportTable'+item.ViewID">
-              <el-table-column prop="" label="" width="">
+              <el-table-column prop="" label="" width="100">
                 <template slot-scope="scope">
                   <div :style='"width: 10px;height: 10px;border-radius: 50%;background:" + scope.row.bgColor'></div>
                 </template>
@@ -163,8 +163,8 @@
             name: "近24小時",
             Time: "Nearly_24_hours",
             TimeGranularity: [{
-              value: "300",
-              label: "5分鐘"
+              value: "3600",
+              label: "1小時"
             }]
           },
           {
@@ -224,7 +224,7 @@
         ViewList: [], // 监控面板数组
         DashboardID: "", // 展示面板的ID
         DashboardName: "",
-        period: "10", // echarts展示粒度
+        period: "60", // echarts展示粒度
         time: [], // 横坐标时间
         startEnd: {
           StartTime: "",
@@ -312,6 +312,7 @@
         });
       },
       GetDat(data) {
+        console.log(data, '时间控件')
         this.time = data[1].XAxis; // 横坐标时间
         this.startEnd.StartTime = data[1].StartTIme; // 开始时间
         this.startEnd.EndTime = data[1].EndTIme; //  结束时间
@@ -744,6 +745,63 @@
             }
           });
       },
+      // 获取监控面板echarts数据2
+      // getSingleMonitorData(
+      //   Namespace, MetricName, Period, StartTime, EndTime, Instances, index, InstanceName
+      // ) {
+      //   let params = {
+      //     Version: "2017-03-12", Namespace, MetricName, Period, StartTime: StartTime, EndTime: EndTime,
+      //   };
+      //   let color = this.colorArr;
+      //   let DataPointsAll = []; // 拼接之后合成的大数组
+      //   if (Instances.length != 0) {
+      //     Instances.forEach((ele, i) => {
+      //       let paramsIn = JSON.parse(JSON.stringify(params));
+      //       paramsIn["Dimensions.0." + InstanceName] = ele[InstanceName];
+      //       this.axios.get(GET_MONITOR_DATA, {params: paramsIn}).then(res => {
+      //         this.mainLoading = false;
+      //         if (res.Response.Error === undefined) {
+      //           var DataPoints = []; // 取出这个空数组
+      //           res.Response.DataPoints.forEach((ele, i) => {
+      //             DataPoints.push({
+      //               type: "line",
+      //               data: ele.Points.map((item,i) => {
+      //                 return item === null ? 0 : item // 存在坐标为null的情况，应该是接口问题
+      //               }),
+      //               name: ele.Dimensions[InstanceName], // Id名对应的Id
+      //               itemStyle: {
+      //                 normal: {
+      //                   color: color[i] ? color[i] : color[i % 10],
+      //                   lineStyle: {
+      //                     color: color[i] ? color[i] : color[i % 10]
+      //                   }
+      //                 }
+      //               }
+      //             });
+      //           });
+      //           DataPointsAll = [...DataPointsAll, ...DataPoints]; // 合并进大数组
+      //         } else {
+      //           let ErrTips = {};
+      //           let ErrOr = Object.assign(ErrorTips, ErrTips);
+      //           this.$message({
+      //             message: ErrOr[res.Response.Error.Code],
+      //             type: "error",
+      //             showClose: true,
+      //             duration: 0
+      //           });
+      //         }
+      //       })
+      //     });
+      //     const item = this.ViewList[index];
+      //     item.DataPoints = DataPointsAll;
+      //     this.$set(this.ViewList, index, item);
+      //   } else {
+      //     const item = this.ViewList[index];
+      //     item.DataPoints = [];
+      //     this.$set(this.ViewList, index, item);
+      //     return;
+      //   }
+      // },
       getAllMonitorData() {
         this.ViewList.forEach((ele, index) => {
           // Y轴数据

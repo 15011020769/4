@@ -97,6 +97,8 @@
                     <timelineview
                       slot="content"
                       :data="scope.row.tips"
+                      :viewName="scope.row.viewName"
+                      @itemClick="itemClick"
                     ></timelineview>
                     <i
                       v-if="scope.row.status"
@@ -554,6 +556,15 @@ export default {
             showClose: true,
             duration: 0
           });
+        }
+      });
+    },
+    itemClick(viewName, groupId) {
+      this.$router.push({
+        name: "strategyCreateDetail",
+        query: {
+          groupId: groupId,
+          viewName: viewName
         }
       });
     },

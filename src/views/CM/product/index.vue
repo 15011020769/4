@@ -440,7 +440,7 @@ export default {
     },
     jump(id) {
       this.$router.push({
-        name: "strategy",
+        name: "strategyCreate",
         query: {
           id
         }

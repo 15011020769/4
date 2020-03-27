@@ -7,7 +7,7 @@
         <div class="grid-left">
           <span class="goback" @click="goBack">
             <i class="el-icon-back"></i>
-            <span>{{title}} / 监控</span>
+            <span>{{title}} / {{$t('TKE.colony.jk')}}</span>
           </span>
         </div>
       </div>
@@ -124,7 +124,7 @@ export default {
             },
             {
               value: "86400",
-              label: "24小时"
+              label: "24小時"
             }
           ]
         }
@@ -140,7 +140,7 @@ export default {
     }
   },
   watch:{
-    
+
   },
   created() {
     this.title = this.$route.query.title;
@@ -315,7 +315,7 @@ export default {
           for(let key in monitor) {
             let item = monitor[key];
             let time = moment(key).format("YYYY-MM-DD HH:mm:ss");//时间
-            
+
             for(let j = 0; j < item.length; j++) {
               let monItem = item[j];
               let pod = item[2];//实例数量
@@ -350,7 +350,7 @@ export default {
         }
       })
     },
-    
+
   },
 };
 </script>

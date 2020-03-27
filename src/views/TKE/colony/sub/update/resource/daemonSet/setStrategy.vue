@@ -36,8 +36,8 @@
               <el-form-item :label="$t('TKE.subList.gxjg')">
                 <el-input class="w100" v-model="cl.timeInterval" ></el-input>秒
               </el-form-item>
-             
-              <el-form-item label="策略配置" >
+
+              <el-form-item :label="$t('TKE.subList.clpz')" >
                 <div class="flex bg" >
                   <span>MaxUnavailable</span>
                   <div style="margin-left:50px;">
@@ -53,7 +53,7 @@
 					<el-button size="small"   type="primary" @click="submit">完成</el-button>
           <el-button size="small" @click="goBack">取消</el-button>
         </div>
-      </div>    
+      </div>
     </div>
   </div>
 </template>
@@ -97,7 +97,7 @@ export default {
 	submit(){
       var params;
       if(this.updateWay==2){//OnDelete
-     
+
         params={
           ClusterName: this.clusterId,
           ContentType: "application/strategic-merge-patch+json",
@@ -161,7 +161,7 @@ export default {
            this.updateWay='1'//
            this.cl.podNum=obj.spec.updateStrategy.rollingUpdate.maxUnavailable
          }
-            
+
         })
 
     },

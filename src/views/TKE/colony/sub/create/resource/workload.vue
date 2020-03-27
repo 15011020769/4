@@ -543,7 +543,7 @@
                               </el-option>
                             </el-select>
                           </el-form-item>
-                          <el-form-item :label="$t('TKE.subList.jcxy')" v-show="v.readyToCheckContent.inspectMethodValue==='HTTP请求检查'">
+                          <el-form-item :label="$t('TKE.subList.jcxy')" v-show="v.readyToCheckContent.inspectMethodValue==='HTTP请求檢查'">
                             <el-select v-model="v.readyToCheckContent.inspectProtocolValue">
                               <el-option v-for="item in v.readyToCheckContent.inspectProtocolOption" :key="item" :label="item"
                                          :value="item">

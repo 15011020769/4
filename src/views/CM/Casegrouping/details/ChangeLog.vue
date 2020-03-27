@@ -8,6 +8,7 @@
             :data="enterList"
             tooltip-effect="dark"
             style="width: 100%"
+            v-loading="loadShow1"
             @selection-change="handleSelectionChange"
           >
             <el-table-column :label="$t('CVM.ChangeLog.bgsj')">
@@ -33,6 +34,7 @@
             <div class="block">
               <el-pagination
                 @size-change="handleSizeChange"
+                :pager-count="7"
                 @current-change="handleCurrentChange"
                 :current-page="pageIndex"
                 :page-sizes="[10, 20, 50, 100]"
@@ -128,10 +130,11 @@ export default {
       //分页
       total: 0, //总条数
       pageSize: 10, // 分页条数
-      pageIndex: 0, // 当前页码
+      pageIndex: 1, // 当前页码
       tableData: [],
       details: "",
-      loadShow: true
+      loadShow: false,
+      loadShow1: false
     };
   },
   props: {
@@ -146,6 +149,7 @@ export default {
   },
   methods: {
     ListInit() {
+      this.loadShow1 = true;
       let params = {
         Version: "2018-07-24",
         Module: "monitor",
@@ -160,7 +164,9 @@ export default {
           if (res.Response.Error === undefined) {
             this.enterList = res.Response.List;
             this.total = res.Response.Total;
+            this.loadShow1 = false;
           } else {
+            this.loadShow1 = false;
             let ErrTips = {};
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({

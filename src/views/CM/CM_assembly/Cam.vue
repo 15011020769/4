@@ -42,6 +42,7 @@
     <div>
       <!-- 接收组table -->
       <el-table
+        ref="groupTable"
         v-if="formInline.jieshou === '0'"
         :data="tableData2"
         v-loading="loadingShow"
@@ -68,6 +69,7 @@
 
       <!-- 接收人table -->
       <el-table
+        ref="userTable"
         v-if="formInline.jieshou === '1'"
         :data="userListArr"
         v-loading="userListLoading"
@@ -169,32 +171,63 @@ export default {
     endTime: {
       type: Number,
       default: 57599
+    },
+    selectedList: {
+      type: Array,
+      default: function() {
+        return [];
+      }
+    },
+    type: {
+      type: String,
+      default: function() {
+        return "";
+      }
     }
   },
   watch: {
-    startTime: function (val) {
-      this.timeValue.start = new Date(val * 1000)
+    startTime: function(val) {
+      this.timeValue.start = new Date(val * 1000);
     },
-    endTime: function (val) {
-      this.timeValue.end = new Date(val * 1000)
+    endTime: function(val) {
+      this.timeValue.end = new Date(val * 1000);
     },
     timeValue: {
-      handler: function (val) {
-        console.log(val)
-        let timeArr = [val.start, val.end]
+      handler: function(val) {
+        console.log(val);
+        let timeArr = [val.start, val.end];
         this.cam.time = timeArr.map(item => {
-          let tempTime = Date.parse(item) / 1000
-          if (tempTime > 86400) tempTime = tempTime - 86400
-          if (tempTime < 0) tempTime = tempTime + 86400
-          return tempTime
-        })
+          let tempTime = Date.parse(item) / 1000;
+          if (tempTime > 86400) tempTime = tempTime - 86400;
+          if (tempTime < 0) tempTime = tempTime + 86400;
+          return tempTime;
+        });
+      },
+      immediate: true,
+      deep: true
+    },
+    type: {
+      handler: function(val) {
+        if (val === "group") {
+          this.formInline = Object.assign({}, this.formInline, {
+            jieshou: "0"
+          });
+        } else if (val === "user") {
+          this.formInline = Object.assign({}, this.formInline, {
+            jieshou: "1"
+          });
+        }
       },
       immediate: true,
       deep: true
     }
   },
   mounted() {
-    this.userGroup(); // 查询接收组
+    if (this.type === "user") {
+      this.userList(); // 查询接收人
+    } else {
+      this.userGroup(); // 查询接收组
+    }
   },
   methods: {
     // 选中接受组还是接收人
@@ -278,6 +311,7 @@ export default {
                 });
               });
               this.tableData2 = this.tableData;
+              this.selected();
             }
           } else {
             let ErrTips = {
@@ -325,6 +359,7 @@ export default {
                   item.subscription = undefined;
                 });
                 this.userListArr = arr;
+                this.selected();
               } else {
                 this.$message({
                   type: "info",
@@ -374,6 +409,66 @@ export default {
     selectChannel() {
       // this.cam.channel = this.qudaoCheckList;
       this.$emit("camClick", this.cam);
+    },
+
+    selected() {
+      if (this.type.length === 0) {
+        return;
+      }
+
+      if (this.selectedList.length == 0) {
+        if (this.type === "group" && this.$refs.groupTable !== undefined) {
+          this.$refs.groupTable.clearSelection();
+        } else if (this.type === "user" && this.$refs.userTable !== undefined) {
+          this.$refs.userTable.clearSelection();
+        }
+        return;
+      }
+
+      if (this.type === "group") {
+        if (this.tableData2.length === 0) {
+          return;
+        }
+
+        console.log(this.tableData2);
+
+        const selectedRows = this.tableData2.filter(row => {
+          const found = this.selectedList.find(item => {
+            return item.GroupId === row.GroupId;
+          });
+
+          return found !== undefined;
+        });
+
+        if (this.$refs.groupTable !== undefined) {
+          this.$nextTick(function() {
+            selectedRows.forEach(row => {
+              this.$refs.groupTable.toggleRowSelection(row);
+            });
+          });
+        }
+      } else {
+        if (this.userListArr.length === 0) {
+          return;
+        }
+
+        console.log(this.userListArr);
+        const selectedRows = this.userListArr.filter(row => {
+          const found = this.selectedList.find(item => {
+            return item.Uid === row.Uid;
+          });
+
+          return found !== undefined;
+        });
+
+        if (this.$refs.userTable !== undefined) {
+          this.$nextTick(function() {
+            selectedRows.forEach(row => {
+              this.$refs.userTable.toggleRowSelection(row);
+            });
+          });
+        }
+      }
     }
   }
 };

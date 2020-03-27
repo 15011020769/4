@@ -44,7 +44,7 @@ const router = new Router({
         keepAlive: true,
         leftNav: true
       },
-      beforeEnter: accessLogIntercept
+      beforeEnter: (t, f, n) => accessLogIntercept(t, f, n)
     },
     {
       path: "/accessLogDetail", // 访问日志
@@ -55,7 +55,7 @@ const router = new Router({
         keepAlive: true,
         leftNav: true
       },
-      beforeEnter: accessLogIntercept
+      beforeEnter: (t, f, n) => accessLogIntercept(t, f, n)
     },
     {
       path: "/protectionSettings", // 防护设置

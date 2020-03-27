@@ -18,7 +18,7 @@
       <!-- 搜索框与新建，删除 -->
       <div class="flex">
         <div class="font" style="flex:1;padding-top:20px;">
-           <el-tooltip :disabled='value!=""' class="item" effect="dark" content="请先创建一个集群" placement="top-start">
+           <el-tooltip :disabled='value!=""' class="item" effect="dark" :content="$t('TKE.overview.qxcjygjq')" placement="top-start">
              <button class="data-card-hd" :style="{cursor:(value!=''?'pointer':'no-drop')}" v-if="!xjF"   @click="value!=''?newCread():''">新建</button>
            </el-tooltip>
           <button class="data-card-hd" v-if="xjF" @click="dialogVisible = true">新建</button>
@@ -376,7 +376,7 @@
         })
         sessionStorage.setItem('clusterId',this.value)
       },
-      //命名空间选项 
+      //命名空间选项
       nameSpaceList() {
         if (this.value2) {
           var params = {
@@ -687,6 +687,6 @@
   .show {
     display: block;
   }
-  
+
 
 </style>

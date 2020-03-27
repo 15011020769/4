@@ -345,32 +345,32 @@ export default {
       seriesMenNocaches:[],
       seriesMemUsageBytes:[],
       // pod监控图像数据
-      podTimes:[],                
-      podsIds:[],                 
-      podStatuErrs:[],            
-      podCpuUseds:[],             
-      podCpuUsedCenters:[],       
-      podCpuUsedRequests:[],      
-      podCpuUsedLimits:[],        
-      podMemorys:[],              
-      podMemoryNocaches:[],       
-      podMemoryCenters:[],        
-      podMemoryCenterNocaches:[], 
-      podMemoryRequests:[],       
+      podTimes:[],
+      podsIds:[],
+      podStatuErrs:[],
+      podCpuUseds:[],
+      podCpuUsedCenters:[],
+      podCpuUsedRequests:[],
+      podCpuUsedLimits:[],
+      podMemorys:[],
+      podMemoryNocaches:[],
+      podMemoryCenters:[],
+      podMemoryCenterNocaches:[],
+      podMemoryRequests:[],
       podMemoryRequestNocaches:[],
-      podMemoryLimits:[],         
-      podMemoryLimitNocaches:[],  
-      podInNetworks:[],           
-      podOutNetworks:[],          
-      podInFlows:[],              
-      podOutFlows:[],            
-      podInPacketFlows:[],        
-      podOutPacketFlows:[],       
-      podGPUUses:[],              
-      podGPUSeeUses:[],           
-      podGPUUseNodes:[],          
-      podGPUSeeUseNodes:[],       
-      podGPUUseRequests:[],       
+      podMemoryLimits:[],
+      podMemoryLimitNocaches:[],
+      podInNetworks:[],
+      podOutNetworks:[],
+      podInFlows:[],
+      podOutFlows:[],
+      podInPacketFlows:[],
+      podOutPacketFlows:[],
+      podGPUUses:[],
+      podGPUSeeUses:[],
+      podGPUUseNodes:[],
+      podGPUSeeUseNodes:[],
+      podGPUUseRequests:[],
       podGPUSeeUseRequests:[],
       TimeArr: [{
           name: '實時',
@@ -409,7 +409,7 @@ export default {
             },
             {
               value: "86400",
-              label: "24小时"
+              label: "24小時"
             }
           ]
         }
@@ -546,7 +546,7 @@ export default {
         } else {
           this.loadShow = false;
           let ErrTips = {
-            
+
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -746,32 +746,32 @@ export default {
               this.seriesMemUsageBytes = memUsageBytes
             } else {
             this.PodDataId = []
-            let podTimes=[],                
-                podsIds=[],                 
-                podStatuErrs=[],            
-                podCpuUseds=[],             
-                podCpuUsedCenters=[],       
-                podCpuUsedRequests=[],      
-                podCpuUsedLimits=[],        
-                podMemorys=[],              
-                podMemoryNocaches=[],       
-                podMemoryCenters=[],        
-                podMemoryCenterNocaches=[], 
-                podMemoryRequests=[],       
+            let podTimes=[],
+                podsIds=[],
+                podStatuErrs=[],
+                podCpuUseds=[],
+                podCpuUsedCenters=[],
+                podCpuUsedRequests=[],
+                podCpuUsedLimits=[],
+                podMemorys=[],
+                podMemoryNocaches=[],
+                podMemoryCenters=[],
+                podMemoryCenterNocaches=[],
+                podMemoryRequests=[],
                 podMemoryRequestNocaches=[],
-                podMemoryLimits=[],         
-                podMemoryLimitNocaches=[],  
-                podInNetworks=[],           
-                podOutNetworks=[],          
-                podInFlows=[],              
-                podOutFlows=[],            
-                podInPacketFlows=[],        
-                podOutPacketFlows=[],       
-                podGPUUses=[],              
-                podGPUSeeUses=[],           
-                podGPUUseNodes=[],          
-                podGPUSeeUseNodes=[],       
-                podGPUUseRequests=[],       
+                podMemoryLimits=[],
+                podMemoryLimitNocaches=[],
+                podInNetworks=[],
+                podOutNetworks=[],
+                podInFlows=[],
+                podOutFlows=[],
+                podInPacketFlows=[],
+                podOutPacketFlows=[],
+                podGPUUses=[],
+                podGPUSeeUses=[],
+                podGPUUseNodes=[],
+                podGPUSeeUseNodes=[],
+                podGPUUseRequests=[],
                 podGPUSeeUseRequests=[]
               for(let i = 0; i < data.length; i++) {
                   let items = data[i];
@@ -805,34 +805,34 @@ export default {
                     let podGPUSeeUseNode = items[24];//GPU显存利用率（占节点）
                     let podGPUUseRequest = items[25];//GPU利用率（占Request）
                     let podGPUSeeUseRequest = items[26];//GPU显存利用率（占Request）
-                    podTimes.push(podTime)                
-                    // podsIds.push(podsId)                 
-                    podStatuErrs.push(podStatuErr)            
-                    podCpuUseds.push(podCpuUsed)             
-                    podCpuUsedCenters.push(podCpuUsedCenter)       
-                    podCpuUsedRequests.push(podCpuUsedRequest)      
-                    podCpuUsedLimits.push(podCpuUsedL)        
-                    podMemorys.push(podMemory)              
-                    podMemoryNocaches.push(podMemoryNocache)      
-                    podMemoryCenters.push(podMemoryCenter) 
-                    podMemoryCenterNocaches.push(podMemoryCenterNocache) 
-                    podMemoryRequests.push(podMemoryRequest)       
+                    podTimes.push(podTime)
+                    // podsIds.push(podsId)
+                    podStatuErrs.push(podStatuErr)
+                    podCpuUseds.push(podCpuUsed)
+                    podCpuUsedCenters.push(podCpuUsedCenter)
+                    podCpuUsedRequests.push(podCpuUsedRequest)
+                    podCpuUsedLimits.push(podCpuUsedL)
+                    podMemorys.push(podMemory)
+                    podMemoryNocaches.push(podMemoryNocache)
+                    podMemoryCenters.push(podMemoryCenter)
+                    podMemoryCenterNocaches.push(podMemoryCenterNocache)
+                    podMemoryRequests.push(podMemoryRequest)
                     podMemoryRequestNocaches.push(podMemoryRequestNoc)
-                    podMemoryLimits.push(podMemoryLimit)         
-                    podMemoryLimitNocaches.push(podMemoryLimitNocache)  
-                    podInNetworks.push(podInNetwork)          
-                    podOutNetworks.push(podOutNetwork)          
-                    podInFlows.push(podInFlow)              
-                    podOutFlows.push(podOutFlow)            
-                    podInPacketFlows.push(podInPacketFlow)        
-                    podOutPacketFlows.push(podOutPacketFlow)       
-                    podGPUUses.push(podGPUUse)              
-                    podGPUSeeUses.push(podGPUSeeUse)           
-                    podGPUUseNodes.push(podGPUUseNode)          
-                    podGPUSeeUseNodes.push(podGPUSeeUseNode)       
-                    podGPUUseRequests.push(podGPUUseRequest)       
+                    podMemoryLimits.push(podMemoryLimit)
+                    podMemoryLimitNocaches.push(podMemoryLimitNocache)
+                    podInNetworks.push(podInNetwork)
+                    podOutNetworks.push(podOutNetwork)
+                    podInFlows.push(podInFlow)
+                    podOutFlows.push(podOutFlow)
+                    podInPacketFlows.push(podInPacketFlow)
+                    podOutPacketFlows.push(podOutPacketFlow)
+                    podGPUUses.push(podGPUUse)
+                    podGPUSeeUses.push(podGPUSeeUse)
+                    podGPUUseNodes.push(podGPUUseNode)
+                    podGPUSeeUseNodes.push(podGPUSeeUseNode)
+                    podGPUUseRequests.push(podGPUUseRequest)
                     podGPUSeeUseRequests.push(podGPUSeeUseRequest)
-                    this.PodDataId.push(podsId)  
+                    this.PodDataId.push(podsId)
                    } else {
                      this.PodDataId.push(podsId)
                    }

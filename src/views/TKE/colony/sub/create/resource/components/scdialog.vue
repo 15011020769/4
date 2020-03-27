@@ -1,11 +1,11 @@
 <template>
-  <el-dialog :title="`设置${type}`" :visible.sync="show" width="45%">
-    <el-form-item :label="`选择${type}`">
+  <el-dialog :title="`${$t('TKE.overview.sz')}${type}`" :visible.sync="show" width="45%">
+    <el-form-item :label="`${$t('TKE.subList.xze')}${type}`">
       <el-select v-model="tempData.name" @change="nameChange">
         <el-option v-for="item in options" :key="item.name" :label="item.name" :value="item.name"></el-option>
       </el-select>
     </el-form-item>
-    <el-form-item label="选项">
+    <el-form-item :label="$t('TKE.subList.xxiang')">
       <el-radio-group v-model="tempData.checked">
         <el-radio label="all">全部</el-radio>
         <el-radio label="part">指定部分Key</el-radio>
@@ -21,19 +21,19 @@
             </el-select>
           </el-form-item>
           <el-form-item style="display: inline-block;margin-left: 10px" label-width="0px">
-            <el-input v-model="v.path" placeholder="请输入子路径，eg: dev"></el-input>
+            <el-input v-model="v.path" :placeholder="$t('TKE.subList.qsrzlj')"></el-input>
           </el-form-item>
           <el-form-item style="display: inline-block;margin-left: 10px" label-width="0px">
-            <el-input v-model="v.mode" placeholder="文件权限，如0644"></el-input>
+            <el-input v-model="v.mode" :placeholder="$t('TKE.subList.wjqx')"></el-input>
           </el-form-item>
-          <el-tooltip class="item" effect="light" :content="tempData.items.length===1?'不可删除，至少指定一个Key':''"
+          <el-tooltip class="item" effect="light" :content="tempData.items.length===1?$t('TKE.subList.zszdk'):''"
                       placement="right" :disabled="tempData.items.length!==1">
             <i class="el-icon-close" style="font-size:20px;margin-left:20px;cursor:pointer" @click="tempData.items.length>1?delDataItems(i):''"></i>
           </el-tooltip>
         </div>
-        <p v-if="tempData.items.length>0">向特定路径挂载，如挂载点是 /data/config，子路径是dev，最终会存储在/data/config/dev下</p>
+        <p v-if="tempData.items.length>0">{{$t('TKE.subList.xtdljgz')}}</p>
         <div v-if="items.length === 0 || items.length - tempData.items.length <= 0">添加Item
-          <el-tooltip class="item" effect="light" :content="`${type}无更多可用Key`" placement="top">
+          <el-tooltip class="item" effect="light" :content="`${type}無更多可用Key`" placement="top">
             <i class="el-icon-warning-outline" style="color:red;cursor:pointer"></i>
           </el-tooltip>
         </div>
@@ -43,7 +43,7 @@
       </div>
     </div>
     <div slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="confirm">确 定</el-button>
+      <el-button type="primary" @click="confirm">{{$t('TKE.overview.qd')}}</el-button>
       <el-button @click="cancel">取 消</el-button>
     </div>
   </el-dialog>

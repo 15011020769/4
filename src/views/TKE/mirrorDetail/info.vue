@@ -108,65 +108,65 @@
         ></el-pagination>
       </div>
     </div>
-    <el-dialog title="删除镜像版本" :visible.sync="dialogVisibleDelete" width="40%">
-      <p style="font-weight:bold">您确定要删除镜像版本"{{this.deleteObj.delName}}"吗？</p>
-      <p style="color:#888;font-size:14px">镜像版本删除后将不可恢复，请提前备份好数据。</p>
+    <el-dialog :title="$t('TKE.mirrorDetail.scjxbb')" :visible.sync="dialogVisibleDelete" width="40%">
+      <p style="font-weight:bold">{{$t('TKE.mirrorDetail.nqdyscjxbb')}}"{{this.deleteObj.delName}}"{{$t('TKE.myMirror.ma')}}？</p>
+      <p style="color:#888;font-size:14px">{{$t('TKE.mirrorDetail.jxbbsch')}}</p>
       <p style="color:red">
-        注：将同时删除与"{{this.deleteObj.delName}}"版本镜像ID相同的
+        {{$t('TKE.mirrorDetail.zjtsscy')}}"{{this.deleteObj.delName}}"版本{{$t('TKE.overview.jx')}}ID相同的
         <span style="margin-left:2px" v-for="(v,i) in deleteObj.delOtherArr" :key="i">[{{v}}]</span> 版本。
       </p>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisibleDelete = false">取 消</el-button>
-        <el-button type="primary" @click="deleteSure()">确 定</el-button>
+        <el-button type="primary" @click="deleteSure()">{{$t('TKE.overview.qd')}}</el-button>
       </span>
     </el-dialog>
     <!-- 使用指引弹出框 -->
     <el-dialog title="使用指引" :visible.sync="dialogFormVisible" width="620px">
       <ul>
         <li>
-          <p class="pli-1">登录台富云docker registry</p>
+          <p class="pli-1">{{$t('TKE.mirrorDetail.dltfy')}}docker registry</p>
           <div class="tip">
             <p class="tip-p">
               sudo docker login --username={{userID}}
               <br />
               {{server|tableServers}}
             </p>
-            <div class="tip-position" @click="getContext($event)">复制</div>
+            <div class="tip-position" @click="getContext($event)">{{$t('TKE.overview.fz')}}</div>
           </div>
-          <p class="pli-2">登录registry的用户名是您的台富云的账号ID，密码是您开通镜像仓库服务时设置的密码</p>
+          <p class="pli-2">{{$t('TKE.mirrorDetail.dl')}}registry{{$t('TKE.mirrorDetail.dyhmsnd')}}</p>
         </li>
         <li>
-          <p class="pli-1">从registry拉取镜像</p>
+          <p class="pli-1">{{$t('TKE.overview.cong')}}registry拉取{{$t('TKE.overview.jx')}}</p>
           <div class="tip">
             <p class="tip-p">sudo docker pull {{server|tableServers}}/{{reponame}}:[tag]</p>
-            <div class="tip-position" @click="getContext($event)">复制</div>
+            <div class="tip-position" @click="getContext($event)">{{$t('TKE.overview.fz')}}</div>
           </div>
-          <p class="pli-2">其中[tag]请根据您的镜像版本信息进行填写。</p>
+          <p class="pli-2">其中[tag]{{$t('TKE.mirrorDetail.qgjndjxbb')}}。</p>
         </li>
         <li>
-          <p class="pli-1">将镜像推送到registry</p>
+          <p class="pli-1">{{$t('TKE.overview.jjxtsd')}}registry</p>
           <div class="tip">
             <p class="tip-p">
               sudo docker login --username={{userID}}
               <br />
               {{server|tableServers}}
             </p>
-            <div class="tip-position" @click="getContext($event)">复制</div>
+            <div class="tip-position" @click="getContext($event)">{{$t('TKE.overview.fz')}}</div>
           </div>
           <div class="tip tip-one">
             <p class="tip-p">sudo docker tag [ImageId] {{server|tableServers}}/{{reponame}}:[tag]</p>
-            <div class="tip-position" @click="getContext($event)">复制</div>
+            <div class="tip-position" @click="getContext($event)">{{$t('TKE.overview.fz')}}</div>
           </div>
           <div class="tip">
             <p class="tip-p">sudo docker push {{server|tableServers}}/{{reponame}}:[tag]</p>
-            <div class="tip-position" @click="getContext($event)">复制</div>
+            <div class="tip-position" @click="getContext($event)">{{$t('TKE.overview.fz')}}</div>
           </div>
-          <p class="pli-2">其中[ImageId]请根据您的实际镜像ID信息进行填写, [tag]请根据您的镜像版本信息进行填写。</p>
+          <p class="pli-2">其中[ImageId]{{$t('TKE.mirrorDetail.qgjndjxsjjx')}}, [tag]{{$t('TKE.mirrorDetail.qgjndjxbb')}}。</p>
         </li>
       </ul>
     </el-dialog>
     <!-- 设置 -->
-    <el-dialog title="自动删除镜像设置" :visible.sync="dialogVisible" width="40%">
+    <el-dialog :title="$t('TKE.mirrorDetail.zdscjxsz')" :visible.sync="dialogVisible" width="40%">
       <div class="explain2" style="margin-bottom:20px;">
         <p>{{$t('TKE.mirrorDetail.dqzhxjxck2')}}</p>
       </div>

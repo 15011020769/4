@@ -534,7 +534,7 @@ export default {
         if (res.code == 0 && res.Error == undefined) {
           this.loadShow = false
            this.$message({
-              message: "重置密码成功",
+              message: "重置密碼成功",
               type: "success",
               showClose: true,
               duration: 0

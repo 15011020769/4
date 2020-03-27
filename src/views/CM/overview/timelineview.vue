@@ -5,7 +5,7 @@
         <b></b><span></span
         ><a href="javascript:void(0)">
           <p class="datetime">{{ formatDate(item.FirstOccurTime) }}</p>
-          <p class="content">{{ item.Content }}</p>
+          <p class="content" @click="eventClick(item)">{{ item.Content }}</p>
           <p>
             {{ item.InstanceId + " " }}
             <label>{{ formatStatus(item.Status) }}</label>
@@ -21,7 +21,8 @@ import moment from "moment";
 export default {
   name: "timelineview",
   props: {
-    data: Array
+    data: Array,
+    viewName: String
   },
   methods: {
     formatDate(date) {
@@ -33,6 +34,9 @@ export default {
       } else {
         return "已恢復";
       }
+    },
+    eventClick(item) {
+      this.$emit('itemClick', this.viewName, item.GroupId);
     }
   }
 };

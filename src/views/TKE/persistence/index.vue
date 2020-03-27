@@ -269,18 +269,18 @@ export default {
           this.loadShow = false;
         } else {
           let ErrTips = {
-            InternalError: "内部错误",
-            "InternalError.CamNoAuth": "没有权限。",
-            "InternalError.Db": "db错误。",
-            "InternalError.DbAffectivedRows": "DB错误",
+            InternalError: "內部錯誤",
+            "InternalError.CamNoAuth": "沒有權限。",
+            "InternalError.Db": "db錯誤。",
+            "InternalError.DbAffectivedRows": "DB錯誤",
             "InternalError.Param": "Param。",
-            "InternalError.PublicClusterOpNotSupport": "集群不支持当前操作。",
-            "InternalError.QuotaMaxClsLimit": "超过配额限制。",
-            "InternalError.QuotaMaxNodLimit": "超过配额限制。",
-            InvalidParameter: "参数错误",
-            "InvalidParameter.Param": "参数错误。",
-            LimitExceeded: "超过配额限制",
-            ResourceNotFound: "资源不存在"
+            "InternalError.PublicClusterOpNotSupport": "集群不支持當前操作。",
+            "InternalError.QuotaMaxClsLimit": "超過配額限制。",
+            "InternalError.QuotaMaxNodLimit": "超過配額限制。",
+            InvalidParameter: "參數錯誤",
+            "InvalidParameter.Param": "參數錯誤。",
+            LimitExceeded: "超過配額限制",
+            ResourceNotFound: "資源不存在"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({

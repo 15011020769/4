@@ -105,7 +105,7 @@ export default {
       this.axios.post(TKE_COLONY_QUERY, params).then(res => {
         if (res.Response.Error == undefined) {
           this.$message({
-            message: "编辑完成",
+            message: "編輯完成",
             type: "success",
             showClose: true,
             duration: 0

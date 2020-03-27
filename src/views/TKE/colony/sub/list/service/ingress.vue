@@ -62,7 +62,7 @@
               <div slot="reference">
                 <a :href="scope.row.backendService[0].url" class="tke-text-link">{{scope.row.backendService[0].url}}</a>-->{{scope.row.backendService[0].other}}
                 <p class="tke-text-link" v-if="scope.row.backendService.length>1">
-                  等{{scope.row.backendService.length}}条转发规则</p>
+                  等{{scope.row.backendService.length}}{{$t('TKE.overview.tiao')}}{{$t('TKE.subList.zfgz')}}</p>
               </div>
             </el-popover>
           </template>

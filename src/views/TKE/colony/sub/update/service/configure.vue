@@ -9,7 +9,7 @@
           <span class="goback" @click="()=>$router.back()">
             <i class="el-icon-back"></i>
           </span>
-          <h2 class="header-title">更新轉發配置</h2>
+          <h2 class="header-title">{{$t('TKE.subList.gxzfpz')}}</h2>
         </div>
         <!-- 右侧 -->
       </div>

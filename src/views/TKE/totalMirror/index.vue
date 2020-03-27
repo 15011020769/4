@@ -266,7 +266,7 @@ export default {
   filters: {
     isQcloudOfficials: function (val) {
       if (val) {
-        return 'Tencent官方'
+        return '官方'
       } else {
         return '用戶公開'
       }

@@ -9,7 +9,7 @@
       </el-table-column>
       <el-table-column label="策略類型">
         <template slot-scope="scope">
-          <p>{{scope.row.ViewName}}</p>
+          <p>{{scope.row.ViewName === 'dcchannel' ? '專線通道' : ''}}</p>
         </template>
       </el-table-column>
       <el-table-column label="觸發條件">

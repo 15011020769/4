@@ -21,6 +21,7 @@
                   filterable
                   v-model="formInline.product_name"
                   class="select-option"
+                  disabled
                 >
                   <el-option
                     v-for="item in formInline.product_kind"
@@ -110,7 +111,7 @@
           <template slot-scope="scope">
             <el-popover placement="right" width="500" trigger="hover">
               <div class="popover-box">
-                <p class="text-color">指標告警（任意）：</p>
+                <p class="text-color">指標告警（{{scope.row.IsUnionRule===0?'任意':'所有'}}）：</p>
                 <div
                   v-for="(i, item) in scope.row.Conditions"
                   :key="item"
@@ -245,7 +246,20 @@
           <template slot-scope="scope">
             <div v-if="scope.row.ReceiverInfos != undefined">
               <div v-for="(i, x) in scope.row.ReceiverInfos" :key="x">
-                <p>接收組：{{ i.ReceiverGroupList.length }}個</p>
+                <p v-if="i.ReceiverGroupList.length > 0">
+                  接收組：{{ i.ReceiverGroupList.length }}個
+                </p>
+                <p v-if="i.ReceiverUserList.length > 0">
+                  接收人：{{ i.ReceiverUserList.length }}個
+                </p>
+                <p
+                  v-if="
+                    i.ReceiverUserList.length === 0 &&
+                      i.ReceiverGroupList.length === 0
+                  "
+                >
+                  接收組：0個
+                </p>
                 <p>
                   有效期：{{ i.StartTime | EndTime }} -
                   {{ i.EndTime | EndTime }}
@@ -276,7 +290,7 @@
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button type="text" class="cloneBtn" @click="Copy(scope.row)"
-              >複制</el-button
+              >複製</el-button
             >
             <el-tooltip
               content="預設策略不支持刪除，可釋放所有資源或設置新的預設策略後將此轉爲非預設策略"
@@ -486,7 +500,7 @@
               </el-option>
             </el-select>
           </div>
-          <div>
+          <!-- <div>
             <p>
               <span>微信</span>
               <span>已開通數:{{ wechatOpen }},未開通數:{{ wechatClose }}</span>
@@ -515,7 +529,7 @@
               >
               </el-option>
             </el-select>
-          </div>
+          </div> -->
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
@@ -1180,7 +1194,7 @@ export default {
         }
       });
     },
-    // 複制
+    // 複製
     Copy(row) {
       this.$router.push({
         path: "/strategy/create",

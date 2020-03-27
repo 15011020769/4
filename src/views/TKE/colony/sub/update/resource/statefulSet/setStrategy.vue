@@ -33,7 +33,7 @@
               <p v-show="updateWay=='2'">{{$t('TKE.subList.sdsc')}}</p>
             </el-form-item>
             <div v-show="updateWay=='1'">
-              <el-form-item label="策略配置" >
+              <el-form-item :label="$t('TKE.subList.clpz')" >
                 <div class="flex bg">
                   <span>Partition</span>
                   <div style="margin-left:50px;">
@@ -48,7 +48,7 @@
 					<el-button size="small"   type="primary" @click="submit">完成</el-button>
           <el-button size="small" @click="goBack">取消</el-button>
         </div>
-      </div>    
+      </div>
     </div>
   </div>
 </template>
@@ -103,7 +103,7 @@ export default {
           ContentType: "application/strategic-merge-patch+json",
           Method: "PATCH",
           Path: `/apis/apps/v1beta2/namespaces/${this.spaceName}/${this.workload}/${this.name}`,
-          RequestBody:  JSON.stringify({"spec":{"updateStrategy":{"type":"RollingUpdate","rollingUpdate":{"partition":Number(this.cl.podNum)}}}}) , 
+          RequestBody:  JSON.stringify({"spec":{"updateStrategy":{"type":"RollingUpdate","rollingUpdate":{"partition":Number(this.cl.podNum)}}}}) ,
           Version: "2018-05-25",
         }
       }

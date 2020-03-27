@@ -80,7 +80,7 @@
             <el-table-column label="操作">
               <template slot-scope="scope">
                 <a style="padding-right:10px;" @click="Copy(scope.row)">{{
-                  $t("CVM.Casegrouping.zhxg")
+                  $t("CVM.Casegrouping.fz")
                 }}</a>
                 <a @click="Delete(scope.row)">删除</a>
               </template>

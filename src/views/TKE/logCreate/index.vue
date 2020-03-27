@@ -72,7 +72,7 @@
               </div>
 
               <div class="form-form position-form" v-show="
-                  vlog == 'two' && tabPosition == 'one' && item.flag == true 
+                  vlog == 'two' && tabPosition == 'one' && item.flag == true
                 ">
                 <i class="el-icon-check icon-check" @click="roomShow(index,item.value1)"></i>
                 <i class="el-icon-close icon-close" @click="removeNewRoom(formFour, index)"></i>
@@ -96,7 +96,7 @@
                     </div>
                    <!-- 传入相应工作负载选项 -->
                     <el-tabs tab-position="left" class="tab-set" style="height: 200px;" v-model="item.activeName"
-                    
+
                       @tab-click="workLoadTab(item.activeName, index)">
                       <el-tab-pane label="Deployment" name="Deployment">
                         <div v-if="workload1" style="overflow:auto">
@@ -539,7 +539,7 @@
               this.newroomFlag = true
               return false
             }
-           
+
             //新建禁用判断
             if (item.radio == '1') {
               this.newroomFlag = false
@@ -568,8 +568,8 @@
     },
     mounted() {},
     methods: {
-     
-     
+
+
       async reflowData(){
          await this.nameSpaceList()
          await this.findEditData();
@@ -612,10 +612,10 @@
 
         if (this.checked) {
           //是否使用腾讯云消息队列kafka
-           
+
           if(this.output.topic_id==''){
             this.$message({
-            message:"请选择CKafka實例Topic",
+            message:"請選擇CKafka實例Topic",
             type:'warning',
             showClose: true,
             duration: 0
@@ -864,7 +864,7 @@
               //指定文件
               if (!data.spec.input.container_log_input.all_namespaces) {
                 this.vlog = 'two';
-               
+
               }
               let namespace=data.spec.input.container_log_input.namespaces,arr=[];
               console.log(namespace,'namespace++++++++++++')
@@ -890,7 +890,7 @@
                   }
                      arr.push(obj)
                 }
-                
+
                 if(!item.all_containers){
                   let obj2={}
                    obj2.value1=item.namespace;
@@ -965,7 +965,7 @@
               if(this.formFour.length!=this.namespaceOptions.length){
                 this.newroomFlag=false
               }else{
-                  this.newroomFlag=true 
+                  this.newroomFlag=true
               }
             }
             if (data.spec.output.ckafka_output) {
@@ -1105,7 +1105,7 @@
                       }
                   }
             }
-           
+
             params.RequestBody.spec.input = {
               container_log_input: {
                 all_namespaces: false,
@@ -1332,7 +1332,7 @@
                 this.namespaceOptions.push(item.metadata.name);
                 this.namespaceOptions1.push(item.metadata.name);
               });
-              console.log(this.namespaceOptions,'命名空间选项')
+              console.log(this.namespaceOptions,'命名空間選項')
               this.formFour[0].value1 = this.namespaceOptions[0];
             }
           });
@@ -1356,7 +1356,7 @@
             Version: "2018-05-25"
         };
         this.axios.post(TKE_COLONY_QUERY, params).then(res=>{
-          
+
           if (res.Response.Error === undefined){
               this.formTwo.option3 = ['請選擇workload'];
               var data = JSON.parse(res.Response.ResponseBody);
@@ -1458,9 +1458,9 @@
           option4:needData,
           option5: [],
           value4: "",
-          value5: "", 
-          value6: "", 
-          value7: "", 
+          value5: "",
+          value6: "",
+          value7: "",
           valueKey: ""
         });
       },
@@ -1488,7 +1488,7 @@
         }
       },
       roomShow(index,np) {
-       
+
         if (this.namespaceOptions1.length == '1') {
           this.namespaceOptions1 = []
         }
@@ -1513,7 +1513,7 @@
              break
            }
           }
-         
+
           if(s==0){
              this.$message({
                   message: '已選工作負載項為0個，請至少選擇一個工作負載項或者選擇全部容器',
@@ -1521,7 +1521,7 @@
                   showClose: true,
                   duration: 0
                 });
-         
+
           }else{
             this.formFour[index].workload = s;
             this.formFour[index].flag = !this.formFour[index].flag;
@@ -1575,7 +1575,7 @@
           /^(\d|[1-9]\d|1\d{2}|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d{2}|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d{2}|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d{2}|2[0-4]\d|25[0-5])$/;
         return reg.test(str)
       },
-   
+
     },
     components: {
       HeadCom
@@ -1881,7 +1881,7 @@
       border:none;
       background: #fcecec;
       cursor: pointer;
-    } 
+    }
     ::v-deep .el-button:hover{
       color:#b43537;
     }

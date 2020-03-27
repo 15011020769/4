@@ -1319,7 +1319,7 @@
                                   :content="
                                     scope.row.UnusableReason
                                       ? scope.row.UnusableReason
-                                      : 'Master&Etcd 节点需配置4核及以上的机型'
+                                      : 'Master&Etcd 節點需配置4核及以上的機型'
                                   "
                                   placement="right"
                                   effect="light"
@@ -2374,9 +2374,9 @@
                       effect="light"
                       :content="
                         item.textNull
-                          ? '请选择安全组'
+                          ? '請選擇安全組'
                           : item.error
-                          ? '安全组重复'
+                          ? '安全組重複'
                           : ''
                       "
                       placement="right"

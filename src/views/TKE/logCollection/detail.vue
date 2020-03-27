@@ -29,7 +29,7 @@
             <span v-if="$route.query.type.type == 'host-log'">{{$t('TKE.overview.zdzjwj')}}</span>
             <!-- <span v-if="$route.query.type.type == 'host-log'">{{$t('TKE.overview.zdrqrz')}}</span> -->
             <span v-if="$route.query.type['container_log_input']&&$route.query.type['container_log_input']['all_namespaces']">{{$t('TKE.overview.rqbzsc')}}</span>
-            <span v-if="$route.query.type['container_log_input']&&!$route.query.type['container_log_input']['all_namespaces']">	指定容器日志</span>
+            <span v-if="$route.query.type['container_log_input']&&!$route.query.type['container_log_input']['all_namespaces']">	指定容器{{$t('TKE.event.rz')}}</span>
             <span v-if="$route.query.type.type == 'pod-log'">{{$t('TKE.overview.zdrqwj')}}</span>
             <!-- <span>指定主机文件</span> -->
           </el-form-item>
@@ -47,7 +47,7 @@
           </div>
           <!-- 收集路径 -->
           <div  v-if="$route.query.type.type == 'host-log'">
-             <el-form-item label="收集路径">
+             <el-form-item :label="`收集${$t('TKE.subList.lj')}`">
                 {{path}}
               </el-form-item>
           </div>
@@ -138,7 +138,7 @@ import {
         var d = new Date(times);
         var n = d.getFullYear();
         var y = (d.getMonth() + 1)<9?'0'+(d.getMonth() + 1):(d.getMonth() + 1);
-        
+
         var r = d.getDate();
         var h = d.getHours(); //12
         var m = d.getMinutes(); //12
@@ -178,7 +178,7 @@ import {
                   if(data.spec.input.host_log_input){
                     this.path=data.spec.input.host_log_input.path
                   }
-                
+
 
 
                   if(data.spec.output.type=='kafka'){
@@ -191,7 +191,7 @@ import {
                   }
 
             } else {
-            
+
             }
           })
       },

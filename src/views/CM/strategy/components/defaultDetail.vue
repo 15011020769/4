@@ -97,7 +97,7 @@
             </span>
           </p>
         </div>
-        <span class="textColor" v-if="basicNews.EventConfig">事件告警</span>
+        <!-- <span class="textColor" v-if="basicNews.EventConfig">事件告警</span>
         <div
           v-for="(j, q) in basicNews.EventConfig"
           class="trigger-condition"
@@ -108,10 +108,10 @@
               j.AlarmNotifyPeriod > 0 ? "重複告警" : "不重複告警"
             }}
           </p>
-        </div>
+        </div> -->
       </div>
     </el-card>
-    <el-card class="box-card alarm-object">
+    <el-card class="box-card alarm-object" v-if="ViewName !== 'BS'">
       <div slot="header" class="clearfix">
         <h3>告警物件</h3>
         <a @click="editObject">編輯</a>
@@ -1062,6 +1062,7 @@
           placeholder="請輸告警策略名稱，20字以內"
           v-model="GroupName"
           @input="EditTips"
+          maxlength="20"
         ></el-input>
         <p v-if="tipsShow">告警策略名稱不能爲空</p>
       </div>
@@ -1359,6 +1360,7 @@
                   <ul class="ul-one ul-two">
                     <li v-for="(item, index) in formWrite.arr" :key="index">
                       <div>
+                        <!-- 类型 -->
                         if&nbsp;
                         <el-select
                           v-model="item.typeVal"
@@ -1373,12 +1375,13 @@
                             label-width="40px"
                           ></el-option> </el-select
                         >&nbsp;
+                        <!-- 周期 -->
                         <el-select
                           v-model="item.censusVal"
                           style="width:140px;"
                         >
                           <el-option
-                            v-for="(x, i) in cycle"
+                            v-for="(x, i) in item.cycle"
                             :key="i"
                             :label="x.label"
                             :value="x.value"
@@ -1605,6 +1608,8 @@
         <p>選擇部分物件</p>
         <div class="table">
           <CamTransferCpt
+            :selectedList="alarmObjectData"
+            :showSelectedList="true"
             :productData="productListData"
             v-on:projectId="projectIds"
             v-on:searchParam="searchParams"
@@ -1666,7 +1671,11 @@
       <div class="edit-receive-object">
         <p>您可到訪問管理控制台修改用戶和用戶組訊息</p>
         <div>
-          <Cam @camClick="camFun"></Cam>
+          <Cam
+            @camClick="camFun"
+            :selectedList="receivingObjectData"
+            :type="ReceiverInfos.ReceiverType"
+          ></Cam>
         </div>
       </div>
       <div slot="footer" class="dialog-footer">
@@ -1680,6 +1689,7 @@
       :visible.sync="callbackInterface"
       width="550px"
       class="callback-dialog-box"
+      :before-close='CallBackDel'
     >
       <div class="callback-interface-box">
         <div class="text-http">
@@ -1743,7 +1753,7 @@
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="CallBackSave(1)">保 存</el-button>
-        <el-button @click="callbackInterface = false">取 消</el-button>
+        <el-button @click="CallBackDel">取 消</el-button>
       </div>
     </el-dialog>
     <!-- 告警對象 解除綁定 -->
@@ -1771,7 +1781,9 @@
       custom-class="tke-dialog"
     >
       <div>
-        確認解除告警接收人關聯
+        確認解除告警{{
+          ReceiverInfos.ReceiverType === "group" ? "接收組" : "接收人"
+        }}關聯
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="Receive">確定</el-button>
@@ -1792,7 +1804,7 @@ import {
   CM_GROUPING_MANAGELIST,
   CM_ALARM_OBJECT_LIST_OUT,
   CM_ALARM_OBJECT_LIST_ALLOUT,
-  CM_ALARM_RECEIVE_OBJECT_LIST,
+  LIST_SUBACCOUNTS,
   CM_ALARM_RECEIVE_OBJECT_GetGroup,
   CM_CALLBACK,
   CM_ALARM_TRIGGER_CONDITION,
@@ -1904,16 +1916,7 @@ export default {
       gaoJingLoading1: true,
       Conditions: [],
       ViewName: this.$route.query.viewName,
-      cycle: [
-        {
-          value: 60,
-          label: "統計週期1分鍾"
-        },
-        {
-          value: 300,
-          label: "統計週期5分鍾"
-        }
-      ],
+      cycle: [],
       satisfy: [
         {
           value: 0,
@@ -1971,7 +1974,8 @@ export default {
             number: 0,
             unit: "%",
             continuousCycleVal: 1,
-            warningVal: 0
+            warningVal: 0,
+            cycle: []
           }
         ],
         gaoArr: [
@@ -2105,6 +2109,7 @@ export default {
       Verification: true,
       loading: true,
       addDis: false,
+      codeSure: true,
       cam: {} // cam元件的值
     };
   },
@@ -2113,7 +2118,10 @@ export default {
     this.DetailsInit();
     this.Project();
     // 告警對象列表
-    this.AlarmObjectList();
+    if (this.ViewName !== "BS") {
+      this.AlarmObjectList();
+    }
+
     this.AlarmTriggerCondition();
     this.GaoJingGrouping();
     this.HttpInit();
@@ -2224,72 +2232,69 @@ export default {
               var arr = [];
               this.Offset++;
               let params = {
-                Version: "2018-07-24",
-                Module: "monitor",
-                Limit: 100,
-                Offset: 1
+                Type: "SubAccount",
+                Version: "2019-01-16",
+                Offset: 0,
+                Limit: 1000
               };
-              this.axios
-                .post(CM_ALARM_RECEIVE_OBJECT_LIST, params)
-                .then(res => {
-                  if (res.Response.Error === undefined) {
-                    arr = res.Response.List;
-                    this.describeContactListLength = res.Response.TotalNum;
-                    for (let i in arr) {
-                      this.describeContactList.push(arr[i]);
-                    }
-                    for (let i in _ReceiverUserList) {
-                      for (let j in this.describeContactList) {
-                        if (
-                          _ReceiverUserList[i] ==
-                          this.describeContactList[j].Uid
-                        ) {
-                          this.receivingObjectData.push(
-                            this.describeContactList[j]
-                          );
-                        }
+              this.axios.post(LIST_SUBACCOUNTS, params).then(res => {
+                if (res.Response.Error === undefined) {
+                  arr = res.Response.UserInfo;
+                  this.describeContactListLength = res.Response.TotalNum;
+                  for (let i in arr) {
+                    this.describeContactList.push(arr[i]);
+                  }
+                  for (let i in _ReceiverUserList) {
+                    for (let j in this.describeContactList) {
+                      if (
+                        _ReceiverUserList[i] == this.describeContactList[j].Uid
+                      ) {
+                        this.receivingObjectData.push(
+                          this.describeContactList[j]
+                        );
                       }
                     }
-                    this.receivingObjectLoad = false;
-                    console.log(
-                      "this.receivingObjectData",
-                      this.receivingObjectData
-                    );
-                    // if (
-                    //   this.Offset ==
-                    //   Math.ceil(Number(this.describeContactListLength) / 100)
-                    // ) {
-                    //   console.log(
-                    //     Number(this.describeContactListLength / 100)
-                    //   );
-                    //   clearInterval(setTime);
-                    //   this.receivingObjectLoad = false;
-                    //   return false;
-                    // }
-                  } else {
-                    let ErrTips = {
-                      FailedOperation: "操作失敗。",
-                      InternalError: "內部錯誤。",
-                      InvalidParameter: "參數錯誤。",
-                      LimitExceeded: "超過配額限制。",
-                      MissingParameter: "缺少參數錯誤。",
-                      ResourceInUse: "資源被占用。",
-                      ResourceInsufficient: "資源不足。",
-                      ResourceNotFound: "資源不存在。",
-                      ResourceUnavailable: "資源不可用。",
-                      UnauthorizedOperation: "未授權操作。",
-                      UnknownParameter: "未知參數錯誤。",
-                      UnsupportedOperation: "操作不支持。"
-                    };
-                    let ErrOr = Object.assign(ErrorTips, ErrTips);
-                    this.$message({
-                      message: ErrOr[res.Response.Error.Code],
-                      type: "error",
-                      showClose: true,
-                      duration: 0
-                    });
                   }
-                });
+                  this.receivingObjectLoad = false;
+                  console.log(
+                    "this.receivingObjectData",
+                    this.receivingObjectData
+                  );
+                  // if (
+                  //   this.Offset ==
+                  //   Math.ceil(Number(this.describeContactListLength) / 100)
+                  // ) {
+                  //   console.log(
+                  //     Number(this.describeContactListLength / 100)
+                  //   );
+                  //   clearInterval(setTime);
+                  //   this.receivingObjectLoad = false;
+                  //   return false;
+                  // }
+                } else {
+                  let ErrTips = {
+                    FailedOperation: "操作失敗。",
+                    InternalError: "內部錯誤。",
+                    InvalidParameter: "參數錯誤。",
+                    LimitExceeded: "超過配額限制。",
+                    MissingParameter: "缺少參數錯誤。",
+                    ResourceInUse: "資源被占用。",
+                    ResourceInsufficient: "資源不足。",
+                    ResourceNotFound: "資源不存在。",
+                    ResourceUnavailable: "資源不可用。",
+                    UnauthorizedOperation: "未授權操作。",
+                    UnknownParameter: "未知參數錯誤。",
+                    UnsupportedOperation: "操作不支持。"
+                  };
+                  let ErrOr = Object.assign(ErrorTips, ErrTips);
+                  this.$message({
+                    message: ErrOr[res.Response.Error.Code],
+                    type: "error",
+                    showClose: true,
+                    duration: 0
+                  });
+                }
+              });
               // }, 1000);
             }
           } else {
@@ -2377,6 +2382,29 @@ export default {
         this.tipsShow = true;
       } else {
         this.tipsShow = false;
+      }
+      if (this.GroupName.length === 20) {
+        this.$message({
+          message: "名稱不能超過20個字",
+          type: "error",
+          showClose: true,
+          duration: 0
+        });
+      }
+    },
+    isURL(str) {
+      var Expression = /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?/;
+      var objExp = new RegExp(Expression);
+      if (objExp.test(str) != true) {
+        this.$message({
+          message: "請輸入正確的url",
+          type: "error",
+          showClose: true,
+          duration: 0
+        });
+        this.codeSure = false;
+      } else {
+        this.codeSure = true;
       }
     },
     // 編輯告警對象
@@ -2549,13 +2577,14 @@ export default {
     editGaoJing() {
       // 編輯告警觸發條件
       this.dialogEditGaojing = true;
-      console.log(this.basicNews);
       if (this.basicNews.ConditionsTemp) {
         this.radioChufa = "1";
       } else {
         this.formWrite.satisfyVal = this.basicNews.IsUnionRule;
         if (this.basicNews.ConditionsConfig) {
           var _ConditionsConfig = this.basicNews.ConditionsConfig;
+          console.log(_ConditionsConfig);
+          console.log(this.typeOpt);
           var _typeVal = "";
           var _max = "";
           var _AlarmNotifyPeriod = "";
@@ -2570,7 +2599,6 @@ export default {
                 _max = Math.floor(this.typeOpt[j].ConfigManual.CalcValue.Max);
               }
             }
-
             if (_ConditionsConfig[i].AlarmNotifyType == 1) {
               _AlarmNotifyPeriod = 60;
             } else {
@@ -2587,8 +2615,79 @@ export default {
               continuousCycleVal:
                 Number(_ConditionsConfig[i].ContinueTime) /
                 Number(_ConditionsConfig[i].Period),
-              warningVal: _AlarmNotifyPeriod
+              warningVal: _AlarmNotifyPeriod,
+              cycle: []
             });
+            if (this.ViewName !== "vpn_tunnel") {
+              for (let j in this.typeOpt) {
+                if (
+                  _ConditionsConfig[i].MetricShowName ===
+                  this.typeOpt[j].MetricShowName
+                ) {
+                  for (let k in this.formWrite.arr) {
+                    for (let a in this.typeOpt[j].ConfigManual.Period.Keys) {
+                      if (this.typeOpt[j].ConfigManual.Period.Keys[a] == 60) {
+                        this.formWrite.arr[k].cycle.push({
+                          value: this.typeOpt[j].ConfigManual.Period.Keys[a],
+                          label: "统计周期1分钟"
+                        });
+                      }
+                      if (this.typeOpt[j].ConfigManual.Period.Keys[a] == 300) {
+                        this.formWrite.arr[k].cycle.push({
+                          value: this.typeOpt[j].ConfigManual.Period.Keys[a],
+                          label: "统计周期5分钟"
+                        });
+                      }
+                    }
+                    for (
+                      let b = 0;
+                      b < this.formWrite.arr[k].cycle.length - 1;
+                      b++
+                    ) {
+                      for (
+                        let c = b + 1;
+                        c < this.formWrite.arr[k].cycle.length;
+                        c++
+                      ) {
+                        if (
+                          this.formWrite.arr[k].cycle[b].value ==
+                          this.formWrite.arr[k].cycle[c].value
+                        ) {
+                          this.formWrite.arr[k].cycle.splice(c, 1);
+                          //因为数组长度减小1，所以直接 j++ 会漏掉一个元素，所以要 j--
+                          c--;
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+              this.formWrite.index = this.formWrite.arr.length - 1;
+            } else {
+              for (let j in this.typeOpt) {
+                if (
+                  _ConditionsConfig[i].MetricShowName ===
+                  this.typeOpt[j].MetricShowName
+                ) {
+                  for (let k in this.formWrite.arr) {
+                    if (_ConditionsConfig[i].Period == 60) {
+                      this.formWrite.arr[k].cycle.push({
+                        value: _ConditionsConfig[i].Period,
+                        label: "统计周期1分钟"
+                      });
+                    }
+                    if (_ConditionsConfig[i].Period == 300) {
+                      this.formWrite.arr[k].cycle.push({
+                        value: _ConditionsConfig[i].Period,
+                        label: "统计周期5分钟"
+                      });
+                    }
+                  }
+                }
+              }
+            }
+
+            console.log(this.formWrite.arr);
           }
         }
       }
@@ -3421,7 +3520,7 @@ export default {
             } else if (this.ViewName === "dcchannel") {
               let params = {
                 Version: "2018-04-10",
-                Limit: this.pageSize,
+                Limit: 50,
                 Offset: this.pageIndex
               };
               params["Filters.0.Name"] = "direct-connect-tunnel-id";
@@ -3966,7 +4065,7 @@ export default {
           for (let i in this.cam.channel) {
             if (this.cam.channel[i] === "郵件") {
               param["ReceiverInfos.0.NotifyWay." + i] = "EMAIL";
-            } else if (this.cam.channel[i] === "間訊") {
+            } else {
               param["ReceiverInfos.0.NotifyWay." + i] = "SMS";
             }
           }
@@ -4012,7 +4111,7 @@ export default {
           for (let i in this.cam.channel) {
             if (this.cam.channel[i] === "郵件") {
               param["ReceiverInfos.0.NotifyWay." + i] = "EMAIL";
-            } else if (this.cam.channel[i] === "間訊") {
+            } else {
               param["ReceiverInfos.0.NotifyWay." + i] = "SMS";
             }
           }
@@ -4239,7 +4338,6 @@ export default {
         }
       });
     },
-
     chufaTemplate() {
       //觸發條件範本
     },
@@ -4249,17 +4347,8 @@ export default {
       this.showChufa2 = true;
     },
     addZhibiao() {
-      if (this.typeOpt.length === this.formWrite.arr.length) {
-        this.addDis = true;
-        return false;
-      } else {
-        this.addDis = false;
-      }
       //添加觸發條件的指標告警
       this.formWrite.index++;
-      if (this.formWrite.index + 1 === this.formWrite.arr.length) {
-        this.formWrite.index = 0;
-      }
       this.formWrite.arr.push({
         max: Math.floor(
           this.typeOpt[this.formWrite.index].ConfigManual.CalcValue.Max
@@ -4268,13 +4357,56 @@ export default {
         censusVal: 60,
         calcTypeVal: "1",
         number: 0,
-        unit: "",
+        unit: this.typeOpt[this.formWrite.index].MetricUnit,
         continuousCycleVal: 1,
-        warningVal: 86400
+        warningVal: 86400,
+        cycle: []
       });
+      console.log(this.formWrite.arr[this.formWrite.index].censusVal);
+      if (this.ViewName !== "vpn_tunnel") {
+        let arr = this.typeOpt[this.formWrite.index].ConfigManual.Period.Keys;
+        for (let i in arr) {
+          if (arr[i] == 60) {
+            this.formWrite.arr[this.formWrite.index].cycle.push({
+              value: 60,
+              label: "统计周期1分钟"
+            });
+            this.formWrite.arr[this.formWrite.index].censusVal = 60;
+          }
+          if (arr[i] == 300) {
+            this.formWrite.arr[this.formWrite.index].cycle.push({
+              value: 300,
+              label: "统计周期5分钟"
+            });
+            this.formWrite.arr[this.formWrite.index].censusVal = 300;
+          }
+        }
+      } else {
+        if (this.typeOpt[this.formWrite.index].MetricId != 40) {
+          this.formWrite.arr[this.formWrite.index].cycle.push({
+            value: 300,
+            label: "统计周期5分钟"
+          });
+          this.formWrite.arr[this.formWrite.index].censusVal = 300;
+        } else {
+          this.formWrite.arr[this.formWrite.index].cycle.push({
+            value: 60,
+            label: "统计周期1分钟"
+          });
+          this.formWrite.arr[this.formWrite.index].censusVal = 60;
+        }
+      }
+      if (this.typeOpt.length === this.formWrite.arr.length) {
+        this.addDis = true;
+        return false;
+      } else {
+        this.addDis = false;
+      }
     },
     delZhibiao(index) {
+      this.formWrite.index--;
       this.formWrite.arr.splice(index, 1);
+      this.addDis = false;
     },
     addShijian() {
       //添加觸發條件的事件告警
@@ -4372,6 +4504,7 @@ export default {
     },
     HttpHistroyBlur() {
       // this.httpShow = false;
+      this.isURL(this.httpVal + "://" + this.httpInput);
     },
     leave() {
       this.httpShow = false;
@@ -4494,6 +4627,17 @@ export default {
     },
     // 回調接口 保存
     CallBackSave(val) {
+      if (val == 1) {
+        if (!this.codeSure) {
+          this.$message({
+            message: "請輸入正確的url",
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+          return false;
+        }
+      }
       let param = {
         Version: "2018-07-24",
         Module: "monitor",
@@ -4521,6 +4665,10 @@ export default {
           });
         }
       });
+    },
+    CallBackDel() {
+      this.callbackInterface = false;
+      this.httpInput = "";
     },
     // 刷新
     CallBackRefresh() {

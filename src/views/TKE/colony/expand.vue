@@ -275,7 +275,7 @@
                 <el-radio-button label="CLOUD_SSD">{{$t('TKE.colony.yyp')}}</el-radio-button>
               </el-radio-group>
               <div class="block">
-                <el-slider :min="50" :max="500" :step="10" :show-tooltip="true" v-model="nodeForm.systemSize" 
+                <el-slider :min="50" :max="500" :step="10" :show-tooltip="true" v-model="nodeForm.systemSize"
                     show-input @change="changeSyetem" :marks="mark"></el-slider>
               </div>
             </div>
@@ -296,18 +296,18 @@
                         <el-radio-button label="CLOUD_PREMIUM">{{$t('TKE.colony.gxnyp')}}</el-radio-button>
                         <el-radio-button label="CLOUD_SSD">{{$t('TKE.colony.yyp')}}</el-radio-button>
                       </el-radio-group>
-                      <div class="block" style="height: auto;" v-if="item.dataDiskType = 'CLOUD_PREMIUM'">
-                        <el-slider :min="10" :max="16000" :step="10" :show-tooltip="true" v-model="item.dataSize"
-                         show-input @change="changeDataDisk"></el-slider>
+                      <div class="block" style="height: auto;" v-if="item.dataDiskType === 'CLOUD_PREMIUM'">
+                        <el-slider :marks="markdata" :min="10"  :max="16000" :step="10" :show-tooltip="true" v-model="item.dataSize"
+                         show-input @change="changeDataDisk(i)"></el-slider>
                       </div>
                       <div class="block" style="height: auto;" v-else>
-                        <el-slider :min="100" :max="16000" :step="10" :show-tooltip="true" v-model="item.dataSize"
-                         show-input @change="changeDataDisk"></el-slider>
+                        <el-slider :min="100" :marks="marks" :max="16000" :step="10" :show-tooltip="true" v-model="item.dataSize"
+                         show-input @change="changeDataDisk1(i)"></el-slider>
                       </div>
                     </el-form-item>
                     <el-form-item :label="$t('TKE.colony.gshsz')" class="norms" style="padding-left: 10px;">
                       <el-checkbox v-model="item.fomatAndMount" @change="isFomatMount">
-                        {{$t('TKE.colony.gshbgz')}}          
+                        {{$t('TKE.colony.gshbgz')}}
                       </el-checkbox>
                       <div v-if="item.fomatAndMount" style="display: flex;width:440px">
                         <!-- <div style="width:600px"> -->
@@ -321,9 +321,9 @@
                           </el-option>
                         </el-select>
                         <!-- <div class='box-form'> -->
-                        
+
                         <el-input v-model="item.filePath" :placeholder="$t('TKE.colony.qsrgzlj')" @blur="getInput()" :class='[item.rule? "box-form" : ""]' ></el-input>
-                        <el-tooltip class="item" effect="light" content="挂载路径不可重复" placement="top">
+                        <el-tooltip class="item" effect="light" :content="$t('TKE.colony.gzljbkcf')" placement="top">
                           <i class="el-icon-info" v-if="item.rule"></i>
                         </el-tooltip>
                         </div>
@@ -343,7 +343,7 @@
                 class="add-data-disk" style="margin-top: 10px;"
                 v-if="nodeForm.dataDiskShow"
               >
-                <el-button :disabled="nodeForm.buyDataDiskArr.length >19?true:false" @click="AddDataDisk()" style="color: #006eff;">{{$t('TKE.colony.tjsjp')}}</el-button> 
+                <el-button :disabled="nodeForm.buyDataDiskArr.length >19?true:false" @click="AddDataDisk()" style="color: #006eff;">{{$t('TKE.colony.tjsjp')}}</el-button>
               </div>
             </div>
           </div>
@@ -367,7 +367,7 @@
               </el-radio-group>
               <div style="overflow:hidden;margin-left:120px;">
                 <div class="block">
-                  <el-slider :min="0" :max="100" :step="1" v-model="nodeForm.internetMaxBandwidthOut" show-input
+                  <el-slider :min="0" :max="100" :step="1" :marks="markNet" v-model="nodeForm.internetMaxBandwidthOut" show-input
                   @change="changeInternet"></el-slider>
                 </div>
                 <div class="data-disk">
@@ -499,7 +499,7 @@
                     class="hide"
                     :class="{ active: item.error }"
                     effect="light"
-                    :content="item.error ? '安全组重复' : ''"
+                    :content="item.error ? '安全組重複' : ''"
                     placement="right"
                   >
                     <i class="el-icon-warning-outline ml5"></i>
@@ -592,26 +592,7 @@
                     <span style="top:8px">=</span>
                     <el-input class="text" v-model="item.value" style="top:8px"></el-input>
                     <i class="el-icon-close" @click="DeleteAdvancedSetting(index)"></i>
-                    <!-- <el-tooltip
-                      v-if="dynamicValidateForm.domains.length=='1'"
-                      class="item"
-                      effect="dark"
-                      :content="$t('TKE.subList.zsszyx')"
-                      placement="right"
-                    >
-                      <i class="el-icon-close"></i>
-                    </el-tooltip>
-                    <el-tooltip v-else class="item" effect="dark" :content="$t('TKE.overview.sc')" placement="right">
-                      <i class="el-icon-close" @click.prevent="removeDomain(domain)"></i>
-                    </el-tooltip> -->
                   </div>
-                  <!-- <el-input v-model="item.name" size="mini"></el-input>
-                  <span style="margin:0 10px;">=</span>
-                  <el-input v-model="item.value" style="margin-left: -100px;"></el-input>
-                  <i
-                    class="el-icon-close"
-                    @click="DeleteAdvancedSetting(index)"
-                  ></i> -->
                 </li>
               </ul>
               <a href="javascript:;" @click="AddAdvancedSetting">新增</a>
@@ -670,7 +651,7 @@
           <el-form-item :label="$t('TKE.colony.sjp')">
             <p v-if="!nodeForm.isShowDataDisk">{{$t('TKE.colony.zbgm')}}</p>
             <p v-else>{{nodeForm.buyDataDiskArr | buyDataDiskArr}}</p>
-            
+
           </el-form-item>
           <el-form-item :label="$t('TKE.colony.gwdk')" class="tke-fourth-broadband">
             <p>{{nodeForm.internetChargeType | internetChargeType}} ({{nodeForm.internetMaxBandwidthOut}}Mbps)</p>
@@ -713,7 +694,7 @@
               <span class="tke-second-cost-num">{{nodeForm.totalPrice}}</span
               ><span class="tke-second-cost-h">元</span
               >
-            
+
             </div>
           </el-form-item>
           <el-form-item :label="$t('TKE.colony.zjfy')" v-else>
@@ -760,12 +741,20 @@ export default {
   data() {
     return {
       marks:{
-        0: '10',
-        100: '16000',
+        100: '100GB',
+        16000: '16000GB',
+      },
+      markNet:{
+        3: '1Mbps',
+        100: '500Mbps'
+      },
+      markdata:{
+        10: '10GB',
+        16000: '16000GB',
       },
       mark:{
-        60: '50G',
-        300: '500G'
+        50: '50GB',
+        500: '500GB'
       },//slider滑块
       loadShow: false,//是否显示加载
       clusterId: '',//集群id
@@ -812,7 +801,7 @@ export default {
             value: "CLOUD_SSD",
             label: "SSD雲硬碟"
           }
-        ], 
+        ],
         latticeSetOpt: [
           { value: "ext3", label: "ext3" },
           { value: "ext4", label: "ext4" },
@@ -828,7 +817,7 @@ export default {
         instanceName: '',//实例名称
         loginSettings: 'relation',//登录方式
         keyIds: '',//ssh秘钥id
-        password: '',//密码 
+        password: '',//密码
         confirmPassword: '',//确认密码
         securityId: '',//安全组id
         securityService: true,//云服务器
@@ -1031,9 +1020,9 @@ export default {
     AdvancedSettingBtn() {
       this.nodeForm.advancedSettingShow = !this.nodeForm.advancedSettingShow;
     },
-    //获取镜像 
+    //获取镜像
     async getImagesList() {
-      
+
     },
     //获取集群信息
     async getColonyInfo () {
@@ -1064,7 +1053,7 @@ export default {
         let paramImage = {
           Version: "2018-05-25"
         }
-        
+
         await this.axios.post(TKE_OPERAT_SYSTEM, paramImage).then(resImage => {
           if(resImage.Response.Error === undefined) {
             let images = resImage.Response.ImageInstanceSet;
@@ -1162,7 +1151,7 @@ export default {
     //获取可用区机型配置信息
     async getDescribeZoneInstanceConfigInfos() {
       let param = {
-        Version: "2017-03-12"        
+        Version: "2017-03-12"
       }
       param["Filters.0.Name"] = "zone";
       param["Filters.0.Values.0"] = "ap-taipei-1";
@@ -1300,7 +1289,7 @@ export default {
       } else {
         this.loadShow = false;
         let ErrTips = {
-          
+
         };
         let ErrOr = Object.assign(ErrorTips, ErrTips);
         this.$message({
@@ -1350,10 +1339,10 @@ export default {
       } else if(example !== 'all' && cpu === 'all' && memory === 'all') {
         zoneInfoFilters = zoneInfoList.filter( res => res.InstanceFamily === example);
       } else if(example !== 'all' && cpu !== 'all' && memory === 'all') {
-        zoneInfoFilters = zoneInfoList.filter( 
+        zoneInfoFilters = zoneInfoList.filter(
           res => res.InstanceFamily === example && res.Cpu === cpu);
       } else if(example !== 'all' && cpu !== 'all' && memory !== 'all') {
-        zoneInfoFilters = zoneInfoList.filter( 
+        zoneInfoFilters = zoneInfoList.filter(
           res => res.InstanceFamily === example && res.Cpu === cpu && res.Memory === memory);
       } else if (example !== 'all' && cpu === 'all' && memory !== 'all') {
         zoneInfoFilters = zoneInfoList.filter(res => res.InstanceFamily === example && res.Memory === memory);
@@ -1420,7 +1409,7 @@ export default {
           for(let keys in arr){
             if(key == arr[keys]){
                 this.nodeForm.buyDataDiskArr[key]['rule'] = true
-            } 
+            }
           }
         }
         console.log(this.nodeForm.buyDataDiskArr)
@@ -1438,7 +1427,7 @@ export default {
     AddDataDisk(index) {
         this.nodeForm.buyDataDiskArr.push({
           dataDiskType: "CLOUD_PREMIUM",
-          dataSize: 100,
+          dataSize: 10,
           fomatAndMount: false,
           fileSystem: "ext4",
           filePath: "/var/lib/docker",
@@ -1457,7 +1446,7 @@ export default {
     // ----------------------------------------- 第三步 -------------------------------------
     // 登录方式
     LoginMode(val) {
-      
+
     },
     // 第三步 上一步
     thirdPrev() {
@@ -1481,12 +1470,62 @@ export default {
       this.costPrice();
     },
     changeSyetem() {
+      let size = String(this.nodeForm.systemSize);
+      let datasize = 0;
+      if(Number(size) < 50) {
+        this.nodeForm.systemSize = 50
+      } else if(Number(size) > 500) {
+        this.nodeForm.systemSize = 500
+      } else {
+        if(Number(size.substring(size.length-1,size.length)) > 4) {
+          datasize = size.substring(0,size.length-1)+'0';
+          this.nodeForm.systemSize = Number(datasize) + 10;
+        } else {
+          datasize = size.substring(0,size.length-1)+'0';
+          this.nodeForm.systemSize = Number(datasize);
+        }
+      }
+      this.costPrice();
+    },
+    changeDataDisk(index) {
+      let buyDataDiskArr = this.nodeForm.buyDataDiskArr;
+      let size = String(buyDataDiskArr[index].dataSize);
+      let datasize = 0;
+      if(Number(size) < 10) {
+        this.nodeForm.buyDataDiskArr[index].dataSize = 10
+      } else if(Number(size) > 16000) {
+        this.nodeForm.buyDataDiskArr[index].dataSize = 16000
+      } else {
+        if(Number(size.substring(size.length-1,size.length)) > 4) {
+          datasize = size.substring(0,size.length-1)+'0';
+          this.nodeForm.buyDataDiskArr[index].dataSize = Number(datasize) + 10;
+        } else {
+          datasize = size.substring(0,size.length-1)+'0';
+          this.nodeForm.buyDataDiskArr[index].dataSize = Number(datasize);
+        }
+      }
+      this.costPrice();
+    },
+    changeDataDisk1(index) {
+      let buyDataDiskArr = this.nodeForm.buyDataDiskArr;
+      let size = String(buyDataDiskArr[index].dataSize);
+      let datasize = 0;
+      if(Number(size) < 100) {
+        this.nodeForm.buyDataDiskArr[index].dataSize = 100
+      } else if(Number(size) > 16000) {
+        this.nodeForm.buyDataDiskArr[index].dataSize = 16000
+      } else {
+        if(Number(size.substring(size.length-1,size.length)) > 4) {
+          datasize = size.substring(0,size.length-1)+'0';
+          this.nodeForm.buyDataDiskArr[index].dataSize = Number(datasize) + 10;
+        } else {
+          datasize = size.substring(0,size.length-1)+'0';
+          this.nodeForm.buyDataDiskArr[index].dataSize = Number(datasize);
+        }
+      }
       this.costPrice();
     },
     changeDataDiskType() {
-      this.costPrice();
-    },
-    changeDataDisk() {
       this.costPrice();
     },
     changeInternetType() {
@@ -1670,7 +1709,7 @@ export default {
       };
       let buyDataDisks = this.nodeForm.buyDataDiskArr;
       if(buyDataDisks.length > 0) {
-        
+
         let dataDisks = [];
         for(let i = 0; i < buyDataDisks.length; i++) {
           let buyDataDisk = {
@@ -1685,7 +1724,7 @@ export default {
       if(this.nodeForm.containerChecked) {
         containerInput = this.nodeForm.containerInput;
       }
-      
+
       let param = {
         Version: '2018-05-25',
         ClusterId: this.clusterId,
@@ -1703,7 +1742,6 @@ export default {
         } else {
           param["InstanceAdvancedSettings.Unschedulable"] = 0;
         }
-        debugger
         if (this.nodeForm.advancedSettingArr.length > 0) {
           for (let i in this.nodeForm.advancedSettingArr) {
             param[
@@ -1717,7 +1755,7 @@ export default {
           param["InstanceAdvancedSettings.Labels.0.Name"] = "";
           param["InstanceAdvancedSettings.Labels.0.Value"] = "";
         }
-      }  
+      }
       // param["InstanceAdvancedSettings.Kubelet.0"] = "";
 
       let buyDataDiskArr = this.nodeForm.buyDataDiskArr;
@@ -1795,7 +1833,7 @@ export default {
         "Placement.Zone": "ap-taipei-1",
         "SystemDisk.DiskSize": Number(this.nodeForm.systemSize),
         "SystemDisk.DiskType": this.nodeForm.systemDiskType,
-        Version: "2017-03-12", 
+        Version: "2017-03-12",
         PurchaseSource: "MC"
       }
       //公网
@@ -2046,7 +2084,7 @@ export default {
     line-height: 40px;
     font-size: 12px;
     color: #444;
-    overflow: hidden;
+    // overflow: hidden;
   }
   ::v-deep .el-form-item {
     margin-bottom: 0px;
@@ -2080,7 +2118,6 @@ export default {
       }
       &:nth-of-type(2) {
         line-height: 24px;
-        margin-left: 120px;
       }
     }
     .data-disk {

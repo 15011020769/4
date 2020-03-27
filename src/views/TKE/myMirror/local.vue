@@ -6,7 +6,7 @@
           placement="right"
           width="100"
           trigger="hover"
-          content="数量已达到限制"
+          :content="$t('TKE.myMirror.slyddxz')"
           :disabled="tableData.length == 10?false:true">
           <div slot="reference">
             <el-button type="primary" size="mini"  @click="dialogVisible = true" :disabled="tableData.length == 10" >新建</el-button>
@@ -29,7 +29,7 @@
                     placement="left"
                     width="300"
                     trigger="hover"
-                    content="镜像仓库数量不为零，不能进行删除操作"
+                    :content="$t('TKE.myMirror.jsckslbwl')"
                     :disabled="!scope.row.repoCount"
                    >
                   <div slot="reference">
