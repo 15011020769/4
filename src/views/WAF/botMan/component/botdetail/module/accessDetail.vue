@@ -94,7 +94,7 @@
             </span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item :command="0">全部</el-dropdown-item>
-              <el-dropdown-item v-for="item in httpOptions" :command="item">{{item}}</el-dropdown-item>
+              <el-dropdown-item v-for="item in httpOptions" :key="item" :command="item">{{item}}</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </el-table-column>
@@ -105,7 +105,7 @@
             </span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item :command="0">全部</el-dropdown-item>
-              <el-dropdown-item v-for="item in requestOptions" :command="item">{{item}}</el-dropdown-item>
+              <el-dropdown-item v-for="item in requestOptions" :key="item" :command="item">{{item}}</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </el-table-column>
@@ -119,7 +119,7 @@
             </span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item :command="0">全部</el-dropdown-item>
-              <el-dropdown-item v-for="item in statusOptions" :command="item">{{item}}</el-dropdown-item>
+              <el-dropdown-item v-for="item in statusOptions" :key="item" :command="item">{{item}}</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </el-table-column>
