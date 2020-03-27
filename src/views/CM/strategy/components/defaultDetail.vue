@@ -1689,6 +1689,7 @@
       :visible.sync="callbackInterface"
       width="550px"
       class="callback-dialog-box"
+      :before-close='CallBackDel'
     >
       <div class="callback-interface-box">
         <div class="text-http">
@@ -1752,7 +1753,7 @@
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="CallBackSave(1)">保 存</el-button>
-        <el-button @click="callbackInterface = false">取 消</el-button>
+        <el-button @click="CallBackDel">取 消</el-button>
       </div>
     </el-dialog>
     <!-- 告警對象 解除綁定 -->
@@ -4626,14 +4627,16 @@ export default {
     },
     // 回調接口 保存
     CallBackSave(val) {
-      if (!this.codeSure) {
-        this.$message({
-          message: "請輸入正確的url",
-          type: "error",
-          showClose: true,
-          duration: 0
-        });
-        return false;
+      if (val == 1) {
+        if (!this.codeSure) {
+          this.$message({
+            message: "請輸入正確的url",
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+          return false;
+        }
       }
       let param = {
         Version: "2018-07-24",
@@ -4662,6 +4665,10 @@ export default {
           });
         }
       });
+    },
+    CallBackDel() {
+      this.callbackInterface = false;
+      this.httpInput = "";
     },
     // 刷新
     CallBackRefresh() {
