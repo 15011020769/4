@@ -1671,7 +1671,11 @@
       <div class="edit-receive-object">
         <p>您可到訪問管理控制台修改用戶和用戶組訊息</p>
         <div>
-          <Cam @camClick="camFun" :selectedList="receivingObjectData" :type="ReceiverInfos.ReceiverType"></Cam>
+          <Cam
+            @camClick="camFun"
+            :selectedList="receivingObjectData"
+            :type="ReceiverInfos.ReceiverType"
+          ></Cam>
         </div>
       </div>
       <div slot="footer" class="dialog-footer">
@@ -1776,7 +1780,9 @@
       custom-class="tke-dialog"
     >
       <div>
-        確認解除告警接收人關聯
+        確認解除告警{{
+          ReceiverInfos.ReceiverType === "group" ? "接收組" : "接收人"
+        }}關聯
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="Receive">確定</el-button>
