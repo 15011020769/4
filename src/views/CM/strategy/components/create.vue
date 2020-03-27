@@ -1056,8 +1056,8 @@ export default {
               message: "創建告警策略成功",
               type: "success",
               showClose: true,
-              duration: 2000
-            });
+              // duration: 2000
+            })
             this.$router.replace({
               path: "/strategy"
             });

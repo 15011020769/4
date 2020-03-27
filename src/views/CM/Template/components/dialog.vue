@@ -1,7 +1,7 @@
 <template>
   <div class="dialog">
-    <!--  @open="$emit('open')" @close="$emit('close')" -->
-    <el-dialog title="新建" :visible.sync="show" @open="loadShow = true">
+    <!--  @open="$emit('open')" @close="$emit('close')"  @open="loadShow = true"-->
+    <el-dialog title="新建" :visible.sync="show">
       <el-form :model="formInline" :rules="rules" ref="form">
         <p class="rowCont">
           <span>策略名稱</span>
@@ -81,7 +81,7 @@
                 <span style="display:inline">條件時，觸發告警</span>
               </p>
               <!-- 在這裏進行便利，添加 -->
-              <ul v-loading="loadShow">
+              <ul v-loading="loading">
                 <li
                   style="display:flex;align-items: center;cursor: pointer;"
                   v-for="(it, i) in indexAry"
@@ -299,7 +299,7 @@ import Loading from "@/components/public/Loading";
 export default {
   data() {
     return {
-      loadShow: false, // 加载是否显示
+      loading:true,
       isChected: true, // 多选框是否选中
       isDisabled: false, // 指标告警是否禁用
       isDisGJ: false, // 事件告警是否禁用
@@ -577,9 +577,8 @@ export default {
           }
         });
         this.jinggaoZQ.forEach(item4 => {
-          var AM;
           if (ele.alarm == item4.value && ele.alarm !== 1) {
-            AM = item4.value;
+            let AM = item4.value;
             params[`Conditions.${i}.AlarmNotifyPeriod`] = AM;
             params[`Conditions.${i}.AlarmNotifyType`] = 0;
           }
@@ -616,27 +615,27 @@ export default {
             message: "新建成功",
             type: "success",
             showClose: true,
-            duration: 2000
+            // duration: 2000
           });
           this.createSuccess(); // 更新列表
-          this.loadShow = false;
         } else {
           this.errorPrompt(res);
         }
       });
     },
     passData(item) {
+      // this.isShow = false
       // this.productData = item
       // this.zhibiaoType = item.MetricName
       this.zhibiaoType = item.Metrics;
       this.productValue = item.productValue;
       this.$nextTick(() => {
-        this.loadShow = false;
+        this.loading = false;
       });
     },
     // 切換策略類型加載提示
     isLoading(val) {
-      this.loadShow = val;
+      this.loading = val;
     },
     // 類型
     msgBtn(index) {

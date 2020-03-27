@@ -34,7 +34,7 @@
           <template slot-scope="scope">
             <el-popover trigger="hover" placement="right">
               <div>
-                <p style="color:#999;font-size:12px">指標告警(任意):</p>
+                <p style="color:#999;font-size:12px">指標告警({{scope.row.IsUnionRule==0?'任意':'所有'}}):</p>
                 <p v-for="(it,i) in scope.row.Conditions" :key="i" style="font-size:12px">
                   {{ `${it.MetricDisplayName}${it.CalcType||'-'}${it.CalcValue||'-'}${it.Unit||''},持續${it.ContinueTime/60}分鍾,${it.alarm}` }}</p>
               </div>
@@ -456,7 +456,7 @@ export default {
                 item.alarm = '不重複告警'
               } else if (item.AlarmNotifyType == 1) {
                 item.alarm = '按週期指數遞增重複告警'
-              } else if (anp > 0 && time1 < 30) {
+              } else if (anp > 0 && time1 <= 30) {
                 item.alarm = `按${time1}分鍾重複告警`
               } else if (anp > 0 && time1 > 30 && time2 < 24) {
                 item.alarm = `按${time2}小時重複告警`
@@ -510,7 +510,7 @@ export default {
             message: '條件範本名稱修改成功',
             type: 'success',
             showClose: true,
-            duration: 2000
+            // duration: 2000
           })
         } else {
           this.errorPrompt(res)
@@ -541,7 +541,7 @@ export default {
             message: '複製成功',
             type: 'success',
             showClose: true,
-            duration: 2000
+            // duration: 2000
           })
           this.loadShow = false
         } else {
@@ -575,7 +575,7 @@ export default {
             message: '刪除成功',
             type: 'success',
             showClose: true,
-            duration: 2000
+            // duration: 2000
           })
         } else {
           this.showDelDialog = false

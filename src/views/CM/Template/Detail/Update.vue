@@ -49,7 +49,7 @@
       </el-form>
       <hr style="margin-bottom:20px;color:#ddd"/>
       <h4 class="title-text">告警觸發條件</h4>
-      <p class="text-color1">指標告警(任意)</p>
+      <p class="text-color1">指標告警({{information.IsUnionRule==0?'任意':'所有'}})</p>
       <p class="text-color2" v-for="(it) in IndexAlarm" :key="it.metricShowName">
         {{ `${it.metricShowName}${it.calcType}${it.calcValue}${it.unit},持續${it.continueTime/60}分鍾,${it.alarm}` }}
       </p>

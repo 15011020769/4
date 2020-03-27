@@ -111,7 +111,7 @@
           <template slot-scope="scope">
             <el-popover placement="right" width="500" trigger="hover">
               <div class="popover-box">
-                <p class="text-color">指標告警（任意）：</p>
+                <p class="text-color">指標告警（{{scope.row.IsUnionRule===0?'任意':'所有'}}）：</p>
                 <div
                   v-for="(i, item) in scope.row.Conditions"
                   :key="item"
