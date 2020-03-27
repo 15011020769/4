@@ -592,26 +592,7 @@
                     <span style="top:8px">=</span>
                     <el-input class="text" v-model="item.value" style="top:8px"></el-input>
                     <i class="el-icon-close" @click="DeleteAdvancedSetting(index)"></i>
-                    <!-- <el-tooltip
-                      v-if="dynamicValidateForm.domains.length=='1'"
-                      class="item"
-                      effect="dark"
-                      :content="$t('TKE.subList.zsszyx')"
-                      placement="right"
-                    >
-                      <i class="el-icon-close"></i>
-                    </el-tooltip>
-                    <el-tooltip v-else class="item" effect="dark" :content="$t('TKE.overview.sc')" placement="right">
-                      <i class="el-icon-close" @click.prevent="removeDomain(domain)"></i>
-                    </el-tooltip> -->
                   </div>
-                  <!-- <el-input v-model="item.name" size="mini"></el-input>
-                  <span style="margin:0 10px;">=</span>
-                  <el-input v-model="item.value" style="margin-left: -100px;"></el-input>
-                  <i
-                    class="el-icon-close"
-                    @click="DeleteAdvancedSetting(index)"
-                  ></i> -->
                 </li>
               </ul>
               <a href="javascript:;" @click="AddAdvancedSetting">新增</a>
@@ -1761,7 +1742,6 @@ export default {
         } else {
           param["InstanceAdvancedSettings.Unschedulable"] = 0;
         }
-        debugger
         if (this.nodeForm.advancedSettingArr.length > 0) {
           for (let i in this.nodeForm.advancedSettingArr) {
             param[
@@ -2138,7 +2118,6 @@ export default {
       }
       &:nth-of-type(2) {
         line-height: 24px;
-        margin-left: 120px;
       }
     }
     .data-disk {

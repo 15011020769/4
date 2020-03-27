@@ -249,9 +249,28 @@
                 <!-- <a
                   href="https://cloud.tencent.com/document/product/457/18824"
                   target="_blank"
-                >取消封锁命令</a>-->
+                >取消封锁命令</a> -->
               </p>
             </el-form-item>
+          </el-form-item>
+          <el-form-item label="Label" v-show="isActive">
+            <ul>
+              <li v-for="(item, index) in advancedSettingArr" :key="index" style="display: flex;">
+                <div class="form-input1">
+                  <el-input v-model="item.name" size="mini" style="top:8px;width: 120px;" ></el-input>
+                  <span style="top:8px">=</span>
+                  <el-input class="text" v-model="item.value" style="top:8px;width: 120px;"></el-input>
+                  <i class="el-icon-close" @click="DeleteAdvancedSetting(index)"></i>
+                </div>
+              </li>
+            </ul>
+            <a href="javascript:;" @click="AddAdvancedSetting">新增</a>
+            <p>
+              標籤名稱只能包含字母、數字及分隔符("-"、"_"、"."、"/")，且必須以字母、數字開頭和結尾
+            </p>
+            <p>
+              標籤值只能包含字母、數字及分隔符("-"、"_"、".")，且必須以字母、數字開頭和結尾
+            </p>
           </el-form-item>
         </el-form>
 
@@ -616,6 +635,7 @@ export default {
       textOne: "",
       textTwo: "",
       Radio: "pwd1",
+      advancedSettingArr: [],
       asg: {
         name: "", //名称
         typeRadio: "POSTPAID_BY_HOUR", //实例类型
@@ -873,6 +893,15 @@ export default {
     console.log(this.ClusterOs);
   },
   methods: {
+    AddAdvancedSetting() {
+      this.advancedSettingArr.push({
+        name: "",
+        value: ""
+      });
+    },
+    DeleteAdvancedSetting(index) {
+      this.advancedSettingArr.splice(index, 1);
+    },
     changeValue(val) {
       console.log(this.inputRoom);
     },
@@ -979,9 +1008,22 @@ export default {
         } else {
           params["InstanceAdvancedSettings.Unschedulable"] = 0;
         }
+        if (this.advancedSettingArr.length > 0) {
+          for (let i in this.advancedSettingArr) {
+            params[
+              "InstanceAdvancedSettings.Labels." + i + ".Name"
+            ] = this.advancedSettingArr[i].name;
+            params[
+              "InstanceAdvancedSettings.Labels." + i + ".Value"
+            ] = this.advancedSettingArr[i].value;
+          }
+        } else {
+          params["InstanceAdvancedSettings.Labels.0.Name"] = "";
+          params["InstanceAdvancedSettings.Labels.0.Value"] = "";
+        }
       } 
-      params["InstanceAdvancedSettings.Labels.0.Name"] = "";
-      params["InstanceAdvancedSettings.Labels.0.Value"] = "";
+      // params["InstanceAdvancedSettings.Labels.0.Name"] = "";
+      // params["InstanceAdvancedSettings.Labels.0.Value"] = "";
 
       // params[ //不能传递参数
       //   "EnhancedService.SecurityService.Enabled"
@@ -1461,6 +1503,18 @@ export default {
   justify-content: space-between;
   align-items: center;
   width: 200px;
+  span {
+    margin: 0 10px;
+  }
+  i {
+    margin: 0 10px;
+    cursor: pointer;
+  }
+}
+.form-input1 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   span {
     margin: 0 10px;
   }
