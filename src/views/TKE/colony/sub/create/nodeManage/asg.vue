@@ -36,7 +36,7 @@
           <el-form-item :label="$t('TKE.colony.sllx')">
             <el-radio-group v-model="asg.typeRadio" size="small">
               <el-radio-button label="POSTPAID_BY_HOUR">{{$t('TKE.colony.aljf')}}</el-radio-button>
-              <el-radio-button label="SPOTPAID">{{$t('TKE.subList.jjjf')}}</el-radio-button>
+              <!-- <el-radio-button label="SPOTPAID">{{$t('TKE.subList.jjjf')}}</el-radio-button> -->
             </el-radio-group>
             <p v-if="asg.typeRadio=='SPOTPAID'">
               {{$t('TKE.subList.jjsl')}}

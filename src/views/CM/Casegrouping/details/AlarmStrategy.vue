@@ -264,6 +264,7 @@ export default {
           this.total = res.Response.Total;
           this.loadShow = false;
         } else {
+          this.loadShow = false;
           let ErrTips = {
                 "AuthFailure.UnauthorizedOperation":
                   "請求未授權。請參考 CAM 文件對鑒權的說明。",
