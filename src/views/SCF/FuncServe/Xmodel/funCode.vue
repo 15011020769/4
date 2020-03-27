@@ -550,7 +550,12 @@ export default {
       // 限制上传文件的大小
       const isLt = file.size / 1024 / 1024
       if (isLt > 20 || isLt === 20) {
-        this.$message.error('上傳zip包最大能上傳20M，您的zip包已超過20M，請使用COS方式上傳')
+        this.$message({
+          message: '上傳zip包最大能上傳20M，您的zip包已超過20M，請使用COS方式上傳',
+          type: "warning",
+          showClose: true,
+          duration: 0
+        });
       } else {
         this.input1 = file.name
         this.getBase64(file.raw).then(resBase64 => {
@@ -588,8 +593,14 @@ export default {
         that.fileBase64clip = result
       }).then((result) => {
         const isLt = that.fileBase64clip.size / 1024 / 1024
+        console.log(isLt)
         if (isLt > 20 || isLt === 20) {
-          this.$message.error('上傳文件夾最大能上傳20M，您的文件夾已超過20M，請使用COS方式上傳')
+          this.$message({
+            message: '上傳文件夾最大能上傳20M，您的文件夾已超過20M，請使用COS方式上傳',
+            type: "warning",
+            showClose: true,
+            duration: 0
+          });
           return
         } else {
           this.getBase64(this.fileBase64clip).then(resBase64 => {
@@ -670,22 +681,32 @@ export default {
 
       if (this.SubmissionValue === 'ZipFile') {         // 上传的是zip
         if (this.fileBase64zip === '') {
-          this.$message.warning('請選擇zip包')
+          this.$message({
+            message: '請選擇zip包',
+            type: "warning",
+            showClose: true,
+            duration: 0
+          });
         } else {
           param.ZipFile = this.fileBase64zip
           this.updateCsliteFun(param) // 更新函数代码
         }
       } else if (this.SubmissionValue === 'TempCos') {  // 上传的是文件夹
         if (this.fileBase64clip1 === '') {
-          this.$message.warning('請選擇文件夾')
+          this.$message({
+            message: '請選擇文件夾',
+            type: "warning",
+            showClose: true,
+            duration: 0
+          });
         } else {
           param.ZipFile = this.fileBase64clip1
           this.updateCsliteFun(param) // 更新函数代码
         }
       } else if (this.SubmissionValue === 'Inline') {   // 在线编辑
         this.cslsSDK.getBlob().then(blob => {
-          console.log(blob)
           const blobSize = blob.size / 1024 / 1024
+          console.log(blobSize)
           if (blobSize > 20 || blobSize === 20) {
             this.$message({
               message: '在線編輯最大能上傳20M，您的代碼包已超過20M，請使用COS方式上傳',
@@ -696,14 +717,19 @@ export default {
           } else {
             this.blobToDataURI(blob, data => { //blob格式再转换为base64格式
               const base64url = data.replace(/^data:application\/\w+;base64,/, "")
-              param.ZipFile = base64url;  // 正则替换哈 imgData 为base64字符串
+              param.ZipFile = base64url;  
               this.updateCsliteFun(param) // 更新函数代码
             })
           }
         })
       } else if (this.SubmissionValue === 'Cos') {         // 上传的是COS
         if (this.cosName === '' || this.cosInput === '') {
-          this.$message.warning('請選擇正確的cos路徑')
+          this.$message({
+            message: '請選擇正確的cos路徑',
+            type: "warning",
+            showClose: true,
+            duration: 0
+          });
         } else {
           param.CosBucketName = this.cosName
           param.CosObjectName = this.cosInput
