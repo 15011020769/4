@@ -92,7 +92,7 @@
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button type="text" class="cloneBtn" @click="copyBtn(scope.row)">複制</el-button>
+            <el-button type="text" class="cloneBtn" @click="copyBtn(scope.row)">複製</el-button>
             <el-button type="text" class="deleteBtn" @click="delBtn(scope.row.GroupID)">刪除</el-button>
           </template>
         </el-table-column>
@@ -136,8 +136,8 @@
       </el-dialog>
       <!-- 复制弹框 -->
       <el-dialog :visible.sync="showCopyDialog" width="35%">
-        <p style="color:#444;font-weight:bolder;">複制所選觸發條件範本</p>
-        <p style="font-size:12px;margin-top:20px">{{`是否複制${groupName}`}}</p>
+        <p style="color:#444;font-weight:bolder;">複製所選觸發條件範本</p>
+        <p style="font-size:12px;margin-top:20px">{{`是否複製${groupName}`}}</p>
         <span slot="footer" class="dialog-footer">
           <el-button type="primary" @click="coptData()">確 定</el-button>
           <el-button @click="showCopyDialog = false">取 消</el-button>
@@ -538,7 +538,7 @@ export default {
           this.showCopyDialog = false
           this.getTemplateList()
           this.$message({
-            message: '複制成功',
+            message: '複製成功',
             type: 'success',
             showClose: true,
             duration: 2000

@@ -277,7 +277,7 @@
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button type="text" class="cloneBtn" @click="Copy(scope.row)"
-              >複制</el-button
+              >複製</el-button
             >
             <el-tooltip
               content="預設策略不支持刪除，可釋放所有資源或設置新的預設策略後將此轉爲非預設策略"
@@ -1181,7 +1181,7 @@ export default {
         }
       });
     },
-    // 複制
+    // 複製
     Copy(row) {
       this.$router.push({
         path: "/strategy/create",
