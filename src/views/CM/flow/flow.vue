@@ -157,26 +157,25 @@
         };
         this.axios.post(All_MONITOR, param).then(res => {
           if (res.Response.Error == undefined) {
-            let times = new Date(res.Response.StartTime).getTime();
+            let times = new Date(res.Response.StartTime.replace(/-/g, '/')).getTime();
             let Points = res.Response.DataPoints[0].Points;
-            console.log(new Date(res.Response.StartTime).getTime());
             this.tableData = [];
             this.times = [];
             this.Points = [];
             let table = [];
+            // var a = new Date();
             for (let i in Points) {
               if (Points[i] != null) {
+                var a = new Date();
+                a.setTime(times+ this.Period * 1000 * i)
                 table.push({
-                  times: moment(times + this.Period * 1000 * i).format(
-                    "YYYY-MM-DD HH:mm:ss"
-                  ),
+                  // times: moment(times + this.Period * 1000 * i).format(
+                  //   "YYYY-MM-DD HH:mm:ss"
+                  // ),
+                  times:this.nowtime(a),
                   Points: Points[i]
                 });
-                this.times.push(
-                  moment(times + this.Period * 1000 * i).format(
-                    "YYYY-MM-DD HH:mm:ss"
-                  )
-                );
+                this.times = this.GetX(this.StartTime,this.EndTime,this.Period)
                 this.Points.push(Points[i]);
               }
             }
@@ -240,9 +239,58 @@
         }
         return wbout;
       },
-      exportImg() {
-        //导出图片
-        alert("導出圖片");
+      // 时间转换兼容
+      GetX(startDate, endDate, space) {
+        if (!endDate) {
+          endDate = new Date();
+        } else {
+          endDate = new Date(endDate);
+        }
+        if (!startDate) {
+          startDate = new Date(new Date().getTime() - 1 * 60 * 60 * 1000);
+        } else {
+          startDate = new Date(startDate);
+        }
+        if (!space) {
+          space = 600 * 1000;
+        } else {
+          space = space * 1000;
+        }
+        var endTime = endDate.getTime();
+        var startTime = startDate.getTime();
+        var mod = endTime - startTime;
+        var dateArray = [];
+        // 加入结束时间
+        var a = new Date();
+        a.setTime(endTime);
+        a = this.nowtime(a);
+        dateArray.push(a);
+        while (mod - space >= space) {
+          var d = new Date();
+          d.setTime(endTime - space);
+          d = this.nowtime(d);
+          dateArray.push(d);
+          mod = mod - space;
+          endTime = endTime - space;
+        }
+        // 加入开始时间
+        var a = new Date();
+        a.setTime(startTime);
+        a = this.nowtime(a);
+        dateArray.push(a);
+        var xAxis = dateArray.reverse()
+        return xAxis;
+      },
+      nowtime(dt) {
+        return (
+          dt.getFullYear() +
+          "-" +
+          (dt.getMonth() + 1 < 10 ? "0" + (dt.getMonth() + 1) : dt.getMonth() + 1) + "-" + (dt.getDate() < 10 ? "0" +
+            dt.getDate() :
+            dt.getDate()) + " " + (dt.getHours() < 10 ? "0" + dt.getHours() : dt.getHours()) + ":" + (dt
+            .getMinutes() < 10 ? "0" +
+            dt.getMinutes() : dt.getMinutes()) + ":" + (dt.getSeconds() < 10 ? "0" + dt.getSeconds() : dt
+            .getSeconds()));
       }
     }
   };
