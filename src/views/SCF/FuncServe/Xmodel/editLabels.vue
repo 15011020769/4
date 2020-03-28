@@ -118,7 +118,7 @@ export default {
             this.axios.post(EDIT_LABELS_JZ,params).then(res=>{
                 console.log(res)
                  if (res.Response.Error === undefined){
-                     this.$parent.getLabelsFather()
+                     this.$parent.GetDate()
 
                       this.$message({
                         message:'操作成功',

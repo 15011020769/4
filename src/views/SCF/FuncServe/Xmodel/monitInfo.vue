@@ -5,7 +5,7 @@
     </div>
     <div class="Monitortip">
       <TimeDropDown :TimeArr='TimeArr' :Datecontrol='true' :Graincontrol='true' :Difference="'H'"
-        v-on:switchData="GetDat" />
+        v-on:switchData="GetDat" @switchData2='GetDat2' />
       <p @click="_GetBase">{{$t('SCF.total.sx')}}</p>
     </div>
 
@@ -36,10 +36,18 @@
         <el-table-column width="550">
           <template slot-scope="scope">
             <p v-if="scope.row.DataPoints[0].Values.length==0">{{$t('SCF.total.zwsj')}}</p>
-            <div v-if="scope.row.DataPoints[0].Values.length!=0">
-              <echart-line :id="scope.row.MetricName + 1" :time="scope.row.DataPoints[0].Timestamps | UpTime"
+            <div v-if="scope.row.DataPoints[0].Timestamps.length!=0">
+              <echart-line  v-if="Object.keys(Time2).length==0"    :id="scope.row.MetricName + 1" :time="scope.row.DataPoints[0].Timestamps | UpTime"
                 :opData="scope.row.DataPoints[0].Values" :scale="3" :period="Period" :xdata="false"
                 :MetricName='disName[scope.row.MetricName]' :Company='Company[scope.row.MetricName]'></echart-line>
+              <echartsLineComparsion v-if="Object.keys(Time2).length!='0'" 
+              :id="scope.row.MetricName + 1" :time="scope.row.DataPoints[0].Timestamps | UpTime"
+                :time2="scope.row.DataPoints2[0].Timestamps | UpTime"
+              :opData="scope.row.DataPoints[0].Values" 
+              :opData2="scope.row.DataPoints2[0].Values"
+              :scale="3" :period="Period" :xdata="false"
+              :MetricName='disName[scope.row.MetricName]' :Company='Company[scope.row.MetricName]'
+              ></echartsLineComparsion>
             </div>
           </template>
         </el-table-column>
@@ -173,6 +181,7 @@
   import moment from "moment";
   import TimeDropDown from './/TimeDropDowncopy' //引入时间组件
   import echartLine from "@/components/public/echars-line"; //引入图标组件
+  import echartsLineComparsion from '../echartsline-comparsion'
   import {
     ErrorTips
   } from "@/components/ErrorTips";
@@ -237,11 +246,13 @@
           }
         ],
         functionName: this.$route.query.functionName,
+        comparseFlag:false,
         BaseList: [], //全部指标列表
         BaseListK: [], //用到的指标列表
         TableLoad: true,
         Period: '', //粒度
         Time: {}, //监控传递时间
+        Time2:{},//数据对比监控传递时间
         MonitorData: [], //监控数据
         tableData: [], // 组合数据
         disName: {
@@ -310,24 +321,52 @@
     },
     components: {
       TimeDropDown,
-      echartLine
+      echartLine,
+      echartsLineComparsion
     },
     watch: {
-      MonitorData(val) {
-        if (this.MonitorData) {
-          this.MonitorData.forEach(element => {
-            this.BaseListK.forEach(item => {
-              if (item.MetricName === element.MetricName) {
-                item.DataPoints = element.DataPoints
-              }
+      // MonitorData(val) {
+      //   if (this.MonitorData) {
+      //     this.MonitorData.forEach(element => {
+      //       this.BaseListK.forEach(item => {
+      //         if (item.MetricName === element.MetricName) {
+      //           item.DataPoints = element.DataPoints
+      //           if(element.DataPoints2){
+      //             item.DataPoints2 = element.DataPoints2
+      //           }
+      //         }
+      //       });
+      //     });
+      //     if (this.BaseListK.length == val.length) {
+      //       this.tableData = this.BaseListK
+      //       console.log(this.tableData,'this.tableData')
+      //       this.TableLoad = false
+      //     }
+      //   }
+      // },
+      MonitorData:{
+        handler(val){
+          if (this.MonitorData) {
+           this.MonitorData.forEach(element => {
+              this.BaseListK.forEach(item => {
+             if(item.MetricName === element.MetricName) {
+                  item.DataPoints = element.DataPoints
+                  if(element.DataPoints2){
+                    item.DataPoints2 = element.DataPoints2
+                  }
+                }
+              });
             });
-          });
-          if (this.BaseListK.length == val.length) {
-            this.tableData = this.BaseListK
-            this.TableLoad = false
-          }
-        }
+            if(this.BaseListK.length == val.length){
+              this.tableData = this.BaseListK
+              console.log(this.tableData,'this.tableData')
+              this.TableLoad = false
+            }
+         } 
+        },
+        deep:true
       }
+
     },
     methods: {
       //导出表格
@@ -353,11 +392,17 @@
         return wbout;
       },
       GetDat(data) {
+        console.log(data,'data++++++++++++++++=time')
         this.Period = data[0]
-        this.Time = data[1]
-        this.TableLoad = true
+        this.Time ={...data[1]} 
         this._GetBase()
       },
+      GetDat2(data){
+        console.log(this.Time2,'this.Time2222222222222++++++++++++++++=time')
+        this.Time2={...data[1]} 
+         this._GetBase()
+      },
+     
       //获取基础指标详情
       _GetBase() {
         this.TableLoad = true
@@ -371,10 +416,15 @@
             this.BaseList = res.Response.MetricSet
             this.MonitorData = []
             this.BaseListK = []
+            console.log(this.Time,'time1')
+            console.log(this.Time2,'time2')
             this.BaseList.forEach(item => {
               if (item.Period.indexOf(Number(this.Period)) !== -1) {
                 this.BaseListK.push(item)
                 this._GetMonitorData(item.MetricName)
+                if(Object.keys(this.Time2).length!=0){
+                 this._GetMonitorData2(item.MetricName)
+                }
               }
             });
           } else {
@@ -402,9 +452,46 @@
           'Instances.0.Dimensions.1.Name': 'version',
           'Instances.0.Dimensions.1.Value': this.FunctionVersion
         }
+        console.log(parms,'_GetMonitorData1111111111111111111111111')
         this.axios.post(All_MONITOR, parms).then(data => {
           if (data.Response.Error == undefined) {
             this.MonitorData.push(data.Response);
+          } else {
+            this.$message({
+              message: ErrorTips[data.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
+      },
+      _GetMonitorData2(MetricName) {
+        let parms = {
+          Version: '2018-07-24',
+          Region: localStorage.getItem('regionv2'),
+          Namespace: 'QCE/SCF_V2',
+          Period: this.Period,
+          StartTime: this.Time2.StartTIme,
+          EndTime: this.Time2.EndTIme,
+          MetricName: MetricName,
+          'Instances.0.Dimensions.0.Name': 'functionName',
+          'Instances.0.Dimensions.0.Value': this.functionName,
+          'Instances.0.Dimensions.1.Name': 'version',
+          'Instances.0.Dimensions.1.Value': this.FunctionVersion
+        }
+         console.log(parms,'_GetMonitorData22222222222222')
+        this.axios.post(All_MONITOR, parms).then(data => {
+          let arr=[];
+          if (data.Response.Error == undefined) {
+            this.MonitorData.forEach(item=>{
+              if(item.MetricName==data.Response.MetricName){
+                 item.DataPoints2 = data.Response.DataPoints
+              }
+            })
+            // return  this.MonitorData
+            // this.MonitorData.push(data.Response);
+            console.log( this.MonitorData,' this.MonitorDatadata.Response')
           } else {
             this.$message({
               message: ErrorTips[data.Response.Error.Code],

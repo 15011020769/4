@@ -28,9 +28,9 @@
               <el-button size="mini" type="primary" @click="Sure">{{$t('SCF.total.qd')}}</el-button>
               <el-button size="mini" @click="visible = false">取消</el-button>
             </el-row>
-            <el-button size="small" v-if="datetim" icon="el-icon-search" @click="SelectionTime" slot="reference">{{$t('SCF.total.xzrq')}}
+            <el-button size="small" v-if="datetim" icon="el-icon-search" @click="SelectionTime()" slot="reference">{{$t('SCF.total.xzrq')}}
             </el-button>
-            <el-button size="small" v-if="datetime" @click="SelectionTime" slot="reference">
+            <el-button size="small" v-if="datetime" @click="SelectionTime()" slot="reference">
               {{Start_End.StartTIme}}至{{Start_End.EndTIme}}<i class="el-icon-date el-icon--right"></i>
             </el-button>
           </el-popover>
@@ -72,6 +72,7 @@
           {{Start_End.StartTIme}}至{{Start_End.EndTIme}}<i class="el-icon-date el-icon--right"></i>
         </el-button>
       </el-popover>
+        <i class="el-icon-close" v-if="!datetim1" @click="cancleCompare" style="font-size:16px;margin-top:10px;margin-left:10px;cursor:pointer"></i>
     </div>
   </div>
 </template>
@@ -270,18 +271,25 @@
         this.datetim1 = false;
         this.Start_End.StartTIme = moment(new Date(this.timevalueStart)).format("YYYY-MM-DD HH:mm:ss")
         this.Start_End.EndTIme = moment(new Date(this.timevalueEnd)).format("YYYY-MM-DD HH:mm:ss")
-        this.$emit("switchData", [this.grainValue, this.Start_End]);
+        this.$emit("switchData2", [this.grainValue, this.Start_End]);
       },
       // 选择时间
       SelectionTime1() {
         this.datetime1 = false;
         this.datetim1 = true;
         if (this.timevalueStart === null) {
-          this.timevalueStart = moment(new Date()).subtract(1, 'hours').format("YYYY/MM/DD HH:mm:ss")
-          this.timevalueEnd = moment(new Date()).format("YYYY/MM/DD HH:mm:ss")
+          this.timevalueStart = moment(new Date()-24*60*60*1000).subtract(1, 'hours').format("YYYY/MM/DD HH:mm:ss")
+          this.timevalueEnd = moment(new Date()-24*60*60*1000).format("YYYY/MM/DD HH:mm:ss")
         }
         this.visible1 = true;
       },
+      //取消数据对比
+      cancleCompare(){
+         this.datetime1 = false;
+         this.datetim1 = true;
+         this.$emit("switchData2", {});
+      }
+    
     },
   }
 
