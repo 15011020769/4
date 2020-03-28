@@ -61,11 +61,11 @@
           ({{Vpc_Smb.Smb.SubnetId}} | {{Vpc_Smb.Smb.SubnetName}} | {{Vpc_Smb.Smb.CidrBlock}})
         </p>
       </div>
-      <div class="Content" v-if="!Congigload">
+      <!-- <div class="Content" v-if="!Congigload">
         <p>{{$t('SCF.total.bq')}}</p>
         <span v-for="(v,i) in ConfigDate.Tags" :key="i">{{v}}</span>
         <p><i @click="modifyLabels()" class="el-icon-edit" style="cursor:pointer"></i></p>
-      </div>
+      </div> -->
       <editLabel :editVisible.sync="dialogVisible" :labelsInfo='labelsInfo'></editLabel>
     </div>
     <div v-if="edit===true">
