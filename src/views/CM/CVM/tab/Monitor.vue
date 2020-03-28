@@ -534,7 +534,7 @@ export default {
       let parms = {
         Version: "2018-07-24",
         Region: localStorage.getItem("regionv2"),
-        NameSpace: "qce/cvm",
+        NameSpace: "qce/block_storage",
         Module: "monitor"
       };
       this.axios.post(ALL_Basics1, parms).then(res => {
