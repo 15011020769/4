@@ -111,7 +111,11 @@
           <template slot-scope="scope">
             <el-popover placement="right" width="500" trigger="hover">
               <div class="popover-box">
-                <p class="text-color">指標告警（{{scope.row.IsUnionRule===0?'任意':'所有'}}）：</p>
+                <p class="text-color">
+                  指標告警（{{
+                    scope.row.IsUnionRule === 0 ? "任意" : "所有"
+                  }}）：
+                </p>
                 <div
                   v-for="(i, item) in scope.row.Conditions"
                   :key="item"
@@ -132,7 +136,9 @@
                     </span>
                   </p>
                 </div>
-                <!-- <p class="text-color">事件告警：</p>
+                <p class="text-color" v-if="scope.row.EventConditions">
+                  事件告警：
+                </p>
                 <div
                   v-for="j in scope.row.EventConditions"
                   class="trigger-condition"
@@ -142,7 +148,7 @@
                       j.AlarmNotifyPeriod > 0 ? "重複告警" : "不重複告警"
                     }}
                   </p>
-                </div> -->
+                </div>
               </div>
               <div slot="reference">
                 <div
@@ -164,7 +170,7 @@
                     </span>
                   </p>
                 </div>
-                <!-- <div
+                <div
                   v-for="(items, indexs) in scope.row.EventConditions"
                   :key="indexs"
                   class="trigger-condition"
@@ -174,7 +180,7 @@
                       items.AlarmNotifyPeriod > 0 ? "重複告警" : "不重複告警"
                     }}
                   </p>
-                </div> -->
+                </div>
               </div>
             </el-popover>
           </template>

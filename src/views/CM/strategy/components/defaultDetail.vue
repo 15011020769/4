@@ -97,7 +97,7 @@
             </span>
           </p>
         </div>
-        <!-- <span class="textColor" v-if="basicNews.EventConfig">事件告警</span>
+        <span class="textColor" v-if="basicNews.EventConfig">事件告警</span>
         <div
           v-for="(j, q) in basicNews.EventConfig"
           class="trigger-condition"
@@ -108,7 +108,7 @@
               j.AlarmNotifyPeriod > 0 ? "重複告警" : "不重複告警"
             }}
           </p>
-        </div> -->
+        </div>
       </div>
     </el-card>
     <el-card class="box-card alarm-object" v-if="ViewName !== 'BS'">
@@ -1146,7 +1146,7 @@
                       <el-option
                         v-for="x in satisfy"
                         :key="x.value"
-                        :label="x.label"
+                        :label="x.name"
                         :value="x.value"
                         label-width="40px"
                       ></el-option>
@@ -1295,8 +1295,8 @@
                   </div>
                 </div>
                 <div v-if="nameVal !== '當前策略下沒有觸發條件範本'">
-                  <p v-if="basicNews.EventConfig">
-                    <el-checkbox disabled v-if="Conditions.EventConditions">
+                  <p v-if="Conditions.EventConditions.length !== 0">
+                    <el-checkbox disabled>
                       事件告警
                     </el-checkbox>
                     <el-popover placement="right" trigger="hover">
@@ -1501,7 +1501,7 @@
                     </div>
                   </ul>
                 </div>
-                <!-- <div v-if="basicNews.EventConfig">
+                <div>
                   <p>
                     <el-checkbox v-model="formWrite.checkedGaojing">
                       事件告警
@@ -1523,12 +1523,13 @@
                         <el-select
                           v-model="i.eventVal"
                           style="width:180px;margin:0 5px;"
+                          :disabled="!formWrite.checkedGaojing"
                         >
                           <el-option
                             v-for="item in eventOpt"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
+                            :key="item.EventId"
+                            :label="item.EventShowName"
+                            :value="item.EventId"
                             label-width="40px"
                           ></el-option>
                         </el-select>
@@ -1540,9 +1541,18 @@
                         @click="delShijian(x)"
                       ></i>
                     </li>
-                    <a @click="addShijian">添加</a>
+                    <a
+                      @click="addShijian"
+                      v-if="formWrite.gaoArr.length !== eventOpt.length"
+                      >添加</a
+                    >
+                    <a
+                      v-if="formWrite.gaoArr.length === eventOpt.length"
+                      style="color:#888;"
+                      >添加</a
+                    >
                   </ul>
-                </div> -->
+                </div>
               </div>
             </div>
           </div>
@@ -1689,7 +1699,7 @@
       :visible.sync="callbackInterface"
       width="550px"
       class="callback-dialog-box"
-      :before-close='CallBackDel'
+      :before-close="CallBackDel"
     >
       <div class="callback-interface-box">
         <div class="text-http">
@@ -1916,7 +1926,17 @@ export default {
       gaoJingLoading1: true,
       Conditions: [],
       ViewName: this.$route.query.viewName,
-      cycle: [],
+      cycle: [
+        {
+          value: 60,
+          label: "统计周期1分钟"
+        },
+        {
+          value: 300,
+          label: "统计周期5分钟"
+        }
+      ],
+
       satisfy: [
         {
           value: 0,
@@ -2057,40 +2077,7 @@ export default {
           label: "週期指數遞增"
         }
       ],
-      eventOpt: [
-        {
-          value: "1",
-          label: "磁盤只讀"
-        },
-        {
-          value: "2",
-          label: "內核故障"
-        },
-        {
-          value: "3",
-          label: "記憶體oom"
-        },
-        {
-          value: "4",
-          label: "ping不可達"
-        },
-        {
-          value: "5",
-          label: "機器重啓"
-        },
-        {
-          value: "6",
-          label: "外網出頻寬超限導致丟包"
-        },
-        {
-          value: "7",
-          label: "agent上報超時"
-        },
-        {
-          value: "8",
-          label: "子機nvme設備error"
-        }
-      ],
+      eventOpt: [],
       productListData: {},
       projectId: 0,
       searchParam: {},
@@ -2132,6 +2119,7 @@ export default {
       this.isShow = false;
       this.productListData = data;
       this.typeOpt = data.Metrics;
+      this.eventOpt = data.EventMetrics;
       setTimeout(() => {
         this.productListData = {};
         // this.isShow = true;
@@ -2193,10 +2181,6 @@ export default {
                     if (res.Response.Error === undefined) {
                       this.receivingObjectData.push(res.Response);
                       this.receivingObjectLoad = false;
-                      console.log(
-                        "this.receivingObjectData",
-                        this.receivingObjectData
-                      );
                     } else {
                       let ErrTips = {
                         FailedOperation: "操作失敗。",
@@ -2577,14 +2561,29 @@ export default {
     editGaoJing() {
       // 編輯告警觸發條件
       this.dialogEditGaojing = true;
+      if (this.basicNews.EventConfig) {
+        this.formWrite.checkedGaojing = true;
+      } else {
+        this.formWrite.checkedGaojing = false;
+      }
+
       if (this.basicNews.ConditionsTemp) {
         this.radioChufa = "1";
       } else {
         this.formWrite.satisfyVal = this.basicNews.IsUnionRule;
+        if (this.basicNews.EventConfig) {
+          var _EventConfig = this.basicNews.EventConfig;
+          this.formWrite.gaoArr = [];
+          for (let i in _EventConfig) {
+            this.formWrite.gaoArr.push({
+              eventVal: _EventConfig[i].EventId
+            });
+          }
+        } else {
+          this.formWrite.gaoArr[0].eventVal = this.eventOpt[0].EventId;
+        }
         if (this.basicNews.ConditionsConfig) {
           var _ConditionsConfig = this.basicNews.ConditionsConfig;
-          console.log(_ConditionsConfig);
-          console.log(this.typeOpt);
           var _typeVal = "";
           var _max = "";
           var _AlarmNotifyPeriod = "";
@@ -2604,7 +2603,6 @@ export default {
             } else {
               _AlarmNotifyPeriod = _ConditionsConfig[i].AlarmNotifyPeriod;
             }
-            console.log(_AlarmNotifyPeriod);
             this.formWrite.arr.push({
               max: _max,
               typeVal: _typeVal,
@@ -2686,8 +2684,6 @@ export default {
                 }
               }
             }
-
-            console.log(this.formWrite.arr);
           }
         }
       }
@@ -2775,7 +2771,6 @@ export default {
           this.Conditions = this.triggerCondition[i];
         }
       }
-      console.log(this.Conditions.Conditions);
       for (let j in this.Conditions.Conditions) {
         this.ContinueTime.push({
           value: this.Conditions.Conditions[j].ContinueTime,
@@ -2785,7 +2780,6 @@ export default {
               Number(this.Conditions.Conditions[j].Period) +
             "個週期"
         });
-        console.log(this.Conditions.Conditions[j].AlarmNotifyType);
         if (this.Conditions.Conditions[j].AlarmNotifyType == 1) {
           this.Conditions.Conditions[j].AlarmNotifyPeriod = "週期指数递增";
         } else {
@@ -2857,7 +2851,6 @@ export default {
         GroupName: this.GroupName
       };
       let _Conditions = this.Conditions.Conditions;
-      console.log(_Conditions);
       let _EventConfig = this.Conditions.EventConditions;
       let _arr = this.formWrite.arr;
       let _gaoArr = this.formWrite.gaoArr;
@@ -2886,11 +2879,10 @@ export default {
             _EventConfig[j].AlarmNotifyType;
           param["EventConditions." + j + ".AlarmNotifyPeriod"] =
             _EventConfig[j].AlarmNotifyPeriod;
-          // param["EventConditions." + j + ".RuleId"] = _EventConfig[j].RuleID;
+          param["EventConditions." + j + ".RuleId"] = _EventConfig[j].RuleID;
         }
       } else {
         param["IsUnionRule"] = this.formWrite.satisfyVal;
-
         for (let i in _arr) {
           param["Conditions." + i + ".MetricId"] = _arr[i].typeVal;
           param["Conditions." + i + ".CalcType"] = _arr[i].calcTypeVal;
@@ -2912,22 +2904,20 @@ export default {
             ] = this.formWrite.warningVal;
           }
         }
+        if (this.formWrite.checkedGaojing) {
+          for (let j in _gaoArr) {
+            param["EventConditions." + j + ".EventId"] = Number(
+              _gaoArr[j].eventVal
+            );
+            param["EventConditions." + j + ".AlarmNotifyType"] = "0";
+            param["EventConditions." + j + ".AlarmNotifyPeriod"] = "0";
+          }
+        }
       }
-      // for (let j in _gaoArr) {
-      //   param["EventConditions." + j + ".EventId"] = Number(
-      //     _gaoArr[j].EventID
-      //   );
-      //   param["EventConditions." + j + ".AlarmNotifyType"] =
-      //     _gaoArr[j].AlarmNotifyType;
-      //   param["EventConditions." + j + ".AlarmNotifyPeriod"] =
-      //     _gaoArr[j].AlarmNotifyPeriod;
-      //   param["EventConditions." + j + ".RuleId"] = _gaoArr[j].RuleID;
-      // }
 
       this.axios.post(CM_ALARM_TRIGGER_MODIFY, param).then(res => {
         if (res.Response.Error === undefined) {
           this.dialogEditGaojing = false;
-          console.log(res);
           this.DetailsInit();
         } else {
           let ErrTips = {
@@ -3069,7 +3059,6 @@ export default {
       await this.$axios.post(CM_ALARM_OBJECT_LIST, param).then(res => {
         if (res.Response.Error === undefined) {
           this.InstanceGroupShow = res.Response;
-          console.log(this.InstanceGroupShow);
           var _enterList = res.Response.List;
           this.total = res.Response.Total;
           if (this.total > 0) {
@@ -3103,7 +3092,6 @@ export default {
                       }
                     }
                   }
-                  console.log("alarmObjectData", this.alarmObjectData);
                   this.alarmObjecLoad = false;
                   this.alarmInstanceLond = false;
                 } else {
@@ -3533,7 +3521,6 @@ export default {
                 if (res.Response.Error === undefined) {
                   this.alarmObjectData = res.Response.DirectConnectTunnelSet;
                   this.total = res.Response.TotalCount;
-                  console.log(this.alarmObjectData);
                   for (let i in _enterList) {
                     for (let j in this.alarmObjectData) {
                       if (
@@ -3551,7 +3538,6 @@ export default {
                       }
                     }
                   }
-                  console.log(this.alarmObjectData);
                   this.alarmObjecLoad = false;
                   this.alarmInstanceLond = false;
                 } else {
@@ -3585,7 +3571,6 @@ export default {
                 if (res.Response.Error === undefined) {
                   this.alarmObjectData = res.Response.DirectConnectSet;
                   this.total = res.Response.TotalCount;
-                  console.log(this.alarmObjectData);
                   for (let i in _enterList) {
                     for (let j in this.alarmObjectData) {
                       if (
@@ -3602,7 +3587,6 @@ export default {
                       }
                     }
                   }
-                  console.log(this.alarmObjectData);
                   this.alarmObjecLoad = false;
                   this.alarmInstanceLond = false;
                 } else {
@@ -3631,7 +3615,6 @@ export default {
             } else if (this.ViewName === "COS") {
               this.axios.get(OBJ_LIST).then(res => {
                 var _arr = res.Buckets.Bucket;
-                console.log(_arr);
                 for (let i in _enterList) {
                   for (let j in _arr) {
                     if (
@@ -3649,12 +3632,10 @@ export default {
                     }
                   }
                 }
-                console.log(this.alarmObjectData);
                 this.alarmObjecLoad = false;
                 this.alarmInstanceLond = false;
               });
             }
-            console.log(this.alarmObjectData);
           } else {
             this.alarmObjectData = [];
             this.alarmObjecLoad = false;
@@ -4047,10 +4028,6 @@ export default {
     camFun(val) {
       this.cam = val;
       console.log(this.cam);
-      // var time = 57599;
-      // var unixTimestamp = new Date(time);
-      // var commonTime = unixTimestamp.toLocaleString();
-      // console.log(commonTime);
     },
     EditReceiveSave() {
       let param = {
@@ -4135,7 +4112,6 @@ export default {
         }
       }
 
-      console.log(param);
       this.axios.post(CM_ALARM_RECEIVE_OBJECT_RELIEVE, param).then(res => {
         if (res.Response.Error === undefined) {
           this.editReceiveObjectVisuble = false;
@@ -4183,12 +4159,10 @@ export default {
     },
     // 告警接收對象 select
     receivingSelectionChange(val) {
-      console.log(val);
       this.remove = val;
     },
     // 告警接收對象 解除
     Remove(row, index) {
-      console.log(row);
       let name = "";
       if (this.ReceiverInfos.ReceiverType === "group") {
         name = "接收組";
@@ -4286,7 +4260,6 @@ export default {
           }
         }
       }
-      console.log(param);
       this.axios.post(CM_ALARM_RECEIVE_OBJECT_RELIEVE, param).then(res => {
         if (res.Response.Error === undefined) {
           this.relieveDialogVisible = false;
@@ -4340,6 +4313,7 @@ export default {
     },
     chufaTemplate() {
       //觸發條件範本
+      console.log(this.Conditions.IsUnionRule);
     },
     config() {
       //配置觸發條件
@@ -4362,7 +4336,6 @@ export default {
         warningVal: 86400,
         cycle: []
       });
-      console.log(this.formWrite.arr[this.formWrite.index].censusVal);
       if (this.ViewName !== "vpn_tunnel") {
         let arr = this.typeOpt[this.formWrite.index].ConfigManual.Period.Keys;
         for (let i in arr) {
@@ -4411,14 +4384,12 @@ export default {
     addShijian() {
       //添加觸發條件的事件告警
       this.formWrite.gaoIndex++;
-      if (this.formWrite.gaoIndex + 1 === this.formWrite.gaoArr.length) {
-        this.formWrite.gaoIndex = 0;
-      }
       this.formWrite.gaoArr.push({
-        eventVal: this.eventOpt[this.formWrite.gaoIndex].value
+        eventVal: this.eventOpt[this.formWrite.gaoIndex].EventId
       });
     },
     delShijian(index) {
+      this.formWrite.gaoIndex--;
       this.formWrite.gaoArr.splice(index, 1);
     },
     TypeChange(index) {
@@ -4617,7 +4588,6 @@ export default {
       }
     },
     HttpSelect(item) {
-      console.log(item);
       this.httpInput = item.Url.substring(
         item.Url.lastIndexOf("/") + 1,
         item.Url.length
