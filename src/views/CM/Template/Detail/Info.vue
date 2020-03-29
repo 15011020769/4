@@ -107,22 +107,23 @@
      <!--  @open="openEditloadShow=true"   @open="openEdit()"-->
     <el-dialog class="dil" :visible.sync="showDelDialog3" width="65%">
       <p class="title">修改觸發條件</p>
-      <div v-if="!checkedZhibiao" style="color:red;margin-top:-10px;">请至少配置1项触发条件</div>
+      <!-- <div v-if="!checkedZhibiao" style="color:red;margin-top:-10px;">请至少配置1项触发条件</div> -->
+      <div class="tips" v-if="!checkedGaojing&&!checkedZhibiao">请至少配置1项触发条件</div>
       <product-type-cpt v-on:PassData="passData" :projectId='projectId' :searchParam='searchParam'
         :productValue='productValue' v-on:loading="Type_loading" style="display:none"/>
       <div v-loading="openLoadShow">
         <div style="display:flex">
           <span style="display: inline-block;width: 80px;">觸發條件</span>
-          <div>
+          <div v-loading="openEditloadShow">
             <div>
               <p style="line-height:30px;">
-                <el-checkbox v-model="checkedZhibiao" :checked="checkedZhibiao" @change="isDisabledZB()">指標告警</el-checkbox>
+                <el-checkbox v-model="checkedZhibiao" :checked="checkedZhibiao">指標告警</el-checkbox>
               </p>
             </div>
             <div class="color">
               <p>
                 <span>滿足</span>
-                <el-select :disabled="isDisabled" v-model="UnionRule" style="width:90px;margin:0 5px;" size="small">
+                <el-select :disabled="!checkedZhibiao" v-model="UnionRule" style="width:90px;margin:0 5px;" size="small">
                   <el-option
                     v-for="(item,index) in meetConditions"
                     :key="index"
@@ -134,13 +135,13 @@
                 <span>條件時，觸發告警</span>
               </p>
               <!-- -->
-              <ul v-loading="openEditloadShow">
+              <ul>
                 <!-- <li style="display:flex;align-items: center;cursor: pointer;"> -->
                 <li style="display:flex;align-items: center;cursor: pointer;" v-for="(it,i) in indexAry" :key="i">
                   <p>
                     if&nbsp;
                     <!-- <el-select :disabled="isDisabled" v-model="formInline.projectName" style="width:150px;" size="small"> -->
-                    <el-select :disabled="isDisabled" v-model="it.MetricID" style="width:150px;" size="small">
+                    <el-select :disabled="!checkedZhibiao" v-model="it.MetricID" style="width:150px;" size="small">
                       <el-option
                         v-for="(item,index) in zhibiaoType"
                         :key="index"
@@ -150,7 +151,7 @@
                       ></el-option>
                     </el-select>&nbsp;
                     <!-- <el-select :disabled="isDisabled" v-model="formInline.projectName" style="width:130px;" size="small"> -->
-                    <el-select :disabled="isDisabled" v-model="it.Period" style="width:130px;" size="small">
+                    <el-select :disabled="!checkedZhibiao" v-model="it.Period" style="width:130px;" size="small">
                       <el-option
                         v-for="(item,index) in tongjiZQ"
                         :key="index"
@@ -160,7 +161,7 @@
                       ></el-option>
                     </el-select>&nbsp;
                     <!-- <el-select :disabled="isDisabled" v-model="formInline.projectName" style="width:60px;" size="small"> -->
-                      <el-select :disabled="isDisabled" v-model="it.CalcType" style="width:75px;" size="small">
+                      <el-select :disabled="!checkedZhibiao" v-model="it.CalcType" style="width:75px;" size="small">
                       <el-option
                         v-for="(item,index) in SymbolList"
                         :key="index"
@@ -170,7 +171,7 @@
                       ></el-option>
                     </el-select>&nbsp;
                       <!-- placeholder="指標" -->
-                    <input :disabled="isDisabled"
+                    <input :disabled="!checkedZhibiao"
                       style="height: 30px;line-height: 30px;padding:0 10px;width:60px;border: 1px solid #dcdfe6;"
                       value="0"
                       v-model="it.CalcValue"
@@ -182,7 +183,7 @@
                       style="padding:0 10px;display:inline-block;height: 30px;line-height: 30px;width:52px;border: 1px solid #dcdfe6;"
                     >{{it.Unit||'&nbsp;'}}</b>
                     &nbsp;
-                    <el-select :disabled="isDisabled" v-model="it.ContinueTime" style="width:110px;" size="small">
+                    <el-select :disabled="!checkedZhibiao" v-model="it.ContinueTime" style="width:110px;" size="small">
                       <el-option
                         v-for="(item,index) in continuePeriod"
                         :key="index"
@@ -192,7 +193,7 @@
                       ></el-option>
                     </el-select>&nbsp;
                     <span style="width:30px" v-if="UnionRule!==1" >then</span>&nbsp;
-                    <el-select :disabled="isDisabled" v-model="it.RepeatedAlarm" v-if="UnionRule!==1" style="width:150px;" size="small">
+                    <el-select :disabled="!checkedZhibiao" v-model="it.RepeatedAlarm" v-if="UnionRule!==1" style="width:150px;" size="small">
                       <el-option
                         v-for="(item,index) in jinggaoZQ"
                         :key="index"
@@ -217,7 +218,7 @@
               </ul>
               <p v-if="UnionRule==1">
                 <span style="width:30px">then</span>&nbsp;
-                <el-select :disabled="isDisabled" v-model="all_alarm" style="width:150px;">
+                <el-select :disabled="!checkedZhibiao" v-model="all_alarm" style="width:150px;">
                   <el-option
                     v-for="(item,index) in jinggaoZQ"
                     :key="index"
@@ -235,9 +236,9 @@
                 </el-popover>
               </p>
             </div>
-            <!-- <div>
+            <div>
               <p style="line-height:30px;">
-                <el-checkbox v-model="checkedGaojing" :checked="checkedGaojing" @change="isDisabledGJ()">
+                <el-checkbox v-model="checkedGaojing" :checked="checkedGaojing">
                   事件告警
                   <i class="el-icon-info" style="color:#888; margin:0 5px;"></i>
                 </el-checkbox>
@@ -245,12 +246,13 @@
               <ul class="color">
                 <li style="display:flex;align-items: center;cursor: pointer;" v-for="(item,i) in eventAry" :key="i">
                   <p>
-                    <el-select :disabled="isDisGJ" v-model="item.EventDisplayName" style="width:180px;margin:0 5px;" size="small">
+                    <el-select :disabled="!checkedGaojing" v-model="item.EventID"
+                      @change="eventChange" style="width:180px;margin:0 5px;" size="small">
                       <el-option
-                        v-for="(item,index) in formInline.project"
-                        :key="index"
-                        :label="item.name"
-                        :value="item.value"
+                        v-for="it in eventType"
+                        :key="it.EventId"
+                        :label="it.EventShowName"
+                        :value="it.EventId"
                         label-width="40px"
                       ></el-option>
                     </el-select>
@@ -259,13 +261,17 @@
                 </li>
                 <a @click="addShijian" style="cursor:pointer">添加</a>
                 <i class="rubbish-icon"></i>
+                <p style="color:red" v-if="IsEventRepeated">
+                  <i class="el-icon-info" style="color:#888; margin:0 5px;color:red"></i>
+                  請勿重複配置
+                </p>
               </ul>
-            </div> -->
+            </div>
             <p class="red-text">{{`該告警觸發條件範本已經關聯了${infoData.PolicyGroups?infoData.PolicyGroups.length:0}個策略，若修改，修改內容將應用到所有已關聯的告警策略上`}}</p>
           </div>
         </div>
         <div style="display:flex;align-items:center;justify-content:center;margin-top:20px">
-          <el-button :disabled="isRepeated||!checkedZhibiao" @click="submitEdit" type="primary" size="small">保存</el-button>
+          <el-button :disabled="isRepeated||(!checkedZhibiao&&!checkedGaojing)||IsEventRepeated" @click="submitEdit" type="primary" size="small">保存</el-button>
           <el-button size="small" @click="showDelDialog3=false">取消</el-button>
         </div>
       </div>
@@ -371,8 +377,10 @@ export default {
         ]
       },
       indexAry: [], // 编辑弹框打开后的指标告警数组
-      eventAry: [], // 事件告警数组
       zhibiaoType: [], // 触发条件数据
+      eventAry: [], // 事件告警数组
+      eventType:[],//事件告警类型数组
+      IsEventRepeated:false,//添加事件告警类型是否重复
       meetConditions: [{ label: '任意', value: 0 }, { label: '所有', value: 1 }], // 满足条件
       UnionRule: 0, // 双向绑定的满足条件
       all_alarm: 86400, // 满足条件为 所有 时告警值
@@ -497,8 +505,7 @@ export default {
               let time1 = item.AlarmNotifyPeriod / 60
               let time2 = item.AlarmNotifyPeriod / (60 * 60)
               if (item.AlarmNotifyPeriod == 0 && item.AlarmNotifyType == 0) {
-                item.alarm = '不重複告警'
-                this.indexAry[i].RepeatedAlarm = 0               
+                item.alarm = '不重複告警'              
               } else if (item.AlarmNotifyType == 1) {
                 item.alarm = '按周期指數遞增重複告警'               
               } else if (item.AlarmNotifyPeriod > 0 && time1 <= 30) {
@@ -511,7 +518,6 @@ export default {
             })
             this.infoData = ele
             this.ConditionsAry = [...ele.Conditions]            
-            this.eventAry = ele.EventConditions// 編輯觸發條件
           })
           // this.infoData = msg[0]
           this.loadShow = false
@@ -522,8 +528,12 @@ export default {
       })
     },
     passData (item) {
-      this.zhibiaoType = item.Metrics
       this.productValue = item.productValue
+      this.eventType = item.EventMetrics
+      this.zhibiaoType = item.Metrics.filter(v=>{
+        return v.MetricShowName!=="磁碟只讀"&&v.MetricShowName!=="機器重啟"&&v.MetricShowName!=="ping不可達"
+      })
+      // this.zhibiaoType = item.Metrics
       this.$nextTick(() => {
         this.openEditloadShow = false
       })
@@ -566,7 +576,11 @@ export default {
                 this.all_alarm = item.AlarmNotifyPeriod
               }
             })
+            ele.EventConditions.forEach(it=>{
+              it.EventID = Number(it.EventID)
+            })
             this.indexAry = ele.Conditions
+            this.eventAry = ele.EventConditions// 編輯觸發條件
             if (ele.IsUnionRule === 0) {
               this.UnionRule = 0
             } else if (ele.IsUnionRule === 1) {
@@ -591,6 +605,7 @@ export default {
         ViewName: ViewName,
         GroupName: GroupName
       }
+      if(checkedZhibiao){
       this.indexAry.forEach((ele, i) => {
         params[`Conditions.${i}.CalcValue`] = Number(ele.CalcValue)// 百分比
         params[`Conditions.${i}.MetricID`] = ele.MetricID// 指標類型id值
@@ -622,6 +637,14 @@ export default {
           params[`Conditions.${i}.AlarmNotifyType`] = 1
         }
       })
+      }
+      if(this.eventAry.length&&checkedGaojing){
+        this.eventAry.forEach((ele,i)=>{
+          params[`EventConditions.${i}.EventID`] = ele.EventID
+          params[`EventConditions.${i}.AlarmNotifyPeriod`] = 0
+          params[`EventConditions.${i}.AlarmNotifyType`] = 0
+        })
+      }
       this.axios.post(EDIT_TEMPLATE, params).then(res => {
         if (res.Response.Error === undefined) {
           this.showDelDialog3 = false
@@ -728,22 +751,6 @@ export default {
         })
       })
     },
-    // 是否禁用指標告警
-    isDisabledZB () {
-      if (this.checkedZhibiao) {
-        this.isDisabled = false
-      } else {
-        this.isDisabled = true
-      }
-    },
-    // 是否禁用事件告警
-    isDisabledGJ () {
-      if (this.checkedGaojing) {
-        this.isDisGJ = false
-      } else {
-        this.isDisGJ = true
-      }
-    },
     // 格式化時間
     upTime (value) {
       // return moment(value).format('YYYY/MM/DD HH :mm:ss')
@@ -787,51 +794,44 @@ export default {
       }
     },
     addShijian () { // 添加觸發條件的事件告警
-      this.eventAry.push(
-        {
-          jieshou: '接收組',
-          jieshouArr: [
-            { value: '0', name: '接收組' },
-            {
-              value: '1',
-              name: '接收人'
-            }
-          ],
-          apiStr: 'http', // 接口回調
-          apiArr: [
-            {
-              value: 0,
-              name: 'http'
-            },
-            {
-              value: 1,
-              name: 'https'
-            }
-          ], // 接口回調數據
-          strategy_name: '', // 策略名稱
-          textareas: '', // 備注
-          strategy: '雲伺服器-基礎監控',
-          strategy_kind: [
-            {
-              value: 0,
-              name: '雲伺服器-基礎監控'
-            }
-          ], // 策略類型
-          alarm: '', // 策略類型
-          projectName: '預設專案',
-          project: [
-            {
-              value: 0,
-              name: '預設專案'
-            }
-          ]
+      let { eventType,eventAry } = this
+      for(let i = 0;i<eventType.length;i++){
+        let msg = eventAry.some(item=>{
+          return item.EventID === eventType[i].EventId
+        })
+        this.IsEventRepeated = msg
+        if(!msg){
+          eventAry.push({
+            EventID:eventType[i].EventId,
+            AlarmNotifyPeriod:0,
+            AlarmNotifyType:0,
+          });
+          return
         }
-      )
+      }
+      eventAry.push({
+        EventID:eventType[0].EventId,
+        AlarmNotifyPeriod:0,
+        AlarmNotifyType:0,
+      });
     },
     delShijian (item) { // 刪除觸發條件的事件告警
       var index = this.eventAry.indexOf(item)
       if (index !== -1) {
         this.eventAry.splice(index, 1)
+      }
+    },
+    eventChange(val){//事件告警选中值的改变 验证
+      let ary = []
+      this.eventAry.forEach(ele=>[
+        !ary.some(item=>{
+          return item.EventID === val
+        }) && ary.push(ele)
+      ])
+      if(ary.length===this.eventAry.length){
+        this.IsEventRepeated = false
+      }else{
+        this.IsEventRepeated = true
       }
     },
     Type_loading(val) {
@@ -1063,5 +1063,15 @@ export default {
   color: red;
   font-size: 12px;
   margin-top:10px;
+}
+.tips {
+  height:45px;
+  line-height:45px;
+  color: #b43537;
+  font-size: 14px;
+  background-color: #fcecec;
+  border:1px solid #f6b5b5;
+  padding: 0 20px;
+  margin-bottom:10px;
 }
 </style>

@@ -49,7 +49,7 @@
           </el-popover>
         </el-checkbox> -->
       </p>
-      <div class="tips" v-if="!event.checkedGaojing&&isDisabled">请至少配置1项触发条件</div>
+      <div class="tips" v-if="!event.checkedGaojing&&!checkedZhibiao">请至少配置1项触发条件</div>
       <div class="rowCont cont">
         <span>觸發條件</span>
         <div v-loading="loading">
@@ -58,7 +58,6 @@
               <el-checkbox
                 v-model="checkedZhibiao"
                 :checked="checkedZhibiao"
-                @change="isDisabledZB()"
                 >指標告警</el-checkbox
               >
             </p>
@@ -66,7 +65,7 @@
               <p>
                 <span style="display:inline">滿足</span>
                 <el-select
-                  :disabled="isDisabled"
+                  :disabled="!checkedZhibiao"
                   v-model="metting"
                   style="width:90px;margin:0 5px;"
                 >
@@ -90,7 +89,7 @@
                   <p :class="{ mp: metting == 1 }">
                     if&nbsp;
                     <el-select
-                      :disabled="isDisabled"
+                      :disabled="!checkedZhibiao"
                       v-model="it.MetricId"
                       style="width:150px;"
                     >
@@ -103,7 +102,7 @@
                       ></el-option> </el-select
                     >&nbsp;
                     <el-select
-                      :disabled="isDisabled"
+                      :disabled="!checkedZhibiao"
                       v-model="it.Period"
                       style="width:130px;"
                     >
@@ -116,7 +115,7 @@
                       ></el-option> </el-select
                     >&nbsp;
                     <el-select
-                      :disabled="isDisabled"
+                      :disabled="!checkedZhibiao"
                       v-model="it.CalcType"
                       style="width:60px;"
                     >
@@ -130,7 +129,7 @@
                     >&nbsp;
                     <!-- placeholder="指標" -->
                     <input
-                      :disabled="isDisabled"
+                      :disabled="!checkedZhibiao"
                       v-model="it.CalcValue"
                       min="0"
                       max="100"
@@ -145,7 +144,7 @@
                     >
                     &nbsp;
                     <el-select
-                      :disabled="isDisabled"
+                      :disabled="!checkedZhibiao"
                       v-model="it.ContinuePeriod"
                       style="width:110px;"
                     >
@@ -160,7 +159,7 @@
                     <span style="width:30px" v-if="metting !== 1">then</span
                     >&nbsp;
                     <el-select
-                      :disabled="isDisabled"
+                      :disabled="!checkedZhibiao"
                       v-model="it.alarm"
                       v-if="metting !== 1"
                       style="width:150px;"
@@ -216,7 +215,7 @@
               <p v-if="metting == 1">
                 <span style="width:30px">then</span>&nbsp;
                 <el-select
-                  :disabled="isDisabled"
+                  :disabled="!checkedZhibiao"
                   v-model="all_alarm"
                   style="width:150px;"
                 >
@@ -253,11 +252,41 @@
             </div>
           </div>
           <!-- 事件告警 -->
-          <EventAlarm :eventData.sync="event"></EventAlarm>
+          <!-- <EventAlarm :eventData.sync="event" v-if="event.eventType.length"></EventAlarm> -->
+          <div v-if="event.eventType.length">
+            <p>
+              <el-checkbox v-model="event.checkedGaojing" :checked="event.checkedGaojing">
+                事件告警
+                <!-- <i class="el-icon-info" style="color:#888; margin:0 5px;"></i> -->
+              </el-checkbox>
+            </p>
+            <ul class="color">
+              <li style="display:flex;align-items: center;cursor: pointer;" v-for="(item,i) in event.eventAry" :key="i">
+                <p>
+                  <el-select :disabled="!event.checkedGaojing" v-model="item.EventId" style="width:180px;margin:0 5px;">
+                    <el-option
+                      v-for="item in event.eventType"
+                      :key="item.EventId"
+                      :label="item.EventShowName"
+                      :value="item.EventId"
+                      label-width="40px"
+                    ></el-option>
+                  </el-select>
+                </p>
+                <i class="el-icon-error" style="color:#888; margin:0 5px;"
+                  @click="delShijian(item)" v-if="event.eventAry.length>1"></i>
+              </li>
+              <a @click="addShijian" style="cursor:pointer">添加</a>
+              <p style="color:red" v-if="event.IsEventRepeated">
+                <i class="el-icon-info" style="color:#888; margin:0 5px;color:red"></i>
+                請勿重複配置
+              </p>
+            </ul>
+          </div>
         </div>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" :disabled="!event.checkedGaojing&&isDisabled?!event.checkedGaojing||isDisabled:isRepeated" @click="save('form')"
+        <el-button type="primary" :disabled="isRepeated||(!checkedZhibiao&&!event.checkedGaojing)||event.IsEventRepeated" @click="save('form')"
           >保 存</el-button
         >
         <el-button @click="show = false">取 消</el-button>
@@ -286,20 +315,17 @@ export default {
             AlarmNotifyType:0,
           }
         ],
-        eventType: [//事件告警类型
-          {EventShowName:'磁盘只读',EventId: 39},
-          {EventShowName:'内核故障',EventId: 40}
-        ], // 事件告警類型
+        eventType: [], // 事件告警類型
       },
       loading:true,
       isChected: true, // 多选框是否选中
-      isDisabled: false, // 指标告警是否禁用
-      // isDisGJ: false, // 事件告警是否禁用
       isRepeated: false, // 是否为重复的指标告警条件
+      IsEventRepeated:false,//添加事件告警类型是否重复
+      checkedZhibiao: true, // 指示告警是否启用
+      checkedGaojing: true, // 事件告警是否启用
       backShow: 'true',
       strategy_name: '', // 策略名称
       remark: '', // 备注信息
-      checkedZhibiao: true, // 指示告警
       checkedUse: false, // 使用预置触发条件
       productData: [], // 策略类型
       SymbolList: ['>', '>=', '<', '<=', '=', '!='], // 符号数组
@@ -352,7 +378,7 @@ export default {
         { label: "週期指數遞增", value: 1 }
       ],
       zhibiaoType: [], // 指標告警類型
-      // eventType: [], // 事件告警類型
+      eventType: [], // 事件告警類型
       form: {
         name: "",
         region: "",
@@ -363,7 +389,7 @@ export default {
         resource: "",
         desc: ""
       },
-      // checkedGaojing: "", // 告警
+      
       // dialogFormVisible: false //監控面板的開關
       show: this.dialogVisible, // 控制弹框显示隐藏
       all_alarm: 86400, // 满足条件为 所有 时告警值
@@ -415,21 +441,34 @@ export default {
     show: function(val) {
       this.$emit("update:dialogVisible", val);
     },
-    productValue: function(val) {
-      let { zhibiaoType } = this;
-      if (zhibiaoType) {
-        this.indexAry = [
-          {
-            Period: 60,
-            CalcType: ">",
-            CalcValue: "0",
-            MetricId: zhibiaoType[0].MetricId,
-            Unit: zhibiaoType[0].MetricUnit,
-            ContinuePeriod: 1,
-            alarm: 86400
-          }
-        ];
-      }
+    productValue: {
+      handler:function(val) {
+        let { zhibiaoType } = this;
+        let {eventType} = this.event     
+        if (zhibiaoType) {
+          this.indexAry = [
+            {
+              Period: 60,
+              CalcType: ">",
+              CalcValue: "0",
+              MetricId: zhibiaoType[0].MetricId,
+              Unit: zhibiaoType[0].MetricUnit,
+              ContinuePeriod: 1,
+              alarm: 86400
+            }
+          ];        
+        }
+        if(eventType){
+          this.event.eventAry=[
+            {
+              EventId:eventType[0].EventId,
+              AlarmNotifyPeriod:0,
+              AlarmNotifyType:0,
+            }
+          ];
+        }
+      },
+      deep:true
     },
     indexAry: {
       handler: function(val, old) {
@@ -452,6 +491,22 @@ export default {
         }
       },
       deep: true
+    },
+    'event.eventAry':{
+      handler:function(val){
+        let ary = []
+        val.forEach((ele,i)=>[
+          !ary.some(item=>{
+            return item.EventId === ele.EventId
+          }) && ary.push(ele)
+        ])
+        if(val.length !== ary.length){
+          this.event.IsEventRepeated = true
+        }else{
+          this.event.IsEventRepeated = false
+        }
+      },
+      deep:true
     }
   },
   components: {
@@ -487,7 +542,6 @@ export default {
     },
     // 新建完成保存
     async newBuild() {
-      if(!this.event.checkedGaojing||isDisabled) return
       let params = {
         Version: "2018-07-24",
         GroupName: this.formInline.strategy_name,
@@ -538,9 +592,15 @@ export default {
           params[`Conditions.${i}.AlarmNotifyType`] = 1;
         }
       });
+      if(this.event.eventAry.length){
+        this.event.eventAry.forEach((ele,i)=>{
+          params[`EventConditions.${i}.EventID`] = ele.EventId
+          params[`EventConditions.${i}.AlarmNotifyPeriod`] = 0
+          params[`EventConditions.${i}.AlarmNotifyType`] = 0
+        })
+      }
       await this.axios.post(NEWBUILD_TEMPLATE, params).then(res => {
         if (res.Response.Error === undefined) {
-          // console.log(res)
           this.show = false; // 關閉彈框
           this.formInline.strategy_name = "";
           this.formInline.textareas = "";
@@ -555,6 +615,13 @@ export default {
               alarm: 86400
             }
           ];
+          this.event.eventAry = [
+            {
+              EventId:39,
+              AlarmNotifyPeriod:0,
+              AlarmNotifyType:0,
+            }
+          ]
           this.$message({
             message: "新建成功",
             type: "success",
@@ -568,11 +635,13 @@ export default {
       });
     },
     passData(item) {
-      // this.isShow = false
+      console.log(item)
       // this.productData = item
-      // this.zhibiaoType = item.MetricName
+      // item.Metrics = item.Metrics.filter(ele=>
+      //   !()
+      // )
       this.zhibiaoType = item.Metrics;
-      this.event.eventType = item.EventMetrics
+      this.event.eventType = item.EventMetrics?item.EventMetrics:[]
       this.productValue = item.productValue;
       this.$nextTick(() => {
         this.loading = false;
@@ -625,32 +694,35 @@ export default {
         this.indexAry.splice(index, 1);
       }
     },
+    // 添加觸發條件的事件告警
     addShijian() {
-      // 添加觸發條件的事件告警
-      // this.eventAry.push();
-    },
-    delShijian(item) {
-      // 刪除觸發條件的事件告警
-      // var index = this.eventAry.indexOf(item);
-      // if (index !== -1) {
-      //   this.eventAry.splice(index, 1);
-      // }
-    },
-    // 指標告警是否禁用
-    isDisabledZB() {
-      if (this.checkedZhibiao) {
-        this.isDisabled = false;
-      } else {
-        this.isDisabled = true;
+      let { eventType,eventAry } = this.event
+      for(let i = 0;i<eventType.length;i++){
+        let msg = eventAry.some(item=>{
+          return item.EventId === eventType[i].EventId
+        })
+        this.event.IsEventRepeated = msg
+        if(!msg){
+          eventAry.push({
+            EventId:eventType[i].EventId,
+            AlarmNotifyPeriod:0,
+            AlarmNotifyType:0,
+          });
+          return
+        }
       }
+      eventAry.push({
+        EventId:eventType[0].EventId,
+        AlarmNotifyPeriod:0,
+        AlarmNotifyType:0,
+      });
     },
-    // 事件告警是否禁用
-    isDisabledGJ() {
-      // if (this.checkedGaojing) {
-      //   this.isDisGJ = false;
-      // } else {
-      //   this.isDisGJ = true;
-      // }
+    // 刪除觸發條件的事件告警
+    delShijian(item) {
+      var index = this.event.eventAry.indexOf(item);
+      if (index !== -1) {
+        this.event.eventAry.splice(index, 1);
+      }
     },
     // 錯誤提示
     errorPrompt(res) {
