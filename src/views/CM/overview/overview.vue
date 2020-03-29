@@ -608,7 +608,7 @@ export default {
     },
     goToProduct(row) {
       this.$router.push({
-        name: this.getRouterNameByViewName(row.ViewName)
+        name: this.getRouterNameByViewName(row.viewName)
       });
     },
     getAbnormalList(viewName, index) {
