@@ -169,7 +169,7 @@
                     scope.row.IsAlarmConfig == 1 ? "已配置" : "未配置"
                   }}</span>
                   <span class="New_Configuration"
-                    ><a @click="jump(scope.row.InstanceId)">新增配置</a></span
+                    ><a @click="jump(scope.row)">新增配置</a></span
                   >
                 </p>
               </template>
@@ -439,6 +439,7 @@ export default {
       }
     },
     jump(id) {
+      console.log(id)
       this.$router.push({
         name: "strategyCreate",
         query: {
