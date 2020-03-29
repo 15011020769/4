@@ -64,7 +64,7 @@
             <div v-for="(item,i) in scope.row.ReceiverInfos" :key="i">
               <!-- +item.ReceiverGroupList.length||0 -->
               <p>接收組:&nbsp;{{item.ReceiverGroupList?''+item.ReceiverGroupList.length+'個':'0個'}}</p>
-              <p>有效期:&nbsp;{{'00:00:00 - 23:59:59'}}</p>
+              <p>有效期:&nbsp;{{upTime(item.StartTime)}}-{{upTime(item.EndTime)}}</p>
               <!-- <p>{{'管道:'}}<span v-for="it in channelList" :key="it">{{it+' '}}</span></p> -->
               <p>管道:<span v-for="key in item.NotifyWay" :key="key">&nbsp; {{key|notifyChannel}}</span></p>
             </div>
@@ -752,9 +752,8 @@ export default {
       })
     },
     // 格式化時間
-    upTime (value) {
-      // return moment(value).format('YYYY/MM/DD HH :mm:ss')
-      return moment(value).format('HH :mm:ss')
+    upTime(value) {
+      return moment(value * 1000).format("HH:mm:ss");
     },
     addZhibiao () { // 添加觸發條件的指標告警
       let { zhibiaoType } = this
