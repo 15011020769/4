@@ -1,7 +1,7 @@
 <template>
   <div class="dialog">
-    <!--  @open="$emit('open')" @close="$emit('close')"  @open="loadShow = true"-->
-    <el-dialog title="新建" :visible.sync="show">
+    <!--  @open="$emit('open')" @close="$emit('close')"  @open="openDialog"-->
+    <el-dialog title="新建" :visible.sync="show" @open="openDialog" @close="closeDialog">
       <el-form :model="formInline" :rules="rules" ref="form">
         <p class="rowCont">
           <span>策略名稱</span>
@@ -253,7 +253,7 @@
           </div>
           <!-- 事件告警 -->
           <!-- <EventAlarm :eventData.sync="event" v-if="event.eventType.length"></EventAlarm> -->
-          <div v-if="event.eventType.length">
+          <div v-if="event.eventType.length>0">
             <p>
               <el-checkbox v-model="event.checkedGaojing" :checked="event.checkedGaojing">
                 事件告警
@@ -388,8 +388,7 @@ export default {
         type: [],
         resource: "",
         desc: ""
-      },
-      
+      },      
       // dialogFormVisible: false //監控面板的開關
       show: this.dialogVisible, // 控制弹框显示隐藏
       all_alarm: 86400, // 满足条件为 所有 时告警值
@@ -441,34 +440,33 @@ export default {
     show: function(val) {
       this.$emit("update:dialogVisible", val);
     },
-    productValue: {
-      handler:function(val) {
-        let { zhibiaoType } = this;
-        let {eventType} = this.event     
-        if (zhibiaoType) {
-          this.indexAry = [
-            {
-              Period: 60,
-              CalcType: ">",
-              CalcValue: "0",
-              MetricId: zhibiaoType[0].MetricId,
-              Unit: zhibiaoType[0].MetricUnit,
-              ContinuePeriod: 1,
-              alarm: 86400
-            }
-          ];        
-        }
-        if(eventType){
-          this.event.eventAry=[
-            {
-              EventId:eventType[0].EventId,
-              AlarmNotifyPeriod:0,
-              AlarmNotifyType:0,
-            }
-          ];
-        }
-      },
-      deep:true
+    productValue: function(val) {
+      let { zhibiaoType } = this;
+      let {eventType} = this.event     
+      if (zhibiaoType.length>0) {
+        this.indexAry = [
+          {
+            Period: 60,
+            CalcType: ">",
+            CalcValue: "0",
+            MetricId: zhibiaoType[0].MetricId,
+            Unit: zhibiaoType[0].MetricUnit,
+            ContinuePeriod: 1,
+            alarm: 86400
+          }
+        ];        
+      }
+      if(eventType.length>0){
+        this.event.eventAry=[
+          {
+            EventId:eventType[0].EventId,
+            AlarmNotifyPeriod:0,
+            AlarmNotifyType:0,
+          }
+        ];
+      }else{
+        this.event.eventAry=[]
+      }
     },
     indexAry: {
       handler: function(val, old) {
@@ -530,6 +528,35 @@ export default {
     }
   },
   methods: {
+    openDialog(){
+      this.initData()
+    },
+    closeDialog(){
+      this.initData()
+    },
+    initData(){
+      this.formInline.strategy_name = "";
+      this.formInline.textareas = "";
+      this.productValue= "cvm_device";
+      this.indexAry = [
+        {
+          Period: 60,
+          CalcType: ">",
+          CalcValue: "0",
+          MetricId: 33,
+          Unit: "%",
+          ContinuePeriod: 1,
+          alarm: 86400
+        }
+      ];
+      this.event.eventAry = [
+        {
+          EventId:39,
+          AlarmNotifyPeriod:0,
+          AlarmNotifyType:0,
+        }
+      ];
+    },
     save(form) {
       // this.$emit('save')
       this.$refs[form].validate(valid => {
@@ -592,7 +619,7 @@ export default {
           params[`Conditions.${i}.AlarmNotifyType`] = 1;
         }
       });
-      if(this.event.eventAry.length){
+      if(this.event.eventAry.length>0){
         this.event.eventAry.forEach((ele,i)=>{
           params[`EventConditions.${i}.EventID`] = ele.EventId
           params[`EventConditions.${i}.AlarmNotifyPeriod`] = 0
@@ -602,26 +629,7 @@ export default {
       await this.axios.post(NEWBUILD_TEMPLATE, params).then(res => {
         if (res.Response.Error === undefined) {
           this.show = false; // 關閉彈框
-          this.formInline.strategy_name = "";
-          this.formInline.textareas = "";
-          this.indexAry = [
-            {
-              Period: 60,
-              CalcType: ">",
-              CalcValue: "0",
-              MetricId: 33,
-              Unit: "%",
-              ContinuePeriod: 1,
-              alarm: 86400
-            }
-          ];
-          this.event.eventAry = [
-            {
-              EventId:39,
-              AlarmNotifyPeriod:0,
-              AlarmNotifyType:0,
-            }
-          ]
+          this.initData()
           this.$message({
             message: "新建成功",
             type: "success",
@@ -635,13 +643,12 @@ export default {
       });
     },
     passData(item) {
-      console.log(item)
       // this.productData = item
-      // item.Metrics = item.Metrics.filter(ele=>
-      //   !()
-      // )
+      item.Metrics = item.Metrics.filter(ele=>
+        !(item.EventMetrics&&item.EventMetrics.find(it=>it.EventShowName == ele.MetricShowName))
+      )
       this.zhibiaoType = item.Metrics;
-      this.event.eventType = item.EventMetrics?item.EventMetrics:[]
+      this.event.eventType = item.EventMetrics?item.EventMetrics:[];
       this.productValue = item.productValue;
       this.$nextTick(() => {
         this.loading = false;
@@ -775,10 +782,6 @@ export default {
         duration: 0
       });
     },
-    // 新建策略類型
-    showMsgfromChild(val) {
-      console.log("val", val);
-    }
   }
 };
 </script>

@@ -530,10 +530,10 @@ export default {
     passData (item) {
       this.productValue = item.productValue
       this.eventType = item.EventMetrics
-      this.zhibiaoType = item.Metrics.filter(v=>{
-        return v.MetricShowName!=="磁碟只讀"&&v.MetricShowName!=="機器重啟"&&v.MetricShowName!=="ping不可達"
-      })
-      // this.zhibiaoType = item.Metrics
+      item.Metrics = item.Metrics.filter(ele=>
+        !(item.EventMetrics&&item.EventMetrics.find(it=>it.EventShowName == ele.MetricShowName))
+      )
+      this.zhibiaoType = item.Metrics
       this.$nextTick(() => {
         this.openEditloadShow = false
       })
@@ -638,7 +638,7 @@ export default {
         }
       })
       }
-      if(this.eventAry.length&&checkedGaojing){
+      if(this.eventAry.length>0&&checkedGaojing){
         this.eventAry.forEach((ele,i)=>{
           params[`EventConditions.${i}.EventID`] = ele.EventID
           params[`EventConditions.${i}.AlarmNotifyPeriod`] = 0
