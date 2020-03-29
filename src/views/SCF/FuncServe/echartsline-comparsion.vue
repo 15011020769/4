@@ -28,8 +28,8 @@
     //   console.log(this.xdata,'xdata')
     //   console.log(this.period,'period')
     //   console.log(this.Company,'company')
-    console.log(this.opData,'opdata')
-    console.log(this.opData2,'opdata222222222')
+    // console.log(this.opData,'opdata')
+    // console.log(this.opData2,'opdata222222222')
     },
     watch: {
       time: {
@@ -127,7 +127,7 @@
           },
           xAxis: [{
             type: "category",
-            data: this.time,
+            data: this.time2,
             axisTick: {
               // 决定是否显示坐标刻度
               alignWithLabel: true,
@@ -148,7 +148,7 @@
             },
           },{
             type: "category",
-            data: this.time2,
+            data: this.time,
             axisTick: {
               // 决定是否显示坐标刻度
               alignWithLabel: true,
@@ -181,7 +181,7 @@
           series: [{
            
             type: "line", // 设置图表主题
-            data: this.opData,
+            data: this.opData2,
              itemStyle: {
               normal: {
                 color: 'blue',
@@ -193,7 +193,7 @@
           },{
            
             type: "line", // 设置图表主题
-            data: this.opData2,
+            data: this.opData,
           }]
         });
         window.addEventListener("resize", () => {

@@ -79,7 +79,7 @@
                         class="el-icon-warning"
                         style="color: red;font-size: 10px;"
                       ></i>
-                      異常 當前有資源正處於異常狀態未修復
+                      異常 當前有資源正處於異常狀態未修複
                     </div>
                     <i
                       class="el-icon-info"
@@ -187,7 +187,7 @@
           </div>
         </div>
         <!-- <div class="right">
-           当月已使用簡訊统计
+           當月已使用間訊統計
           <div class="box">
             <div class="head">
               <h3 style="flex:1;">
@@ -487,8 +487,8 @@ export default {
     //       // console.log(result);
     //     } else {
     //       let ErrTips = {
-    //         InternalError: "内部错误",
-    //         UnauthorizedOperation: "未授权操作"
+    //         InternalError: "內部錯誤",
+    //         UnauthorizedOperation: "未授權操作"
     //       };
     //       let ErrOr = Object.assign(ErrorTips, ErrTips);
     //       this.$message({
@@ -546,8 +546,8 @@ export default {
           });
         } else {
           let ErrTips = {
-            InternalError: "内部错误",
-            UnauthorizedOperation: "未授权操作"
+            InternalError: "內部錯誤",
+            UnauthorizedOperation: "未授權操作"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -608,7 +608,7 @@ export default {
     },
     goToProduct(row) {
       this.$router.push({
-        name: this.getRouterNameByViewName(row.ViewName)
+        name: this.getRouterNameByViewName(row.viewName)
       });
     },
     getAbnormalList(viewName, index) {

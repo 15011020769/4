@@ -377,9 +377,9 @@ export default {
     },
     //分页
     handleCurrentChange(val) {
-      this.pageIndex = val - 1;
+      this.pageIndex = (val - 1) * this.pageSize;
       this.getCustomMessage(this.timeObjs);
-      this.pageIndex += 1;
+      this.pageIndex += (val - 1) * this.pageSize;
     },
     //设置弹框
     buyMessgae() {

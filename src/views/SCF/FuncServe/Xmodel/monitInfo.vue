@@ -5,7 +5,7 @@
     </div>
     <div class="Monitortip">
       <TimeDropDown :TimeArr='TimeArr' :Datecontrol='true' :Graincontrol='true' :Difference="'H'"
-        v-on:switchData="GetDat" @switchData2='GetDat2' />
+        v-on:switchData="GetDat" @switchData2='GetDat2' @openFlag='openFlag' />
       <p @click="_GetBase">{{$t('SCF.total.sx')}}</p>
     </div>
 
@@ -37,14 +37,14 @@
           <template slot-scope="scope">
             <p v-if="scope.row.DataPoints[0].Values.length==0">{{$t('SCF.total.zwsj')}}</p>
             <div v-if="scope.row.DataPoints[0].Timestamps.length!=0">
-              <echart-line  v-if="Object.keys(Time2).length==0"    :id="scope.row.MetricName + 1" :time="scope.row.DataPoints[0].Timestamps | UpTime"
+              <echart-line  v-if="!openFlags"    :id="scope.row.MetricName + 1" :time="scope.row.DataPoints[0].Timestamps | UpTime"
                 :opData="scope.row.DataPoints[0].Values" :scale="3" :period="Period" :xdata="false"
                 :MetricName='disName[scope.row.MetricName]' :Company='Company[scope.row.MetricName]'></echart-line>
-              <echartsLineComparsion v-if="Object.keys(Time2).length!='0'" 
-              :id="scope.row.MetricName + 1" :time="scope.row.DataPoints[0].Timestamps | UpTime"
-                :time2="scope.row.DataPoints2[0].Timestamps | UpTime"
-              :opData="scope.row.DataPoints[0].Values" 
-              :opData2="scope.row.DataPoints2[0].Values"
+              <echartsLineComparsion v-if="openFlags" 
+              :id="scope.row.MetricName + 1" :time="scope.row.DataPoints?UpTime2(scope.row.DataPoints[0].Timestamps):[]"
+                :time2="scope.row.DataPoints2?UpTime2(scope.row.DataPoints2[0].Timestamps):[]"
+              :opData="scope.row.DataPoints?(scope.row.DataPoints[0].Values):[]" 
+              :opData2="scope.row.DataPoints2?(scope.row.DataPoints2[0].Values):[]"
               :scale="3" :period="Period" :xdata="false"
               :MetricName='disName[scope.row.MetricName]' :Company='Company[scope.row.MetricName]'
               ></echartsLineComparsion>
@@ -247,6 +247,7 @@
         ],
         functionName: this.$route.query.functionName,
         comparseFlag:false,
+        openFlags:false,
         BaseList: [], //全部指标列表
         BaseListK: [], //用到的指标列表
         TableLoad: true,
@@ -325,25 +326,6 @@
       echartsLineComparsion
     },
     watch: {
-      // MonitorData(val) {
-      //   if (this.MonitorData) {
-      //     this.MonitorData.forEach(element => {
-      //       this.BaseListK.forEach(item => {
-      //         if (item.MetricName === element.MetricName) {
-      //           item.DataPoints = element.DataPoints
-      //           if(element.DataPoints2){
-      //             item.DataPoints2 = element.DataPoints2
-      //           }
-      //         }
-      //       });
-      //     });
-      //     if (this.BaseListK.length == val.length) {
-      //       this.tableData = this.BaseListK
-      //       console.log(this.tableData,'this.tableData')
-      //       this.TableLoad = false
-      //     }
-      //   }
-      // },
       MonitorData:{
         handler(val){
           if (this.MonitorData) {
@@ -359,7 +341,6 @@
             });
             if(this.BaseListK.length == val.length){
               this.tableData = this.BaseListK
-              console.log(this.tableData,'this.tableData')
               this.TableLoad = false
             }
          } 
@@ -392,15 +373,24 @@
         return wbout;
       },
       GetDat(data) {
-        console.log(data,'data++++++++++++++++=time')
+        // console.log(data,'data++++++++++++++++=time')
         this.Period = data[0]
-        this.Time ={...data[1]} 
+        this.Time =data[1]
+        // this.Time ={...data[1]} 
         this._GetBase()
       },
       GetDat2(data){
-        console.log(this.Time2,'this.Time2222222222222++++++++++++++++=time')
-        this.Time2={...data[1]} 
-         this._GetBase()
+
+        if(this.openFlags){
+        //  console.log(this.Time2,'this.Time2222222222222++++++++++++++++=time')
+          this.Time2=data[1]
+          // this.Time2={...data[1]} 
+           this._GetBase()
+        }
+      },
+      //数据对比开关状态
+      openFlag(val){
+          this.openFlags=val
       },
      
       //获取基础指标详情
@@ -416,13 +406,13 @@
             this.BaseList = res.Response.MetricSet
             this.MonitorData = []
             this.BaseListK = []
-            console.log(this.Time,'time1')
-            console.log(this.Time2,'time2')
+            // console.log(this.Time,'time1')
+            // console.log(this.Time2,'time2')
             this.BaseList.forEach(item => {
               if (item.Period.indexOf(Number(this.Period)) !== -1) {
                 this.BaseListK.push(item)
                 this._GetMonitorData(item.MetricName)
-                if(Object.keys(this.Time2).length!=0){
+                if(this.openFlags){
                  this._GetMonitorData2(item.MetricName)
                 }
               }
@@ -452,7 +442,7 @@
           'Instances.0.Dimensions.1.Name': 'version',
           'Instances.0.Dimensions.1.Value': this.FunctionVersion
         }
-        console.log(parms,'_GetMonitorData1111111111111111111111111')
+        // console.log(parms,'_GetMonitorData1111111111111111111111111')
         this.axios.post(All_MONITOR, parms).then(data => {
           if (data.Response.Error == undefined) {
             this.MonitorData.push(data.Response);
@@ -491,7 +481,7 @@
             })
             // return  this.MonitorData
             // this.MonitorData.push(data.Response);
-            console.log( this.MonitorData,' this.MonitorDatadata.Response')
+            // console.log( this.MonitorData,' this.MonitorDatadata.Response')
           } else {
             this.$message({
               message: ErrorTips[data.Response.Error.Code],
@@ -527,6 +517,14 @@
           });
         }
       },
+      UpTime2(value){
+          let timeArr = [];
+        for (let i = 0; i < value.length; i++) {
+          let uptime = moment(value[i] * 1000).format("YYYY-MM-DD HH:mm:ss");
+          timeArr.push(uptime);
+        }
+        return timeArr;
+      }
 
     },
     filters: {
