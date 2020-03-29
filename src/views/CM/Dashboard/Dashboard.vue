@@ -93,7 +93,7 @@
           </div>
           <div class="chartContent" v-show="item.openChartFlag">
             <el-table :data="item.Instances" :id="'exportTable'+item.ViewID">
-              <el-table-column prop="" label="" width="100">
+              <el-table-column prop="" label="" width="50">
                 <template slot-scope="scope">
                   <div :style='"width: 10px;height: 10px;border-radius: 50%;background:" + scope.row.bgColor'></div>
                 </template>
@@ -962,13 +962,16 @@
 
   .Dashboard-wrap>>>.chart {
     width: 100%;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
+    // display: flex;
+    // flex-wrap: wrap;
+    // justify-content: space-between;
+    overflow: hidden;
 
     >div.chartList {
       width: 32%;
       margin-bottom: 10px;
+      float: left;
+      margin-right: 1%;
 
       .chartItem {
         padding: 20px;
@@ -1003,7 +1006,7 @@
           display: flex;
           justify-content: center;
           align-items: center;
-          margin-top: 20px;
+          // margin-top: 20px;
         }
       }
 
