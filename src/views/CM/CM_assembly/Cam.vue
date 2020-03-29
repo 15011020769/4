@@ -200,7 +200,6 @@ export default {
     },
     timeValue: {
       handler: function(val) {
-        console.log(val);
         let timeArr = [val.start, val.end];
         this.cam.time = timeArr.map(item => {
           let tempTime = Date.parse(item) / 1000;
@@ -242,6 +241,10 @@ export default {
     setStartAndEndTime: function (startIime, endTime) {
       this.timeValue.start = new Date(startIime * 1000)
       this.timeValue.end = new Date(endTime * 1000)
+    },
+    setType: function (type) {
+      this.cam.selectType = type
+      this.selectChange()
     },
     // 选中接受组还是接收人
     selectChange() {
@@ -345,7 +348,7 @@ export default {
     },
 
     // 查询接收人数据
-    userList() {
+    async userList () {
       this.userListLoading = true;
       let userList = {
         Type: "SubAccount",
@@ -356,7 +359,7 @@ export default {
       if (this.triggerInput != null && this.triggerInput != "") {
         userList["Keyword"] = this.triggerInput;
       }
-      this.axios
+      await this.axios
         .post(LIST_SUBACCOUNTS, userList)
         .then(data => {
           this.userListLoading = false;
@@ -442,8 +445,6 @@ export default {
         if (this.tableData2.length === 0) {
           return;
         }
-
-        console.log(this.tableData2);
 
         const selectedRows = this.tableData2.filter(row => {
           const found = this.selectedList.find(item => {
