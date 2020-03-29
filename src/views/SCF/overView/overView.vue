@@ -155,17 +155,17 @@
                 </el-table>
               </div>
             </el-tab-pane>
-            <!-- <el-tab-pane name="concurrent_executions">
+            <el-tab-pane name="concurrent_executions">
               <template slot="label">
                 <p>
-                  <span class="menu1">并发执行个数</span>
+                  <span class="menu1">並發執行個數</span>
                   <span class="menu2">(个)</span>
                 </p>
               </template>
               <div v-if="MetricName==='concurrent_executions'">
                 <TimeDropDown :TimeArr='TimeArr' :Datecontrol='true' :Graincontrol='true' :Difference="'H'"
                   v-on:switchData="GetDat" />
-                <p class="title">并发执行个数</p>
+                <p class="title">並發執行個數</p>
                 <el-table :data="tableData" style="width: 750px" v-loading='tabload'>
                   <el-table-column>
                     <template slot-scope="scope">
@@ -179,7 +179,7 @@
                   </el-table-column>
                 </el-table>
               </div>
-            </el-tab-pane> -->
+            </el-tab-pane>
             <el-tab-pane name="throttle">
               <template slot="label">
                 <p>
