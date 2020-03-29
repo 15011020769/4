@@ -25,7 +25,7 @@
               </el-tooltip>
             </div>
 
-            <div v-if="scope.row.AccidentName=='雲伺服器網路連接問題'">
+            <div v-if="scope.row.AccidentName=='雲伺服器網絡連接問題'">
               <span style="margin-left: 0px;flex-wrap:nowrap">
                 {{
                 scope.row.AccidentName
