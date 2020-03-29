@@ -87,9 +87,15 @@
         Conditions: '',
         productValue1: this.productValue,
         Metrics: null,
+        EventMetrics:[],//事件告警类型
       }
     },
     watch: {
+      productValue: {
+        handler: function (val) {
+          this.productValue1 = val
+        }
+      },
       productValue1() {
         this._Metrics()
       },
@@ -115,6 +121,7 @@
           this.Conditions.forEach(item => {
             if (item.PolicyViewName === this.productValue1) {
               this.Metrics = item.Metrics
+              this.EventMetrics = item.EventMetrics
             }
           });
         }).then(() => {
@@ -130,6 +137,7 @@
         this.Pass.MetricName = this.MetricName
         this.Pass.id = this.id
         this.Pass.Metrics = this.Metrics
+        this.Pass.EventMetrics = this.EventMetrics
         this.$emit("PassData", this.Pass);
       },
       _switchType() {

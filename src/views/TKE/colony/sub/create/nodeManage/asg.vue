@@ -110,9 +110,7 @@
           </el-form-item>
 
           <el-form-item :label="$t('TKE.overview.yhm')" v-show="asg.pwdRadio === 'pwd3'">
-            <div class="tke-form-item_text">
-              {{caozuo}}
-            </div>
+            <div class="tke-form-item_text">{{caozuo}}</div>
           </el-form-item>
           <el-form-item :label="$t('TKE.overview.mm')" v-show="asg.pwdRadio === 'pwd3'">
             <el-input
@@ -223,6 +221,22 @@
               <el-button type="text" @click="addDomain2">新增Lable</el-button>
             </el-form-item>
           </el-form-item>-->
+          <el-form-item label="Label">
+            <ul>
+              <li v-for="(item, index) in advancedSettingArr" :key="index" style="display: flex;">
+                <div class="form-input1">
+                  <el-input v-model="item.name" size="mini" style="top:8px;width: 120px;"></el-input>
+                  <span style="top:8px">=</span>
+                  <el-input class="text" v-model="item.value" style="top:8px;width: 120px;"></el-input>
+                  <i class="el-icon-close" @click="DeleteAdvancedSetting(index)"></i>
+                </div>
+              </li>
+            </ul>
+            <a href="javascript:;" @click="AddAdvancedSetting">新增</a>
+            <p>標籤名稱只能包含字母、數字及分隔符("-"、"_"、"."、"/")，且必須以字母、數字開頭和結尾</p>
+            <p>標籤值只能包含字母、數字及分隔符("-"、"_"、".")，且必須以字母、數字開頭和結尾</p>
+          </el-form-item>
+
           <p>
             <i :class="[isActive?'el-icon-caret-bottom':'el-icon-caret-right']"></i>
             <el-button
@@ -249,15 +263,15 @@
                 <!-- <a
                   href="https://cloud.tencent.com/document/product/457/18824"
                   target="_blank"
-                >取消封锁命令</a> -->
+                >取消封锁命令</a>-->
               </p>
             </el-form-item>
           </el-form-item>
-          <el-form-item label="Label" v-show="isActive">
+          <!-- <el-form-item label="Label" v-show="isActive">
             <ul>
               <li v-for="(item, index) in advancedSettingArr" :key="index" style="display: flex;">
                 <div class="form-input1">
-                  <el-input v-model="item.name" size="mini" style="top:8px;width: 120px;" ></el-input>
+                  <el-input v-model="item.name" size="mini" style="top:8px;width: 120px;"></el-input>
                   <span style="top:8px">=</span>
                   <el-input class="text" v-model="item.value" style="top:8px;width: 120px;"></el-input>
                   <i class="el-icon-close" @click="DeleteAdvancedSetting(index)"></i>
@@ -265,13 +279,9 @@
               </li>
             </ul>
             <a href="javascript:;" @click="AddAdvancedSetting">新增</a>
-            <p>
-              標籤名稱只能包含字母、數字及分隔符("-"、"_"、"."、"/")，且必須以字母、數字開頭和結尾
-            </p>
-            <p>
-              標籤值只能包含字母、數字及分隔符("-"、"_"、".")，且必須以字母、數字開頭和結尾
-            </p>
-          </el-form-item>
+            <p>標籤名稱只能包含字母、數字及分隔符("-"、"_"、"."、"/")，且必須以字母、數字開頭和結尾</p>
+            <p>標籤值只能包含字母、數字及分隔符("-"、"_"、".")，且必須以字母、數字開頭和結尾</p>
+          </el-form-item>-->
         </el-form>
 
         <hr />
@@ -840,7 +850,7 @@ export default {
       ],
       optionsOne: [],
       domains: [],
-      domainstion: [],
+      domainstion: [], //lable
       value: "0",
       valueOne: "",
       values: [],
@@ -885,9 +895,9 @@ export default {
     this.getDescribeVpcs();
     this.clusterId = this.$route.query.clusterId;
     this.ClusterOs = sessionStorage.getItem("ClusterOs");
-    if (this.ClusterOs.substring(0,6)=='centos') {
+    if (this.ClusterOs.substring(0, 6) == "centos") {
       this.caozuo = "root";
-    } else if (this.ClusterOs.substring(0,6)=='ubuntu') {
+    } else if (this.ClusterOs.substring(0, 6) == "ubuntu") {
       this.caozuo = "ubuntu";
     }
     console.log(this.ClusterOs);
@@ -989,10 +999,10 @@ export default {
         Version: "2018-05-25",
         ClusterId: this.clusterId,
         AutoScalingGroupPara: JSON.stringify(AutoScalingGroupPara), //伸缩组配置
-        LaunchConfigurePara: JSON.stringify(LaunchConfigurePara) //启动配置
-        // InstanceAdvancedSettings: InstanceAdvancedSettings
+        LaunchConfigurePara: JSON.stringify(LaunchConfigurePara), //启动配置
+        InstanceAdvancedSettings: InstanceAdvancedSettings
       };
-      if(this.checked){
+      if (this.checked) {
         params["InstanceAdvancedSettings.DockerGraphPath"] = this.inputRoom;
       } else {
         params["InstanceAdvancedSettings.DockerGraphPath"] = "";
@@ -1003,25 +1013,25 @@ export default {
         params["InstanceAdvancedSettings.UserScript"] = Base64.encode(
           this.textarea2
         );
-        if(this.checkedThree) {
+        if (this.checkedThree) {//封锁
           params["InstanceAdvancedSettings.Unschedulable"] = 1;
         } else {
           params["InstanceAdvancedSettings.Unschedulable"] = 0;
         }
-        if (this.advancedSettingArr.length > 0) {
-          for (let i in this.advancedSettingArr) {
-            params[
-              "InstanceAdvancedSettings.Labels." + i + ".Name"
-            ] = this.advancedSettingArr[i].name;
-            params[
-              "InstanceAdvancedSettings.Labels." + i + ".Value"
-            ] = this.advancedSettingArr[i].value;
-          }
-        } else {
-          params["InstanceAdvancedSettings.Labels.0.Name"] = "";
-          params["InstanceAdvancedSettings.Labels.0.Value"] = "";
+      }
+      if (this.advancedSettingArr.length > 0) {
+        for (let i in this.advancedSettingArr) {
+          params[
+            "InstanceAdvancedSettings.Labels." + i + ".Name"
+          ] = this.advancedSettingArr[i].name;
+          params[
+            "InstanceAdvancedSettings.Labels." + i + ".Value"
+          ] = this.advancedSettingArr[i].value;
         }
-      } 
+      } else {
+        params["InstanceAdvancedSettings.Labels.0.Name"] = "";
+        params["InstanceAdvancedSettings.Labels.0.Value"] = "";
+      }
       // params["InstanceAdvancedSettings.Labels.0.Name"] = "";
       // params["InstanceAdvancedSettings.Labels.0.Value"] = "";
 
@@ -1029,18 +1039,6 @@ export default {
       //   "EnhancedService.SecurityService.Enabled"
       // ] = this.asg.securityService;
       // params["EnhancedService.MonitorService.Enabled"] = this.asg.monitor;
-
-      // Version: "2018-05-25"
-      // ClusterId: "cls-h3phnkpy"
-      // AutoScalingGroupPara: "{"AutoScalingGroupName":"asdasd","MaxSize":3,"MinSize":2,"VpcId":"vpc-6whh21qa","SubnetIds":["subnet-nn56635p"],"RetryPolicy":"IMMEDIATE_RETRY","ServiceSettings":{"ScalingMode":"CLASSIC_SCALING"}}"
-      // LaunchConfigurePara: "{"LaunchConfigurationName":"","InstanceType":"S3.SMALL1","SystemDisk":{"DiskType":"CLOUD_PREMIUM","DiskSize":50},"InternetAccessible":{"InternetChargeType":"BANDWIDTH_POSTPAID_BY_HOUR","InternetMaxBandwidthOut":1,"PublicIpAssigned":true},"LoginSettings":{"Password":"asdasd123"},"SecurityGroupIds":["sg-81y1wst4","sg-p8r1uybc"],"EnhancedService":{"SecurityService":{"Enabled":true},"MonitorService":{"Enabled":true}},"InstanceChargeType":"POSTPAID_BY_HOUR"}"
-      // InstanceAdvancedSettings: {MountTarget: "", DockerGraphPath: "", UserScript: "", Unschedulable: 0, ExtraArgs: {Kubelet: []}}
-      // MountTarget: ""
-      // DockerGraphPath: ""
-      // UserScript: ""
-      // Unschedulable: 0
-      // ExtraArgs: {Kubelet: []}
-      // Kubelet: []
 
       await this.axios.post(CREATE_GROUP, params).then(res => {
         if (res.Response.Error === undefined) {
@@ -1222,11 +1220,16 @@ export default {
             });
             dataList = list;
           }
-          let usdRate = localStorage.getItem('usdRate');   // 美元汇率
-          let tpdRate = localStorage.getItem('tpdRate');   // 台币汇率
-          let taRate = localStorage.getItem('taRate');  // 税率
+          let usdRate = localStorage.getItem("usdRate"); // 美元汇率
+          let tpdRate = localStorage.getItem("tpdRate"); // 台币汇率
+          let taRate = localStorage.getItem("taRate"); // 税率
           dataList.forEach(element => {
-            element.cost = (element.Price.UnitPrice* usdRate * tpdRate * taRate).toFixed(8);
+            element.cost = (
+              element.Price.UnitPrice *
+              usdRate *
+              tpdRate *
+              taRate
+            ).toFixed(8);
           });
           this.zoneInfoList = dataList;
           this.asg.zoneInstanceConfigInfo =

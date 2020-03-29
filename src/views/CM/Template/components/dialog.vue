@@ -1,7 +1,7 @@
 <template>
   <div class="dialog">
-    <!--  @open="$emit('open')" @close="$emit('close')"  @open="loadShow = true"-->
-    <el-dialog title="新建" :visible.sync="show">
+    <!--  @open="$emit('open')" @close="$emit('close')"  @open="openDialog"-->
+    <el-dialog title="新建" :visible.sync="show" @open="openDialog" @close="closeDialog">
       <el-form :model="formInline" :rules="rules" ref="form">
         <p class="rowCont">
           <span>策略名稱</span>
@@ -41,7 +41,6 @@
           :productValue="productValue"
           @loading="isLoading"
         />
-        <!-- <grouping-type @handleChangeChild="showMsgfromChild"></grouping-type> -->
         <!-- <el-checkbox v-model="checkedUse" style="margin-left:20px;">
           使用預置觸發條件
           <el-popover trigger="hover" placement="top"
@@ -50,15 +49,15 @@
           </el-popover>
         </el-checkbox> -->
       </p>
+      <div class="tips" v-if="!event.checkedGaojing&&!checkedZhibiao">请至少配置1项触发条件</div>
       <div class="rowCont cont">
         <span>觸發條件</span>
-        <div>
+        <div v-loading="loading">
           <div>
             <p>
               <el-checkbox
                 v-model="checkedZhibiao"
                 :checked="checkedZhibiao"
-                @change="isDisabledZB()"
                 >指標告警</el-checkbox
               >
             </p>
@@ -66,7 +65,7 @@
               <p>
                 <span style="display:inline">滿足</span>
                 <el-select
-                  :disabled="isDisabled"
+                  :disabled="!checkedZhibiao"
                   v-model="metting"
                   style="width:90px;margin:0 5px;"
                 >
@@ -81,7 +80,7 @@
                 <span style="display:inline">條件時，觸發告警</span>
               </p>
               <!-- 在這裏進行便利，添加 -->
-              <ul v-loading="loading">
+              <ul>
                 <li
                   style="display:flex;align-items: center;cursor: pointer;"
                   v-for="(it, i) in indexAry"
@@ -90,7 +89,7 @@
                   <p :class="{ mp: metting == 1 }">
                     if&nbsp;
                     <el-select
-                      :disabled="isDisabled"
+                      :disabled="!checkedZhibiao"
                       v-model="it.MetricId"
                       style="width:150px;"
                     >
@@ -103,7 +102,7 @@
                       ></el-option> </el-select
                     >&nbsp;
                     <el-select
-                      :disabled="isDisabled"
+                      :disabled="!checkedZhibiao"
                       v-model="it.Period"
                       style="width:130px;"
                     >
@@ -116,7 +115,7 @@
                       ></el-option> </el-select
                     >&nbsp;
                     <el-select
-                      :disabled="isDisabled"
+                      :disabled="!checkedZhibiao"
                       v-model="it.CalcType"
                       style="width:60px;"
                     >
@@ -130,7 +129,7 @@
                     >&nbsp;
                     <!-- placeholder="指標" -->
                     <input
-                      :disabled="isDisabled"
+                      :disabled="!checkedZhibiao"
                       v-model="it.CalcValue"
                       min="0"
                       max="100"
@@ -145,7 +144,7 @@
                     >
                     &nbsp;
                     <el-select
-                      :disabled="isDisabled"
+                      :disabled="!checkedZhibiao"
                       v-model="it.ContinuePeriod"
                       style="width:110px;"
                     >
@@ -160,7 +159,7 @@
                     <span style="width:30px" v-if="metting !== 1">then</span
                     >&nbsp;
                     <el-select
-                      :disabled="isDisabled"
+                      :disabled="!checkedZhibiao"
                       v-model="it.alarm"
                       v-if="metting !== 1"
                       style="width:150px;"
@@ -216,7 +215,7 @@
               <p v-if="metting == 1">
                 <span style="width:30px">then</span>&nbsp;
                 <el-select
-                  :disabled="isDisabled"
+                  :disabled="!checkedZhibiao"
                   v-model="all_alarm"
                   style="width:150px;"
                 >
@@ -252,36 +251,42 @@
               </p>
             </div>
           </div>
-          <!-- <div>
+          <!-- 事件告警 -->
+          <!-- <EventAlarm :eventData.sync="event" v-if="event.eventType.length"></EventAlarm> -->
+          <div v-if="event.eventType.length>0">
             <p>
-              <el-checkbox v-model="checkedGaojing" :checked="checkedGaojing" @change="isDisabledGJ()">
+              <el-checkbox v-model="event.checkedGaojing" :checked="event.checkedGaojing">
                 事件告警
-                <i class="el-icon-info" style="color:#888; margin:0 5px;"></i>
+                <!-- <i class="el-icon-info" style="color:#888; margin:0 5px;"></i> -->
               </el-checkbox>
             </p>
             <ul class="color">
-              <li style="display:flex;align-items: center;cursor: pointer;" v-for="(item,i) in eventAry" :key="i">
+              <li style="display:flex;align-items: center;cursor: pointer;" v-for="(item,i) in event.eventAry" :key="i">
                 <p>
-                  <el-select :disabled="isDisGJ" v-model="item.projectName" style="width:180px;margin:0 5px;">
+                  <el-select :disabled="!event.checkedGaojing" v-model="item.EventId" style="width:180px;margin:0 5px;">
                     <el-option
-                      v-for="(item,index) in eventType"
-                      :key="index"
-                      :label="item"
-                      :value="item"
+                      v-for="item in event.eventType"
+                      :key="item.EventId"
+                      :label="item.EventShowName"
+                      :value="item.EventId"
                       label-width="40px"
                     ></el-option>
                   </el-select>
                 </p>
                 <i class="el-icon-error" style="color:#888; margin:0 5px;"
-                  @click="delShijian(item)" v-if="eventAry.length>1"></i>
+                  @click="delShijian(item)" v-if="event.eventAry.length>1"></i>
               </li>
               <a @click="addShijian" style="cursor:pointer">添加</a>
+              <p style="color:red" v-if="event.IsEventRepeated">
+                <i class="el-icon-info" style="color:#888; margin:0 5px;color:red"></i>
+                請勿重複配置
+              </p>
             </ul>
-          </div> -->
+          </div>
         </div>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" :disabled="isRepeated" @click="save('form')"
+        <el-button type="primary" :disabled="isRepeated||(!checkedZhibiao&&!event.checkedGaojing)||event.IsEventRepeated" @click="save('form')"
           >保 存</el-button
         >
         <el-button @click="show = false">取 消</el-button>
@@ -292,6 +297,7 @@
 <script>
 // import GroupingType from '@/components/GroupingType'
 import ProductTypeCpt from "@/views/CM/CM_assembly/product_type";
+import EventAlarm from "@/views/CM/CM_assembly/EventAlarm";
 // import type from '@/views/CM/CM_assembly/product_type'
 import { NEWBUILD_TEMPLATE } from "@/constants/CM-yhs.js";
 import { ErrorTips } from "@/components/ErrorTips";
@@ -299,26 +305,27 @@ import Loading from "@/components/public/Loading";
 export default {
   data() {
     return {
+      event:{
+        IsEventRepeated:false,//添加事件告警类型是否重复
+        checkedGaojing: true, // 事件告警是否禁用
+        eventAry: [// 事件告警数组
+          {
+            EventId:39,
+            AlarmNotifyPeriod:0,
+            AlarmNotifyType:0,
+          }
+        ],
+        eventType: [], // 事件告警類型
+      },
       loading:true,
       isChected: true, // 多选框是否选中
-      isDisabled: false, // 指标告警是否禁用
-      isDisGJ: false, // 事件告警是否禁用
       isRepeated: false, // 是否为重复的指标告警条件
+      IsEventRepeated:false,//添加事件告警类型是否重复
+      checkedZhibiao: true, // 指示告警是否启用
+      checkedGaojing: true, // 事件告警是否启用
       backShow: 'true',
       strategy_name: '', // 策略名称
       remark: '', // 备注信息
-      value1: new Date(2020, 1, 10, 18, 40),
-      value2: new Date(2020, 1, 10, 18, 40),
-
-      showChufa1: false, // 触发条件1显示开关
-      showChufa2: true, // 触发条件2显示开关
-
-      showQudao1: false, // 管道选择1显示开关
-      showQudao2: false, // 管道选择2显示开关
-
-      errorTip1: false, // 触发条件範本错误提示
-      errorTip2: true, // 配置触发条件错误提示
-      checkedZhibiao: true, // 指示告警
       checkedUse: false, // 使用预置触发条件
       productData: [], // 策略类型
       SymbolList: ['>', '>=', '<', '<=', '=', '!='], // 符号数组
@@ -337,46 +344,7 @@ export default {
           alarm: 86400
         }
       ],
-      eventAry: [// 事件告警数组
-        {
-          jieshou: "接收組",
-          jieshouArr: [
-            { value: "0", name: "接收組" },
-            {
-              value: "1",
-              name: "接收人"
-            }
-          ],
-          apiStr: "http", // 接口回調
-          apiArr: [
-            {
-              value: 0,
-              name: "http"
-            },
-            {
-              value: 1,
-              name: "https"
-            }
-          ], // 接口回调数据
-          strategy_name: '', // 策略名称
-          textareas: '', // 备注
-          strategy: '雲伺服器-基礎監控',
-          strategy_kind: [
-            {
-              value: 0,
-              name: "雲伺服器-基礎監控"
-            }
-          ], // 策略類型
-          alarm: "", // 策略類型
-          projectName: "預設專案",
-          project: [
-            {
-              value: 0,
-              name: "預設專案"
-            }
-          ]
-        }
-      ],
+      // eventAry: [],// 事件告警数组
       metting: 0, // 滿足條件
       meetConditions: [
         { label: "任意", value: 0 },
@@ -420,9 +388,15 @@ export default {
         type: [],
         resource: "",
         desc: ""
-      },
-      checkedGaojing: "", // 告警
+      },      
       // dialogFormVisible: false //監控面板的開關
+      show: this.dialogVisible, // 控制弹框显示隐藏
+      all_alarm: 86400, // 满足条件为 所有 时告警值
+      view_name: '', // 策略视图名称
+      projectId: 0,
+      searchParam: {},
+      //  value: 'ins-6oz38wnu', label: 'instance-id'
+      productValue: "cvm_device",
       rules: {
         strategy_name: [
           {
@@ -457,13 +431,6 @@ export default {
           }
         ]
       }, // 名称和备注的验证
-      show: this.dialogVisible, // 控制弹框显示隐藏
-      all_alarm: 86400, // 满足条件为 所有 时告警值
-      view_name: '', // 策略视图名称
-      projectId: 0,
-      searchParam: {},
-      //  value: 'ins-6oz38wnu', label: 'instance-id'
-      productValue: "cvm_device"
     };
   },
   watch: {
@@ -475,7 +442,8 @@ export default {
     },
     productValue: function(val) {
       let { zhibiaoType } = this;
-      if (zhibiaoType) {
+      let {eventType} = this.event     
+      if (zhibiaoType.length>0) {
         this.indexAry = [
           {
             Period: 60,
@@ -486,7 +454,18 @@ export default {
             ContinuePeriod: 1,
             alarm: 86400
           }
+        ];        
+      }
+      if(eventType.length>0){
+        this.event.eventAry=[
+          {
+            EventId:eventType[0].EventId,
+            AlarmNotifyPeriod:0,
+            AlarmNotifyType:0,
+          }
         ];
+      }else{
+        this.event.eventAry=[]
       }
     },
     indexAry: {
@@ -510,10 +489,27 @@ export default {
         }
       },
       deep: true
+    },
+    'event.eventAry':{
+      handler:function(val){
+        let ary = []
+        val.forEach((ele,i)=>[
+          !ary.some(item=>{
+            return item.EventId === ele.EventId
+          }) && ary.push(ele)
+        ])
+        if(val.length !== ary.length){
+          this.event.IsEventRepeated = true
+        }else{
+          this.event.IsEventRepeated = false
+        }
+      },
+      deep:true
     }
   },
   components: {
     // GroupingType,
+    EventAlarm,
     ProductTypeCpt,
     Loading
   },
@@ -532,6 +528,35 @@ export default {
     }
   },
   methods: {
+    openDialog(){
+      this.initData()
+    },
+    closeDialog(){
+      this.initData()
+    },
+    initData(){
+      this.formInline.strategy_name = "";
+      this.formInline.textareas = "";
+      this.productValue= "cvm_device";
+      this.indexAry = [
+        {
+          Period: 60,
+          CalcType: ">",
+          CalcValue: "0",
+          MetricId: 33,
+          Unit: "%",
+          ContinuePeriod: 1,
+          alarm: 86400
+        }
+      ];
+      this.event.eventAry = [
+        {
+          EventId:39,
+          AlarmNotifyPeriod:0,
+          AlarmNotifyType:0,
+        }
+      ];
+    },
     save(form) {
       // this.$emit('save')
       this.$refs[form].validate(valid => {
@@ -594,23 +619,17 @@ export default {
           params[`Conditions.${i}.AlarmNotifyType`] = 1;
         }
       });
+      if(this.event.eventAry.length>0){
+        this.event.eventAry.forEach((ele,i)=>{
+          params[`EventConditions.${i}.EventID`] = ele.EventId
+          params[`EventConditions.${i}.AlarmNotifyPeriod`] = 0
+          params[`EventConditions.${i}.AlarmNotifyType`] = 0
+        })
+      }
       await this.axios.post(NEWBUILD_TEMPLATE, params).then(res => {
         if (res.Response.Error === undefined) {
-          // console.log(res)
           this.show = false; // 關閉彈框
-          this.formInline.strategy_name = "";
-          this.formInline.textareas = "";
-          this.indexAry = [
-            {
-              Period: 60,
-              CalcType: ">",
-              CalcValue: "0",
-              MetricId: 33,
-              Unit: "%",
-              ContinuePeriod: 1,
-              alarm: 86400
-            }
-          ];
+          this.initData()
           this.$message({
             message: "新建成功",
             type: "success",
@@ -624,10 +643,12 @@ export default {
       });
     },
     passData(item) {
-      // this.isShow = false
       // this.productData = item
-      // this.zhibiaoType = item.MetricName
+      item.Metrics = item.Metrics.filter(ele=>
+        !(item.EventMetrics&&item.EventMetrics.find(it=>it.EventShowName == ele.MetricShowName))
+      )
       this.zhibiaoType = item.Metrics;
+      this.event.eventType = item.EventMetrics?item.EventMetrics:[];
       this.productValue = item.productValue;
       this.$nextTick(() => {
         this.loading = false;
@@ -680,68 +701,34 @@ export default {
         this.indexAry.splice(index, 1);
       }
     },
+    // 添加觸發條件的事件告警
     addShijian() {
-      // 添加觸發條件的事件告警
-      this.eventAry.push({
-        jieshou: "接收組",
-        jieshouArr: [
-          { value: "0", name: "接收組" },
-          {
-            value: "1",
-            name: "接收人"
-          }
-        ],
-        apiStr: "http", // 接口回調
-        apiArr: [
-          {
-            value: 0,
-            name: "http"
-          },
-          {
-            value: 1,
-            name: "https"
-          }
-        ], // 接口回調數據
-        strategy_name: "", // 策略名稱
-        textareas: "", // 備注
-        strategy: "雲伺服器-基礎監控",
-        strategy_kind: [
-          {
-            value: 0,
-            name: "雲伺服器-基礎監控"
-          }
-        ], // 策略類型
-        alarm: "", // 策略類型
-        projectName: "預設專案",
-        project: [
-          {
-            value: 0,
-            name: "預設專案"
-          }
-        ]
+      let { eventType,eventAry } = this.event
+      for(let i = 0;i<eventType.length;i++){
+        let msg = eventAry.some(item=>{
+          return item.EventId === eventType[i].EventId
+        })
+        this.event.IsEventRepeated = msg
+        if(!msg){
+          eventAry.push({
+            EventId:eventType[i].EventId,
+            AlarmNotifyPeriod:0,
+            AlarmNotifyType:0,
+          });
+          return
+        }
+      }
+      eventAry.push({
+        EventId:eventType[0].EventId,
+        AlarmNotifyPeriod:0,
+        AlarmNotifyType:0,
       });
     },
+    // 刪除觸發條件的事件告警
     delShijian(item) {
-      // 刪除觸發條件的事件告警
-      var index = this.eventAry.indexOf(item);
+      var index = this.event.eventAry.indexOf(item);
       if (index !== -1) {
-        this.eventAry.splice(index, 1);
-      }
-    },
-    // 指標告警是否禁用
-    isDisabledZB() {
-      if (this.checkedZhibiao) {
-        this.isDisabled = false;
-      } else {
-        this.isDisabled = true;
-      }
-    },
-    // 事件告警是否禁用
-    isDisabledGJ() {
-      if (this.checkedGaojing) {
-        this.isDisGJ = false;
-      } else {
-        this.isDisGJ = true;
+        this.event.eventAry.splice(index, 1);
       }
     },
     // 錯誤提示
@@ -795,10 +782,6 @@ export default {
         duration: 0
       });
     },
-    // 新建策略類型
-    showMsgfromChild(val) {
-      console.log("val", val);
-    }
   }
 };
 </script>
@@ -872,5 +855,15 @@ export default {
 }
 .mp {
   height: 28px;
+}
+.tips {
+  height:45px;
+  line-height:45px;
+  color: #b43537;
+  font-size: 14px;
+  background-color: #fcecec;
+  border:1px solid #f6b5b5;
+  padding: 0 20px;
+  margin-bottom:10px;
 }
 </style>

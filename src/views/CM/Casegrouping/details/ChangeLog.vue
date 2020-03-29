@@ -220,9 +220,9 @@ export default {
     },
     // 分页
     handleCurrentChange(val) {
-      this.pageIndex = val - 1;
+      this.pageIndex = (val - 1) * this.pageSize;
       this.ListInit();
-      this.pageIndex += 1;
+      this.pageIndex += (val - 1) * this.pageSize;
     },
     handleSizeChange(val) {
       // console.log(`每页 ${val} 条`);

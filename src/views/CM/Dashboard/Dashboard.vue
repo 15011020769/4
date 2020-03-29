@@ -93,7 +93,7 @@
           </div>
           <div class="chartContent" v-show="item.openChartFlag">
             <el-table :data="item.Instances" :id="'exportTable'+item.ViewID">
-              <el-table-column prop="" label="" width="100">
+              <el-table-column prop="" label="" width="50">
                 <template slot-scope="scope">
                   <div :style='"width: 10px;height: 10px;border-radius: 50%;background:" + scope.row.bgColor'></div>
                 </template>
@@ -255,7 +255,7 @@
       EcharS
     },
     created() {
-      console.log(this.CMname)
+      // console.log(this.CMname)
       this.createGetDashboardList(); // 先 获取Dashboard列表数据 再 获取监控面板视图
       if (this.$router.query) {
         this.DashboardID = this.$router.query.DashboardID; // 路由传过来的
@@ -267,17 +267,19 @@
         // console.log(newVal, "newVal");
         // this.DashboardID = newVal;
         this.mainLoading = true;
+        this.chartsLoading = true;
         this.getDescribeDashboardView(); // 监控面板展示
       },
       DashboardName() {
         this.mainLoading = true;
+        this.chartsLoading = true;
         this.getDescribeDashboardView(); // 监控面板展示
       }
     },
     methods: {
       // 从展开的列表ID 跳转到别的路由
       goMonitorDetail(row) {
-        console.log(row, 'row');
+        // console.log(row, 'row');
         let name = "";
         let query = {
           id: row.Id
@@ -312,7 +314,7 @@
         });
       },
       GetDat(data) {
-        console.log(data, '时间控件')
+        // console.log(data, '时间控件')
         this.time = data[1].XAxis; // 横坐标时间
         this.startEnd.StartTime = data[1].StartTIme; // 开始时间
         this.startEnd.EndTime = data[1].EndTIme; //  结束时间
@@ -370,7 +372,7 @@
       },
       exportChart() {
         //导出图表
-        alert("導出");
+        // alert("導出");
       },
       deleteChart() {
         //删除图表
@@ -482,7 +484,7 @@
                 };
               });
               this.options = options;
-              console.log(this.options, "options");
+              // console.log(this.options, "options");
             } else {
               let ErrTips = {
                 "AuthFailure.UnauthorizedOperation": "請求未授權。請參考 CAM 文件對鑒權的說明。",
@@ -537,7 +539,7 @@
       // 下拉框显示按钮
       mouseoverSelect(itemVal) {
         this.selectButtonShow = itemVal;
-        console.log(this.selectButtonShow, "this.selectButtonShow", itemVal);
+        // console.log(this.selectButtonShow, "this.selectButtonShow", itemVal);
       },
       // 重命名
       handleRenameControl(name) {
@@ -564,7 +566,7 @@
                 ele.openChartFlag = false; // 列表展开收起的标志
                 ele.dataIndex = 0; // 折线图下面需要展示的数值的索引
                 ele.echartsIndex = index; // echarts图在Viewlist中的索引
-                console.log(this.time[this.time.length - 1], 'a');
+                // console.log(this.time[this.time.length - 1], 'a');
                 ele.showTime = this.time[this.time.length - 1]// echarts图标需要展示的时间
                 let newInstances = [];
                 ele.Instances.forEach((el,i) => {
@@ -628,7 +630,7 @@
                 }
               });
               this.ViewList = ViewList;
-              console.log(this.ViewList, 'this.ViewList');
+              // console.log(this.ViewList, 'this.ViewList');
               this.getAllMonitorData(); // 获取echarts数据
             } else {
               let ErrTips = {
@@ -708,8 +710,8 @@
             params: params
           })
           .then(res => {
-            // this.chartsLoading = false
             this.mainLoading = false;
+            this.chartsLoading = false;
             if (res.Response.Error === undefined) {
               var DataPoints = []; // 取出这个空数组
               res.Response.DataPoints.forEach((ele, i) => {
@@ -803,6 +805,7 @@
       //   }
       // },
       getAllMonitorData() {
+        this.chartsLoading = true;
         this.ViewList.forEach((ele, index) => {
           // Y轴数据
           this.getSingleMonitorData(
@@ -823,10 +826,10 @@
       },
       //导出表格
       exportExcel(ViewID) {
-        console.log(ViewID)
+        // console.log(ViewID)
         /* generate workbook object from table */
         var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable" + ViewID));
-        console.log(wb);
+        // console.log(wb);
         /* get binary string as output */
         var wbout = XLSX.write(wb, {
           bookType: "xlsx",
@@ -841,7 +844,9 @@
             "1300560919-monitor-data" + ".xlsx"
           );
         } catch (e) {
-          if (typeof console !== "undefined") console.log(e, wbout);
+          if (typeof console !== "undefined") {
+            // console.log(e, wbout);
+          }
         }
         return wbout;
       },
@@ -857,6 +862,7 @@
           confirmButtonText: '确定', cancelButtonText: '取消', center: true
         }).then(() => {
           this.deleteDashboardView(ViewID); // 删除监控面板接口
+          this.mainLoading = true;
         }).catch(() => {});
       },
       // 删除监控面板
@@ -866,6 +872,8 @@
             params: params
           }).then(res => {
             if (res.Response.Error === undefined) {
+              this.mainLoading = true;
+              this.chartsLoading = true;
               this.getDescribeDashboardView(); // 获取监控面板视图
             } else {
               let ErrTips = {
@@ -962,13 +970,16 @@
 
   .Dashboard-wrap>>>.chart {
     width: 100%;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
+    // display: flex;
+    // flex-wrap: wrap;
+    // justify-content: space-between;
+    overflow: hidden;
 
     >div.chartList {
       width: 32%;
       margin-bottom: 10px;
+      float: left;
+      margin-right: 1%;
 
       .chartItem {
         padding: 20px;
@@ -1003,7 +1014,7 @@
           display: flex;
           justify-content: center;
           align-items: center;
-          margin-top: 20px;
+          // margin-top: 20px;
         }
       }
 

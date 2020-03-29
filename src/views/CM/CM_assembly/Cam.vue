@@ -192,6 +192,12 @@ export default {
     endTime: function(val) {
       this.timeValue.end = new Date(val * 1000);
     },
+    selectedList: {
+      handler: function () {
+        this.selected()
+      },
+      deep: true
+    },
     timeValue: {
       handler: function(val) {
         console.log(val);
@@ -230,6 +236,13 @@ export default {
     }
   },
   methods: {
+    setNotifyWay: function (notifyWay) {
+      this.cam.channel = notifyWay
+    },
+    setStartAndEndTime: function (startIime, endTime) {
+      this.timeValue.start = new Date(startIime * 1000)
+      this.timeValue.end = new Date(endTime * 1000)
+    },
     // 选中接受组还是接收人
     selectChange() {
       this.triggerInput = "";
