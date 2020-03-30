@@ -21,11 +21,11 @@
         <span slot="title">防護概覽</span>
       </el-menu-item>
       <el-menu-item index="basicProtection">
-        <span slot="title">基础防護</span>
+        <span slot="title">基礎防護</span>
       </el-menu-item>
       <el-submenu index="IpProfessional">
         <template slot="title">
-          <span>高防IP專業版</span>
+          <span>DDoS 高防IP專業版</span>
         </template>
         <el-menu-item-group>
           <el-menu-item class="selectMenu" index="IpProfessional">統計報表</el-menu-item>

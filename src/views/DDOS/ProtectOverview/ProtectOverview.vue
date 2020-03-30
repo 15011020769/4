@@ -324,7 +324,7 @@ export default {
       // type: "bgp",
       type: "net",
       // 下载名称
-      downloadName: "高防IP專業版攻擊記錄",
+      downloadName: "DDoS 高防IP專業版攻擊記錄",
       // 查询输入字段（资源实例id）
       searchInputID: "",
 
@@ -464,7 +464,7 @@ export default {
       //   this.downloadName = "共享包攻擊記錄";
       // } else
       if (param === 'net') {
-        this.downloadName = '高防IP專業版攻擊記錄'
+        this.downloadName = 'DDoS 高防IP專業版攻擊記錄'
       }
       this.describeDDoSEvList();
     },
