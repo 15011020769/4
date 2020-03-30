@@ -1501,7 +1501,7 @@
                     </div>
                   </ul>
                 </div>
-                <div>
+                <div v-if="eventOpt.length !== 0">
                   <p>
                     <el-checkbox v-model="formWrite.checkedGaojing">
                       事件告警
@@ -1535,7 +1535,7 @@
                         </el-select>
                       </p>
                       <i
-                        v-if="formWrite.gaoArr.length !== 1"
+                        v-if="formWrite.gaoArr.length > 1"
                         class="el-icon-error"
                         style="color:#888; margin:0 5px;"
                         @click="delShijian(x)"
@@ -1950,27 +1950,27 @@ export default {
       satisfyVal: 0,
       CalcType: [
         {
-          value: "1",
+          value: 1,
           label: ">"
         },
         {
-          value: "2",
+          value: 2,
           label: ">="
         },
         {
-          value: "3",
+          value: 3,
           label: "<"
         },
         {
-          value: "4",
+          value: 4,
           label: "<="
         },
         {
-          value: "5",
+          value: 5,
           label: "="
         },
         {
-          value: "6",
+          value: 6,
           label: "!="
         }
       ],
@@ -2119,7 +2119,7 @@ export default {
       this.isShow = false;
       this.productListData = data;
       this.typeOpt = data.Metrics;
-      this.eventOpt = data.EventMetrics;
+      this.eventOpt = data.EventMetrics ? data.EventMetrics : [];
       setTimeout(() => {
         this.productListData = {};
         // this.isShow = true;
@@ -2570,18 +2570,24 @@ export default {
       if (this.basicNews.ConditionsTemp) {
         this.radioChufa = "1";
       } else {
+        this.formWrite.gaoArr = [];
         this.formWrite.satisfyVal = this.basicNews.IsUnionRule;
         if (this.basicNews.EventConfig) {
           var _EventConfig = this.basicNews.EventConfig;
-          this.formWrite.gaoArr = [];
+
           for (let i in _EventConfig) {
             this.formWrite.gaoArr.push({
               eventVal: _EventConfig[i].EventId
             });
           }
         } else {
-          this.formWrite.gaoArr[0].eventVal = this.eventOpt[0].EventId;
+          if (this.eventOpt.length !== 0) {
+            this.formWrite.gaoArr.push({
+              eventVal: this.eventOpt[0].EventId
+            });
+          }
         }
+        console.log(this.basicNews.ConditionsConfig);
         if (this.basicNews.ConditionsConfig) {
           var _ConditionsConfig = this.basicNews.ConditionsConfig;
           var _typeVal = "";
@@ -2607,7 +2613,7 @@ export default {
               max: _max,
               typeVal: _typeVal,
               censusVal: _ConditionsConfig[i].Period,
-              calcTypeVal: _ConditionsConfig[i].CalcType.toString(),
+              calcTypeVal: _ConditionsConfig[i].CalcType,
               number: _ConditionsConfig[i].CalcValue,
               unit: _ConditionsConfig[i].Unit,
               continuousCycleVal:
@@ -2771,6 +2777,7 @@ export default {
           this.Conditions = this.triggerCondition[i];
         }
       }
+      console.log(this.Conditions);
       for (let j in this.Conditions.Conditions) {
         this.ContinueTime.push({
           value: this.Conditions.Conditions[j].ContinueTime,

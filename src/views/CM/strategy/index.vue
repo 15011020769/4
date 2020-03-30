@@ -358,6 +358,7 @@
           placeholder="請輸告警策略名稱，20字以內"
           v-model="GroupName"
           @input="EditTips"
+          maxlength="20"
         ></el-input>
         <p v-if="tipsShow">告警策略名稱不能爲空</p>
       </div>
@@ -1340,6 +1341,14 @@ export default {
         this.tipsShow = true;
       } else {
         this.tipsShow = false;
+      }
+      if (this.GroupName.length === 20) {
+        this.$message({
+          message: "名稱不能超過20個字",
+          type: "error",
+          showClose: true,
+          duration: 0
+        });
       }
     },
     // 修改告警管道
