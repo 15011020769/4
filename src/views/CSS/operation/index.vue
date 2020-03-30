@@ -207,9 +207,12 @@ export default {
         disabledDate(time) {
           let timeOptionRange = vue.timeOptionRange;
           if(timeOptionRange){
-            return moment(timeOptionRange).diff(time, 'days') > 30 || moment(time).diff(timeOptionRange, 'days') > 30 || time > moment()
+            return moment(timeOptionRange).diff(time, 'days') > 30
+            || moment(time).diff(timeOptionRange, 'days') > 30
+            || time > moment()
+            || time < moment().startOf('years')
           }
-          return time > moment()
+          return time > moment() || time < moment().startOf('years')
         },
         onPick(time){
           if(time.minDate && !time.maxDate){
@@ -299,7 +302,7 @@ export default {
           times = [moment().subtract(6, 'days'), moment().endOf('day')]
           break
         case 4:
-          times = [moment().subtract(28, 'days'), moment().endOf('day')]
+          times = [moment().subtract(29, 'days'), moment().endOf('day')]
           break
         default:
           break
@@ -332,35 +335,38 @@ export default {
         StartTime: moment(this.StartTIme).format('YYYY-MM-DD HH:mm:ss'),
         EndTime: moment(this.EndTIme).format('YYYY-MM-DD HH:mm:ss'),
         Granularity: 60,
-        'CountryOrAreaNames.0': 'Taiwan'
+        MainlandOrOversea: "Mainland"
+        // 'CountryOrAreaNames.0': 'Taiwan'
       }
-      // const params2 = {
-      //   Version: "2018-08-01",
-      //   StartTime: moment(this.StartTIme).format("YYYY-MM-DD HH:mm:ss"),
-      //   EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:mm:ss"),
-      //   Granularity: 60,
-      //   MainlandOrOversea: "Oversea",
-      // };
+      const params2 = {
+        Version: "2018-08-01",
+        StartTime: moment(this.StartTIme).format("YYYY-MM-DD HH:mm:ss"),
+        EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:mm:ss"),
+        Granularity: 60,
+        MainlandOrOversea: "Mainland"
+        // MainlandOrOversea: "Oversea",
+      };
       if (this.domainCheckedListCopy.length !== this.domainsData.length) {
         this.domainCheckedListCopy.forEach((item, index) => {
           params['PlayDomains.' + index] = item
+          params2['PlayDomains.' + index] = item
         })
       }
       // 不查运营商 看腾讯页面0和1的数据请求CSS_MBPS，2和3的数据请求DESCRIBE_PLAY_STAT_INFOLIST
-      // this.axios.post(CSS_MBPS, params2).then(res => {
-      //   if (res.Response.Error) {
-      //     this.$message.error(res.Response.Error.Message);
-      //   } else {
-      //     this.tab[0].value = res.Response.PeakBandwidth
-      //     this.tab[1].value = res.Response.SumFlux
-      //   }
-      // });
+      this.axios.post(CSS_MBPS, params2).then(res => {
+        if (res.Response.Error) {
+          this.$message.error(res.Response.Error.Message);
+        } else {
+          this.tab[0].value = res.Response.PeakBandwidth
+          this.tab[1].value = res.Response.SumFlux
+        }
+      });
       this.axios.post(DESCRIBE_PLAY_STAT_INFOLIST, params).then(res => {
         if (res.Response.Error) {
           this.$message.error(res.Response.Error.Message)
         } else {
-          this.tab[0].value = res.Response.MaxBandwidth // 带宽峰值
-          this.tab[1].value = res.Response.TotalFlux // 总流量
+          // this.tab[0].value = res.Response.MaxBandwidth // 带宽峰值
+          // this.tab[1].value = res.Response.TotalFlux // 总流量
           this.tab[2].value = res.Response.TotalRequest // 总请求数
           this.tab[3].value = res.Response.MaxOnline // 并发连接数
         }

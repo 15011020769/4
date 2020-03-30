@@ -83,9 +83,12 @@ export default {
         disabledDate(time) {
           let timeOptionRange = vue.timeOptionRange;
           if(timeOptionRange){
-            return moment(timeOptionRange).diff(time, 'days') > 30 || moment(time).diff(timeOptionRange, 'days') > 30 || time > moment()
+            return moment(timeOptionRange).diff(time, 'days') > 30
+            || moment(time).diff(timeOptionRange, 'days') > 30
+            || time > moment()
+            || time < moment().startOf('years')
           }
-          return time > moment()
+          return time > moment() || time < moment().startOf('years')
         },
         onPick(time){
           if(time.minDate && !time.maxDate){
@@ -145,7 +148,7 @@ export default {
           times = [moment().subtract(6, 'days'), moment().endOf('day')]
           break
         case 4:
-          times = [moment().subtract(28, 'days'), moment().endOf('day')]
+          times = [moment().subtract(29, 'days'), moment().endOf('day')]
           break
         default:
           break
