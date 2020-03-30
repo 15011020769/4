@@ -87,7 +87,8 @@
                     <template slot-scope="scope">{{formatSeconds(scope.row.Duration)}}</template>
                   </el-table-column>
                   <el-table-column prop label="告警管道" width="130">
-                    <template slot-scope="scope">郵件、簡訊</template>
+                    <!-- <template slot-scope="scope">郵件、簡訊</template> -->
+                    <template slot-scope="scope">郵件</template>
                   </el-table-column>
                   <el-table-column prop label="告警狀態" width="100">
                     <template slot-scope="scope">

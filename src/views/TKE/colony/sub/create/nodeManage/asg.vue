@@ -967,11 +967,72 @@ export default {
 
       let InstanceAdvancedSettings = {
         MountTarget: "",
-        DockerGraphPath: this.inputRoom,
-        UserScript: "",
-        Unschedulable: 0,
+        // DockerGraphPath: this.inputRoom,
+        // UserScript: "",
+        // Unschedulable: 0,
         ExtraArgs: { Kubelet: [] }
       };
+      if (this.checked) {
+        InstanceAdvancedSettings.DockerGraphPath = this.inputRoom;
+      } else {
+        InstanceAdvancedSettings.DockerGraphPath = "";
+      }
+      if (this.isActive) {
+        InstanceAdvancedSettings.UserScript = Base64.encode(this.textarea2);
+        if (this.checkedThree) {
+          //封锁
+          InstanceAdvancedSettings.Unschedulable = 1;
+        } else {
+          InstanceAdvancedSettings.Unschedulable = 0;
+        }
+      }
+      
+      if (this.advancedSettingArr.length > 0) {
+            var array = [];
+            this.advancedSettingArr.forEach((v, i) => {
+              array.push({
+                Name: v.name,
+                Value: v.value
+              })
+            });
+            InstanceAdvancedSettings.Labels=array;
+          } else {
+            InstanceAdvancedSettings.Labels = [
+              {
+                Name: "",
+                Value: ""
+              }
+            ];
+           
+          }
+      // if (this.advancedSettingArr.length > 0) {
+      //   // for (let i in this.advancedSettingArr) {
+      //   //   params[
+      //   //     "InstanceAdvancedSettings.Labels." + i + ".Name"
+      //   //   ] = this.advancedSettingArr[i].name;
+      //   //   params[
+      //   //     "InstanceAdvancedSettings.Labels." + i + ".Value"
+      //   //   ] = this.advancedSettingArr[i].value;
+      //   // }
+      //   this.advancedSettingArr.forEach((v, i) => {
+      //     var array = {};
+      //     array = {
+      //       Name: v.name,
+      //       Value: v.value
+      //     };
+      //     InstanceAdvancedSettings.Labels.push(array);
+      //   });
+      // } else {
+      //   InstanceAdvancedSettings.Labels = [
+      //     {
+      //       Name: "",
+      //       Value: ""
+      //     }
+      //   ];
+      //   // params["InstanceAdvancedSettings.Labels.0.Name"] = "";
+      //   // params["InstanceAdvancedSettings.Labels.0.Value"] = "";
+      // }
+
       let dataArr = this.buyDataDiskArr;
       let datadisk = [];
       let dataDisks = [];
@@ -1002,38 +1063,36 @@ export default {
         LaunchConfigurePara: JSON.stringify(LaunchConfigurePara), //启动配置
         InstanceAdvancedSettings: InstanceAdvancedSettings
       };
-      if (this.checked) {
-        params["InstanceAdvancedSettings.DockerGraphPath"] = this.inputRoom;
-      } else {
-        params["InstanceAdvancedSettings.DockerGraphPath"] = "";
-      }
-      // params["InstanceAdvancedSettings.UserScript"] = "";
-      // params["InstanceAdvancedSettings.Unschedulable"] = 0;
-      if (this.isActive) {
-        params["InstanceAdvancedSettings.UserScript"] = Base64.encode(
-          this.textarea2
-        );
-        if (this.checkedThree) {//封锁
-          params["InstanceAdvancedSettings.Unschedulable"] = 1;
-        } else {
-          params["InstanceAdvancedSettings.Unschedulable"] = 0;
-        }
-      }
-      if (this.advancedSettingArr.length > 0) {
-        for (let i in this.advancedSettingArr) {
-          params[
-            "InstanceAdvancedSettings.Labels." + i + ".Name"
-          ] = this.advancedSettingArr[i].name;
-          params[
-            "InstanceAdvancedSettings.Labels." + i + ".Value"
-          ] = this.advancedSettingArr[i].value;
-        }
-      } else {
-        params["InstanceAdvancedSettings.Labels.0.Name"] = "";
-        params["InstanceAdvancedSettings.Labels.0.Value"] = "";
-      }
-      // params["InstanceAdvancedSettings.Labels.0.Name"] = "";
-      // params["InstanceAdvancedSettings.Labels.0.Value"] = "";
+      // if (this.checked) {
+      //   params["InstanceAdvancedSettings.DockerGraphPath"] = this.inputRoom;
+      // } else {
+      //   params["InstanceAdvancedSettings.DockerGraphPath"] = "";
+      // }
+
+      // if (this.isActive) {
+      //   params["InstanceAdvancedSettings.UserScript"] = Base64.encode(
+      //     this.textarea2
+      //   );
+      //   if (this.checkedThree) {
+      //     //封锁
+      //     params["InstanceAdvancedSettings.Unschedulable"] = 1;
+      //   } else {
+      //     params["InstanceAdvancedSettings.Unschedulable"] = 0;
+      //   }
+      // }
+      // if (this.advancedSettingArr.length > 0) {
+      //   for (let i in this.advancedSettingArr) {
+      //     params[
+      //       "InstanceAdvancedSettings.Labels." + i + ".Name"
+      //     ] = this.advancedSettingArr[i].name;
+      //     params[
+      //       "InstanceAdvancedSettings.Labels." + i + ".Value"
+      //     ] = this.advancedSettingArr[i].value;
+      //   }
+      // } else {
+      //   params["InstanceAdvancedSettings.Labels.0.Name"] = "";
+      //   params["InstanceAdvancedSettings.Labels.0.Value"] = "";
+      // }
 
       // params[ //不能传递参数
       //   "EnhancedService.SecurityService.Enabled"

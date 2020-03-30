@@ -64,9 +64,9 @@
         <p style="margin:0 0 20px 30px;">
           <el-checkbox label="郵件"></el-checkbox>
         </p>
-        <p style="margin-left:30px">
+        <!-- <p style="margin-left:30px">
           <el-checkbox label="間訊"></el-checkbox>
-        </p>
+        </p> -->
       </el-checkbox-group>
     </p>
   </div>
@@ -110,9 +110,10 @@ export default {
       data.NotifyWay.forEach((v, i) => {
         if (v == "EMAIL") {
           v = "郵件";
-        } else if (v == "SMS") {
-          v = "間訊";
         }
+        //  else if (v == "SMS") {
+        //   v = "間訊";
+        // }
         this.qudaoCheckList.push(v);
       });
     }
