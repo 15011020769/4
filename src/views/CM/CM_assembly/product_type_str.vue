@@ -936,6 +936,7 @@
         let parms = {
           Region: localStorage.getItem("regionv2"),
           Version: "2017-03-12",
+          Limit: 100
         }
         if (this.searchParam.label !== undefined && this.searchParam.value !== undefined) {
           parms["Filters.0.Name"] = this.searchParam.label;
