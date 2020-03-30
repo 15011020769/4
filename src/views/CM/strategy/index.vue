@@ -96,7 +96,6 @@
         v-loading="loadShow"
         height="450"
         @selection-change="handleSelectionChange"
-        id="exportTable"
       >
         <el-table-column type="selection" width="50"></el-table-column>
         <el-table-column label="策略名稱">
@@ -125,11 +124,10 @@
                     {{ i.MetricShowName }}
                     {{ i.CalcType | CalcType }} {{ i.CalcValue
                     }}{{ i.Unit }}，持续{{ i.ContinueTime / 60 }}分钟，
-                    <span v-if="i.AlarmNotifyType != 1"
-                      >按{{ i.AlarmNotifyPeriod | AlarmNotifyPeriod
-                      }}{{
-                        i.AlarmNotifyPeriod > 0 ? "重复告警" : "不重复告警"
-                      }}
+                    <span v-if="i.AlarmNotifyType != 1">
+                      <i v-if="i.AlarmNotifyType != 0"
+                        >按{{ i.AlarmNotifyPeriod | AlarmNotifyPeriod }}</i
+                      >{{ i.AlarmNotifyPeriod > 0 ? "重复告警" : "不重复告警" }}
                     </span>
                     <span v-else>
                       按週期指数递增重复告警
@@ -159,9 +157,10 @@
                     {{ item.MetricShowName }}
                     {{ item.CalcType | CalcType }} {{ item.CalcValue
                     }}{{ item.Unit }}，持續{{ item.ContinueTime / 60 }}分鍾，
-                    <span v-if="item.AlarmNotifyType != 1"
-                      >按{{ item.AlarmNotifyPeriod | AlarmNotifyPeriod
-                      }}{{
+                    <span v-if="item.AlarmNotifyType != 1">
+                      <i v-if="item.AlarmNotifyType != 0"
+                        >按{{ item.AlarmNotifyPeriod | AlarmNotifyPeriod }}</i
+                      >{{
                         item.AlarmNotifyPeriod > 0 ? "重复告警" : "不重复告警"
                       }}
                     </span>
@@ -328,6 +327,153 @@
           </template>
         </el-table-column>
       </el-table>
+      <div style="display:none;">
+        <el-table
+          :data="tableData"
+          style="width: 100%"
+          height="450"
+          id="exportTable"
+        >
+          <el-table-column label="策略名稱">
+            <template slot-scope="scope">
+              <a class="defaultDialog">{{ scope.row.GroupName }}</a>
+            </template>
+          </el-table-column>
+          <el-table-column label="觸發條件">
+            <template slot-scope="scope">
+              <div
+                v-for="item in scope.row.Conditions"
+                class="trigger-condition"
+              >
+                <p>
+                  {{ item.MetricShowName }}
+                  {{ item.CalcType | CalcType }} {{ item.CalcValue
+                  }}{{ item.Unit }}，持續{{ item.ContinueTime / 60 }}分鍾，
+                  <span v-if="item.AlarmNotifyType != 1">
+                    <i v-if="item.AlarmNotifyType != 0"
+                      >按{{ item.AlarmNotifyPeriod | AlarmNotifyPeriod }}</i
+                    >{{
+                      item.AlarmNotifyPeriod > 0 ? "重复告警" : "不重复告警"
+                    }}
+                  </span>
+                  <span v-else>
+                    按周期指数递增重复告警
+                  </span>
+                </p>
+              </div>
+              <div
+                v-for="(items, indexs) in scope.row.EventConditions"
+                :key="indexs"
+                class="trigger-condition"
+              >
+                <p>
+                  {{ items.EventShowName }}，{{
+                    items.AlarmNotifyPeriod > 0 ? "重複告警" : "不重複告警"
+                  }}
+                </p>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column label="所屬專案">
+            <template slot-scope="scope">
+              {{ scope.row.ProjectId | ProjectName }}
+            </template>
+          </el-table-column>
+          <el-table-column label="策略類型">
+            <template slot-scope="scope">
+              <el-popover placement="left-start" trigger="hover">
+                <div>
+                  <p>
+                    <span
+                      >策略類型：
+                      <span v-if="scope.row.IsDefault == 1">預設</span
+                      >{{ scope.row.Name }}</span
+                    >
+                  </p>
+                  <p
+                    v-if="
+                      scope.row.IsDefault == 0 &&
+                        scope.row.CanSetDefault === false
+                    "
+                    style="color:#888;"
+                  >
+                    此告警策略綁定的物件是實力組，當前不支持設置爲預設策略
+                  </p>
+                </div>
+                <div slot="reference">
+                  <div
+                    :class="{ strong: scope.row.IsDefault == 1 }"
+                    @mouseenter="enter(scope.$index)"
+                    @mouseleave="leave()"
+                  >
+                    <span v-if="scope.row.IsDefault == 1">預設</span
+                    >{{ scope.row.Name }}
+                    <p
+                      v-show="edit && scope.$index == current"
+                      v-if="scope.row.IsDefault != 1 && scope.row.CanSetDefault"
+                    >
+                      <a href="javascript:;" @click="SetDefault(scope.row)"
+                        >設置預設</a
+                      >
+                    </p>
+                  </div>
+                </div>
+              </el-popover>
+            </template>
+          </el-table-column>
+          <el-table-column label="已啓用/實例數">
+            <template slot-scope="scope">
+              <div>{{ scope.row.NoShieldedSum }} / {{ scope.row.UseSum }}</div>
+              <div
+                class="group-color"
+                v-if="scope.row.InstanceGroup != undefined"
+              >
+                組：{{ scope.row.InstanceGroup.GroupName }}
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column label="最後修改">
+            <template slot-scope="scope">
+              <div>{{ scope.row.LastEditUin }}</div>
+              <div>{{ scope.row.UpdateTime | formatDate }}</div>
+            </template>
+          </el-table-column>
+          <el-table-column label="告警管道">
+            <template slot-scope="scope">
+              <div v-if="scope.row.ReceiverInfos != undefined">
+                <div v-for="(i, x) in scope.row.ReceiverInfos" :key="x">
+                  <p v-if="i.ReceiverGroupList.length > 0">
+                    接收組：{{ i.ReceiverGroupList.length }}個
+                  </p>
+                  <p v-if="i.ReceiverUserList.length > 0">
+                    接收人：{{ i.ReceiverUserList.length }}個
+                  </p>
+                  <p
+                    v-if="
+                      i.ReceiverUserList.length === 0 &&
+                        i.ReceiverGroupList.length === 0
+                    "
+                  >
+                    接收組：0個
+                  </p>
+                  <p>
+                    有效期：{{ i.StartTime | EndTime }} -
+                    {{ i.EndTime | EndTime }}
+                  </p>
+                  <p v-if="i.NotifyWay.length > 0">
+                    管道：<span v-for="(j, k) in i.NotifyWay" :key="k"
+                      >{{ j | NotifyWay
+                      }}<i v-if="i.NotifyWay.length - 1 > k">、</i></span
+                    >
+                  </p>
+                  <p v-else>管道：-</p>
+                </div>
+              </div>
+              <div v-else>-</div>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
       <!-- 分頁 -->
       <div class="tke-page">
         <div class="block">
@@ -829,7 +975,10 @@ export default {
     ProductTypeCpt
   },
   mounted() {
-    this.ListInit();
+    setTimeout(() => {
+      this.ListInit();
+    }, 2000);
+
     this.Project();
   },
   methods: {

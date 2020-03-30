@@ -89,8 +89,9 @@
               i.ContinueTime / 60
             }}分钟，
             <span v-if="i.AlarmNotifyType != 1"
-              >按{{ i.AlarmNotifyPeriod | AlarmNotifyPeriod
-              }}{{ i.AlarmNotifyPeriod > 0 ? "重复告警" : "不重复告警" }}
+              >
+              <i v-if="i.AlarmNotifyType != 0">按{{ i.AlarmNotifyPeriod | AlarmNotifyPeriod
+              }}</i>{{ i.AlarmNotifyPeriod > 0 ? "重复告警" : "不重复告警" }}
             </span>
             <span v-else>
               按週期指数递增重复告警
