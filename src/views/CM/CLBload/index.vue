@@ -26,9 +26,11 @@
         <el-table-column prop :label="$t('CVM.clBload.jk')" width="80">
           <template slot-scope="scope">
             <div v-for="(i,index) in scope.row.LoadBalancerVips" :key="index">
-              <div class="a"
+              <!-- <div class="a"
                 @click="jump(scope.row.LoadBalancerId,i,scope.row.LoadBalancerType,scope.row.NumericalVpcId)">
-              </div>
+              </div> -->
+              <el-button type="text" class="iconfont icon-tubiaozhanshi" style="color: #888;"
+                @click="jump(scope.row.LoadBalancerId,i,scope.row.LoadBalancerType,scope.row.NumericalVpcId)"></el-button>
             </div>
           </template>
         </el-table-column>

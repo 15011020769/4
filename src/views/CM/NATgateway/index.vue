@@ -28,7 +28,9 @@
             <!-- <a @click="jump(scope.row.NatGatewayId)" style="cursor:pointer;">
               <i class="el-icon-share"></i>
             </a>-->
-            <div class="a" @click="jump(scope.row.NatGatewayId)"></div>
+            <!-- <div class="a" @click="jump(scope.row.NatGatewayId)"></div> -->
+            <el-button type="text" class="iconfont icon-tubiaozhanshi" style="color: #888;"
+              @click="jump(scope.row.NatGatewayId)"></el-button>
           </template>
         </el-table-column>
 

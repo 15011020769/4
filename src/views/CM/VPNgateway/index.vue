@@ -25,10 +25,9 @@
           </el-table-column>
           <el-table-column prop :label="$t('CVM.clBload.jk')">
             <template slot-scope="scope">
-              <div class="a" @click="jump(scope.row.VpnGatewayId)"></div>
-              <!-- <a @click="jump(scope.row.VpnGatewayId)" style="cursor:pointer;">
-                <i class="el-icon-share"></i>
-              </a>-->
+              <!-- <div class="a" @click="jump(scope.row.VpnGatewayId)"></div> -->
+              <el-button type="text" class="iconfont icon-tubiaozhanshi" style="color: #888;"
+                @click="jump(scope.row.VpnGatewayId)"></el-button>
             </template>
           </el-table-column>
           <el-table-column prop :label="$t('CVM.clBload.zt')">

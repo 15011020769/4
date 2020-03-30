@@ -23,8 +23,9 @@
         </el-table-column>
         <el-table-column prop :label="$t('CVM.clBload.jk')">
           <template slot-scope="scope">
-            <!-- <i @click="jump(scope.row.Name)" style="cursor:pointer;"><i class="el-icon-share"></i></a> -->
-            <div class="a" @click="jump(scope.row.Name)"></div>
+            <!-- <div class="a" @click="jump(scope.row.Name)"></div> -->
+            <el-button type="text" class="iconfont icon-tubiaozhanshi" style="color: #888;"
+              @click="jump(scope.row.Name)"></el-button>
           </template>
         </el-table-column>
         <el-table-column prop :label="$t('CVM.objectStorage.dy')">

@@ -28,7 +28,8 @@
         </el-table-column>
         <el-table-column prop :label="$t('CVM.clBload.jk')">
           <template slot-scope="scope">
-            <div class="a" @click="jump(scope.row.InstanceId,scope.row.SystemDisk.DiskId)"></div>
+            <el-button type="text" class="iconfont icon-tubiaozhanshi" style="color: #888;"
+             @click="jump(scope.row.InstanceId,scope.row.SystemDisk.DiskId)"></el-button>
           </template>
         </el-table-column>
         <el-table-column prop :label="$t('CVM.clBload.zt')">
