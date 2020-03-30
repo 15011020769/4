@@ -209,11 +209,11 @@
                     <el-button type="text" size="mini" @click="configTriggerAddConditions">添加</el-button>
                   </div>
                   <!-- 事件告警 -->
-                  <p style="line-height: 28px">
+                  <p style="line-height: 28px" v-if="product.EventMetrics !== undefined">
                     <el-checkbox v-model="formInline.alarmCheckbok" label="事件告警">事件告警</el-checkbox>
                     <i class="el-icon-info" style="color:#888; margin:0 5px;"></i>
                   </p>
-                  <div style="padding-left: 21px">
+                  <div style="padding-left: 21px" v-if="product.EventMetrics !== undefined">
                     <div v-for="(feItem, feIndex) in formInline.configTrigger.EventConditions" :key="feIndex">
                       <el-form-item label-width="0px">
                         <el-select v-model="feItem.EventID" style="width:180px;" :disabled="!formInline.alarmCheckbok.includes('事件告警')">
@@ -528,6 +528,11 @@ export default {
     },
     configTriggerAddEventConditions: function () {
       let { EventMetrics } = this.product
+      if (!EventMetrics) {
+        let index = this.formInline.alarmCheckbok.indexOf('事件告警')
+        if (index !== -1) this.formInline.alarmCheckbok.splice(index, 1)
+        return
+      }
       for (let i = 0; i < EventMetrics.length; i++) {
         let exist = this.formInline.configTrigger.EventConditions.some(item => {
           return item.EventID === EventMetrics[i].EventId

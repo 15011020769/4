@@ -193,8 +193,8 @@ export default {
       this.timeValue.end = new Date(val * 1000);
     },
     selectedList: {
-      handler: function () {
-        this.selected()
+      handler: function() {
+        this.selected();
       },
       deep: true
     },
@@ -229,18 +229,20 @@ export default {
   },
   mounted() {
     if (this.type === "user") {
+      this.cam.selectType = "user";
       this.userList(); // 查询接收人
     } else {
+      this.cam.selectType = "group";
       this.userGroup(); // 查询接收组
     }
   },
   methods: {
-    setNotifyWay: function (notifyWay) {
-      this.cam.channel = notifyWay
+    setNotifyWay: function(notifyWay) {
+      this.cam.channel = notifyWay;
     },
-    setStartAndEndTime: function (startIime, endTime) {
-      this.timeValue.start = new Date(startIime * 1000)
-      this.timeValue.end = new Date(endTime * 1000)
+    setStartAndEndTime: function(startIime, endTime) {
+      this.timeValue.start = new Date(startIime * 1000);
+      this.timeValue.end = new Date(endTime * 1000);
     },
     setType: function (type) {
       this.cam.selectType = type
