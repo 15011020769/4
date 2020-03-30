@@ -117,7 +117,7 @@
       <span>接收管道&nbsp;&nbsp;</span>
       <el-checkbox-group v-model="cam.channel" @change="selectChannel">
         <el-checkbox label="郵件"></el-checkbox>
-        <el-checkbox label="簡訊"></el-checkbox>
+        <!-- <el-checkbox label="簡訊"></el-checkbox> -->
       </el-checkbox-group>
     </p>
   </div>
@@ -159,7 +159,7 @@ export default {
         selectUserGroup: [], // 接收组 --> table表格选中
         selectUserList: [], // 接收人 --> table表格选中
         time: [], // 选中的时间
-        channel: ["郵件", "簡訊"] // 选中的管道
+        channel: ["郵件"] // 选中的管道
       }
     };
   },
@@ -244,9 +244,9 @@ export default {
       this.timeValue.start = new Date(startIime * 1000);
       this.timeValue.end = new Date(endTime * 1000);
     },
-    setType: function (type) {
-      this.cam.selectType = type
-      this.selectChange()
+    setType: function(type) {
+      this.cam.selectType = type;
+      this.selectChange();
     },
     // 选中接受组还是接收人
     selectChange() {
@@ -317,7 +317,6 @@ export default {
       this.axios
         .post(GET_GROUP, params)
         .then(res => {
-          this.loadingShow = false;
           if (res.Response.Error === undefined) {
             this.groupData.push(res.Response);
             if (this.groupData.length === this.tableData.length) {
@@ -330,6 +329,7 @@ export default {
               });
               this.tableData2 = this.tableData;
               this.selected();
+              this.loadingShow = false;
             }
           } else {
             let ErrTips = {
@@ -350,7 +350,7 @@ export default {
     },
 
     // 查询接收人数据
-    async userList () {
+    async userList() {
       this.userListLoading = true;
       let userList = {
         Type: "SubAccount",

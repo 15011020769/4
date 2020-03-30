@@ -492,7 +492,7 @@
               </el-option>
             </el-select>
           </div>
-          <div>
+          <!-- <div>
             <p>
               <span>簡訊</span>
               <span>已開通數:{{ SMSOpen }},未開通數:{{ SMSClose }}</span>
@@ -506,7 +506,7 @@
               >
               </el-option>
             </el-select>
-          </div>
+          </div> -->
           <!-- <div>
             <p>
               <span>微信</span>
