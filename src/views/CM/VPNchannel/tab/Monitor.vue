@@ -172,7 +172,7 @@
           "Outpkg": '個/秒',
           "Inpkg": '個/秒',
           "Pkgdrop": '%',
-          "Delay": 'm'
+          "Delay": 'ms'
         },
         Tips: {
           "Outbandwidth": 'VPN通道平均每秒出流量',
