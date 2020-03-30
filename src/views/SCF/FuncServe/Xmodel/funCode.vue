@@ -771,7 +771,7 @@ export default {
 
     // 更新函数代码
     updateCsliteFun(param) {
-      this.axios.post(UPD_FUN_CODE, param).then(res => {
+      this.axios.post('http://152.136.25.227:8868/product/' + UPD_FUN_CODE, param).then(res => {
         if (res.Response.Error === undefined) {
           // this.$message({
           //   message: '保存成功',
