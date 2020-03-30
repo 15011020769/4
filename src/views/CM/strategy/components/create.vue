@@ -30,7 +30,8 @@
           <!-- 告警對象-》選擇部分對象 -->
           <div style="margin-bottom: 18px" v-show="radio === '2'">
             <div style="margin-left: 70px">
-              <cam-transfer-cpt v-loading="loading" :productData="product" isShowRight @projectId="projectIds" @searchParam="searchParams" @multipleSelection="selectDatas"></cam-transfer-cpt>
+              <cam-transfer-cpt ref="camTransferCpt" v-loading="loading" :productData="product" isShowRight @projectId="projectIds"
+                                @searchParam="searchParams" @multipleSelection="selectDatas"></cam-transfer-cpt>
             </div>
           </div>
           <!-- 告警對象-》 選擇實例組 -->
@@ -75,7 +76,7 @@
                         <div class="indication-alarm">
                           <span>if</span>
                           <el-form-item label-width="0px" style="display: inline-block">
-                            <el-select v-model="cItem.MetricID" style="width:150px;" disabled>
+                            <el-select v-model="cItem.MetricId" style="width:150px;" disabled>
                               <el-option v-for="(item, index) in product.Metrics" :key="index" :label="item.MetricShowName" :value="item.MetricId"></el-option>
                             </el-select>
                           </el-form-item>
@@ -144,6 +145,10 @@
                 <el-radio v-model="radioChufa" label="2">配置觸發條件</el-radio>
                 <!--                <div class="tip">請至少配置1項觸發條件</div>-->
                 <div v-show="radioChufa === '2'" style="padding: 10px">
+                  <div v-if="formInline.alarmCheckbok.length === 0"
+                       style="color: #b43537;border: 1px solid #f6b5b5;background-color: #fcecec; line-height: 27px;padding: 10px 30px 10px 20px;margin-bottom: 20px;">
+                    请至少配置1项触发条件
+                  </div>
                   <p style="line-height: 28px">
                     <el-checkbox v-model="formInline.alarmCheckbok" label="指標告警">指標告警</el-checkbox>
                   </p>
@@ -159,7 +164,7 @@
                       <div class="indication-alarm">
                         <span>if</span>
                         <el-form-item label-width="0px" style="display: inline-block">
-                          <el-select v-model="cItem.MetricID" style="width:150px;" :disabled="!formInline.alarmCheckbok.includes('指標告警')">
+                          <el-select v-model="cItem.MetricId" style="width:150px;" :disabled="!formInline.alarmCheckbok.includes('指標告警')">
                             <el-option v-for="(item, index) in product.Metrics" :key="index" :label="item.MetricShowName" :value="item.MetricId"></el-option>
                           </el-select>
                         </el-form-item>
@@ -410,7 +415,9 @@ export default {
       receivingObjectData: [],
       receivingObjectLoad: false,
       ReceiverInfos: [],
-      saveBtnIsDisable: false
+      saveBtnIsDisable: false,
+      fromEventCenterParam: null,
+      isFromEventCenterInit: false
     }
   },
   watch: {
@@ -418,7 +425,7 @@ export default {
       handler: function (val) {
         val.forEach((item, index) => {
           let tempObj = this.product.Metrics.find(pmItem => {
-            return pmItem.MetricId === item.MetricID
+            return pmItem.MetricId === item.MetricId
           })
           if (tempObj) {
             this.formInline.configTrigger.Conditions[index].Unit =
@@ -466,7 +473,6 @@ export default {
               if (IsUnionRule === 1) this.formInline.configTrigger.AlarmNotifyPeriod = ConditionsConfig[0].AlarmNotifyPeriod
               this.formInline.configTrigger.Conditions = ConditionsConfig.map(item => {
                 item.MetricShowName = '磁碟利用率'
-                item.MetricID = item.MetricId
                 item.continuePeriod = item.AlarmNotifyPerio
                 if (item.ContinueTime !== undefined) {
                   item.ContinueTime = [1, 2, 3, 4, 5].includes(item.ContinueTime) ? item.ContinueTime : item.ContinueTime / item.Period
@@ -490,6 +496,17 @@ export default {
           this.isInit = false
         }
       }
+      if (this.isFromEventCenterInit) {
+        let { ProjectId, InstanceId, EventId } = this.fromEventCenterParam
+        let tempProjectId = this.formInline.projectId
+        this.formInline.projectId = ProjectId
+        if (tempProjectId === ProjectId) {
+          this.$refs.camTransferCpt.byIdSetSeleteList(InstanceId)
+          this.formInline.alarmCheckbok = ['事件告警']
+          this.formInline.configTrigger.EventConditions[0].EventID = EventId
+          this.isFromEventCenterInit = false
+        }
+      }
       this.projectIdChange = false
       this.loading = false
     },
@@ -500,12 +517,12 @@ export default {
       let { Metrics } = this.product
       for (let i = 0; i < Metrics.length; i++) {
         let exist = this.formInline.configTrigger.Conditions.some(item => {
-          return item.MetricID === Metrics[i].MetricId
+          return item.MetricId === Metrics[i].MetricId
         })
         if (!exist) {
           this.formInline.configTrigger.Conditions.push({
             key: Date.now(),
-            MetricID: Metrics[i].MetricId,
+            MetricId: Metrics[i].MetricId,
             Period: 60,
             CalcType: '1',
             CalcValue: 0,
@@ -518,7 +535,7 @@ export default {
       }
       this.formInline.configTrigger.Conditions.push({
         key: Date.now(),
-        MetricID: Metrics[0].MetricId,
+        MetricId: Metrics[0].MetricId,
         Period: 60,
         CalcType: '1',
         CalcValue: 0,
@@ -753,6 +770,13 @@ export default {
               duration: 0
             })
             return
+          } else if (this.radioChufa === '2' && this.formInline.alarmCheckbok.length === 0) {
+            this.$message({
+              message: '請選擇告警條件 ',
+              type: 'error',
+              showClose: true,
+              duration: 0
+            })
           }
           this.saveSubmit()
         } else {
@@ -778,7 +802,7 @@ export default {
       if (this.radioChufa === '1') {
         let { Conditions, EventConditions } = triggerCondition
         Conditions.forEach((item, index) => {
-          params[`Conditions.${index}.MetricId`] = item.MetricID
+          params[`Conditions.${index}.MetricId`] = item.MetricId
           params[`Conditions.${index}.AlarmNotifyType`] = item.AlarmNotifyType
           params[`Conditions.${index}.AlarmNotifyPeriod`] =
             item.AlarmNotifyPeriod
@@ -800,7 +824,7 @@ export default {
         // params.IsUnionRule = configTrigger.IsUnionRule
         if (alarmCheckbok.includes('指標告警')) {
           Conditions.forEach((item, index) => {
-            params[`Conditions.${index}.MetricId`] = item.MetricID
+            params[`Conditions.${index}.MetricId`] = item.MetricId
             // todo 有問題，不知道給後台傳的是什麽值，文件上是 0.連續告警 1.指數告警
             // params[`Conditions.${index}.AlarmNotifyType`] = item.AlarmNotifyType
             params[`Conditions.${index}.AlarmNotifyType`] = 0
@@ -829,14 +853,16 @@ export default {
         this.axiosUtils(res, () => {
           this.saveResponseGroupId = res.Response.GroupId
           Promise.all([this.saveOther()]).then(() => {
-            this.$message({
-              message: '創建告警策略成功',
-              type: 'success',
-              showClose: true
-            })
-            this.$router.replace({
-              path: '/strategy'
-            })
+            setTimeout(() => {
+              this.$message({
+                message: '創建告警策略成功',
+                type: 'success',
+                showClose: true
+              })
+              this.$router.replace({
+                path: '/strategy'
+              })
+            }, 2000)
           })
         })
         this.saveBtnIsDisable = false
@@ -1109,7 +1135,9 @@ export default {
       this.echoDis()
     }
     if (id) {
-      console.log('JSON.parse(id)', JSON.parse(id))
+      let { ProjectId, InstanceId, EventId } = JSON.parse(id)
+      this.fromEventCenterParam = { ProjectId: parseInt(ProjectId), InstanceId, EventId }
+      this.isFromEventCenterInit = true
     }
     this.getProjectsList()
     this.callbackEdit()

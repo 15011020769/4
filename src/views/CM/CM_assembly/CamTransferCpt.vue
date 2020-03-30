@@ -512,6 +512,15 @@ export default {
     this.getProjectList();
   },
   methods: {
+    // 根据 InstanceId 设置选中
+    byIdSetSeleteList: function (InstanceId) {
+      let newSelectList = this.tableData.filter(item => item.InstanceId === InstanceId)
+      if (newSelectList[0]) {
+        this.multipleSelection = newSelectList
+        this.$refs.multipleTable.toggleRowSelection(newSelectList[0], true)
+      }
+      this.$emit('multipleSelection', newSelectList)
+    },
     //选择项目
     changeProject() {
       this.$emit("projectId", this.projectSelectedOption);
@@ -685,7 +694,7 @@ export default {
       }
     },
     handleSelection(val) {
-
+      console.log('handleSelection', val)
       if (this.showSelectedList === true) {
         return;
       }
@@ -802,7 +811,7 @@ export default {
       this.$emit("multipleSelection", selectedItems);
     },
     handleSelectionChange(val) {
-
+      console.log('handleSelectionChange', val)
       if (this.showSelectedList === false) {
         return;
       }
