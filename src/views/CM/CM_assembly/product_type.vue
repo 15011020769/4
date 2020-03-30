@@ -87,7 +87,7 @@
         Conditions: '',
         productValue1: this.productValue,
         Metrics: null,
-        EventMetrics:[],//事件告警类型
+        EventMetrics: [], //事件告警类型
       }
     },
     watch: {
@@ -138,6 +138,10 @@
         this.Pass.id = this.id
         this.Pass.Metrics = this.Metrics
         this.Pass.EventMetrics = this.EventMetrics
+        if (this.Pass.productValue === "cvm_device") {
+          this.Pass.Metrics.splice(1, 2)
+          this.Pass.Metrics.splice(3, 1)
+        }
         this.$emit("PassData", this.Pass);
       },
       _switchType() {

@@ -130,6 +130,10 @@
         this.Pass.MetricName = this.MetricName
         this.Pass.id = this.id
         this.Pass.Metrics = this.Metrics
+        if (this.Pass.productValue === "cvm_device") {
+          this.Pass.Metrics.splice(1, 2)
+          this.Pass.Metrics.splice(3, 1)
+        }
         this.$emit("PassData", this.Pass);
       },
       _switchType() {

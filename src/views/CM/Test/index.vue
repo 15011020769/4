@@ -148,7 +148,7 @@
         projectId: 0,
         searchParam: {},
         ceshi999: '',
-        productValue: 'nat_tc_stat'
+        productValue: 'cvm_device'
       }
     },
     components: {
