@@ -178,7 +178,7 @@
       </div>
       <!--调整带宽限速模态窗 -->
       <el-dialog title :visible.sync="updateVisible" class="updateDialog">
-        <div class="transfer">
+        <div class="transfer" v-loading="loadShow2" >
           <div class="left">
             <span>{{$t('CCN.tabs.tab3btnD')}}</span>
             <div class="region">
@@ -201,14 +201,14 @@
               <div class="t-body">
                 <div>{{$t('CCN.tabs.tab3R')}}</div>
                 <div>
-                  <el-input size="small" v-model="upLimits.Limits" type="text"></el-input>
+                  <el-input size="small" v-model.number="upLimits.Limits" type="text"></el-input>
                 </div>
               </div>
             </div>
           </div>
         </div>
         <div slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="updateLimits()">{{$t('CCN.total.sure')}}</el-button>
+          <el-button type="primary"  :disabled="flag" @click="updateLimits()">{{$t('CCN.total.sure')}}</el-button>
           <el-button @click="updateVisible = false">{{ $t('CCN.total.buttonQX') }}</el-button>
         </div>
       </el-dialog>
@@ -254,6 +254,7 @@ export default {
   data() {
     return {
       ccnId: "",
+      flag:true,
       regionShow: false,
       tableData: [], // 带宽限速数据列表
       ccnPublic: {},
@@ -281,7 +282,8 @@ export default {
       totalItems: 0,
       pageSize: 10, // 分页条数
       currpage: 1, // 当前页码
-      loadShow: false
+      loadShow: false,
+      loadShow2: false
     };
   },
   created() {
@@ -295,6 +297,20 @@ export default {
     }
     this.formArr.push(this.formInfoObj);
     this.getData();
+  },
+  watch:{
+    'upLimits.Limits':function(val){
+      console.log(val)
+        if(typeof(val)=='string'){
+        this.upLimits.Limits=''
+        this.flag=true
+        }else if(typeof(val)=='number'){
+        if(val>10000){
+          this.upLimits.Limits=10000
+        }
+        this.flag=false
+      }
+    }
   },
   methods: {
     getData: function() {
@@ -359,6 +375,7 @@ export default {
       this.updateBandwidthLimitTypeVisible = false;
       this.updateBandwidthLimitTypeVisible2 = false;
     },
+    
     // 生产一个新的obj对象
     copyObj: function() {
       var des = {
@@ -400,6 +417,7 @@ export default {
     },
     // 修改带宽限速
     updateLimits: function() {
+      this.loadShow2=true;
       var params = {
         Version: "2017-03-12",
         Region: localStorage.getItem("regionv2"),
@@ -410,6 +428,9 @@ export default {
       };
       this.axios.post(SET_CCNREGIONBANDWIDTHLIMITS, params).then(res => {
         if (res.Response.Error === undefined) {
+          this.loadShow2=false
+          this.updateVisible = false;
+          this.getData();
           this.$message({
             message: "修改成功",
             type: "success",
@@ -426,9 +447,7 @@ export default {
             duration: 0
           });
         }
-        this.getData();
       });
-      this.updateVisible = false;
       this.updateVisible2 = false;
     },
     // 分页开始
