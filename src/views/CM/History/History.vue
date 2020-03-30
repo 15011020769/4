@@ -144,11 +144,11 @@
                   </el-table-column>
                   <el-table-column prop label="所屬實例組" width="180">
                     <template slot-scope="scope">
-                      <div v-if="scope.row.instanceGroup">
+                      <div v-if="scope.row.InstanceGroup">
                         <span
-                          v-for="(item,index) in scope.row.instanceGroup"
+                          v-for="(item,index) in scope.row.InstanceGroup"
                           :key="index"
-                        >{{item.InstanceGroupName}}</span>
+                        >{{item.InstanceGroupName}}、</span>
                       </div>
                       <div v-else>-</div>
                     </template>
