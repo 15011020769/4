@@ -4,45 +4,28 @@
     <!-- 地域间带宽 -->
     <div v-show="regionShow">
       <span>
-        {{$t("CCN.tabs.tr7")}}：{{$t("CCN.tabs.tab3tit1")}}
-        <span
-          @click="updateBandwidthLimitTypeVisible = true"
-          style="cursor: pointer;"
-        >{{$t("CCN.tabs.tab3tit2")}}</span>
+        {{$t("CCN.total.tr7")}}：{{$t("CCN.tabs.tab3tit1")}}
+        <span @click="updateBandwidthLimitTypeVisible = true"
+          style="cursor: pointer;">{{$t("CCN.tabs.tab3tit2")}}</span>
       </span>
       <div class="table">
         <div class="btn">
           <el-button type="text" @click="toUpdateVisible2()">{{$t("CCN.tabs.tab3btn")}}</el-button>
         </div>
-        <el-table
-          :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)"
-          style="width: 100%"
-          v-loading="loadShow"
-        >
+        <el-table :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)" style="width: 100%"
+          v-loading="loadShow">
           <template slot="empty">{{$t("CCN.tabs.tab1no")}}</template>
-          <el-table-column
-            prop="CcnRegionBandwidthLimit.Region"
-            :label="$t('CCN.tabs.tab3tr3')"
-            width
-          >
+          <el-table-column prop="CcnRegionBandwidthLimit.Region" :label="$t('CCN.tabs.tab3tr3')" width>
             <template slot-scope="scope">
-              <p class="edit">{{ scope.row.CcnRegionBandwidthLimit.Region }}</p>
+              <p class="edit">{{Reginft[ scope.row.CcnRegionBandwidthLimit.Region] }}</p>
             </template>
           </el-table-column>
-          <el-table-column
-            prop="CcnRegionBandwidthLimit.DstRegion"
-            :label="$t('CCN.tabs.tab3tr4')"
-            width
-          >
+          <el-table-column prop="CcnRegionBandwidthLimit.DstRegion" :label="$t('CCN.tabs.tab3tr4')" width>
             <template slot-scope="scope">
-              <p class="edit">{{ scope.row.CcnRegionBandwidthLimit.DstRegion }}</p>
+              <p class="edit">{{ Reginft[scope.row.CcnRegionBandwidthLimit.DstRegion]}}</p>
             </template>
           </el-table-column>
-          <el-table-column
-            prop="CcnRegionBandwidthLimit.BandwidthLimit"
-            :label="$t('CCN.tabs.tab3tr2')"
-            width
-          >
+          <el-table-column prop="CcnRegionBandwidthLimit.BandwidthLimit" :label="$t('CCN.tabs.tab3tr2')" width>
             <template slot-scope="scope">
               <p class="edit">{{ scope.row.CcnRegionBandwidthLimit.BandwidthLimit }}</p>
             </template>
@@ -62,15 +45,9 @@
         </el-pagination>
       </div>-->
       <div class="Right-style pagstyle">
-        <span
-          class="pagtotal"
-        >{{$t('CCN.total.gongN')}}&nbsp;{{totalItems}}&nbsp;{{$t('CCN.total.tioaN')}}</span>
-        <el-pagination
-          :page-size="pageSize"
-          layout="prev, pager, next"
-          @current-change="handleCurrentChange"
-          :total="totalItems"
-        ></el-pagination>
+        <span class="pagtotal">{{$t('CCN.total.gongN')}}&nbsp;{{totalItems}}&nbsp;{{$t('CCN.total.tioaN')}}</span>
+        <el-pagination :page-size="pageSize" layout="prev, pager, next" @current-change="handleCurrentChange"
+          :total="totalItems"></el-pagination>
       </div>
       <!--地域间-调整带宽模态窗 -->
       <el-dialog title :visible.sync="updateVisible2" class="newDialog">
@@ -86,22 +63,14 @@
             <!-- 注释掉‘添加’功能，即不能一次调整多个地域间带宽限速 -->
             <td>
               <el-select v-model="upLimits.Region" :placeholder="$t('CCN.tabs.placeh1')">
-                <el-option
-                  v-for="item in regionSet"
-                  :key="item.Region"
-                  :label="item.RegionName"
-                  :value="item.Region"
-                ></el-option>
+                <el-option v-for="item in regionSet" :key="item.Region" :label="item.RegionName" :value="item.Region">
+                </el-option>
               </el-select>
             </td>
             <td>
               <el-select v-model="upLimits.DstRegion" :placeholder="$t('CCN.tabs.placeh1')">
-                <el-option
-                  v-for="item in regionSet"
-                  :key="item.Region"
-                  :label="item.RegionName"
-                  :value="item.Region"
-                ></el-option>
+                <el-option v-for="item in regionSet" :key="item.Region" :label="item.RegionName" :value="item.Region">
+                </el-option>
               </el-select>
             </td>
             <td>
@@ -118,11 +87,7 @@
         </div>
       </el-dialog>
       <!-- 地域间-修改限速方式的模态窗 -->
-      <el-dialog
-        :title="$t('CCN.total.eWay')"
-        :visible.sync="updateBandwidthLimitTypeVisible"
-        class="formDialog"
-      >
+      <el-dialog :title="$t('CCN.total.eWay')" :visible.sync="updateBandwidthLimitTypeVisible" class="formDialog">
         <el-form :model="ccnPublic">
           <el-form-item :label="$t('CCN.total.eWay1')">
             <el-select v-model="ccnPublic.BandwidthLimitType" :placeholder="$t('CCN.total.eWay3')">
@@ -145,36 +110,22 @@
     <!-- 地域出带宽 -->
     <div v-show="!regionShow">
       <span>
-        {{$t("CCN.tabs.tr7")}}：{{$t("CCN.tabs.tab3tit")}}
-        <a
-          @click="updateBandwidthLimitTypeVisible2 = true"
-          style="cursor: pointer;"
-        >{{$t("CCN.tabs.tab3tit2")}}</a>
+        {{$t("CCN.total.tr7")}}：{{$t("CCN.tabs.tab3tit")}}
+        <a @click="updateBandwidthLimitTypeVisible2 = true" style="cursor: pointer;">{{$t("CCN.tabs.tab3tit2")}}</a>
       </span>
       <div class="table">
         <div class="btn">
           <el-button type="text" @click="updateVisible = true">{{$t("CCN.tabs.tab3btn")}}</el-button>
         </div>
-        <el-table
-          :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)"
-          style="width: 100%"
-          v-loading="loadShow"
-        >
+        <el-table :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)" style="width: 100%"
+          v-loading="loadShow">
           <template slot="empty">{{$t("CCN.tabs.tab1no")}}</template>
-          <el-table-column
-            prop="CcnRegionBandwidthLimit.Region"
-            :label="$t('CCN.tabs.tab3tr1')"
-            width
-          >
+          <el-table-column prop="CcnRegionBandwidthLimit.Region" :label="$t('CCN.tabs.tab3tr1')" width>
             <template slot-scope="scope">
-              <p class="edit">{{ scope.row.CcnRegionBandwidthLimit.Region }}</p>
+              <p class="edit">{{ Reginft[scope.row.CcnRegionBandwidthLimit.Region]}}</p>
             </template>
           </el-table-column>
-          <el-table-column
-            prop="CcnRegionBandwidthLimit.BandwidthLimit"
-            :label="$t('CCN.tabs.tab3tr2')"
-            width
-          >
+          <el-table-column prop="CcnRegionBandwidthLimit.BandwidthLimit" :label="$t('CCN.tabs.tab3tr2')" width>
             <template slot-scope="scope">
               <p class="edit">{{ scope.row.CcnRegionBandwidthLimit.BandwidthLimit }}</p>
             </template>
@@ -182,15 +133,9 @@
         </el-table>
       </div>
       <div class="Right-style pagstyle">
-        <span
-          class="pagtotal"
-        >{{$t('CCN.total.gongN')}}&nbsp;{{totalItems}}&nbsp;{{$t('CCN.total.tioaN')}}</span>
-        <el-pagination
-          :page-size="pageSize"
-          layout="prev, pager, next"
-          @current-change="handleCurrentChange"
-          :total="totalItems"
-        ></el-pagination>
+        <span class="pagtotal">{{$t('CCN.total.gongN')}}&nbsp;{{totalItems}}&nbsp;{{$t('CCN.total.tioaN')}}</span>
+        <el-pagination :page-size="pageSize" layout="prev, pager, next" @current-change="handleCurrentChange"
+          :total="totalItems"></el-pagination>
       </div>
       <!--调整带宽限速模态窗 -->
       <el-dialog title :visible.sync="updateVisible" class="updateDialog">
@@ -229,11 +174,7 @@
         </div>
       </el-dialog>
       <!-- 地域出 修改限速方式的模态窗 -->
-      <el-dialog
-        :title="$t('CCN.total.eWay')"
-        :visible.sync="updateBandwidthLimitTypeVisible2"
-        class="formDialog"
-      >
+      <el-dialog :title="$t('CCN.total.eWay')" :visible.sync="updateBandwidthLimitTypeVisible2" class="formDialog">
         <el-form :model="ccnPublic">
           <el-form-item :label="$t('CCN.total.eWay1')">
             <el-select v-model="ccnPublic.BandwidthLimitType" :placeholder="$t('CCN.total.eWay2')">
@@ -257,378 +198,441 @@
 </template>
 
 <script>
-import VueCookie from "vue-cookie";
-import { log } from "util";
-import {
-  GET_CCNREGIONBANDWIDTHLIMITS,
-  MODIFYCCN_REGIONBANDWIDTHLIMITSTYPE,
-  REGIONS_LIST,
-  SET_CCNREGIONBANDWIDTHLIMITS
-} from "@/constants";
-import { ErrorTips } from "@/components/ErrorTips";
-export default {
-  data() {
-    return {
-      ccnId: "",
-      regionShow: false,
-      tableData: [], // 带宽限速数据列表
-      ccnPublic: {},
-      regionSet: [], // 地域列表
-      upLimits: {
-        Region: "",
-        DstRegion: "",
-        Limits: ""
-      },
-      formLabelWidth: "100px",
-      // 调整带宽
-      formInfoObj: {
-        key: undefined
-      },
-      formArr: [],
-      // 变更限速模式的模态窗控制元素
-      updateVisible2: false,
-      updateVisible: false,
-      updateBandwidthLimitTypeVisible: false,
-      updateBandwidthLimitTypeVisible2: false,
-      // 穿梭框数据
-      checked: false,
-      // 分页相关
-      currentPage: 1,
-      totalItems: 0,
-      pageSize: 10, // 分页条数
-      currpage: 1, // 当前页码
-      loadShow: false
-    };
-  },
-  created() {
-    this.ccnId = this.$route.query.ccnId;
-    this.BandwidthLimitType = this.$route.query.BandwidthLimitType;
-    if (this.BandwidthLimitType == "OUTER_REGION_LIMIT") {
-      // 出口限速
-      this.regionShow = false;
-    } else if (this.BandwidthLimitType == "INTER_REGION_LIMIT") {
-      this.regionShow = true;
-    }
-    this.formArr.push(this.formInfoObj);
-    this.getData();
-  },
-  methods: {
-    getData: function() {
-      this.loadShow = true;
-      var params = {
-        Version: "2017-03-12",
-        Region: localStorage.getItem("regionv2"),
-        CcnId: this.ccnId
-      };
-      // 查询-各地域出带宽限速（DescribeCcnRegionBandwidthLimits原API中给出接口）（GetCcnRegionBandwidthLimits腾讯雲给出接口）
-      this.axios.post(GET_CCNREGIONBANDWIDTHLIMITS, params).then(res => {
-        if (res.Response.Error === undefined) {
-          this.tableData = res.Response.CcnBandwidthSet;
-          this.totalItems = res.Response.TotalCount;
-        } else {
-          let ErrTips = {
-            "InvalidParameterValue.Malformed": "入參格式不合法"
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
+  import VueCookie from "vue-cookie";
+  import {
+    log
+  } from "util";
+  import {
+    GET_CCNREGIONBANDWIDTHLIMITS,
+    MODIFYCCN_REGIONBANDWIDTHLIMITSTYPE,
+    REGIONS_LIST,
+    SET_CCNREGIONBANDWIDTHLIMITS
+  } from "@/constants";
+  import {
+    ErrorTips
+  } from "@/components/ErrorTips";
+  export default {
+    data() {
+      return {
+        ccnId: "",
+        regionShow: false,
+        tableData: [], // 带宽限速数据列表
+        ccnPublic: {},
+        regionSet: [], // 地域列表
+        upLimits: {
+          Region: "",
+          DstRegion: "",
+          Limits: ""
+        },
+        formLabelWidth: "100px",
+        // 调整带宽
+        formInfoObj: {
+          key: undefined
+        },
+        formArr: [],
+        // 变更限速模式的模态窗控制元素
+        updateVisible2: false,
+        updateVisible: false,
+        updateBandwidthLimitTypeVisible: false,
+        updateBandwidthLimitTypeVisible2: false,
+        // 穿梭框数据
+        checked: false,
+        // 分页相关
+        currentPage: 1,
+        totalItems: 0,
+        pageSize: 10, // 分页条数
+        currpage: 1, // 当前页码
+        loadShow: false,
+        Reginft: {
+          'ap-taipei': '台灣台北',
+          'ap-bangkok': '亞太地區(曼谷)',
+          'ap-beijing': '華北地區(北京)',
+          'ap-chengdu': ' 西南地區(成都)',
+          'ap-chongqing': '西南地區(重慶)',
+          'ap-guangzhou': '華南地區(廣州)',
+          'ap-guangzhou-open ': '華南地區(廣州Open)',
+          'ap-hongkong': '港澳台地區(中國香港)',
+          'ap-mumbai': ' 亞太地區(孟買)',
+          'ap-nanjing': '華東地區(南京)',
+          'ap-seoul': '亞太地區(首爾)',
+          'ap-shanghai': ' 華東地區(上海)',
+          'ap-shanghai-fsi': '華東地區(上海金融)',
+          'ap-shenzhen-fsi': '華南地區(深圳金融)',
+          'ap-singapore': '東南亞地區(新加坡)',
+          'ap-tokyo': '亞太地區(東京)',
+          'eu-frankfurt': '歐洲地區(法蘭克福)',
+          'eu-moscow': ' 歐洲地區(莫斯科)',
+          'na-ashburn': '美國東部(弗吉尼亞)',
+          'na-siliconvalley': '美國西部(硅谷)',
+          'na-toronto': ' 北美地區(多倫多)'
         }
-        this.loadShow = false;
-      });
-    },
-    // 修改限速方式弹窗
-    upBandwidthLimitType: function(ccnDetail) {
-      var params = {
-        Version: "2017-03-12",
-        Region: localStorage.getItem("regionv2"),
-        CcnId: this.ccnId,
-        BandwidthLimitType: ccnDetail.BandwidthLimitType
       };
-      if (ccnDetail.BandwidthLimitType == "OUTER_REGION_LIMIT") {
-        // 改为出口限速
+    },
+    created() {
+      this.ccnId = this.$route.query.ccnId;
+      this.BandwidthLimitType = this.$route.query.BandwidthLimitType;
+      if (this.BandwidthLimitType == "OUTER_REGION_LIMIT") {
+        // 出口限速
         this.regionShow = false;
-      } else if (ccnDetail.BandwidthLimitType == "INTER_REGION_LIMIT") {
+      } else if (this.BandwidthLimitType == "INTER_REGION_LIMIT") {
         this.regionShow = true;
       }
-      this.axios.post(MODIFYCCN_REGIONBANDWIDTHLIMITSTYPE, params).then(res => {
-        if (res.Response.Error) {
-          let ErrTips = {
-            InvalidParameter: "入參不合法",
-            "InvalidParameterValue.Malformed": "入參格式不合法",
-            UnsupportedOperation: "操作不支持"
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
+      this.formArr.push(this.formInfoObj);
+      this.getData();
+    },
+    methods: {
+      getData: function () {
+        this.loadShow = true;
+        var params = {
+          Version: "2017-03-12",
+          Region: localStorage.getItem("regionv2"),
+          CcnId: this.ccnId
+        };
+        // 查询-各地域出带宽限速（DescribeCcnRegionBandwidthLimits原API中给出接口）（GetCcnRegionBandwidthLimits腾讯雲给出接口）
+        this.axios.post(GET_CCNREGIONBANDWIDTHLIMITS, params).then(res => {
+          if (res.Response.Error === undefined) {
+            this.tableData = res.Response.CcnBandwidthSet;
+            this.totalItems = res.Response.TotalCount;
+          } else {
+            let ErrTips = {
+              "InvalidParameterValue.Malformed": "入參格式不合法"
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+          this.loadShow = false;
+        });
+      },
+      // 修改限速方式弹窗
+      upBandwidthLimitType: function (ccnDetail) {
+        var params = {
+          Version: "2017-03-12",
+          Region: localStorage.getItem("regionv2"),
+          CcnId: this.ccnId,
+          BandwidthLimitType: ccnDetail.BandwidthLimitType
+        };
+        if (ccnDetail.BandwidthLimitType == "OUTER_REGION_LIMIT") {
+          // 改为出口限速
+          this.regionShow = false;
+        } else if (ccnDetail.BandwidthLimitType == "INTER_REGION_LIMIT") {
+          this.regionShow = true;
         }
-        this.getData();
-      });
-      this.ccnPublic = {};
-      this.updateBandwidthLimitTypeVisible = false;
-      this.updateBandwidthLimitTypeVisible2 = false;
-    },
-    // 生产一个新的obj对象
-    copyObj: function() {
-      var des = {
-        key: undefined
-      };
-      return des;
-    },
-    // 新增一行
-    addRow: function() {
-      var des = this.copyObj();
-      this.formArr.push(des);
-    },
-    // 删除一行
-    removeRow: function(idx) {
-      this.formArr.splice(idx, 1);
-    },
-    // 修改地域间带宽限速-模态窗
-    toUpdateVisible2: function() {
-      var params = {
-        Version: "2017-03-12"
-      };
-      this.axios.post(REGIONS_LIST, params).then(res => {
-        if (res.Response.Error === undefined) {
-          this.regionSet = res.Response.RegionSet;
-        } else {
-          let ErrTips = {
-            InternalError: "內部錯誤"
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-      });
-      this.updateVisible2 = true;
-    },
-    // 修改带宽限速
-    updateLimits: function() {
-      var params = {
-        Version: "2017-03-12",
-        Region: localStorage.getItem("regionv2"),
-        CcnId: this.ccnId,
-        "CcnRegionBandwidthLimits.0.Region": this.upLimits.Region,
-        "CcnRegionBandwidthLimits.0.BandwidthLimit": this.upLimits.Limits,
-        "CcnRegionBandwidthLimits.0.DstRegion": this.upLimits.DstRegion
-      };
-      this.axios.post(SET_CCNREGIONBANDWIDTHLIMITS, params).then(res => {
-        if (res.Response.Error === undefined) {
-          this.$message({
-            message: "修改成功",
-            type: "success",
-            showClose: true,
-            duration: 0
-          });
-        } else {
-          let ErrTips = {};
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-        this.getData();
-      });
-      this.updateVisible = false;
-      this.updateVisible2 = false;
-    },
-    // 分页开始
-    handleSizeChange(val) {
-      this.pageSize = val;
-      this.handleCurrentChange(this.currentPage);
-    },
-    handleCurrentChange(val) {
-      this.currentPage = val;
+        this.axios.post(MODIFYCCN_REGIONBANDWIDTHLIMITSTYPE, params).then(res => {
+          if (res.Response.Error) {
+            let ErrTips = {
+              InvalidParameter: "入參不合法",
+              "InvalidParameterValue.Malformed": "入參格式不合法",
+              UnsupportedOperation: "操作不支持"
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+          this.getData();
+        });
+        this.ccnPublic = {};
+        this.updateBandwidthLimitTypeVisible = false;
+        this.updateBandwidthLimitTypeVisible2 = false;
+      },
+      // 生产一个新的obj对象
+      copyObj: function () {
+        var des = {
+          key: undefined
+        };
+        return des;
+      },
+      // 新增一行
+      addRow: function () {
+        var des = this.copyObj();
+        this.formArr.push(des);
+      },
+      // 删除一行
+      removeRow: function (idx) {
+        this.formArr.splice(idx, 1);
+      },
+      // 修改地域间带宽限速-模态窗
+      toUpdateVisible2: function () {
+        var params = {
+          Version: "2017-03-12"
+        };
+        this.axios.post(REGIONS_LIST, params).then(res => {
+          if (res.Response.Error === undefined) {
+            this.regionSet = res.Response.RegionSet;
+          } else {
+            let ErrTips = {
+              InternalError: "內部錯誤"
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
+        this.updateVisible2 = true;
+      },
+      // 修改带宽限速
+      updateLimits: function () {
+        var params = {
+          Version: "2017-03-12",
+          Region: localStorage.getItem("regionv2"),
+          CcnId: this.ccnId,
+          "CcnRegionBandwidthLimits.0.Region": this.upLimits.Region,
+          "CcnRegionBandwidthLimits.0.BandwidthLimit": this.upLimits.Limits,
+          "CcnRegionBandwidthLimits.0.DstRegion": this.upLimits.DstRegion
+        };
+        this.axios.post(SET_CCNREGIONBANDWIDTHLIMITS, params).then(res => {
+          if (res.Response.Error === undefined) {
+            this.$message({
+              message: "修改成功",
+              type: "success",
+              showClose: true,
+              duration: 0
+            });
+          } else {
+            let ErrTips = {};
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+          this.getData();
+        });
+        this.updateVisible = false;
+        this.updateVisible2 = false;
+      },
+      // 分页开始
+      handleSizeChange(val) {
+        this.pageSize = val;
+        this.handleCurrentChange(this.currentPage);
+      },
+      handleCurrentChange(val) {
+        this.currentPage = val;
+      }
     }
-  }
-};
+  };
+
 </script>
 <style lang="scss" scoped>
-.tabThree >>> .el-input__inner {
-  height: 30px;
-  border-radius: 0;
-  padding-top: 0;
-  line-height: 30px;
-  padding-left: 5px;
-  width: 100% !important;
-}
-.tabThree {
-  .t-head {
-    padding: 0 !important;
-    margin-bottom: 10px;
+  .tabThree>>>.el-input__inner {
+    height: 30px;
+    border-radius: 0;
+    padding-top: 0;
+    line-height: 30px;
+    padding-left: 5px;
+    width: 100% !important;
   }
-  .t-head div:nth-child(2),
-  .t-body div:nth-child(2) {
-    margin: 0 !important;
-  }
-  .t-head div:nth-child(1) {
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-  .t-head div:nth-child(1),
-  .t-body > div:nth-child(1) {
-    width: 90px;
-    text-align: left;
-    margin-right: 0;
-  }
-  span {
-    color: #000;
-  }
-  .table {
-    margin-top: 20px;
-    min-height: 450px;
-    padding: 20px 0 0 20px;
-    background: #fff;
-    .btn {
+
+  .tabThree {
+    .t-head {
+      padding: 0 !important;
+      margin-bottom: 10px;
+    }
+
+    .t-head div:nth-child(2),
+    .t-body div:nth-child(2) {
+      margin: 0 !important;
+    }
+
+    .t-head div:nth-child(1) {
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    .t-head div:nth-child(1),
+    .t-body>div:nth-child(1) {
+      width: 90px;
+      text-align: left;
+      margin-right: 0;
+    }
+
+    span {
+      color: #000;
+    }
+
+    .table {
+      margin-top: 20px;
+      min-height: 450px;
+      padding: 20px 0 0 20px;
+      background: #fff;
+
+      .btn {
+        .el-button {
+          height: 30px;
+          background-color: #006eff;
+          color: #fff;
+          border: 1px solid #006eff;
+          line-height: 0px;
+          border-radius: 0px;
+          font-size: 12px !important;
+          padding: 10px 15px;
+        }
+
+        .el-button.is-plain:hover {
+          background-color: #0063e5;
+          color: #fff;
+          border: 1px solid #0063e5;
+        }
+      }
+
+      .close_color {
+        color: #e54545;
+      }
+
+      .off_color {
+        color: #0abf5b;
+      }
+    }
+
+    .newDialog {
+      .table-div {
+        width: 90%;
+        padding: 5px;
+        border: 1px solid #ddd;
+
+        tr {
+          width: 25%;
+
+          a {
+            text-align: center;
+          }
+        }
+
+        .t-head {
+          height: 45px;
+        }
+
+        .t-body {
+          height: 45px;
+          min-height: 200px;
+        }
+
+        .el-input {
+          margin-bottom: 5px;
+        }
+      }
+    }
+
+    .formDialog {
+      .edit-p {
+        color: #e54545;
+        line-height: 20px;
+        margin-left: 10%;
+      }
+    }
+
+    .updateDialog {
+      .region {
+        padding: 20px;
+        box-sizing: border-box !important;
+      }
+
+      .transfer {
+        height: 260px;
+
+        .left {
+          float: left;
+          width: 45%;
+
+          .region {
+            min-height: 200px;
+            border: 1px solid #ddd;
+          }
+        }
+
+        .icon {
+          display: inline-block;
+          float: left;
+          margin-top: 20%;
+          font-size: 20px;
+          font-weight: bold;
+        }
+
+        .right {
+          width: 45%;
+          float: left;
+
+          .region {
+            min-height: 200px;
+            border: 1px solid #ddd;
+
+            .t-head {
+              display: flex;
+              padding: 0 5px;
+
+              div {
+                margin-right: 40px;
+              }
+            }
+
+            .t-body {
+              display: flex;
+
+              // min-height: 200px;
+              div {
+                margin-right: 20px;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .dialog-footer {
+      margin-top: 20px;
+      text-align: center;
+
       .el-button {
         height: 30px;
-        background-color: #006eff;
-        color: #fff;
-        border: 1px solid #006eff;
-        line-height: 0px;
+        line-height: 6px;
         border-radius: 0px;
-        font-size: 12px !important;
-        padding: 10px 15px;
-      }
-      .el-button.is-plain:hover {
-        background-color: #0063e5;
-        color: #fff;
-        border: 1px solid #0063e5;
       }
     }
-    .close_color {
-      color: #e54545;
-    }
-    .off_color {
-      color: #0abf5b;
-    }
-  }
-  .newDialog {
-    .table-div {
-      width: 90%;
-      padding: 5px;
-      border: 1px solid #ddd;
-      tr {
-        width: 25%;
-        a {
-          text-align: center;
-        }
-      }
-      .t-head {
-        height: 45px;
-      }
-      .t-body {
-        height: 45px;
-        min-height: 200px;
-      }
-      .el-input {
-        margin-bottom: 5px;
-      }
-    }
-  }
-  .formDialog {
-    .edit-p {
-      color: #e54545;
-      line-height: 20px;
-      margin-left: 10%;
-    }
-  }
-  .updateDialog {
-    .region {
-      padding: 20px;
-      box-sizing: border-box !important;
-    }
-    .transfer {
-      height: 260px;
-      .left {
-        float: left;
-        width: 45%;
-        .region {
-          min-height: 200px;
-          border: 1px solid #ddd;
-        }
-      }
-      .icon {
-        display: inline-block;
-        float: left;
-        margin-top: 20%;
-        font-size: 20px;
-        font-weight: bold;
-      }
-      .right {
-        width: 45%;
-        float: left;
-        .region {
-          min-height: 200px;
-          border: 1px solid #ddd;
-          .t-head {
-            display: flex;
-            padding: 0 5px;
-            div {
-              margin-right: 40px;
-            }
-          }
-          .t-body {
-            display: flex;
-            // min-height: 200px;
-            div {
-              margin-right: 20px;
-            }
-          }
-        }
-      }
-    }
-  }
-  .dialog-footer {
-    margin-top: 20px;
-    text-align: center;
-    .el-button {
-      height: 30px;
-      line-height: 6px;
-      border-radius: 0px;
-    }
-  }
-  .tabListPage {
-    text-align: right;
-    background-color: #fff;
-    border-top: 1px solid #ddd;
-    padding-top: 8px;
-    height: 50px;
-  }
-}
-.Right-style {
-  display: flex;
-  justify-content: flex-end;
 
-  .esach-inputL {
-    width: 300px;
-    margin-right: 20px;
+    .tabListPage {
+      text-align: right;
+      background-color: #fff;
+      border-top: 1px solid #ddd;
+      padding-top: 8px;
+      height: 50px;
+    }
   }
-}
-.pagstyle {
-  padding: 20px;
-  border-top: 1px solid #ddd;
-  background-color: #fff;
-  .pagtotal {
-    font-size: 13px;
-    font-weight: 400;
-    color: #565656;
-    line-height: 32px;
+
+  .Right-style {
+    display: flex;
+    justify-content: flex-end;
+
+    .esach-inputL {
+      width: 300px;
+      margin-right: 20px;
+    }
   }
-}
+
+  .pagstyle {
+    padding: 20px;
+    border-top: 1px solid #ddd;
+    background-color: #fff;
+
+    .pagtotal {
+      font-size: 13px;
+      font-weight: 400;
+      color: #565656;
+      line-height: 32px;
+    }
+  }
+
 </style>
