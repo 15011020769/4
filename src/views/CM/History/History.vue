@@ -370,7 +370,9 @@ export default {
           Version: "2018-07-24",
           Module: "monitor",
           Limit: this.pageSize,
-          Offset: (this.pageIndex - 1) * this.pageSize
+          // Offset: (this.pageIndex - 1) * this.pageSize
+          Offset: this.pageIndex 
+
         };
         params.ObjLike = this.input;
         params.StartTime = Date.parse(this.StartTime) / 1000; //开始时间戳
@@ -381,13 +383,16 @@ export default {
           Version: "2018-07-24",
           Module: "monitor",
           Limit: this.pageSize,
-          Offset: (this.pageIndex - 1) * this.pageSize
+          Offset: this.pageIndex 
+
+          // Offset: (this.pageIndex - 1) * this.pageSize
         };
         params.ObjLike = this.input;
       }
       this.axios.post(BASICS_ALARM_LIST, params).then(res => {
         if (res.Response.Error === undefined) {
           this.tableData = res.Response.Alarms;
+          console.log(this.tableData)
           this.totals = res.Response.Total;
           this.loadShow = false; //取消加載
         } else {
