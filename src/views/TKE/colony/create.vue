@@ -4952,7 +4952,7 @@ export default {
           InstanceChargeType: _workerOneList[i].InstanceChargeType,
           InstanceType: _workerOneList[i].modelName,
           // 数量
-          InstanceCount: 1,
+          InstanceCount: _workerOneList[i].dataNum,
           // 系统盘
           "SystemDisk.DiskSize": Number(_workerOneList[i].systemDiskNumber),
           "SystemDisk.DiskType": _workerOneList[i].systemDiskVal,
@@ -5043,7 +5043,7 @@ export default {
             InstanceChargeType: _masterOneList[i].InstanceChargeType,
             InstanceType: _masterOneList[i].modelName,
             // 数量
-            InstanceCount: 1,
+            InstanceCount: _masterOneList[i].dataNum,
             // 系统盘
             "SystemDisk.DiskSize": Number(_masterOneList[i].systemDiskNumber),
             "SystemDisk.DiskType": _masterOneList[i].systemDiskVal,
@@ -5454,7 +5454,7 @@ export default {
           InstanceChargeType: _workerOneList[i].InstanceChargeType,
           InstanceType: _workerOneList[i].modelName,
           // 数量
-          InstanceCount: 1,
+          InstanceCount: _workerOneList[i].dataNum,
           // 系统盘
           SystemDisk: {
             DiskSize: Number(_workerOneList[i].systemDiskNumber),
@@ -5546,7 +5546,7 @@ export default {
           InstanceChargeType: _masterOneList[i].InstanceChargeType,
           InstanceType: _masterOneList[i].modelName,
           // 数量
-          InstanceCount: 1,
+          InstanceCount: _masterOneList[i].dataNum,
           // 系统盘
           SystemDisk: {
             DiskSize: Number(_masterOneList[i].systemDiskNumber),
