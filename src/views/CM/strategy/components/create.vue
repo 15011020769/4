@@ -468,8 +468,12 @@ export default {
                 item.MetricShowName = '磁碟利用率'
                 item.MetricID = item.MetricId
                 item.continuePeriod = item.AlarmNotifyPerio
-                item.ContinueTime = [1, 2, 3, 4, 5].includes(item.ContinueTime) ? item.ContinueTime : item.ContinueTime / item.Period
-                item.CalcType = item.CalcType.toString()
+                if (item.ContinueTime !== undefined) {
+                  item.ContinueTime = [1, 2, 3, 4, 5].includes(item.ContinueTime) ? item.ContinueTime : item.ContinueTime / item.Period
+                }
+                if (item.CalcType) {
+                  item.CalcType = item.CalcType.toString()
+                }
                 return item
               })
               this.formInline.alarmCheckbok.push('指標告警')
@@ -867,7 +871,7 @@ export default {
             }
             params[`Dimensions.${index}.EventDimensions`] = { uuid: item.Uuid }
           } else if (productValue === 'BS') {
-            params[`InstanceList.${index}.Dimensions`] = {
+            params[`Dimensions.${index}.Dimensions`] = {
               diskid: item.DiskId
             }
           } else if (productValue === 'vpn_tunnel') {
@@ -1099,10 +1103,13 @@ export default {
     }
   },
   created: function () {
-    let { groupId } = this.$route.query
+    let { groupId, id } = this.$route.query
     this.groupId = groupId
     if (groupId !== 0 && groupId !== undefined) {
       this.echoDis()
+    }
+    if (id) {
+      console.log('JSON.parse(id)', JSON.parse(id))
     }
     this.getProjectsList()
     this.callbackEdit()
