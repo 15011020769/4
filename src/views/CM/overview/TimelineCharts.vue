@@ -26,6 +26,7 @@ export default {
 
     let myCharts = echarts.init(this.$refs.chart);
     this.setupEcharts(myCharts, [], [], []);
+
   },
   beforeDestroy() {
     window.onresize = null;
@@ -61,17 +62,17 @@ export default {
         let endTime = null;
         const todayMoment = moment();
         if (startTimeMoment.isSame(todayMoment, "day")) {
-          let endTimeMoment = null
+          let endTimeMoment = null;
           if (tempEndTime === "-") {
             endTimeMoment = todayMoment;
           } else {
             endTimeMoment = moment(tempEndTime);
           }
-            endTimeMoment.set("year", currentMoment.year());
-            endTimeMoment.set("month", currentMoment.month());
-            endTimeMoment.set("date", currentMoment.date());
+          endTimeMoment.set("year", currentMoment.year());
+          endTimeMoment.set("month", currentMoment.month());
+          endTimeMoment.set("date", currentMoment.date());
 
-            endTime = endTimeMoment.format("YYYY-MM-DD HH:mm:ss");
+          endTime = endTimeMoment.format("YYYY-MM-DD HH:mm:ss");
         } else {
           if (tempEndTime === "-") {
             endTime = `${current} 23:59:59`;
@@ -173,10 +174,16 @@ export default {
                 let end = api.coord([value1, value2]);
                 let height = api.size([5, 10])[1];
 
+                let gap = end[0] - start[0];
+
+                if (gap < 2) {
+                  gap = 2;
+                }
+
                 let rect = {
                   x: start[0],
                   y: start[1] + height,
-                  width: end[0] - start[0],
+                  width: gap,
                   height: height
                 };
 
