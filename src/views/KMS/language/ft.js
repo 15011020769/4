@@ -1,7 +1,7 @@
 module.exports = {
   KMS: {
     total: {
-      title: '密鑰管理系統',
+      title: '金鑰管理服務',
       subMenu: '用戶密鑰',
       kmsList: '密鑰清單',
       newCreate: '新建',
