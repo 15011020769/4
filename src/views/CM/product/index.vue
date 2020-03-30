@@ -439,11 +439,10 @@ export default {
       }
     },
     jump(id) {
-      console.log(id)
       this.$router.push({
         name: "strategyCreate",
         query: {
-          id
+          id: JSON.stringify(id)
         }
       });
     }
