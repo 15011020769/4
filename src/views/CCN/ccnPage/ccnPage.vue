@@ -5,7 +5,7 @@
     </div>
     <div class="tea-content__body">
       <div>
-        <el-tooltip class="item" effect="light" content="雲聯網最多只能創建5條數據" placement="right-end">
+        <el-tooltip class="item" effect="light"  content="雲聯網最多只能創建5條數據" placement="right-end">
           <el-button type="primary" size="small" @click="dialogFormVisible = true" :disabled='newCreateshow'>
             {{$t('CCN.total.newCreate')}}
           </el-button>
@@ -64,7 +64,7 @@
         <el-table-column prop="InstanceChargeType" :label="$t('CCN.total.tr6')">
           <template slot-scope="scope">
             <div v-if="scope.row.InstanceChargeType == 'POSTPAID'">{{$t('CCN.total.mouthPay')}}</div>
-            <!-- <div v-else-if="scope.row.InstanceChargeType=='PREPAID'">预付费</div> -->
+            <div v-else-if="scope.row.InstanceChargeType=='PREPAID'">預付費</div>
             <div v-else>{{$t('CCN.total.mouthPay')}}</div>
           </template>
         </el-table-column>
@@ -155,16 +155,17 @@
         </el-form-item>
 
         <el-form-item :label="$t('CCN.total.new2')">
-          <el-radio-group v-model="form.InstanceChargeType">
-            <!-- <el-radio label="PREPAID">{{$t('CCN.total.mode1')}}</el-radio> -->
+          <el-radio-group v-model="form.InstanceChargeType" @change="form.InstanceChargeType=='PREPAID'?form.BandwidthLimitType='INTER_REGION_LIMIT':''">
+            <el-radio label="PREPAID">{{$t('CCN.total.mode1')}}</el-radio>
             <el-radio label="POSTPAID">{{ $t('CCN.total.mode2') }}</el-radio>
           </el-radio-group>
           <br />
-          <span class="hint trankHint">{{ $t('CCN.total.mode3') }}</span>
+          <span  v-if="form.InstanceChargeType=='PREPAID'" class="hint trankHint">{{ $t('CCN.total.mode3') }}</span>
+          <span  v-if="form.InstanceChargeType=='POSTPAID'" class="hint trankHint">默認帶寬上限爲1Gbps，按當月實際使用帶寬</span>
         </el-form-item>
         <el-form-item :label="$t('CCN.total.new3')">
           <el-radio-group v-model="form.BandwidthLimitType">
-            <el-radio label="OUTER_REGION_LIMIT">{{ $t('CCN.total.way1') }}</el-radio>
+            <el-radio :disabled="form.InstanceChargeType=='PREPAID'" label="OUTER_REGION_LIMIT">{{ $t('CCN.total.way1') }}</el-radio>
             <el-radio label="INTER_REGION_LIMIT">{{ $t('CCN.total.way2') }}</el-radio>
           </el-radio-group>
         </el-form-item>
@@ -180,14 +181,14 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item :label="$t('CCN.total.new6')">
-          <el-select v-model="form.instanceType" :placeholder="$t('CCN.total.vpc1')" @change="_instance()">
+          <el-select class="w200" v-model="form.instanceType" :placeholder="$t('CCN.total.vpc1')" @change="_instance()">
             <el-option :label="$t('CCN.total.vpc1')" value="VPC"></el-option>
             <!-- <el-option :label="$t('CCN.total.vpc2')" value="DIRECTCONNECT"></el-option> -->
           </el-select>
-          <el-select v-model="form.instanceRegion" :placeholder="$t('CCN.total.region')">
+          <el-select class="w200" v-model="form.instanceRegion" :placeholder="$t('CCN.total.region')">
             <el-option :label="$t('CCN.total.region')" value="ap-taipei"></el-option>
           </el-select>
-          <el-select v-model="form.instanceId" :placeholder="$t('CCN.total.select')"
+          <el-select class="w200" v-model="form.instanceId" :placeholder="$t('CCN.total.select')"
             :no-data-text="$t('CCN.total.tdno')">
             <el-option v-if="form.instanceType=='VPC'" v-for="(item, index) in vpcs" :key="index"
               :label="`${item.VpcId}(${item.VpcName}|${item.CidrBlock})`" :value="item.VpcId"></el-option>
@@ -869,7 +870,9 @@
       line-height: 32px;
     }
   }
-
+.w200{
+  width: 150px;
+}
   .newDialog {
     .inputName {
       width: 370px;
