@@ -153,7 +153,7 @@
         >
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column prop="Name" label="用戶名"></el-table-column>
-          <el-table-column label="手機號">
+          <!-- <el-table-column label="手機號">
             <template slot-scope="scope">
               <span v-if="scope.row.PhoneNum !== ''">
                 {{scope.row.PhoneNum}}
@@ -175,7 +175,7 @@
                 </el-tooltip>
               </span>
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column label="郵箱">
             <template slot-scope="scope">
               <span v-if="scope.row.Email !== ''">
