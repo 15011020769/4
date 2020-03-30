@@ -2,7 +2,7 @@
 <template>
   <div class="tabThree">
     <!-- 地域间带宽 -->
-    <div v-show="regionShow">
+    <!-- <div v-show="regionShow">
       <span>
         {{$t("CCN.tabs.tr7")}}：{{$t("CCN.tabs.tab3tit1")}}
         <span
@@ -49,18 +49,7 @@
           </el-table-column>
         </el-table>
       </div>
-      <!-- <div class="tabListPage">
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="currentPage"
-          :page-sizes="[10, 20, 30, 50]"
-          :page-size="pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="totalItems"
-        >
-        </el-pagination>
-      </div>-->
+     
       <div class="Right-style pagstyle">
         <span
           class="pagtotal"
@@ -72,7 +61,7 @@
           :total="totalItems"
         ></el-pagination>
       </div>
-      <!--地域间-调整带宽模态窗 -->
+    
       <el-dialog title :visible.sync="updateVisible2" class="newDialog">
         <div>
           <table class="table-div">
@@ -82,8 +71,7 @@
               <td>{{$t('CCN.tabs.tab3tr2')}}</td>
               <td></td>
             </tr>
-            <!-- <tr class="t-body" v-for="(item, index) in formArr"> -->
-            <!-- 注释掉‘添加’功能，即不能一次调整多个地域间带宽限速 -->
+         
             <td>
               <el-select v-model="upLimits.Region" :placeholder="$t('CCN.tabs.placeh1')">
                 <el-option
@@ -109,7 +97,7 @@
                 <template slot="append">Mbps</template>
               </el-input>
             </td>
-            <!-- 注释掉‘添加’功能，即不能一次调整多个地域间带宽限速 -->
+        
           </table>
         </div>
         <div slot="footer" class="dialog-footer">
@@ -117,7 +105,7 @@
           <el-button @click="updateVisible2 = false">{{ $t('CCN.total.buttonQX') }}</el-button>
         </div>
       </el-dialog>
-      <!-- 地域间-修改限速方式的模态窗 -->
+   
       <el-dialog
         :title="$t('CCN.total.eWay')"
         :visible.sync="updateBandwidthLimitTypeVisible"
@@ -126,7 +114,7 @@
         <el-form :model="ccnPublic">
           <el-form-item :label="$t('CCN.total.eWay1')">
             <el-select v-model="ccnPublic.BandwidthLimitType" :placeholder="$t('CCN.total.eWay3')">
-              <!-- <el-option :label="$t('CCN.total.eWay2')" value="INTER_REGION_LIMIT"></el-option> -->
+            
               <el-option :label="$t('CCN.total.eWay3')" value="OUTER_REGION_LIMIT"></el-option>
             </el-select>
             <p class="edit-p">{{ $t('CCN.total.eWay4') }}</p>
@@ -141,22 +129,18 @@
           </el-button>
         </div>
       </el-dialog>
-    </div>
+    </div> -->
     <!-- 地域出带宽 -->
     <div v-show="!regionShow">
       <span>
-        {{$t("CCN.tabs.tr7")}}：{{$t("CCN.tabs.tab3tit")}}
-        <a
-          @click="updateBandwidthLimitTypeVisible2 = true"
-          style="cursor: pointer;"
-        >{{$t("CCN.tabs.tab3tit2")}}</a>
+        {{$t("CCN.total.eWay1")}}：{{$t("CCN.tabs.tab3tit")}}
       </span>
       <div class="table">
         <div class="btn">
           <el-button type="text" @click="updateVisible = true">{{$t("CCN.tabs.tab3btn")}}</el-button>
         </div>
         <el-table
-          :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)"
+          :data="tableData"
           style="width: 100%"
           v-loading="loadShow"
         >
@@ -167,7 +151,7 @@
             width
           >
             <template slot-scope="scope">
-              <p class="edit">{{ scope.row.CcnRegionBandwidthLimit.Region }}</p>
+              <p class="edit">{{ scope.row.CcnRegionBandwidthLimit.Region&&scope.row.CcnRegionBandwidthLimit.Region=='ap-taipei'?'台灣台北':''}}</p>
             </template>
           </el-table-column>
           <el-table-column
@@ -217,7 +201,7 @@
               <div class="t-body">
                 <div>{{$t('CCN.tabs.tab3R')}}</div>
                 <div>
-                  <el-input v-model="upLimits.Limits" type="text"></el-input>
+                  <el-input size="small" v-model="upLimits.Limits" type="text"></el-input>
                 </div>
               </div>
             </div>
@@ -275,7 +259,7 @@ export default {
       ccnPublic: {},
       regionSet: [], // 地域列表
       upLimits: {
-        Region: "",
+        Region: "ap-taipei",
         DstRegion: "",
         Limits: ""
       },
@@ -422,7 +406,7 @@ export default {
         CcnId: this.ccnId,
         "CcnRegionBandwidthLimits.0.Region": this.upLimits.Region,
         "CcnRegionBandwidthLimits.0.BandwidthLimit": this.upLimits.Limits,
-        "CcnRegionBandwidthLimits.0.DstRegion": this.upLimits.DstRegion
+        "CcnRegionBandwidthLimits.0.DstRegion": 'ap-guangzhou'
       };
       this.axios.post(SET_CCNREGIONBANDWIDTHLIMITS, params).then(res => {
         if (res.Response.Error === undefined) {

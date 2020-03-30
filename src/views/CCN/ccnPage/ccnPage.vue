@@ -6,7 +6,7 @@
     <div class="tea-content__body">
       <div>
         <el-tooltip class="item" effect="light"  content="雲聯網最多只能創建5條數據" placement="right-end">
-          <el-button type="primary" size="small" @click="dialogFormVisible = true" :disabled='newCreateshow'>
+          <el-button type="primary" size="small" @click="newCreate" :disabled='newCreateshow'>
             {{$t('CCN.total.newCreate')}}
           </el-button>
         </el-tooltip>
@@ -155,18 +155,18 @@
         </el-form-item>
 
         <el-form-item :label="$t('CCN.total.new2')">
-          <el-radio-group v-model="form.InstanceChargeType" @change="form.InstanceChargeType=='PREPAID'?form.BandwidthLimitType='INTER_REGION_LIMIT':''">
-            <el-radio label="PREPAID">{{$t('CCN.total.mode1')}}</el-radio>
+          <el-radio-group v-model="form.InstanceChargeType">
+            <!-- <el-radio label="PREPAID">{{$t('CCN.total.mode1')}}</el-radio> -->
             <el-radio label="POSTPAID">{{ $t('CCN.total.mode2') }}</el-radio>
           </el-radio-group>
           <br />
-          <span  v-if="form.InstanceChargeType=='PREPAID'" class="hint trankHint">{{ $t('CCN.total.mode3') }}</span>
+          <!-- <span  v-if="form.InstanceChargeType=='PREPAID'" class="hint trankHint">{{ $t('CCN.total.mode3') }}</span> -->
           <span  v-if="form.InstanceChargeType=='POSTPAID'" class="hint trankHint">默認帶寬上限爲1Gbps，按當月實際使用帶寬</span>
         </el-form-item>
         <el-form-item :label="$t('CCN.total.new3')">
           <el-radio-group v-model="form.BandwidthLimitType">
-            <el-radio :disabled="form.InstanceChargeType=='PREPAID'" label="OUTER_REGION_LIMIT">{{ $t('CCN.total.way1') }}</el-radio>
-            <el-radio label="INTER_REGION_LIMIT">{{ $t('CCN.total.way2') }}</el-radio>
+            <el-radio label="OUTER_REGION_LIMIT">{{ $t('CCN.total.way1') }}</el-radio>
+            <!-- <el-radio label="INTER_REGION_LIMIT">{{ $t('CCN.total.way2') }}</el-radio> -->
           </el-radio-group>
         </el-form-item>
         <el-form-item :label="$t('CCN.total.new4')">
@@ -199,7 +199,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="createClick(form)">{{$t('CCN.total.sure')}}</el-button>
+        <el-button  :disabled="form.CcnName==''||form.instanceId==''" type="primary" @click="createClick(form)">{{$t('CCN.total.sure')}}</el-button>
         <el-button @click="dialogFormVisible = false">{{$t('CCN.total.buttonQX')}}</el-button>
       </div>
     </el-dialog>
@@ -342,6 +342,13 @@
       this.getInstanceIds('VPC');
     },
     methods: {
+
+      newCreate(){
+        this.dialogFormVisible = true;
+        this.form.CcnName='';
+        this.form.instanceId=''
+        
+      },
      
       //取消修改姓名
       cancel1() {
