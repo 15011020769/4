@@ -1262,9 +1262,9 @@ export default {
     },
     // 分頁
     handleCurrentChange(val) {
-      this.pageIndex = val - 1;
+      this.pageIndex = (val - 1) * this.pageSize;
       this.ListInit();
-      this.pageIndex += 1;
+      this.pageIndex += (val - 1) * this.pageSize;
     },
     handleSizeChange(val) {
       // console.log(`每頁 ${val} 條`);
