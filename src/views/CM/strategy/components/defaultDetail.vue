@@ -2118,7 +2118,24 @@ export default {
       console.log(data);
       this.isShow = false;
       this.productListData = data;
-      this.typeOpt = data.Metrics;
+      if (this.ViewName === "cvm_device") {
+        for (let i in data.Metrics) {
+          if (data.Metrics[i].MetricShowName === "機器重啟") {
+            data.Metrics.splice(i, 1);
+          }
+          if (data.Metrics[i].MetricShowName === "ping不可達") {
+            data.Metrics.splice(i, 1);
+          }
+          if (data.Metrics[i].MetricShowName === "磁碟只讀") {
+            data.Metrics.splice(i, 1);
+          }
+        }
+        this.typeOpt = data.Metrics;
+      } else {
+        this.typeOpt = data.Metrics;
+      }
+      console.log(this.typeOpt);
+      console.log(data.Metrics);
       this.eventOpt = data.EventMetrics ? data.EventMetrics : [];
       setTimeout(() => {
         this.productListData = {};
