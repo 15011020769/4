@@ -80,14 +80,14 @@
       >
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column prop="Name" label="用户名"></el-table-column>
-        <el-table-column label="手机号">
+        <!-- <el-table-column label="手机号">
           <template slot-scope="scope">
             <span v-if="scope.row.PhoneNum !== ''">{{
               scope.row.PhoneNum
             }}</span>
             <span v-else>-</span>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column label="邮箱">
           <template slot-scope="scope">
             <span v-if="scope.row.Email !== ''">{{ scope.row.Email }}</span>
