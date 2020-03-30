@@ -66,7 +66,43 @@ export default {
           this.loadShow = false
         } else {
           this.loadShow = false
-          let ErrTips = {}
+          let ErrTips = {
+            'AuthFailure.UnauthorizedOperation': '請求未授權。請參考 CAM 文件對鑒權的說明。',
+            DryRunOperation: 'DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。',
+            'FailedOperation.AlertFilterRuleDeleteFailed': '刪除過濾條件失敗。',
+            'FailedOperation.AlertPolicyCreateFailed': '創建告警策略失敗。',
+            'FailedOperation.AlertPolicyDeleteFailed': '告警策略刪除失敗。',
+            'FailedOperation.AlertPolicyDescribeFailed': '告警策略查詢失敗。',
+            'FailedOperation.AlertPolicyModifyFailed': '告警策略修改失敗。',
+            'FailedOperation.AlertTriggerRuleDeleteFailed': '刪除觸發條件失敗。',
+            'FailedOperation.DbQueryFailed': '數據庫查詢失敗。',
+            'FailedOperation.DbRecordCreateFailed': '創建數據庫記錄失敗。',
+            'FailedOperation.DbRecordDeleteFailed': '數據庫記錄刪除失敗。',
+            'FailedOperation.DbRecordUpdateFailed': '數據庫記錄更新失敗。',
+            'FailedOperation.DbTransactionBeginFailed': '數據庫事務開始失敗。',
+            'FailedOperation.DbTransactionCommitFailed': '數據庫事務提交失敗。',
+            'FailedOperation.DimQueryRequestFailed': '請求維度查詢服務失敗。',
+            'FailedOperation.DruidQueryFailed': '查詢分析數據失敗。',
+            'FailedOperation.DuplicateName': '名字重複。',
+            'FailedOperation.ServiceNotEnabled': '服務未啓用，開通服務後方可使用。',
+            InternalError: '內部錯誤。',
+            'InternalError.ExeTimeout': '執行超時。',
+            InvalidParameter: '參數錯誤。',
+            'InvalidParameter.InvalidParameter': '參數錯誤。',
+            'InvalidParameter.InvalidParameterParam': '參數錯誤。',
+            InvalidParameterValue: '無效的參數值。',
+            LimitExceeded: '超過配額限制。',
+            'LimitExceeded.MetricQuotaExceeded': '指標數量達到配額限制，禁止含有未注冊指標的請求。',
+            MissingParameter: '缺少參數錯誤。',
+            ResourceInUse: '資源被占用。',
+            ResourceInsufficient: '資源不足。',
+            ResourceNotFound: '資源不存在。',
+            ResourceUnavailable: '資源不可用。',
+            ResourcesSoldOut: '資源售罄。',
+            UnauthorizedOperation: '未授權操作。',
+            UnknownParameter: '未知參數錯誤。',
+            UnsupportedOperation: '操作不支持。'
+          }
           let ErrOr = Object.assign(ErrorTips, ErrTips)
           this.$message({
             message: ErrOr[res.Response.Error.Code],

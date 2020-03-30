@@ -116,13 +116,13 @@
     <el-dialog class="dil" :visible.sync="ShowEditDialog" width="25%" title="修改條件範本名稱">
       <!-- <p style="color:#444;font-weight:bolder;margin-bottom:30px">修改條件範本名稱</p> -->
           <div>
-            <el-input maxlength="20" v-model="editGroupName" style="width:200px"></el-input>
+            <el-input maxlength="20" show-word-limit @change="editNameChange"
+            v-model="editGroupName" style="width:300px"></el-input>
             <p v-if="editGroupName==''" class="edit-text-tips">條件範本名稱不能爲空</p>
-      <!-- 分页 -->
-            <p v-if="editGroupName.length==20" class="edit-text-tips">條件範本名稱不能超過20個字符</p>
+            <p v-if="VerifyName" class="edit-text-tips">含有非法字符,请输入1-20個中英文字符或下劃線</p>
           </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitEditName()">保 存</el-button>
+        <el-button type="primary" :disabled="editGroupName==''||VerifyName" @click="submitEditName()">保 存</el-button>
         <el-button @click="ShowEditDialog = false">取 消</el-button>
       </span>
     </el-dialog>
@@ -170,6 +170,7 @@ export default {
       // metricShowName:'',//指标显示名称
       // dialogFormVisible: false,
       ShowEditDialog: false, // 是否显示修改名称弹框
+      VerifyName:false,
       showDelDialog: false, // 是否显示删除弹框
       showCopyDialog: false, // 是否显示复制弹框
       groupId: '', // 删除需要的id值
@@ -491,6 +492,15 @@ export default {
       this.ShowEditDialog = true
       // this.templateObj = obj
     },
+    //编辑名称的验证
+    editNameChange(val){
+      let rg = /^[\u4e00-\u9fa5_a-zA-Z0-9]+$/
+      if(!rg.test(val)){
+        this.VerifyName = true
+      }else{
+        this.VerifyName = false
+      }
+    },
     // 确定编辑範本名称完成
     async submitEditName () {
       let params = {
@@ -586,7 +596,7 @@ export default {
     errorPrompt (res) {
       let ErrTips = {
         'AuthFailure.UnauthorizedOperation': '請求未授權。請參考 CAM 文件對鑒權的說明。',
-        'DryRunOperation': 'DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。',
+        DryRunOperation: 'DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。',
         'FailedOperation.AlertFilterRuleDeleteFailed': '刪除過濾條件失敗。',
         'FailedOperation.AlertPolicyCreateFailed': '創建告警策略失敗。',
         'FailedOperation.AlertPolicyDeleteFailed': '告警策略刪除失敗。',
@@ -603,23 +613,23 @@ export default {
         'FailedOperation.DruidQueryFailed': '查詢分析數據失敗。',
         'FailedOperation.DuplicateName': '名字重複。',
         'FailedOperation.ServiceNotEnabled': '服務未啓用，開通服務後方可使用。',
-        'InternalError': '內部錯誤。',
+        InternalError: '內部錯誤。',
         'InternalError.ExeTimeout': '執行超時。',
-        'InvalidParameter': '參數錯誤。',
+        InvalidParameter: '參數錯誤。',
         'InvalidParameter.InvalidParameter': '參數錯誤。',
         'InvalidParameter.InvalidParameterParam': '參數錯誤。',
-        'InvalidParameterValue': '無效的參數值。',
-        'LimitExceeded': '超過配額限制。',
+        InvalidParameterValue: '無效的參數值。',
+        LimitExceeded: '超過配額限制。',
         'LimitExceeded.MetricQuotaExceeded': '指標數量達到配額限制，禁止含有未注冊指標的請求。',
-        'MissingParameter': '缺少參數錯誤。',
-        'ResourceInUse': '資源被占用。',
-        'ResourceInsufficient': '資源不足。',
-        'ResourceNotFound': '資源不存在。',
-        'ResourceUnavailable': '資源不可用。',
-        'ResourcesSoldOut': '資源售罄。',
-        'UnauthorizedOperation': '未授權操作。',
-        'UnknownParameter': '未知參數錯誤。',
-        'UnsupportedOperation': '操作不支持。'
+        MissingParameter: '缺少參數錯誤。',
+        ResourceInUse: '資源被占用。',
+        ResourceInsufficient: '資源不足。',
+        ResourceNotFound: '資源不存在。',
+        ResourceUnavailable: '資源不可用。',
+        ResourcesSoldOut: '資源售罄。',
+        UnauthorizedOperation: '未授權操作。',
+        UnknownParameter: '未知參數錯誤。',
+        UnsupportedOperation: '操作不支持。'
       }
       let ErrOr = Object.assign(ErrorTips, ErrTips)
       this.$message({

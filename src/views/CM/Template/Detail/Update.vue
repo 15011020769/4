@@ -141,15 +141,15 @@ export default {
         } else {
           this.loadShow = false
           let ErrTips = {
-            'FailedOperation': '操作失敗。',
-            'InternalError': '內部錯誤。',
-            'InvalidParameter': '參數錯誤。',
+            FailedOperation: '操作失敗。',
+            InternalError: '內部錯誤。',
+            InvalidParameter: '參數錯誤。',
             'InvalidParameter.InvalidParameter': '參數錯誤。',
             'InvalidParameter.InvalidParameterParam': '參數錯誤。',
-            'InvalidParameterValue': '無效的參數值。',
-            'LimitExceeded': '超過配額限制。',
-            'MissingParameter': '缺少參數錯誤。',
-            'UnsupportedOperation': '操作不支持。'
+            InvalidParameterValue: '無效的參數值。',
+            LimitExceeded: '超過配額限制。',
+            MissingParameter: '缺少參數錯誤。',
+            UnsupportedOperation: '操作不支持。'
           }
           let ErrOr = Object.assign(ErrorTips, ErrTips)
           this.$message({
