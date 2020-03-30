@@ -75,7 +75,7 @@
           </span>
           {{ basicNews.ConditionsTemp.GroupName }}
         </p>
-        <span class="textColor"
+        <span class="textColor" v-if="basicNews.ConditionsConfig"
           >指標告警（{{ basicNews.IsUnionRule === 0 ? "任意" : "所有" }}）</span
         >
         <div
@@ -89,8 +89,9 @@
               i.ContinueTime / 60
             }}分钟，
             <span v-if="i.AlarmNotifyType != 1"
-              >按{{ i.AlarmNotifyPeriod | AlarmNotifyPeriod
-              }}{{ i.AlarmNotifyPeriod > 0 ? "重复告警" : "不重复告警" }}
+              >
+              <i v-if="i.AlarmNotifyType != 0">按{{ i.AlarmNotifyPeriod | AlarmNotifyPeriod
+              }}</i>{{ i.AlarmNotifyPeriod > 0 ? "重复告警" : "不重复告警" }}
             </span>
             <span v-else>
               按週期指数递增重复告警
@@ -1345,6 +1346,7 @@
                     <el-select
                       v-model="formWrite.satisfyVal"
                       style="width:90px;margin:0 5px;"
+                      :disabled="!formWrite.checkedZhibiao"
                     >
                       <el-option
                         v-for="x in satisfy"
@@ -1366,6 +1368,7 @@
                           v-model="item.typeVal"
                           style="width:150px;"
                           @change="TypeChange(index)"
+                          :disabled="!formWrite.checkedZhibiao"
                         >
                           <el-option
                             v-for="x in typeOpt"
@@ -1379,6 +1382,7 @@
                         <el-select
                           v-model="item.censusVal"
                           style="width:140px;"
+                          :disabled="!formWrite.checkedZhibiao"
                         >
                           <el-option
                             v-for="(x, i) in item.cycle"
@@ -1391,6 +1395,7 @@
                         <el-select
                           v-model="item.calcTypeVal"
                           style="width:60px;"
+                          :disabled="!formWrite.checkedZhibiao"
                         >
                           <el-option
                             v-for="x in CalcType"
@@ -1407,6 +1412,7 @@
                             controls-position="right"
                             :min="0"
                             :max="item.max"
+                            :disabled="!formWrite.checkedZhibiao"
                           ></el-input-number>
                           <span class="input-p">{{ item.unit }}</span>
                         </div>
@@ -1414,6 +1420,7 @@
                         <el-select
                           v-model="item.continuousCycleVal"
                           style="width:110px;"
+                          :disabled="!formWrite.checkedZhibiao"
                         >
                           <el-option
                             v-for="x in continuousCycleOpt"
@@ -1428,6 +1435,7 @@
                           <el-select
                             v-model="item.warningVal"
                             style="width:150px;"
+                            :disabled="!formWrite.checkedZhibiao"
                           >
                             <el-option
                               v-for="item in warningOpt"
@@ -1473,6 +1481,7 @@
                       <el-select
                         v-model="formWrite.warningVal"
                         style="width:150px;"
+                        :disabled="!formWrite.checkedZhibiao"
                       >
                         <el-option
                           v-for="item in warningOpt"
@@ -1501,11 +1510,11 @@
                     </div>
                   </ul>
                 </div>
-                <div>
+                <div v-if="eventOpt.length !== 0">
                   <p>
                     <el-checkbox v-model="formWrite.checkedGaojing">
                       事件告警
-                      <el-popover placement="right" trigger="hover">
+                      <!-- <el-popover placement="right" trigger="hover">
                         <div>
                           <p>各事件規則<a href="javascript:;">詳情</a></p>
                         </div>
@@ -1514,7 +1523,7 @@
                           style="color:#888; margin:0 5px;"
                           slot="reference"
                         ></i>
-                      </el-popover>
+                      </el-popover> -->
                     </el-checkbox>
                   </p>
                   <ul class="ul-one">
@@ -1535,7 +1544,7 @@
                         </el-select>
                       </p>
                       <i
-                        v-if="formWrite.gaoArr.length !== 1"
+                        v-if="formWrite.gaoArr.length > 1"
                         class="el-icon-error"
                         style="color:#888; margin:0 5px;"
                         @click="delShijian(x)"
@@ -1950,27 +1959,27 @@ export default {
       satisfyVal: 0,
       CalcType: [
         {
-          value: "1",
+          value: 1,
           label: ">"
         },
         {
-          value: "2",
+          value: 2,
           label: ">="
         },
         {
-          value: "3",
+          value: 3,
           label: "<"
         },
         {
-          value: "4",
+          value: 4,
           label: "<="
         },
         {
-          value: "5",
+          value: 5,
           label: "="
         },
         {
-          value: "6",
+          value: 6,
           label: "!="
         }
       ],
@@ -2118,8 +2127,24 @@ export default {
       console.log(data);
       this.isShow = false;
       this.productListData = data;
-      this.typeOpt = data.Metrics;
-      this.eventOpt = data.EventMetrics;
+      if (this.ViewName === "cvm_device") {
+        for (let i in data.Metrics) {
+          if (data.Metrics[i].MetricShowName === "機器重啟") {
+            data.Metrics.splice(i, 1);
+          }
+          if (data.Metrics[i].MetricShowName === "ping不可達") {
+            data.Metrics.splice(i, 1);
+          }
+          if (data.Metrics[i].MetricShowName === "磁碟只讀") {
+            data.Metrics.splice(i, 1);
+          }
+        }
+        this.typeOpt = data.Metrics;
+      } else {
+        this.typeOpt = data.Metrics;
+      }
+      console.log(data.EventMetrics);
+      this.eventOpt = data.EventMetrics ? data.EventMetrics : [];
       setTimeout(() => {
         this.productListData = {};
         // this.isShow = true;
@@ -2570,20 +2595,26 @@ export default {
       if (this.basicNews.ConditionsTemp) {
         this.radioChufa = "1";
       } else {
+        this.formWrite.gaoArr = [];
         this.formWrite.satisfyVal = this.basicNews.IsUnionRule;
         if (this.basicNews.EventConfig) {
           var _EventConfig = this.basicNews.EventConfig;
-          this.formWrite.gaoArr = [];
+
           for (let i in _EventConfig) {
             this.formWrite.gaoArr.push({
               eventVal: _EventConfig[i].EventId
             });
           }
         } else {
-          this.formWrite.gaoArr[0].eventVal = this.eventOpt[0].EventId;
+          if (this.eventOpt.length !== 0) {
+            this.formWrite.gaoArr.push({
+              eventVal: this.eventOpt[0].EventId
+            });
+          }
         }
         if (this.basicNews.ConditionsConfig) {
           var _ConditionsConfig = this.basicNews.ConditionsConfig;
+          this.formWrite.checkedZhibiao = true;
           var _typeVal = "";
           var _max = "";
           var _AlarmNotifyPeriod = "";
@@ -2607,7 +2638,7 @@ export default {
               max: _max,
               typeVal: _typeVal,
               censusVal: _ConditionsConfig[i].Period,
-              calcTypeVal: _ConditionsConfig[i].CalcType.toString(),
+              calcTypeVal: _ConditionsConfig[i].CalcType,
               number: _ConditionsConfig[i].CalcValue,
               unit: _ConditionsConfig[i].Unit,
               continuousCycleVal:
@@ -2683,6 +2714,29 @@ export default {
                   }
                 }
               }
+            }
+          }
+        } else {
+          this.formWrite.checkedZhibiao = false;
+          this.formWrite.arr[0].max = Math.floor(
+            this.typeOpt[0].ConfigManual.CalcValue.Max
+          );
+          this.formWrite.arr[0].typeVal = this.typeOpt[0].MetricId;
+          this.formWrite.arr[0].calcTypeVal = 1;
+          this.formWrite.arr[0].number = 0;
+          this.formWrite.arr[0].unit = this.typeOpt[0].MetricUnit;
+          for (let i in this.typeOpt[0].ConfigManual.Period.Keys) {
+            if (this.typeOpt[0].ConfigManual.Period.Keys[i] == 60) {
+              this.formWrite.arr[0].cycle.push({
+                value: this.typeOpt[0].ConfigManual.Period.Keys[i],
+                label: "统计周期1分钟"
+              });
+            }
+            if (this.typeOpt[0].ConfigManual.Period.Keys[i] == 300) {
+              this.formWrite.arr[0].cycle.push({
+                value: this.typeOpt[0].ConfigManual.Period.Keys[i],
+                label: "统计周期5分钟"
+              });
             }
           }
         }
@@ -2771,6 +2825,7 @@ export default {
           this.Conditions = this.triggerCondition[i];
         }
       }
+      console.log(this.Conditions);
       for (let j in this.Conditions.Conditions) {
         this.ContinueTime.push({
           value: this.Conditions.Conditions[j].ContinueTime,
@@ -2883,25 +2938,27 @@ export default {
         }
       } else {
         param["IsUnionRule"] = this.formWrite.satisfyVal;
-        for (let i in _arr) {
-          param["Conditions." + i + ".MetricId"] = _arr[i].typeVal;
-          param["Conditions." + i + ".CalcType"] = _arr[i].calcTypeVal;
-          param["Conditions." + i + ".CalcValue"] = _arr[i].number;
-          param["Conditions." + i + ".CalcPeriod"] = _arr[i].censusVal;
-          param["Conditions." + i + ".ContinuePeriod"] =
-            _arr[i].continuousCycleVal;
-          if (_arr[i].warningVal == 60) {
-            param["Conditions." + i + ".AlarmNotifyType"] = 1;
-          } else {
-            param["Conditions." + i + ".AlarmNotifyType"] = 0;
-          }
-          if (this.formWrite.satisfyVal == 0) {
-            param["Conditions." + i + ".AlarmNotifyPeriod"] =
-              _arr[i].warningVal;
-          } else {
-            param[
-              "Conditions." + i + ".AlarmNotifyPeriod"
-            ] = this.formWrite.warningVal;
+        if (this.formWrite.checkedZhibiao) {
+          for (let i in _arr) {
+            param["Conditions." + i + ".MetricId"] = _arr[i].typeVal;
+            param["Conditions." + i + ".CalcType"] = _arr[i].calcTypeVal;
+            param["Conditions." + i + ".CalcValue"] = _arr[i].number;
+            param["Conditions." + i + ".CalcPeriod"] = _arr[i].censusVal;
+            param["Conditions." + i + ".ContinuePeriod"] =
+              _arr[i].continuousCycleVal;
+            if (_arr[i].warningVal == 60) {
+              param["Conditions." + i + ".AlarmNotifyType"] = 1;
+            } else {
+              param["Conditions." + i + ".AlarmNotifyType"] = 0;
+            }
+            if (this.formWrite.satisfyVal == 0) {
+              param["Conditions." + i + ".AlarmNotifyPeriod"] =
+                _arr[i].warningVal;
+            } else {
+              param[
+                "Conditions." + i + ".AlarmNotifyPeriod"
+              ] = this.formWrite.warningVal;
+            }
           }
         }
         if (this.formWrite.checkedGaojing) {

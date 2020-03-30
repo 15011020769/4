@@ -87,7 +87,8 @@
                     <template slot-scope="scope">{{formatSeconds(scope.row.Duration)}}</template>
                   </el-table-column>
                   <el-table-column prop label="告警管道" width="130">
-                    <template slot-scope="scope">郵件、簡訊</template>
+                    <!-- <template slot-scope="scope">郵件、簡訊</template> -->
+                    <template slot-scope="scope">郵件</template>
                   </el-table-column>
                   <el-table-column prop label="告警狀態" width="100">
                     <template slot-scope="scope">
@@ -143,11 +144,11 @@
                   </el-table-column>
                   <el-table-column prop label="所屬實例組" width="180">
                     <template slot-scope="scope">
-                      <div v-if="scope.row.instanceGroup">
+                      <div v-if="scope.row.InstanceGroup">
                         <span
-                          v-for="(item,index) in scope.row.instanceGroup"
+                          v-for="(item,index) in scope.row.InstanceGroup"
                           :key="index"
-                        >{{item.InstanceGroupName}}</span>
+                        >{{item.InstanceGroupName}}、</span>
                       </div>
                       <div v-else>-</div>
                     </template>
@@ -369,7 +370,9 @@ export default {
           Version: "2018-07-24",
           Module: "monitor",
           Limit: this.pageSize,
-          Offset: (this.pageIndex - 1) * this.pageSize
+          // Offset: (this.pageIndex - 1) * this.pageSize
+          Offset: this.pageIndex 
+
         };
         params.ObjLike = this.input;
         params.StartTime = Date.parse(this.StartTime) / 1000; //开始时间戳
@@ -380,13 +383,16 @@ export default {
           Version: "2018-07-24",
           Module: "monitor",
           Limit: this.pageSize,
-          Offset: (this.pageIndex - 1) * this.pageSize
+          Offset: this.pageIndex 
+
+          // Offset: (this.pageIndex - 1) * this.pageSize
         };
         params.ObjLike = this.input;
       }
       this.axios.post(BASICS_ALARM_LIST, params).then(res => {
         if (res.Response.Error === undefined) {
           this.tableData = res.Response.Alarms;
+          console.log(this.tableData)
           this.totals = res.Response.Total;
           this.loadShow = false; //取消加載
         } else {

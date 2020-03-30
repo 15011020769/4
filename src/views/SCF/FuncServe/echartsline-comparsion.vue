@@ -139,7 +139,6 @@
             axisPointer: {
                 label: {
                         formatter: function (params) {
-                            console.log(params,'params')
                         let relVal = '';
                             relVal += params.value+ (params.seriesData.length ? '：' + params.seriesData[0].data : '');
                             return relVal;
@@ -161,7 +160,6 @@
              axisPointer: {
                 label: {
                         formatter: function (params) {
-                      console.log(params)
                         let relVal = '';
                            relVal += params.value+ (params.seriesData.length ? '：' + params.seriesData[0].data : '');
                             return relVal;

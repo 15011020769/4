@@ -23,8 +23,9 @@
         </el-table-column>
         <el-table-column prop :label="$t('CVM.clBload.jk')">
           <template slot-scope="scope">
-            <div class="a" @click="jump(scope.row.AddressIp)"></div>
-            <!-- <i @click="jump(scope.row.AddressIp)" style="cursor:pointer;"><i class="el-icon-share"></i></a> -->
+            <!-- <div class="a" @click="jump(scope.row.AddressIp)"></div> -->
+            <el-button type="text" class="iconfont icon-tubiaozhanshi" style="color: #888;"
+              @click="jump(scope.row.AddressIp)"></el-button>
           </template>
         </el-table-column>
         <el-table-column prop :label="$t('CVM.clBload.txdz')">

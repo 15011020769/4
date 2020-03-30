@@ -158,9 +158,10 @@ export default {
       this.cam.channel.forEach((v, i) => {
         if (v == "郵件") {
           v = "EMAIL";
-        } else if (v == "簡訊") {
-          v = "SMS";
         }
+        //  else if (v == "簡訊") {
+        //   v = "SMS";
+        // }
         param["NotifyWays." + i] = v;
       });
       this.axios.post(ADD_CUSTON_MESSAGE, param).then(res => {

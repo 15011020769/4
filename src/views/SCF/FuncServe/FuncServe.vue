@@ -48,7 +48,9 @@
         </el-table-column>
         <el-table-column prop="monitor" :label="$t('SCF.total.jk')">
           <template slot-scope="scope">
-            <div class="a" @click="toDoDetail(scope.row,'fifth',SpaceValue)"></div>
+            <!-- <div class="a" @click="toDoDetail(scope.row,'fifth',SpaceValue)"></div> -->
+            <el-button type="text" class="iconfont icon-tubiaozhanshi" style="color: #888;"
+              @click="toDoDetail(scope.row,'fifth',SpaceValue)"></el-button>
           </template>
 
         </el-table-column>

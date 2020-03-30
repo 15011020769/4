@@ -280,10 +280,10 @@ export default {
       loading: true,
       // 安全统计-本月
       attackData: [
-        { Key: "AttackIpCount", Value: 120, desc: "受攻擊的IP數" },
-        { Key: "AttackCount", Value: 330, desc: "攻擊次數" },
-        { Key: "BlockCount", Value: 440, desc: "封堵次數" },
-        { Key: "MaxMbps", Value: 80, desc: "攻擊峰值Mbps" },
+        { Key: "AttackIpCount", Value: 0, desc: "受攻擊的IP數" },
+        { Key: "AttackCount", Value: 0, desc: "攻擊次數" },
+        { Key: "BlockCount", Value: 0, desc: "封堵次數" },
+        { Key: "MaxMbps", Value: 0, desc: "攻擊峰值Mbps" },
         { Key: "IpNum", Value: 0, desc: "統計的IP數據" }
       ],
       // 获取产品总览
@@ -292,10 +292,10 @@ export default {
       business: 'net', // 产品代号: bgpip表示高防IP；bgp表示独享包；bgp-multip表示共享包；net表示高防IP专业版
       packDataIP: [
         // 高防IP专业版 net
-        { Key: "TotalPackCount", Value: 50 },
+        { Key: "TotalPackCount", Value: 0 },
         { Key: "AttackPackCount", Value: 0 },
         { Key: "BlockPackCount", Value: 0 },
-        { Key: "ExpiredPackCount", Value: 50 },
+        { Key: "ExpiredPackCount", Value: 0 },
         { Key: "ExpireingPackCount", Value: 0 },
         { Key: "IsolatePackCount", Value: 0 }
       ],
@@ -324,7 +324,7 @@ export default {
       // type: "bgp",
       type: "net",
       // 下载名称
-      downloadName: "高防IP專業版攻擊記錄",
+      downloadName: "DDoS 高防IP專業版攻擊記錄",
       // 查询输入字段（资源实例id）
       searchInputID: "",
 
@@ -464,7 +464,7 @@ export default {
       //   this.downloadName = "共享包攻擊記錄";
       // } else
       if (param === 'net') {
-        this.downloadName = '高防IP專業版攻擊記錄'
+        this.downloadName = 'DDoS 高防IP專業版攻擊記錄'
       }
       this.describeDDoSEvList();
     },

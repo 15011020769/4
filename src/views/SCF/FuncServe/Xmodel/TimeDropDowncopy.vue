@@ -306,7 +306,9 @@
         this.Start_End2.EndTIme = moment(new Date(this.timevalueEnd2)).format("YYYY-MM-DD HH:mm:ss")
         this.$emit("switchData2", [this.grainValue, this.Start_End2]);
         this.$emit('openFlag',true)
-         this.$parent._GetBase()
+        this.$nextTick(()=>{
+          this.$parent._GetBase()
+        })
       },
       // 选择时间
       SelectionTime1() {

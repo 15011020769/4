@@ -80,14 +80,14 @@
       >
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column prop="Name" label="用户名"></el-table-column>
-        <el-table-column label="手机号">
+        <!-- <el-table-column label="手机号">
           <template slot-scope="scope">
             <span v-if="scope.row.PhoneNum !== ''">{{
               scope.row.PhoneNum
             }}</span>
             <span v-else>-</span>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column label="邮箱">
           <template slot-scope="scope">
             <span v-if="scope.row.Email !== ''">{{ scope.row.Email }}</span>
@@ -117,7 +117,7 @@
       <span>接收管道&nbsp;&nbsp;</span>
       <el-checkbox-group v-model="cam.channel" @change="selectChannel">
         <el-checkbox label="郵件"></el-checkbox>
-        <el-checkbox label="簡訊"></el-checkbox>
+        <!-- <el-checkbox label="簡訊"></el-checkbox> -->
       </el-checkbox-group>
     </p>
   </div>
@@ -159,7 +159,7 @@ export default {
         selectUserGroup: [], // 接收组 --> table表格选中
         selectUserList: [], // 接收人 --> table表格选中
         time: [], // 选中的时间
-        channel: ["郵件", "簡訊"] // 选中的管道
+        channel: ["郵件"] // 选中的管道
       }
     };
   },
@@ -193,14 +193,13 @@ export default {
       this.timeValue.end = new Date(val * 1000);
     },
     selectedList: {
-      handler: function () {
-        this.selected()
+      handler: function() {
+        this.selected();
       },
       deep: true
     },
     timeValue: {
       handler: function(val) {
-        console.log(val);
         let timeArr = [val.start, val.end];
         this.cam.time = timeArr.map(item => {
           let tempTime = Date.parse(item) / 1000;
@@ -230,18 +229,24 @@ export default {
   },
   mounted() {
     if (this.type === "user") {
+      this.cam.selectType = "user";
       this.userList(); // 查询接收人
     } else {
+      this.cam.selectType = "group";
       this.userGroup(); // 查询接收组
     }
   },
   methods: {
-    setNotifyWay: function (notifyWay) {
-      this.cam.channel = notifyWay
+    setNotifyWay: function(notifyWay) {
+      this.cam.channel = notifyWay;
     },
-    setStartAndEndTime: function (startIime, endTime) {
-      this.timeValue.start = new Date(startIime * 1000)
-      this.timeValue.end = new Date(endTime * 1000)
+    setStartAndEndTime: function(startIime, endTime) {
+      this.timeValue.start = new Date(startIime * 1000);
+      this.timeValue.end = new Date(endTime * 1000);
+    },
+    setType: function(type) {
+      this.cam.selectType = type;
+      this.selectChange();
     },
     // 选中接受组还是接收人
     selectChange() {
@@ -312,7 +317,6 @@ export default {
       this.axios
         .post(GET_GROUP, params)
         .then(res => {
-          this.loadingShow = false;
           if (res.Response.Error === undefined) {
             this.groupData.push(res.Response);
             if (this.groupData.length === this.tableData.length) {
@@ -325,6 +329,7 @@ export default {
               });
               this.tableData2 = this.tableData;
               this.selected();
+              this.loadingShow = false;
             }
           } else {
             let ErrTips = {
@@ -345,7 +350,7 @@ export default {
     },
 
     // 查询接收人数据
-    userList() {
+    async userList() {
       this.userListLoading = true;
       let userList = {
         Type: "SubAccount",
@@ -356,7 +361,7 @@ export default {
       if (this.triggerInput != null && this.triggerInput != "") {
         userList["Keyword"] = this.triggerInput;
       }
-      this.axios
+      await this.axios
         .post(LIST_SUBACCOUNTS, userList)
         .then(data => {
           this.userListLoading = false;
@@ -442,8 +447,6 @@ export default {
         if (this.tableData2.length === 0) {
           return;
         }
-
-        console.log(this.tableData2);
 
         const selectedRows = this.tableData2.filter(row => {
           const found = this.selectedList.find(item => {

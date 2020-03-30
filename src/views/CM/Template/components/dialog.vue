@@ -734,10 +734,8 @@ export default {
     // 錯誤提示
     errorPrompt(res) {
       let ErrTips = {
-        "AuthFailure.UnauthorizedOperation":
-          "請求未授權。請參考 CAM 文件對鑒權的說明。",
-        DryRunOperation:
-          "DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。",
+        "AuthFailure.UnauthorizedOperation":"請求未授權。請參考 CAM 文件對鑒權的說明。",
+        DryRunOperation:"DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。",
         FailedOperation: "操作失敗。",
         "FailedOperation.AlertFilterRuleDeleteFailed": "刪除過濾條件失敗。",
         "FailedOperation.AlertPolicyCreateFailed": "創建告警策略失敗。",

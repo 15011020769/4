@@ -19,7 +19,7 @@ module.exports = {
       ProtectiveExclusive: '高防包',
       aboutExpire: '即將到期',
       Expiring: '已到期',
-      professionalEdition: '高防IP專業版',
+      professionalEdition: 'DDoS 高防IP專業版',
       AttackLog: '攻擊日誌（30天內）',
       DownTable: '下載表格',
       pleaSearchVal: '請輸入要查詢的資產ID',

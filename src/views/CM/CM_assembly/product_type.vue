@@ -87,7 +87,7 @@
         Conditions: '',
         productValue1: this.productValue,
         Metrics: null,
-        EventMetrics:[],//事件告警类型
+        EventMetrics: [], //事件告警类型
       }
     },
     watch: {
@@ -138,6 +138,10 @@
         this.Pass.id = this.id
         this.Pass.Metrics = this.Metrics
         this.Pass.EventMetrics = this.EventMetrics
+        if (this.Pass.productValue === "cvm_device") {
+          this.Pass.Metrics.splice(1, 2)
+          this.Pass.Metrics.splice(3, 1)
+        }
         this.$emit("PassData", this.Pass);
       },
       _switchType() {
@@ -170,6 +174,7 @@
         let parms = {
           Region: localStorage.getItem("regionv2"),
           Version: "2017-03-12",
+          Limit: 100
         }
         // this.searchParam.label !== undefined &&
         if (this.searchParam.value !== undefined) {
@@ -940,6 +945,7 @@
         let parms = {
           Region: localStorage.getItem("regionv2"),
           Version: "2017-03-12",
+          Limit: 100
         }
         if (this.searchParam.label !== undefined && this.searchParam.value !== undefined) {
           parms["Filters.0.Name"] = this.searchParam.label;

@@ -380,13 +380,7 @@
         this._GetBase()
       },
       GetDat2(data){
-
-        if(this.openFlags){
-        //  console.log(this.Time2,'this.Time2222222222222++++++++++++++++=time')
-          this.Time2=data[1]
-          // this.Time2={...data[1]} 
-           this._GetBase()
-        }
+        this.Time2=data[1]
       },
       //数据对比开关状态
       openFlag(val){
@@ -408,6 +402,7 @@
             this.BaseListK = []
             // console.log(this.Time,'time1')
             // console.log(this.Time2,'time2')
+            // console.log(this.openFlags,'this.openFlags')
             this.BaseList.forEach(item => {
               if (item.Period.indexOf(Number(this.Period)) !== -1) {
                 this.BaseListK.push(item)
@@ -442,11 +437,11 @@
           'Instances.0.Dimensions.1.Name': 'version',
           'Instances.0.Dimensions.1.Value': this.FunctionVersion
         }
-        // console.log(parms,'_GetMonitorData1111111111111111111111111')
         this.axios.post(All_MONITOR, parms).then(data => {
           if (data.Response.Error == undefined) {
             this.MonitorData.push(data.Response);
           } else {
+
             this.$message({
               message: ErrorTips[data.Response.Error.Code],
               type: "error",
@@ -470,7 +465,6 @@
           'Instances.0.Dimensions.1.Name': 'version',
           'Instances.0.Dimensions.1.Value': this.FunctionVersion
         }
-         console.log(parms,'_GetMonitorData22222222222222')
         this.axios.post(All_MONITOR, parms).then(data => {
           let arr=[];
           if (data.Response.Error == undefined) {

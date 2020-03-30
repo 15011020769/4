@@ -58,7 +58,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="簡訊" width="170">
+        <!-- <el-table-column label="簡訊" width="170">
           <template slot-scope="scope">
             <span v-if="scope.row.NotifyWay">
               <i
@@ -70,7 +70,7 @@
 
             <span v-if="!scope.row.NotifyWay">尚未訂閱</span>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column label="郵件" width="180">
           <template slot-scope="scope">
             <i
@@ -79,6 +79,7 @@
               class="el-icon-circle-check"
               style="color:#0abf5b"
             ></i>
+            <span v-if="!scope.row.NotifyWay">尚未訂閱</span>
           </template>
         </el-table-column>
         <el-table-column label="站内信" width="180">
@@ -122,9 +123,9 @@
             <span style="margin:0 0 20px 30px;">
               <el-checkbox label="1">郵件</el-checkbox>
             </span>
-            <span style="margin-left:30px">
+            <!-- <span style="margin-left:30px">
               <el-checkbox label="2">簡訊</el-checkbox>
-            </span>
+            </span> -->
             <span style="margin-left:30px">
               <el-checkbox label="4">站内信</el-checkbox>
             </span>
@@ -152,7 +153,7 @@
         >
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column prop="Name" label="用戶名"></el-table-column>
-          <el-table-column label="手機號">
+          <!-- <el-table-column label="手機號">
             <template slot-scope="scope">
               <span v-if="scope.row.PhoneNum !== ''">
                 {{scope.row.PhoneNum}}
@@ -174,7 +175,7 @@
                 </el-tooltip>
               </span>
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column label="郵箱">
             <template slot-scope="scope">
               <span v-if="scope.row.Email !== ''">
@@ -232,7 +233,7 @@ export default {
   name: "subscription",
   data() {
     return {
-      qudaoCheckList: ["1", "2", "4"], //接收方式
+      qudaoCheckList: ["1", "4"], //接收方式
       // qudaoCheckList: ["郵件", "簡訊", "站內信"], //接收方式
       loadingShow1: false, // 加载是否显示
       loadShow: false, // 加载是否显示

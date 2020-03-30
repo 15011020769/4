@@ -41,8 +41,6 @@ export default {
   data() {
     return {
       multipleSelection: [], //穿梭框数据
-      checked1: "", //邮件
-      checked2: "", //簡訊
       input: "",
       input1: "",
       tableData: [],
@@ -115,18 +113,20 @@ export default {
         this.cam.channel.forEach((v, i) => {
           if (v == "郵件") {
             v = "EMAIL";
-          } else if (v == "簡訊") {
-            v = "SMS";
           }
+          //  else if (v == "簡訊") {
+          //   v = "SMS";
+          // }
           param["NotifyWays." + i] = v;
         });
       } else {
         this.dataObj.NotifyWay.forEach((v, i) => {
           if (v == "郵件") {
             v = "EMAIL";
-          } else if (v == "簡訊") {
-            v = "SMS";
           }
+          //  else if (v == "簡訊") {
+          //   v = "SMS";
+          // }
           param["NotifyWays." + i] = v;
         });
       }

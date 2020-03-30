@@ -75,27 +75,28 @@
       <div class="number">共 {{infoData.PolicyGroups?infoData.PolicyGroups.length:0}} 項</div>
     </el-card>
     <!-- 修改名稱彈框 -->
-    <el-dialog class="dil" :visible.sync="showDelDialog1" width="25%" title="修改條件範本名稱">
+    <el-dialog class="dil" :visible.sync="showDelDialog1" width="30%" title="修改條件範本名稱">
       <!-- <p style="color:#444;font-weight:bolder;margin-bottom:30px">修改條件範本名稱</p> -->
       <div>
-        <el-input maxlength="20" v-model="editGroupName" style="width:200px;margin-top:20px" size="small"></el-input>
+        <el-input maxlength="20" show-word-limit v-model="editGroupName"  @input="editNameChange"
+        style="width:300px;margin-top:20px;line-height:30px" size="small"></el-input>
         <p v-if="editGroupName==''" class="edit-text-tips">條件範本名稱不能爲空</p>
-        <p v-if="editGroupName.length==20" class="edit-text-tips">條件範本名稱不能超過20個字符</p>
+        <p v-if="VerifyName" class="edit-text-tips">含有非法字符,请输入1-20個中英文字符或下劃線</p>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitName()">保 存</el-button>
+        <el-button :disabled="editGroupName==''||VerifyName" type="primary" @click="submitName()">保 存</el-button>
         <el-button @click="showDelDialog1 = false">取 消</el-button>
       </span>
     </el-dialog>
-
+    <!-- 修改备注弹框 -->
     <el-dialog class="dil" :visible.sync="showDelDialog2" width="35%" title="修改條件範本備注">
       <!-- <p style="color:#444;font-weight:bolder;margin-bottom:30px">修改條件範本備注</p> -->
       <!-- <el-form :model="infoData" :rules="rules" ref="form"> -->
         <!-- <el-form-item prop="remark"> -->
-          <div>
+        <div>
           <el-input type="textarea" rows="5" maxlength="100" v-model="editRemark" show-word-limit></el-input>
-          <p v-if="editRemark.length==100" class="edit-text-tips">條件範本備注不能超過100個字符</p>
-          </div>
+          <!-- <p v-if="editRemark.length==100" class="edit-text-tips">條件範本備注不能超過100個字符</p> -->
+        </div>
         <!-- </el-form-item> -->
       <!-- </el-form> -->
       <span slot="footer" class="dialog-footer">
@@ -301,6 +302,7 @@ export default {
       openLoadShow:false,//打开编辑弹窗的加载
       isRepeated: false, // 重复警告是否显示
       showDelDialog1: false, // 是否显示修改名称弹框
+      VerifyName:false,
       showDelDialog2: false, // 是否显示修改备注弹框
       showDelDialog3: false, // 是否显示条件编辑弹框
       checkedZhibiao: true, // 指示告警多选框是否选中
@@ -605,7 +607,7 @@ export default {
         ViewName: ViewName,
         GroupName: GroupName
       }
-      if(checkedZhibiao){
+      if(this.checkedZhibiao){
       this.indexAry.forEach((ele, i) => {
         params[`Conditions.${i}.CalcValue`] = Number(ele.CalcValue)// 百分比
         params[`Conditions.${i}.MetricID`] = ele.MetricID// 指標類型id值
@@ -638,7 +640,7 @@ export default {
         }
       })
       }
-      if(this.eventAry.length>0&&checkedGaojing){
+      if(this.eventAry.length>0&&this.checkedGaojing){
         this.eventAry.forEach((ele,i)=>{
           params[`EventConditions.${i}.EventID`] = ele.EventID
           params[`EventConditions.${i}.AlarmNotifyPeriod`] = 0
@@ -702,6 +704,15 @@ export default {
     openName (name) { // 修改名字彈框
       this.editGroupName = name
       this.showDelDialog1 = true
+    },
+    //编辑名称的验证
+    editNameChange(val){
+      let rg = /^[\u4e00-\u9fa5_a-zA-Z0-9]+$/
+      if(!rg.test(val)&&this.editGroupName!==''){
+        this.VerifyName = true
+      }else{
+        this.VerifyName = false
+      }
     },
     // 修改名稱
     async submitName () {
@@ -840,8 +851,8 @@ export default {
     errorPrompt (res) {
       let ErrTips = {
         'AuthFailure.UnauthorizedOperation': '請求未授權。請參考 CAM 文檔對鑒權的說明。',
-        'DryRunOperation': 'DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。',
-        'FailedOperation': '操作失敗。',
+        DryRunOperation: 'DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。',
+        FailedOperation: '操作失敗。',
         'FailedOperation.AlertFilterRuleDeleteFailed': '刪除過濾條件失敗。',
         'FailedOperation.AlertPolicyCreateFailed': '創建告警策略失敗。',
         'FailedOperation.AlertPolicyDeleteFailed': '告警策略刪除失敗。',
@@ -858,23 +869,23 @@ export default {
         'FailedOperation.DruidQueryFailed': '查詢分析數據失敗。',
         'FailedOperation.DuplicateName': '名字重複。',
         'FailedOperation.ServiceNotEnabled': '服務未啓用，開通服務後方可使用。',
-        'InternalError': '內部錯誤。',
+        InternalError: '內部錯誤。',
         'InternalError.ExeTimeout': '執行超時。',
-        'InvalidParameter': '參數錯誤。',
+        InvalidParameter: '參數錯誤。',
         'InvalidParameter.InvalidParameter': '參數錯誤。',
         'InvalidParameter.InvalidParameterParam': '參數錯誤。',
-        'InvalidParameterValue': '無效的參數值。',
-        'LimitExceeded': '超過配額限制。',
+        InvalidParameterValue: '無效的參數值。',
+        LimitExceeded: '超過配額限制。',
         'LimitExceeded.MetricQuotaExceeded': '指標數量達到配額限制，禁止含有未注冊指標的請求。',
-        'MissingParameter': '缺少參數錯誤。',
-        'ResourceInUse': '資源被占用。',
-        'ResourceInsufficient': '資源不足。',
-        'ResourceNotFound': '資源不存在。',
-        'ResourceUnavailable': '資源不可用。',
-        'ResourcesSoldOut': '資源售罄。',
-        'UnauthorizedOperation': '未授權操作。',
-        'UnknownParameter': '未知參數錯誤。',
-        'UnsupportedOperation': '操作不支持。'
+        MissingParameter: '缺少參數錯誤。',
+        ResourceInUse: '資源被占用。',
+        ResourceInsufficient: '資源不足。',
+        ResourceNotFound: '資源不存在。',
+        ResourceUnavailable: '資源不可用。',
+        ResourcesSoldOut: '資源售罄。',
+        UnauthorizedOperation: '未授權操作。',
+        UnknownParameter: '未知參數錯誤。',
+        UnsupportedOperation: '操作不支持。'
       }
       let ErrOr = Object.assign(ErrorTips, ErrTips)
       this.$message({

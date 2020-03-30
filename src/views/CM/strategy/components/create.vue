@@ -12,7 +12,7 @@
             <el-input class="w420" :autosize="{ minRows: 5, maxRows: 2 }" type="textarea" placeholder="1-100個中英文字符或下劃線" v-model="formInline.textarea" maxlength="100" show-word-limit></el-input>
           </el-form-item>
           <el-form-item label="策略類型">
-            <product-type-cpt @PassData="passData" :searchParam="searchParam" :projectId="formInline.projectId"
+            <product-type @PassData="passData" :searchParam="searchParam" :projectId="formInline.projectId"
                               :productValue="formInline.productValue" @loading="e => (loading = e)"/>
           </el-form-item>
           <el-form-item label="所屬專案" prop="projectName" v-if="product.productValue === 'cvm_device' || product.productValue === 'BS'">
@@ -60,10 +60,10 @@
                     <el-button type="text" size="mini" style="margin-left: 20px" @click="describeConditionsTemplateList">重新整理</el-button>
                   </el-form-item>
                   <div v-show="formInline.conditionsTemplateId">
-                    <p style="line-height: 28px">
+                    <p style="line-height: 28px" v-if="formInline.triggerCondition.Conditions.length>0">
                       <el-checkbox disabled>指標告警</el-checkbox>
                     </p>
-                    <div style="padding-left: 21px">
+                    <div style="padding-left: 21px" v-if="formInline.triggerCondition.Conditions.length>0">
                       <el-form-item label-width="0px">
                         <span>滿足</span>
                         <el-select v-model="formInline.triggerCondition.IsUnionRule" style="margin: 0px 5px" disabled>
@@ -122,17 +122,20 @@
                       </div>
                     </div>
                     <!-- 事件告警 -->
-                    <!--<p style="line-height: 28px">
+                    <p style="line-height: 28px" v-if="formInline.triggerCondition.EventConditions.length>0">
                       <el-checkbox disabled>事件告警</el-checkbox>
                       <i class="el-icon-info" style="color:#888; margin:0 5px;"></i>
                     </p>
-                    <div style="padding-left: 21px">
-                      <el-form-item label-width="0px">
-                        <el-select v-model="formInline.projectName" style="width:180px;">
-                          <el-option v-for="(item, index) in formInline.project" :key="index" :label="item.name" :value="item.value" label-width="40px"></el-option>
-                        </el-select>
-                      </el-form-item>
-                    </div>-->
+                    <div style="padding-left: 21px" v-if="formInline.triggerCondition.EventConditions.length>0">
+                      <div v-for="(feItem, feIndex) in formInline.triggerCondition.EventConditions" :key="feIndex">
+                        <el-form-item label-width="0px">
+                          <el-select v-model="feItem.EventID" style="width:180px;" disabled>
+                            <el-option v-for="(item, index) in product.EventMetrics" :key="index"
+                                       :label="item.EventShowName" :value="item.EventId" label-width="40px"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -142,12 +145,12 @@
                 <!--                <div class="tip">請至少配置1項觸發條件</div>-->
                 <div v-show="radioChufa === '2'" style="padding: 10px">
                   <p style="line-height: 28px">
-                    <el-checkbox checked disabled>指標告警</el-checkbox>
+                    <el-checkbox v-model="formInline.alarmCheckbok" label="指標告警">指標告警</el-checkbox>
                   </p>
                   <div style="padding-left: 21px">
                     <el-form-item label-width="0px">
                       <span>滿足</span>
-                      <el-select v-model="formInline.configTrigger.IsUnionRule" style="margin: 0px 5px">
+                      <el-select v-model="formInline.configTrigger.IsUnionRule" style="margin: 0px 5px" :disabled="!formInline.alarmCheckbok.includes('指標告警')">
                         <el-option v-for="(item, index) in condition" :key="index" :label="item.label" :value="item.id" label-width="40px"></el-option>
                       </el-select>
                       <span>條件時，觸發告警</span>
@@ -155,97 +158,75 @@
                     <div v-for="(cItem, cIndex) in formInline.configTrigger.Conditions" :key="cItem.key">
                       <div class="indication-alarm">
                         <span>if</span>
-                        <el-form-item
-                          label-width="0px"
-                          style="display: inline-block"
-                        >
-                          <el-select
-                            v-model="cItem.MetricID"
-                            style="width:150px;"
-                          >
-                            <el-option
-                              v-for="(item, index) in product.Metrics"
-                              :key="index"
-                              :label="item.MetricShowName"
-                              :value="item.MetricId"
-                            ></el-option>
-                          </el-select>
-                        </el-form-item>
-                        <el-form-item
-                          label-width="0px"
-                          style="display: inline-block"
-                        >
-                          <el-select
-                            v-model="cItem.Period"
-                            style="width:150px;"
-                          >
-                            <el-option
-                              v-for="(item, index) in tongjiZQ"
-                              :key="index"
-                              :label="item.label"
-                              :value="item.id"
-                            ></el-option>
-                          </el-select>
-                        </el-form-item>
-                        <el-form-item
-                          label-width="0px"
-                          style="display: inline-block"
-                        >
-                          <el-select
-                            v-model="cItem.CalcType"
-                            style="width:80px;"
-                          >
-                            <el-option
-                              v-for="(item, index) in symbolList"
-                              :key="index"
-                              :label="item.label"
-                              :value="item.id"
-                            ></el-option>
+                        <el-form-item label-width="0px" style="display: inline-block">
+                          <el-select v-model="cItem.MetricID" style="width:150px;" :disabled="!formInline.alarmCheckbok.includes('指標告警')">
+                            <el-option v-for="(item, index) in product.Metrics" :key="index" :label="item.MetricShowName" :value="item.MetricId"></el-option>
                           </el-select>
                         </el-form-item>
                         <el-form-item label-width="0px" style="display: inline-block">
-                          <el-input style="vertical-align: baseline;width: 140px" placeholder="指標" value="0" min="0" max="100" type="number" v-model.number="cItem.CalcValue">
+                          <el-select v-model="cItem.Period" style="width:150px;" :disabled="!formInline.alarmCheckbok.includes('指標告警')">
+                            <el-option v-for="(item, index) in tongjiZQ" :key="index" :label="item.label" :value="item.id"></el-option>
+                          </el-select>
+                        </el-form-item>
+                        <el-form-item label-width="0px" style="display: inline-block">
+                          <el-select v-model="cItem.CalcType" style="width:80px;" :disabled="!formInline.alarmCheckbok.includes('指標告警')">
+                            <el-option v-for="(item, index) in symbolList" :key="index" :label="item.label" :value="item.id"></el-option>
+                          </el-select>
+                        </el-form-item>
+                        <el-form-item label-width="0px" style="display: inline-block">
+                          <el-input style="vertical-align: baseline;width: 140px" placeholder="指標" value="0" min="0" max="100" type="number"
+                                    v-model.number="cItem.CalcValue" :disabled="!formInline.alarmCheckbok.includes('指標告警')">
                             <template slot="append">{{ cItem.Unit }}</template>
                           </el-input>
                         </el-form-item>
                         <el-form-item label-width="0px" style="display: inline-block">
-                          <el-select v-model="cItem.ContinueTime" style="width:120px;">
+                          <el-select v-model="cItem.ContinueTime" style="width:120px;" :disabled="!formInline.alarmCheckbok.includes('指標告警')">
                             <el-option v-for="(item, index) in continuePeriod" :key="index" :label="item.label" :value="item.id"></el-option>
                           </el-select>
                         </el-form-item>
                         <template v-if="formInline.configTrigger.IsUnionRule === 0">
                           <span>then</span>
                           <el-form-item label-width="0px" style="display: inline-block">
-                            <el-select v-model="cItem.AlarmNotifyPeriod" style="width:150px;">
+                            <el-select v-model="cItem.AlarmNotifyPeriod" style="width:150px;" :disabled="!formInline.alarmCheckbok.includes('指標告警')">
                               <el-option v-for="(item, index) in jinggaoZQ" :key="index" :label="item.label" :value="item.id"></el-option>
                             </el-select>
                           </el-form-item>
                           <i class="el-icon-info" style="color:#888; margin:0 5px;"></i>
-                          <i class="el-icon-error" style="color:#888; margin:0 5px;" @click="triggerConditionDelConditions(formInline.configTrigger.Conditions,cIndex)" v-if="formInline.configTrigger.Conditions.length > 1"></i>
+                          <i class="el-icon-error" style="color:#888; margin:0 5px;"
+                             @click="configTriggerDelConditions(formInline.configTrigger.Conditions,cIndex)"
+                             v-if="formInline.configTrigger.Conditions.length > 1"></i>
                         </template>
                       </div>
                     </div>
                     <div v-show="formInline.configTrigger.IsUnionRule === 1">
                       <span>then</span>
                       <el-form-item label-width="0px" style="display: inline-block">
-                        <el-select v-model="formInline.configTrigger.AlarmNotifyPeriod" style="width:150px;">
+                        <el-select v-model="formInline.configTrigger.AlarmNotifyPeriod" style="width:150px;" :disabled="!formInline.alarmCheckbok.includes('指標告警')">
                           <el-option v-for="(item, index) in jinggaoZQ" :key="index" :label="item.label" :value="item.id"></el-option>
                         </el-select>
                       </el-form-item>
                     </div>
-                    <el-button type="text" size="mini" @click="triggerConditionAddConditions">添加</el-button>
+                    <el-button type="text" size="mini" @click="configTriggerAddConditions">添加</el-button>
                   </div>
                   <!-- 事件告警 -->
-                  <!--<p style="line-height: 28px"><el-checkbox>事件告警</el-checkbox><i class="el-icon-info" style="color:#888; margin:0 5px;"></i></p>
-                  <div style="padding-left: 21px">
-                    <el-form-item label-width="0px">
-                      <el-select v-model="formInline.projectName" style="width:180px;">
-                        <el-option v-for="(item, index) in formInline.project" :key="index" :label="item.name" :value="item.value" label-width="40px"></el-option>
-                      </el-select>
-                      <i class="el-icon-error" style="color:#888; margin:0 5px;"></i>
-                    </el-form-item>
-                    <el-button type="text" size="mini">添加</el-button>
-                  </div>-->
+                  <p style="line-height: 28px" v-if="product.EventMetrics !== undefined">
+                    <el-checkbox v-model="formInline.alarmCheckbok" label="事件告警">事件告警</el-checkbox>
+                    <i class="el-icon-info" style="color:#888; margin:0 5px;"></i>
+                  </p>
+                  <div style="padding-left: 21px" v-if="product.EventMetrics !== undefined">
+                    <div v-for="(feItem, feIndex) in formInline.configTrigger.EventConditions" :key="feIndex">
+                      <el-form-item label-width="0px">
+                        <el-select v-model="feItem.EventID" style="width:180px;" :disabled="!formInline.alarmCheckbok.includes('事件告警')">
+                          <el-option v-for="(item, index) in product.EventMetrics" :key="index"
+                                     :label="item.EventShowName" :value="item.EventId" label-width="40px"></el-option>
+                        </el-select>
+                        <i class="el-icon-error" style="color:#888; margin:0 5px;"
+                           @click="configTriggerDelEventConditions(formInline.configTrigger.EventConditions,feIndex)"
+                           v-if="formInline.configTrigger.EventConditions.length > 1"></i>
+                      </el-form-item>
+                    </div>
+                    <el-button type="text" size="mini" @click="configTriggerAddEventConditions">添加</el-button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -289,7 +270,7 @@
           </div>
         </el-form>
         <div class="foot">
-          <el-button type="primary" size="small" @click="save">完成</el-button>
+          <el-button type="primary" size="small" @click="save" :disabled="saveBtnIsDisable">完成</el-button>
         </div>
       </div>
     </div>
@@ -304,7 +285,8 @@ import {
   CM_GROUPING_LIST,
   CM_ALARM_OBJECT_LIST_EDIT,
   CM_ALARM_RECEIVE_OBJECT_RELIEVE,
-  CM_CALLBACK_SAVE
+  CM_CALLBACK_SAVE,
+  LIST_SUBACCOUNTS
 } from '@/constants'
 import { GET_CONDITIONSTEMPLATELIST } from '@/constants/CM-yhs.js'
 import {
@@ -315,11 +297,11 @@ import {
   CM_ALARM_RECEIVE_OBJECT_GetGroup
 } from '@/constants/CM-wxy.js'
 import CamTransferCpt from '@/views/CM/CM_assembly/CamTransferCpt'
-import ProductTypeCpt from '@/views/CM/CM_assembly/product_type'
+import ProductType from '@/views/CM/CM_assembly/product_type'
 
 export default {
   components: {
-    ProductTypeCpt,
+    ProductType,
     CamTransferCpt,
     Header,
     Cam
@@ -344,6 +326,7 @@ export default {
       radioChufa: '2', // 触发条件单选
       options: [],
       formInline: {
+        alarmCheckbok: ['指標告警', '事件告警'],
         protocolValue: 'http', // 接口回调
         callbackVerifyCode: '',
         strategy_name: '', // 策略名称
@@ -426,7 +409,8 @@ export default {
       projectIdChange: false,
       receivingObjectData: [],
       receivingObjectLoad: false,
-      ReceiverInfos: []
+      ReceiverInfos: [],
+      saveBtnIsDisable: false
     }
   },
   watch: {
@@ -466,32 +450,41 @@ export default {
       this.projectId = val
     },
     passData: async function (val) {
-      console.log(val)
       this.product = { ...val, projectId: this.formInline.projectId }
       await this.initRequest()
       if (this.isInit) {
         if (!this.projectIdChange) {
-          let { ConditionsTemp, IsUnionRule, ConditionsConfig } = this.groupInfo
-          console.log('初始化')
+          let { ConditionsTemp, IsUnionRule, ConditionsConfig, EventConfig } = this.groupInfo
           // 回显触发条件
           if (ConditionsTemp) {
             this.formInline.conditionsTemplateId = ConditionsTemp.GroupId
             this.conditionTemplateChange(ConditionsTemp.GroupId)
           } else {
             this.formInline.configTrigger.IsUnionRule = IsUnionRule
-            if (IsUnionRule === 1) {
-              this.formInline.configTrigger.AlarmNotifyPeriod = ConditionsConfig[0].AlarmNotifyPeriod
+            this.formInline.alarmCheckbok = []
+            if (ConditionsConfig) {
+              if (IsUnionRule === 1) this.formInline.configTrigger.AlarmNotifyPeriod = ConditionsConfig[0].AlarmNotifyPeriod
+              this.formInline.configTrigger.Conditions = ConditionsConfig.map(item => {
+                item.MetricShowName = '磁碟利用率'
+                item.MetricID = item.MetricId
+                item.continuePeriod = item.AlarmNotifyPerio
+                if (item.ContinueTime !== undefined) {
+                  item.ContinueTime = [1, 2, 3, 4, 5].includes(item.ContinueTime) ? item.ContinueTime : item.ContinueTime / item.Period
+                }
+                if (item.CalcType) {
+                  item.CalcType = item.CalcType.toString()
+                }
+                return item
+              })
+              this.formInline.alarmCheckbok.push('指標告警')
             }
-            this.formInline.configTrigger.Conditions = ConditionsConfig.map(item => {
-              console.log(item.ContinueTime, item.Period)
-              item.MetricShowName = '磁碟利用率'
-              item.MetricID = item.MetricId
-              item.continuePeriod = item.AlarmNotifyPerio
-              item.ContinueTime = [1, 2, 3, 4, 5].includes(item.ContinueTime) ? item.ContinueTime : item.ContinueTime / item.Period
-              item.CalcType = item.CalcType.toString()
-              return item
-            })
-            console.log('清空配置触发条件')
+            if (EventConfig) {
+              this.formInline.configTrigger.EventConditions = EventConfig.map(item => {
+                item.EventID = item.EventId
+                return item
+              })
+              this.formInline.alarmCheckbok.push('事件告警')
+            }
           }
         } else {
           this.isInit = false
@@ -500,11 +493,10 @@ export default {
       this.projectIdChange = false
       this.loading = false
     },
-    triggerConditionDelConditions: function (arr, index) {
+    configTriggerDelConditions: function (arr, index) {
       arr.splice(index, 1)
     },
-    triggerConditionAddConditions: function () {
-      console.log('添加配置触发条件')
+    configTriggerAddConditions: function () {
       let { Metrics } = this.product
       for (let i = 0; i < Metrics.length; i++) {
         let exist = this.formInline.configTrigger.Conditions.some(item => {
@@ -535,11 +527,44 @@ export default {
         AlarmNotifyPeriod: 86400
       })
     },
+    configTriggerDelEventConditions: function (arr, index) {
+      arr.splice(index, 1)
+    },
+    configTriggerAddEventConditions: function () {
+      let { EventMetrics } = this.product
+      if (!EventMetrics) {
+        let index = this.formInline.alarmCheckbok.indexOf('事件告警')
+        if (index !== -1) this.formInline.alarmCheckbok.splice(index, 1)
+        return
+      }
+      for (let i = 0; i < EventMetrics.length; i++) {
+        let exist = this.formInline.configTrigger.EventConditions.some(item => {
+          return item.EventID === EventMetrics[i].EventId
+        })
+        if (!exist) {
+          this.formInline.configTrigger.EventConditions.push({
+            key: Date.now(),
+            AlarmNotifyPeriod: 0,
+            AlarmNotifyType: 0,
+            EventID: EventMetrics[i].EventId
+          })
+          return
+        }
+      }
+      this.formInline.configTrigger.EventConditions.push({
+        key: Date.now(),
+        AlarmNotifyPeriod: 0,
+        AlarmNotifyType: 0,
+        EventID: EventMetrics[0].EventId
+      })
+    },
     initRequest: async function () {
       await Promise.all([this.describeConditionsTemplateList()]).then(() => {
         this.describeInstanceGroupList()
         this.formInline.configTrigger.Conditions = []
-        this.triggerConditionAddConditions()
+        this.formInline.configTrigger.EventConditions = []
+        this.configTriggerAddConditions()
+        this.configTriggerAddEventConditions()
         if (this.formInline.conditionsTemplate.length > 0) {
           this.conditionTemplateChange(
             this.formInline.conditionsTemplate[0].GroupID
@@ -591,19 +616,21 @@ export default {
             return item.GroupID === groupID
           }
         )
-        let { IsUnionRule, Conditions } = oneConditionsTemplate
+        let { IsUnionRule, Conditions, EventConditions } = oneConditionsTemplate
         Conditions.map(item => {
           let { ContinueTime, Period } = item
           if (!(ContinueTime > -1 && ContinueTime < 6)) {
             item.ContinueTime = ContinueTime / Period
-            item.ContinueTime =
-              item.ContinueTime !== 0 ? item.ContinueTime : ''
+            item.ContinueTime = item.ContinueTime !== 0 ? item.ContinueTime : ''
           }
           return item
         })
+        oneConditionsTemplate.EventConditions = EventConditions.map(item => {
+          item.EventID = parseInt(item.EventID)
+          return item
+        })
         if (IsUnionRule === 1 && Conditions.length > 0) {
-          oneConditionsTemplate.AlarmNotifyPeriod =
-            Conditions[0].AlarmNotifyPeriod
+          oneConditionsTemplate.AlarmNotifyPeriod = Conditions[0].AlarmNotifyPeriod
         }
         this.formInline.triggerCondition = oneConditionsTemplate
       } else {
@@ -677,7 +704,6 @@ export default {
           this.formInline.projectId = this.groupInfo.ProjectId
           // 回显触发条件
           if (this.groupInfo.ConditionsTemp) {
-            console.log('this.groupInfo.ConditionsTemp', this.groupInfo.ConditionsTemp)
             this.radioChufa = this.groupInfo.ConditionsTemp && this.groupInfo.ConditionsTemp.IsUnionRule !== undefined ? '1' : '2'
             this.formInline.conditionsTemplateId = this.groupInfo.GroupId
           }
@@ -736,7 +762,8 @@ export default {
       })
     },
     saveSubmit: async function () {
-      let { configTrigger, triggerCondition, textarea } = this.formInline
+      this.saveBtnIsDisable = true
+      let { configTrigger, triggerCondition, textarea, alarmCheckbok } = this.formInline
       let { productValue } = this.product
       let params = {
         Version: '2018-07-24',
@@ -749,7 +776,7 @@ export default {
       }
       if (textarea !== '') params.Remark = textarea
       if (this.radioChufa === '1') {
-        let { Conditions } = triggerCondition
+        let { Conditions, EventConditions } = triggerCondition
         Conditions.forEach((item, index) => {
           params[`Conditions.${index}.MetricId`] = item.MetricID
           params[`Conditions.${index}.AlarmNotifyType`] = item.AlarmNotifyType
@@ -761,30 +788,42 @@ export default {
           params[`Conditions.${index}.ContinuePeriod`] = item.ContinueTime
           params[`Conditions.${index}.RuleId`] = item.RuleID
         })
+        EventConditions.forEach((item, index) => {
+          params[`EventConditions.${index}.EventId`] = item.EventID
+          params[`EventConditions.${index}.AlarmNotifyType`] = item.AlarmNotifyType
+          params[`EventConditions.${index}.AlarmNotifyPeriod`] = item.AlarmNotifyPeriod
+          params[`EventConditions.${index}.RuleId`] = item.RuleID
+        })
         params.ConditionTempGroupId = this.formInline.conditionsTemplateId
       } else {
-        let { Conditions } = configTrigger
+        let { Conditions, EventConditions } = configTrigger
         // params.IsUnionRule = configTrigger.IsUnionRule
-        Conditions.forEach((item, index) => {
-          params[`Conditions.${index}.MetricId`] = item.MetricID
-          // todo 有問題，不知道給後台傳的是什麽值，文件上是 0.連續告警 1.指數告警
-          // params[`Conditions.${index}.AlarmNotifyType`] = item.AlarmNotifyType
-          params[`Conditions.${index}.AlarmNotifyType`] = 0
-          if (configTrigger.IsUnionRule === 0) {
-            params[`Conditions.${index}.AlarmNotifyPeriod`] =
-              item.AlarmNotifyPeriod
-            params.IsUnionRule = 0
-          } else {
-            params[`Conditions.${index}.AlarmNotifyPeriod`] =
-              configTrigger.AlarmNotifyPeriod
-            params.IsUnionRule = 1
-          }
-          params[`Conditions.${index}.CalcType`] = item.CalcType
-          params[`Conditions.${index}.CalcValue`] = item.CalcValue
-          params[`Conditions.${index}.CalcPeriod`] = item.Period
-          params[`Conditions.${index}.ContinuePeriod`] = item.ContinueTime
-          // params[`Conditions.${index}.RuleId`] = item.RuleID
-        })
+        if (alarmCheckbok.includes('指標告警')) {
+          Conditions.forEach((item, index) => {
+            params[`Conditions.${index}.MetricId`] = item.MetricID
+            // todo 有問題，不知道給後台傳的是什麽值，文件上是 0.連續告警 1.指數告警
+            // params[`Conditions.${index}.AlarmNotifyType`] = item.AlarmNotifyType
+            params[`Conditions.${index}.AlarmNotifyType`] = 0
+            if (configTrigger.IsUnionRule === 0) {
+              params[`Conditions.${index}.AlarmNotifyPeriod`] = item.AlarmNotifyPeriod
+              params.IsUnionRule = 0
+            } else {
+              params[`Conditions.${index}.AlarmNotifyPeriod`] = configTrigger.AlarmNotifyPeriod
+              params.IsUnionRule = 1
+            }
+            params[`Conditions.${index}.CalcType`] = item.CalcType
+            params[`Conditions.${index}.CalcValue`] = item.CalcValue
+            params[`Conditions.${index}.CalcPeriod`] = item.Period
+            params[`Conditions.${index}.ContinuePeriod`] = item.ContinueTime
+          })
+        }
+        if (alarmCheckbok.includes('事件告警')) {
+          EventConditions.forEach((item, index) => {
+            params[`EventConditions.${index}.EventId`] = item.EventID
+            params[`EventConditions.${index}.AlarmNotifyType`] = item.AlarmNotifyType
+            params[`EventConditions.${index}.AlarmNotifyPeriod`] = item.AlarmNotifyPeriod
+          })
+        }
       }
       await this.axios.post(CREATE_POLICYGROUP, params).then(res => {
         this.axiosUtils(res, () => {
@@ -800,6 +839,7 @@ export default {
             })
           })
         })
+        this.saveBtnIsDisable = false
       })
     },
     saveOther: async function () {
@@ -831,7 +871,7 @@ export default {
             }
             params[`Dimensions.${index}.EventDimensions`] = { uuid: item.Uuid }
           } else if (productValue === 'BS') {
-            params[`InstanceList.${index}.Dimensions`] = {
+            params[`Dimensions.${index}.Dimensions`] = {
               diskid: item.DiskId
             }
           } else if (productValue === 'vpn_tunnel') {
@@ -1013,24 +1053,42 @@ export default {
     },
     // 回显
     echoDis: async function () {
-      this.receivingObjectLoad = true
+      // this.receivingObjectLoad = true
       await this.describePolicyGroupInfo()
-      console.log(this.groupInfo)
       if (this.groupInfo.ReceiverInfos) {
         let ReceiverInfos = this.groupInfo.ReceiverInfos[0]
         this.ReceiverInfos = ReceiverInfos
-        let { StartTime, EndTime, ReceiverGroupList, NotifyWay } = ReceiverInfos
-        ReceiverGroupList.forEach(item => {
+        let { StartTime, EndTime, ReceiverType, ReceiverGroupList, ReceiverUserList, NotifyWay } = ReceiverInfos
+        if (ReceiverType === 'user') {
           let params = {
+            Type: 'SubAccount',
             Version: '2019-01-16',
-            GroupId: item
+            Offset: 0,
+            Limit: 1000
           }
-          this.axios.post(CM_ALARM_RECEIVE_OBJECT_GetGroup, params).then(res => {
+          this.axios.post(LIST_SUBACCOUNTS, params).then(res => {
             this.axiosUtils(res, () => {
-              this.receivingObjectData.push(res.Response)
+              let { UserInfo } = res.Response
+              ReceiverUserList.forEach(item => {
+                let oneUserInfo = UserInfo.find(uItem => item === uItem.Uid)
+                this.receivingObjectData.push(oneUserInfo)
+              })
+              this.$refs.cam.setType(ReceiverType)
             })
           })
-        })
+        } else if (ReceiverType) {
+          ReceiverGroupList.forEach(item => {
+            let params = {
+              Version: '2019-01-16',
+              GroupId: item
+            }
+            this.axios.post(CM_ALARM_RECEIVE_OBJECT_GetGroup, params).then(res => {
+              this.axiosUtils(res, () => {
+                this.receivingObjectData.push(res.Response)
+              })
+            })
+          })
+        }
         let notifyWay = NotifyWay.map(item => {
           if (item === 'EMAIL') {
             return '郵件'
@@ -1045,10 +1103,13 @@ export default {
     }
   },
   created: function () {
-    let { groupId } = this.$route.query
+    let { groupId, id } = this.$route.query
     this.groupId = groupId
     if (groupId !== 0 && groupId !== undefined) {
       this.echoDis()
+    }
+    if (id) {
+      console.log('JSON.parse(id)', JSON.parse(id))
     }
     this.getProjectsList()
     this.callbackEdit()

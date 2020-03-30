@@ -130,6 +130,10 @@
         this.Pass.MetricName = this.MetricName
         this.Pass.id = this.id
         this.Pass.Metrics = this.Metrics
+        if (this.Pass.productValue === "cvm_device") {
+          this.Pass.Metrics.splice(1, 2)
+          this.Pass.Metrics.splice(3, 1)
+        }
         this.$emit("PassData", this.Pass);
       },
       _switchType() {
@@ -162,6 +166,7 @@
         let parms = {
           Region: localStorage.getItem("regionv2"),
           Version: "2017-03-12",
+          Limit: 100
         }
         if (this.searchParam.label !== undefined && this.searchParam.value !== undefined) {
           parms["Filters.0.Name"] = this.searchParam.label;
@@ -931,6 +936,7 @@
         let parms = {
           Region: localStorage.getItem("regionv2"),
           Version: "2017-03-12",
+          Limit: 100
         }
         if (this.searchParam.label !== undefined && this.searchParam.value !== undefined) {
           parms["Filters.0.Name"] = this.searchParam.label;

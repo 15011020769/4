@@ -965,34 +965,17 @@ export default {
         // InstanceMarketOptions: { SpotOptions: { MaxPrice: this.asg.maxPrice } }//最高价格
       };
 
-      let InstanceAdvancedSettings = {
-        MountTarget: "",
-        DockerGraphPath: this.inputRoom,
-        UserScript: "",
-        Unschedulable: 0,
-        ExtraArgs: { Kubelet: [] }
-      };
       let dataArr = this.buyDataDiskArr;
       let datadisk = [];
-      let dataDisks = [];
       if (this.buyDataDisk) {
         for (let i = 0; i < dataArr.length; i++) {
           let disk = {
             DiskType: dataArr[i].dataDiskVal,
-            DiskSize: dataArr[i].dataDiskNum
+            DiskSize: Number(dataArr[i].dataDiskNum)
           };
           datadisk.push(disk);
-          let datadis = {
-            AutoFormatAndMount: dataArr[i].formatMount,
-            FileSystem: dataArr[i].latticeSetVal,
-            MountTarget: dataArr[i].setValue,
-            DiskType: dataArr[i].dataDiskVal,
-            DiskSize: dataArr[i].dataDiskNum
-          };
-          dataDisks.push(datadis);
         }
         LaunchConfigurePara.DataDisks = datadisk;
-        InstanceAdvancedSettings.DataDisks = dataDisks;
       }
 
       let params = {
@@ -1000,15 +983,27 @@ export default {
         ClusterId: this.clusterId,
         AutoScalingGroupPara: JSON.stringify(AutoScalingGroupPara), //伸缩组配置
         LaunchConfigurePara: JSON.stringify(LaunchConfigurePara), //启动配置
-        InstanceAdvancedSettings: InstanceAdvancedSettings
       };
+      let buyDataDiskArr = this.buyDataDiskArr;
+      // debugger
+      if(buyDataDiskArr.length > 0) {
+        for(let i = 0; i < buyDataDiskArr.length; i++) {
+          params["InstanceAdvancedSettings.DataDisks." + i + ".DiskSize"] = Number(buyDataDiskArr[i].dataDiskNum);
+          params["InstanceAdvancedSettings.DataDisks." + i + ".DiskType"] = buyDataDiskArr[i].dataDiskVal;
+          params["InstanceAdvancedSettings.DataDisks." + i + ".AutoFormatAndMount"] = buyDataDiskArr[i].formatMount;
+          if(buyDataDiskArr[i].formatMount) {
+            params["InstanceAdvancedSettings.DataDisks." + i + ".FileSystem"] = buyDataDiskArr[i].latticeSetVal;
+            params["InstanceAdvancedSettings.DataDisks." + i + ".MountTarget"] = buyDataDiskArr[i].setValue;
+          }
+        }
+      }
+      params["InstanceAdvancedSettings.MountTarget"] = '';
+      params["InstanceAdvancedSettings.ExtraArgs.Kubelet.0"] = "";
       if (this.checked) {
         params["InstanceAdvancedSettings.DockerGraphPath"] = this.inputRoom;
       } else {
         params["InstanceAdvancedSettings.DockerGraphPath"] = "";
       }
-      // params["InstanceAdvancedSettings.UserScript"] = "";
-      // params["InstanceAdvancedSettings.Unschedulable"] = 0;
       if (this.isActive) {
         params["InstanceAdvancedSettings.UserScript"] = Base64.encode(
           this.textarea2
@@ -1032,13 +1027,6 @@ export default {
         params["InstanceAdvancedSettings.Labels.0.Name"] = "";
         params["InstanceAdvancedSettings.Labels.0.Value"] = "";
       }
-      // params["InstanceAdvancedSettings.Labels.0.Name"] = "";
-      // params["InstanceAdvancedSettings.Labels.0.Value"] = "";
-
-      // params[ //不能传递参数
-      //   "EnhancedService.SecurityService.Enabled"
-      // ] = this.asg.securityService;
-      // params["EnhancedService.MonitorService.Enabled"] = this.asg.monitor;
 
       await this.axios.post(CREATE_GROUP, params).then(res => {
         if (res.Response.Error === undefined) {
