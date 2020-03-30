@@ -174,6 +174,7 @@
         let parms = {
           Region: localStorage.getItem("regionv2"),
           Version: "2017-03-12",
+          Limit: 100
         }
         // this.searchParam.label !== undefined &&
         if (this.searchParam.value !== undefined) {
