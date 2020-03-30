@@ -8,6 +8,7 @@ import '@/assets/style/reset.scss'
 import '@/utils/axios'
 import VueCookie from 'vue-cookie'
 import '@/assets/iconfont/iconfont.css'
+import '@/assets/iconfont2/iconfont.css'
 import CMfilters from '@/filters/CMfilters.js'
 
 import echarts from 'echarts'
