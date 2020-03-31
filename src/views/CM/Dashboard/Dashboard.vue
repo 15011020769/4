@@ -738,7 +738,10 @@
               item.DataPoints = DataPoints;
               this.$set(this.ViewList, index, item);
             } else {
-              let ErrTips = {};
+              let ErrTips = {
+                'InternalError': 'InternalError',
+                'InvalidParameterValue': 'there are no valid dimession values'
+              };
               let ErrOr = Object.assign(ErrorTips, ErrTips);
               this.$message({
                 message: ErrOr[res.Response.Error.Code],
