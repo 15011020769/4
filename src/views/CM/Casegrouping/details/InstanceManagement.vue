@@ -5,17 +5,13 @@
         <div class="btn">
           <div>
             <el-row>
-              <el-button type="primary" @click="AddBtn">{{
+              <el-button type="primary" @click="AddBtn">
+                {{
                 $t("CVM.Casegrouping.xz")
-              }}</el-button>
-              <el-button disabled v-if="multipleSelection1.length === 0"
-                >移出</el-button
-              >
-              <el-button
-                v-if="multipleSelection1.length !== 0"
-                @click="allDelete = true"
-                >移出</el-button
-              >
+                }}
+              </el-button>
+              <el-button disabled v-if="multipleSelection1.length === 0">移出</el-button>
+              <el-button v-if="multipleSelection1.length !== 0" @click="allDelete = true">移出</el-button>
             </el-row>
           </div>
         </div>
@@ -29,19 +25,13 @@
             height="500px"
           >
             <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column
-              :label="$t('CVM.Casegrouping.zjm')"
-              v-if="viewName === 'cvm_device'"
-            >
+            <el-table-column :label="$t('CVM.Casegrouping.zjm')" v-if="viewName === 'cvm_device'">
               <template slot-scope="scope">
                 <p>{{ scope.row.InstanceId }}</p>
                 <p>{{ scope.row.InstanceName }}</p>
               </template>
             </el-table-column>
-            <el-table-column
-              :label="$t('CVM.Casegrouping.zt')"
-              v-if="viewName === 'cvm_device'"
-            >
+            <el-table-column :label="$t('CVM.Casegrouping.zt')" v-if="viewName === 'cvm_device'">
               <template slot-scope="scope">
                 <span>{{ InstanceState(scope.row.InstanceState) }}</span>
               </template>
@@ -49,32 +39,24 @@
             <el-table-column
               :label="$t('CVM.Casegrouping.wllx')"
               v-if="viewName === 'cvm_device'"
-            >
-              VPC 類型
-            </el-table-column>
+            >VPC 類型</el-table-column>
             <el-table-column label="IP地址" v-if="viewName === 'cvm_device'">
               <template slot-scope="scope">
                 <p>
                   <span
                     v-for="(item, index) in scope.row.PrivateIpAddresses"
                     :key="index"
-                  >
-                    {{ item }}(内網)</span
-                  >
+                  >{{ item }}(内網)</span>
                 </p>
                 <p>
                   <span
                     v-for="(item, index) in scope.row.PublicIpAddresses"
                     :key="index"
-                  >
-                    {{ item }}(外網)</span
-                  >
+                  >{{ item }}(外網)</span>
                 </p>
               </template>
             </el-table-column>
-            <el-table-column label="地域" v-if="viewName === 'cvm_device'">
-              台灣台北
-            </el-table-column>
+            <el-table-column label="地域" v-if="viewName === 'cvm_device'">台灣台北</el-table-column>
             <el-table-column label="ID/名稱" v-if="viewName === 'BS'">
               <template slot-scope="scope">
                 <p>{{ scope.row.DiskId }}</p>
@@ -98,9 +80,7 @@
                 <!-- <p>{{ scope.row. }}</p> -->
               </template>
             </el-table-column>
-            <el-table-column label="地域" v-if="viewName === 'BS'">
-              台灣台北
-            </el-table-column>
+            <el-table-column label="地域" v-if="viewName === 'BS'">台灣台北</el-table-column>
             <!-- VPN_GW -->
             <el-table-column label="ID/名稱" v-if="viewName === 'VPN_GW'">
               <template slot-scope="scope">
@@ -119,9 +99,7 @@
                 <!-- <p>{{scope.row.}}</p> -->
               </template>
             </el-table-column>
-            <el-table-column label="地域" v-if="viewName === 'VPN_GW'">
-              台灣台北
-            </el-table-column>
+            <el-table-column label="地域" v-if="viewName === 'VPN_GW'">台灣台北</el-table-column>
             <!-- vpn_tunnel -->
             <el-table-column label="ID/名稱" v-if="viewName === 'vpn_tunnel'">
               <template slot-scope="scope">
@@ -152,9 +130,7 @@
                 <!-- <p>{{scope.row.}}</p> -->
               </template>
             </el-table-column>
-            <el-table-column label="地域" v-if="viewName === 'vpn_tunnel'">
-              台灣台北
-            </el-table-column>
+            <el-table-column label="地域" v-if="viewName === 'vpn_tunnel'">台灣台北</el-table-column>
             <!-- nat_tc_stat -->
             <el-table-column label="ID/名稱" v-if="viewName === 'nat_tc_stat'">
               <template slot-scope="scope">
@@ -179,9 +155,7 @@
                 <p>最大併發連接數{{ scope.row.maxConcurrent / 100 }}萬</p>
               </template>
             </el-table-column>
-            <el-table-column label="地域" v-if="viewName === 'nat_tc_stat'">
-              台灣台北
-            </el-table-column>
+            <el-table-column label="地域" v-if="viewName === 'nat_tc_stat'">台灣台北</el-table-column>
             <!-- DC_GW -->
             <el-table-column label="ID/名稱" v-if="viewName === 'DC_GW'">
               <template slot-scope="scope">
@@ -200,9 +174,7 @@
                 <!-- <p>{{scope.row.}}</p> -->
               </template>
             </el-table-column>
-            <el-table-column label="地域" v-if="viewName === 'DC_GW'">
-              台灣台北
-            </el-table-column>
+            <el-table-column label="地域" v-if="viewName === 'DC_GW'">台灣台北</el-table-column>
             <!-- EIP -->
             <el-table-column label="ID/名稱" v-if="viewName === 'EIP'">
               <template slot-scope="scope">
@@ -214,9 +186,7 @@
                 <span>{{ scope.row.AddressIp }}</span>
               </template>
             </el-table-column>
-            <el-table-column label="地域" v-if="viewName === 'EIP'">
-              台灣台北
-            </el-table-column>
+            <el-table-column label="地域" v-if="viewName === 'EIP'">台灣台北</el-table-column>
             <!-- cdb_detail -->
             <el-table-column label="ID/名稱" v-if="viewName === 'cdb_detail'">
               <template slot-scope="scope">
@@ -229,33 +199,21 @@
                 <p>{{ CDB_Status(scope.row.Status) }}</p>
               </template>
             </el-table-column>
-            <el-table-column
-              label="内網IP/端口"
-              v-if="viewName === 'cdb_detail'"
-            >
+            <el-table-column label="内網IP/端口" v-if="viewName === 'cdb_detail'">
               <template slot-scope="scope">
                 <span>{{ scope.row.Vip }}</span>
                 <p>{{ scope.row.Vport }}</p>
               </template>
             </el-table-column>
             <el-table-column label="網路類型" v-if="viewName === 'cdb_detail'">
-              <template slot-scope="scope">
-                VPC
-              </template>
+              <template slot-scope="scope">VPC</template>
             </el-table-column>
             <el-table-column label="類型" v-if="viewName === 'cdb_detail'">
-              <template slot-scope="scope">
-                {{ CDB_InstanceType(scope.row.InstanceType) }}
-              </template>
+              <template slot-scope="scope">{{ CDB_InstanceType(scope.row.InstanceType) }}</template>
             </el-table-column>
-            <el-table-column label="地域" v-if="viewName === 'cdb_detail'">
-              台灣台北
-            </el-table-column>
+            <el-table-column label="地域" v-if="viewName === 'cdb_detail'">台灣台北</el-table-column>
             <!-- REDIS-CLUSTER -->
-            <el-table-column
-              label="ID/名稱"
-              v-if="viewName === 'REDIS-CLUSTER'"
-            >
+            <el-table-column label="ID/名稱" v-if="viewName === 'REDIS-CLUSTER'">
               <template slot-scope="scope">
                 <p>{{ scope.row.InstanceId }}</p>
                 <p>{{ scope.row.InstanceName }}</p>
@@ -267,21 +225,12 @@
               </template>
             </el-table-column>
             <el-table-column label="規格" v-if="viewName === 'REDIS-CLUSTER'">
-              <template slot-scope="scope">
-                master-slave
-              </template>
+              <template slot-scope="scope">master-slave</template>
             </el-table-column>
-            <el-table-column
-              label="内網地址"
-              v-if="viewName === 'REDIS-CLUSTER'"
-            >
-              <template slot-scope="scope">
-                {{ scope.row.WanIp }}
-              </template>
+            <el-table-column label="内網地址" v-if="viewName === 'REDIS-CLUSTER'">
+              <template slot-scope="scope">{{ scope.row.WanIp }}</template>
             </el-table-column>
-            <el-table-column label="地域" v-if="viewName === 'REDIS-CLUSTER'">
-              台灣台北
-            </el-table-column>
+            <el-table-column label="地域" v-if="viewName === 'REDIS-CLUSTER'">台灣台北</el-table-column>
             <!-- dcchannel -->
             <el-table-column label="ID/名稱" v-if="viewName === 'dcchannel'">
               <template slot-scope="scope">
@@ -295,14 +244,10 @@
               </template>
             </el-table-column>
             <el-table-column label="規格" v-if="viewName === 'dcchannel'">
-              <template slot-scope="scope">
-                master-slave
-              </template>
+              <template slot-scope="scope">master-slave</template>
             </el-table-column>
             <el-table-column label="内網地址" v-if="viewName === 'dcchannel'">
-              <template slot-scope="scope">
-                {{ scope.row.WanIp }}
-              </template>
+              <template slot-scope="scope">{{ scope.row.WanIp }}</template>
             </el-table-column>
             <!-- dcline -->
             <el-table-column label="名稱/ID" v-if="viewName === 'dcline'">
@@ -333,9 +278,7 @@
               </template>
             </el-table-column>
             <el-table-column label="創建時間" v-if="viewName === 'COS'">
-              <template slot-scope="scope">
-                {{ CreationDate(scope.row.CreationDate) }}
-              </template>
+              <template slot-scope="scope">{{ CreationDate(scope.row.CreationDate) }}</template>
             </el-table-column>
 
             <el-table-column prop="address" label="操作">
@@ -369,7 +312,7 @@
         :show-close="false"
         class="dialog-box"
       >
-        <div class="title">
+        <div class="title" style="padding:20px 0">
           <h3>新建</h3>
           <a href="javascript:;" @click="newBuildByVal.newBuildState = false">
             <i class="el-icon-close"></i>
@@ -399,9 +342,7 @@
         </div>
         <div slot="footer" class="dialog-footer" style="text-align:center">
           <el-button type="primary" @click="save">保 存</el-button>
-          <el-button @click="newBuildByVal.newBuildState = false"
-            >取 消</el-button
-          >
+          <el-button @click="newBuildByVal.newBuildState = false">取 消</el-button>
         </div>
       </el-dialog>
       <!-- 移出 -->
@@ -411,14 +352,10 @@
         width="500px"
         custom-class="tke-dialog"
       >
-        <div>
-          移出後，該組之前綁定的告警策略將與該實例釋放，該組後續所涉及的操作將不會對該實例生效。
-        </div>
+        <div>移出後，該組之前綁定的告警策略將與該實例釋放，該組後續所涉及的操作將不會對該實例生效。</div>
         <div slot="footer" class="dialog-footer">
           <el-button type="primary" @click="DeleteList()">確定移出</el-button>
-          <el-button @click="rulesEditorByVal.rulesEditorState = false"
-            >取消</el-button
-          >
+          <el-button @click="rulesEditorByVal.rulesEditorState = false">取消</el-button>
         </div>
       </el-dialog>
       <!-- 批量移出 -->
@@ -430,13 +367,9 @@
         width="500px"
         custom-class="tke-dialog"
       >
-        <div>
-          移出後，該組之前綁定的告警策略將與該實例釋放，該組後續所涉及的操作將不會對該實例生效。
-        </div>
+        <div>移出後，該組之前綁定的告警策略將與該實例釋放，該組後續所涉及的操作將不會對該實例生效。</div>
         <div slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="DeleteList()"
-            >確萣簃炪葰選實唎</el-button
-          >
+          <el-button type="primary" @click="DeleteList()">確萣簃炪葰選實唎</el-button>
           <el-button @click="allDelete = false">取消</el-button>
         </div>
       </el-dialog>
@@ -1518,6 +1451,9 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.security-rules >>> .el-table__body-wrapper {
+  height: 440px !important;
+}
 .security-rules {
   .tab {
     ::v-deep .el-tabs__nav-scroll {

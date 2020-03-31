@@ -112,9 +112,11 @@
                     </template>
                   </el-table-column>
                   <el-table-column prop label="告警類型">
-                    <template slot-scope="scope" v-if="scope.row.AlarmType==0">指標</template>
-                    <template slot-scope="scope" v-else-if="scope.row.AlarmType==2">産品事件</template>
-                    <template slot-scope="scope" v-else-if="scope.row.AlarmType==3">平台事件</template>
+                    <template slot-scope="scope">
+                      <span v-if="scope.row.AlarmType==0">指標</span>
+                      <span v-else-if="scope.row.AlarmType==2">産品事件</span>
+                      <span v-else-if="scope.row.AlarmType==3">平台事件</span>
+                      </template>
                   </el-table-column>
                   <el-table-column prop label="策略類型" width="180">
                     <template slot-scope="scope">
