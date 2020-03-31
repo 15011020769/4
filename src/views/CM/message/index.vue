@@ -60,11 +60,10 @@
             <p v-if="scope.row.NotifyWay">
               <span v-for="(v,i) in scope.row.NotifyWay" :key="i">
                 <b v-if="v=='EMAIL'">郵件</b>
-                <!-- <b v-if="v=='SMS'">簡訊、</b> -->
                 <b v-if="v=='CALL'">站内信</b>
               </span>
             </p>
-            <p v-if="scope.row.NotifyWay.length==0">-</p>
+            <p v-if="scope.row.NotifyWay.length==1&&scope.row.NotifyWay[0]=='SMS'">-</p>
           </template>
         </el-table-column>
         <el-table-column label="操作">
