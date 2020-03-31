@@ -88,10 +88,10 @@
             {{ i.CalcType | CalcType }} {{ i.CalcValue }}{{ i.Unit }}，持續{{
               i.ContinueTime / 60
             }}分钟，
-            <span v-if="i.AlarmNotifyType != 1"
-              >
-              <i v-if="i.AlarmNotifyType != 0">按{{ i.AlarmNotifyPeriod | AlarmNotifyPeriod
-              }}</i>{{ i.AlarmNotifyPeriod > 0 ? "重复告警" : "不重复告警" }}
+            <span v-if="i.AlarmNotifyType != 1">
+              <i v-if="i.AlarmNotifyType != 0"
+                >按{{ i.AlarmNotifyPeriod | AlarmNotifyPeriod }}</i
+              >{{ i.AlarmNotifyPeriod > 0 ? "重复告警" : "不重复告警" }}
             </span>
             <span v-else>
               按週期指数递增重复告警
@@ -1383,6 +1383,7 @@
                           v-model="item.censusVal"
                           style="width:140px;"
                           :disabled="!formWrite.checkedZhibiao"
+                          @change="ChangeD(index)"
                         >
                           <el-option
                             v-for="(x, i) in item.cycle"
@@ -1396,6 +1397,7 @@
                           v-model="item.calcTypeVal"
                           style="width:60px;"
                           :disabled="!formWrite.checkedZhibiao"
+                          @change="ChangeD(index)"
                         >
                           <el-option
                             v-for="x in CalcType"
@@ -1413,8 +1415,21 @@
                             :min="0"
                             :max="item.max"
                             :disabled="!formWrite.checkedZhibiao"
+                            @blur="ChangeD(index)"
                           ></el-input-number>
-                          <span class="input-p">{{ item.unit }}</span>
+
+                          <el-tooltip
+                            :manual="true"
+                            placement="right"
+                            effect="light"
+                            :value="item.tooltip"
+                          >
+                            <div slot="content" style="color:red;">
+                              <i class="el-icon-warning"></i>
+                              请勿重复配置
+                            </div>
+                            <span class="input-p">{{ item.unit }}</span>
+                          </el-tooltip>
                         </div>
                         &nbsp;
                         <el-select
@@ -2002,6 +2017,7 @@ export default {
             calcTypeVal: "1",
             number: 0,
             unit: "%",
+            tooltip: false,
             continuousCycleVal: 1,
             warningVal: 0,
             cycle: []
@@ -2195,6 +2211,7 @@ export default {
             if (this.ReceiverInfos.ReceiverType === "group") {
               _ReceiverUserList = this.basicNews.ReceiverInfos[0]
                 .ReceiverGroupList;
+
               for (let i in _ReceiverUserList) {
                 let params = {
                   Version: "2019-01-16",
@@ -2641,6 +2658,7 @@ export default {
               calcTypeVal: _ConditionsConfig[i].CalcType,
               number: _ConditionsConfig[i].CalcValue,
               unit: _ConditionsConfig[i].Unit,
+              tooltip: false,
               continuousCycleVal:
                 Number(_ConditionsConfig[i].ContinueTime) /
                 Number(_ConditionsConfig[i].Period),
@@ -2725,6 +2743,7 @@ export default {
           this.formWrite.arr[0].calcTypeVal = 1;
           this.formWrite.arr[0].number = 0;
           this.formWrite.arr[0].unit = this.typeOpt[0].MetricUnit;
+          this.formWrite.arr[0].tooltip = false;
           for (let i in this.typeOpt[0].ConfigManual.Period.Keys) {
             if (this.typeOpt[0].ConfigManual.Period.Keys[i] == 60) {
               this.formWrite.arr[0].cycle.push({
@@ -2909,6 +2928,11 @@ export default {
       let _EventConfig = this.Conditions.EventConditions;
       let _arr = this.formWrite.arr;
       let _gaoArr = this.formWrite.gaoArr;
+      for (let i in _arr) {
+        if (_arr[i].tooltip) {
+          return false;
+        }
+      }
       if (this.radioChufa == 1) {
         param["IsUnionRule"] = this.Conditions.IsUnionRule;
         for (let i in _Conditions) {
@@ -3689,6 +3713,7 @@ export default {
                     }
                   }
                 }
+                console.log("COS", this.alarmObjectData);
                 this.alarmObjecLoad = false;
                 this.alarmInstanceLond = false;
               });
@@ -4080,7 +4105,9 @@ export default {
     EditReceiveObject() {
       this.editReceiveObjectVisuble = true;
     },
-
+    CreationDate(val) {
+      return val.replace("T", " ").substring(0, val.length - 1);
+    },
     // 獲取cam元件的值
     camFun(val) {
       this.cam = val;
@@ -4386,13 +4413,15 @@ export default {
         ),
         typeVal: this.typeOpt[this.formWrite.index].MetricId,
         censusVal: 60,
-        calcTypeVal: "1",
+        calcTypeVal: 1,
         number: 0,
         unit: this.typeOpt[this.formWrite.index].MetricUnit,
+        tooltip: false,
         continuousCycleVal: 1,
         warningVal: 86400,
         cycle: []
       });
+
       if (this.ViewName !== "vpn_tunnel") {
         let arr = this.typeOpt[this.formWrite.index].ConfigManual.Period.Keys;
         for (let i in arr) {
@@ -4426,6 +4455,27 @@ export default {
           this.formWrite.arr[this.formWrite.index].censusVal = 60;
         }
       }
+      let _arr = this.formWrite.arr;
+      console.log(
+        this.formWrite.arr[this.formWrite.index].typeVal,
+        this.formWrite.arr[this.formWrite.index].censusVal,
+        this.formWrite.arr[this.formWrite.index].calcTypeVal,
+        this.formWrite.arr[this.formWrite.index].number
+      );
+      for (let i = 0; i < _arr.length - 1; i++) {
+        if (
+          _arr[i].typeVal == this.formWrite.arr[this.formWrite.index].typeVal &&
+          _arr[i].censusVal ==
+            this.formWrite.arr[this.formWrite.index].censusVal &&
+          _arr[i].calcTypeVal ==
+            this.formWrite.arr[this.formWrite.index].calcTypeVal &&
+          _arr[i].number == this.formWrite.arr[this.formWrite.index].number
+        ) {
+          this.formWrite.arr[this.formWrite.index].tooltip = true;
+        } else {
+          this.formWrite.arr[this.formWrite.index].tooltip = false;
+        }
+      }
       if (this.typeOpt.length === this.formWrite.arr.length) {
         this.addDis = true;
         return false;
@@ -4437,6 +4487,21 @@ export default {
       this.formWrite.index--;
       this.formWrite.arr.splice(index, 1);
       this.addDis = false;
+      let _arr = this.formWrite.arr;
+      for (let i = 0; i < _arr.length; i++) {
+        for (let j = i + 1; j < _arr.length; j++) {
+          if (
+            _arr[i].typeVal == _arr[j].typeVal &&
+            _arr[i].censusVal == _arr[j].censusVal &&
+            _arr[i].calcTypeVal == _arr[j].calcTypeVal &&
+            _arr[i].number == _arr[j].number
+          ) {
+            _arr[j].tooltip = true;
+          } else {
+            _arr[j].tooltip = false;
+          }
+        }
+      }
     },
     addShijian() {
       //添加觸發條件的事件告警
@@ -4457,6 +4522,47 @@ export default {
           this.formWrite.arr[index].max = Math.floor(
             this.typeOpt[i].ConfigManual.CalcValue.Max
           );
+        }
+      }
+
+      let _arr = this.formWrite.arr;
+      let _lengthArr = [];
+      for (let i = 0; i < _arr.length; i++) {
+        if (
+          _arr[i].typeVal === this.formWrite.arr[index].typeVal &&
+          _arr[i].censusVal === this.formWrite.arr[index].censusVal &&
+          _arr[i].calcTypeVal === this.formWrite.arr[index].calcTypeVal &&
+          _arr[i].number === this.formWrite.arr[index].number
+        ) {
+          _lengthArr.push(_arr[i]);
+          if (_lengthArr.length > 1) {
+            this.formWrite.arr[index].tooltip = true;
+          } else {
+            this.formWrite.arr[index].tooltip = false;
+          }
+        } else {
+          this.formWrite.arr[index].tooltip = false;
+        }
+      }
+    },
+    ChangeD(index) {
+      let _arr = this.formWrite.arr;
+      let _lengthArr = [];
+      for (let i = 0; i < _arr.length; i++) {
+        if (
+          _arr[i].typeVal === this.formWrite.arr[index].typeVal &&
+          _arr[i].censusVal === this.formWrite.arr[index].censusVal &&
+          _arr[i].calcTypeVal === this.formWrite.arr[index].calcTypeVal &&
+          _arr[i].number === this.formWrite.arr[index].number
+        ) {
+          _lengthArr.push(_arr[i]);
+          if (_lengthArr.length > 1) {
+            this.formWrite.arr[index].tooltip = true;
+          } else {
+            this.formWrite.arr[index].tooltip = false;
+          }
+        } else {
+          this.formWrite.arr[index].tooltip = false;
         }
       }
     },
