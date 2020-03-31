@@ -393,7 +393,10 @@
         this.Time = data[1]
         this.TableLoad = true
         this._GetBase()
-        this._GetBase1()
+        setTimeout(() => {
+          this._GetBase1()
+        }, 3000);
+
       },
       //获取基础指标详情
       _GetBase() {
