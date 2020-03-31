@@ -96,14 +96,14 @@ export default {
         StartTime: moment(this.StartTIme).format("YYYY-MM-DD HH:MM:SS"),
         EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:MM:SS"),
         // "CountryOrAreaNames.0": "Taiwan"
-        MainlandOrOversea: "Mainland"
+        // MainlandOrOversea: "Mainland"
       };
       const params2 = { // 图表
         Version: "2018-08-01",
         StartTime: moment(this.StartTIme).format("YYYY-MM-DD HH:MM:SS"),
         EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:MM:SS"),
         // "CountryOrAreaNames.0": "Taiwan"
-        MainlandOrOversea: "Mainland"
+        // MainlandOrOversea: "Mainland"
       };
       if (this.domainCheckedListCopy.length !== this.domainsData.length) {
         this.domainCheckedListCopy.forEach((item, index) => {

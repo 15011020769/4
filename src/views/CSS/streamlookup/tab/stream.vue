@@ -128,6 +128,11 @@ export default {
               "param=StreamName,value=, length is zero."
             ) {
               this.$message.error("請輸入流id");
+            } else if(
+              res.Response.Error.Message ==
+              'EndTime minus StartTime should smaller than 21600 s'
+            ) {
+              this.$message.error("所選時間範圍不能超過3小時");
             } else {
               this.$message.error(res.Response.Error.Message);
             }
