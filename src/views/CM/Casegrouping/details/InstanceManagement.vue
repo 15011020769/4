@@ -449,7 +449,7 @@ import CamTransferCpt from "@/views/CM/CM_assembly/CamTransferCpt";
 import { ErrorTips } from "@/components/ErrorTips";
 import {
   CM_GROUPING_MANAGE,
-  CM_GROUPING_MANAGELIST,
+  CVM_LIST,
   CM_GROUPING_MOVE,
   CM_GROUPING_MANAGELIST_ADD,
   ALL_PROJECT,
@@ -604,6 +604,7 @@ export default {
       await this.axios.post(CM_GROUPING_MANAGE, param).then(res => {
         if (res.Response.Error === undefined) {
           var _enterList = res.Response.InstanceList;
+          console.log(_enterList);
           this.total = res.Response.Total;
           if (_enterList.length > 0) {
             if (this.viewName === "cvm_device") {
@@ -617,8 +618,9 @@ export default {
                   _enterList[i].Dimensions
                 ).unInstanceId;
               }
-              this.axios.post(CM_GROUPING_MANAGELIST, params).then(res => {
+              this.axios.post(CVM_LIST, params).then(res => {
                 if (res.Response.Error === undefined) {
+                  // console.log(res.Response);
                   this.enterList = res.Response.InstanceSet;
                   for (let i in _enterList) {
                     for (let j in this.enterList) {
@@ -1485,9 +1487,9 @@ export default {
     },
     // 分页
     handleCurrentChange(val) {
-      this.pageIndex = (val - 1) * this.pageSize;
+      this.pageIndex = val - 1;
       this.ListInit();
-      this.pageIndex += (val - 1) * this.pageSize;
+      this.pageIndex += 1;
     },
     handleSizeChange(val) {
       // console.log(`每页 ${val} 条`);
