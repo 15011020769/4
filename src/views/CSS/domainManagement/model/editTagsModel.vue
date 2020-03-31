@@ -108,47 +108,36 @@ export default {
       this.$emit("update:visible", false)
     },
     //确定按钮
-    editTagsSure() {
-      axios.all(this.domains.map(domain => {
-        const ps = []
-        if (this.removeTags.length) {
-          ps.push(
-            this.$axios.post('tag/ModifyResourceTags', flatObj({
+    async editTagsSure() {
+      const tags = this.tags.filter(tag => tag.tagKey && tag.tagValue)
+      if (this.removeTags.length) {
+        Promise.all(this.domains.map(domain => this.$axios.post('tag/ModifyResourceTags', flatObj({
+          resource: `qcs::lvb:ap-guangzhou:uin/${VueCookie.get('uin')}:live/${domain.Name}`,
+          deleteTags: this.removeTags.map(tag => ({ tagKey: tag.tagKey, tagValue: tag.tagValue, resourceId: '' }))
+        })))).then(res => {
+          if (tags.length) {
+            Promise.all(this.domains.map(domain => this.$axios.post('tag/ModifyResourceTags', flatObj({
               resource: `qcs::lvb:ap-guangzhou:uin/${VueCookie.get('uin')}:live/${domain.Name}`,
-              deleteTags: this.removeTags.map(tag => ({ tagKey: tag.tagKey, tagValue: tag.tagValue, resourceId: '' }))
-            }))
-          )
-        }
-        if (this.tags.length) {
-          ps.push(
-            this.$axios.post('tag/ModifyResourceTags', flatObj({
-              resource: `qcs::lvb:ap-guangzhou:uin/${VueCookie.get('uin')}:live/${domain.Name}`,
-              replaceTags: this.tags.map(tag => ({ tagKey: tag.tagKey, tagValue: tag.tagValue }))
-            }))
-          )
-        }
-        // if (this.removeTags.length) {
-        //   ps.push(
-        //     this.$axios.post('tag/ModifyResourceTags', {
-        //       Version: "2018-08-01",
-        //       resource: `qcs::lvb:ap-guangzhou:uin/${VueCookie.get('uin')}:live/${domain.Name}`,
-        //       deleteTags: this.removeTags.map(tag => ({ tagKey: tag.tagKey, tagValue: tag.tagValue, resourceId: '' }))
-        //     })
-        //   )
-        // }
-        // if (this.tags.length) {
-        //   ps.push(
-        //     this.$axios.post('tag/ModifyResourceTags', {
-        //       Version: "2018-08-01",
-        //       resource: `qcs::lvb:ap-guangzhou:uin/${VueCookie.get('uin')}:live/${domain.Name}`,
-        //       replaceTags: this.tags.map(tag => ({ tagKey: tag.tagKey, tagValue: tag.tagValue }))
-        //     })
-        //   )
-        // }
-      }).flat())
-        .then(axios.spread((acct, perms) => {
+              replaceTags: tags.map(tag => ({ tagKey: tag.tagKey, tagValue: tag.tagValue }))
+            })))).then(res => {
+              this.$emit("update:visible", false)
+            })
+          } else {
+            this.$emit("update:visible", false)
+          }
+        })
+      } else {
+        if (tags.length) {
+          Promise.all(this.domains.map(domain => this.$axios.post('tag/ModifyResourceTags', flatObj({
+            resource: `qcs::lvb:ap-guangzhou:uin/${VueCookie.get('uin')}:live/${domain.Name}`,
+            replaceTags: tags.map(tag => ({ tagKey: tag.tagKey, tagValue: tag.tagValue }))
+          })))).then(res => {
+            this.$emit("update:visible", false)
+          })
+        } else {
           this.$emit("update:visible", false)
-        }))
+        }
+      }
     },
     addRow(){
       if (!this.tags.some(tag => !tag.tagKey || !tag.tagValue)) {

@@ -14,6 +14,13 @@
         <el-col>{{info.Name}}</el-col>
       </el-row>
       <el-row class="item">
+        <el-col style="width: 100PX"><span>登录链接</span></el-col>
+        <el-col class="login-url">
+          <a :href="loginUrl" target="_blank">{{loginUrl}}</a>
+        </el-col>
+          <i class="el-icon-copy-document" v-clipboard:success="onCopy" v-clipboard:copy="loginUrl" />
+      </el-row>
+      <el-row class="item">
         <el-col style="width: 100PX"><span>描述</span></el-col>
         <el-col v-if="!showEditDescription">{{info.Description}} <i class="el-icon-edit" @click="showEditDescription=true"></i></el-col>
         <el-col v-else>
@@ -97,13 +104,28 @@ export default {
       dialogVisible: false,
       showEditDescription: false,
       description: "",
-      info: {}
+      info: {},
+      loginUrl: '',
     };
   },
   mounted() {
     this.init();
+    this.$axios.post('open2/GenSAMLAuthRequest', {
+      "Version":"2018-12-25",
+      "Name": this.$route.params.name
+    }).then(({ Response }) => {
+      this.loginUrl = Response.Url + '?SAMLRequest=' + encodeURIComponent(Response.AuthReq)
+    })
   },
   methods: {
+    onCopy() {
+      this.$message({
+        message: '複製成功',
+        type: 'success',
+        showClose: true,
+        duration: 0
+      })
+    },
     cancelUpload() {
       this.addModel.metadataDocument = "";
       this.metadataDocumentError = "";
@@ -148,7 +170,6 @@ export default {
           this.loading = false;
           this.metadataDocumentError = "元數據文檔內容有誤";
           this.$refs.upload.clearFiles();
-          console.log("======");
         }
       };
       reader.readAsText(file.raw);
@@ -293,6 +314,7 @@ export default {
     display: flex;
     height: 40px;
     line-height: 40px;
+    align-items: center;
     .el-icon-edit {
       cursor: pointer;
     }
@@ -304,5 +326,14 @@ export default {
       color: inherit;
     }
   }
+}
+.login-url {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: 50%;
+}
+.el-icon-copy-document {
+  cursor: pointer;
 }
 </style>
