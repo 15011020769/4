@@ -432,6 +432,11 @@ export default {
 .operation-wrap >>> .el-range-input {
   margin-top: 5px;
 }
+ ::v-deep .el-input__inner {
+  height: 30px !important;
+  line-height: 30px !important;
+  border-radius: 0;
+}
 .operation-wrap {
   .seek-box {
     padding: 10px 20px;
@@ -536,11 +541,7 @@ export default {
     .selectDomin {
       width: 230px;
     }
-    ::v-deep .el-input__inner {
-      height: 30px;
-      line-height: 30px;
-      border-radius: 0;
-    }
+
     ::v-deep {
 
       flex-wrap: wrap !important;

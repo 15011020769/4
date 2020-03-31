@@ -105,6 +105,11 @@ export default {
               'param=StreamName,value=, length is zero.'
           ) {
             this.$message.error('請輸入流id')
+          } else if(
+            res.Response.Error.Message ==
+              'EndTime - StartTime must in one day!'
+          ) {
+            this.$message.error('只能查詢最近30天且開始時間與結束時間必須是當天')
           } else {
             this.$message.error(res.Response.Error.Message)
           }
