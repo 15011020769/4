@@ -84,7 +84,7 @@
         },
         picker: {
           disabledDate(time) {
-            return time.getTime() > Date.now() || time.getTime() < (Date.now() - 86400000 * 31 * 6)
+            return time.getTime() > Date.now() || time.getTime() < (Date.now() - 86400000 * 183)
           }
         },
 
