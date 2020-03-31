@@ -3141,8 +3141,7 @@ export default {
             if (this.ViewName === "cvm_device") {
               let params = {
                 Version: "2017-03-12",
-                Limit: 50,
-                Offset: this.pageIndex
+                Limit: 100
               };
               for (let i in _enterList) {
                 params["InstanceIds." + i] = JSON.parse(
@@ -3193,8 +3192,7 @@ export default {
             } else if (this.ViewName === "BS") {
               let params = {
                 Version: "2017-03-12",
-                Limit: 50,
-                Offset: this.pageIndex
+                Limit: 100
               };
               params["Filters.0.Name"] = "disk-id";
               for (let i in _enterList) {
@@ -3241,9 +3239,7 @@ export default {
               });
             } else if (this.ViewName === "VPN_GW") {
               let params = {
-                Version: "2017-03-12",
-                Limit: 50,
-                Offset: this.pageIndex
+                Version: "2017-03-12"
               };
               params["Filters.0.Name"] = "public-ip-address";
               for (let i in _enterList) {
@@ -3290,9 +3286,7 @@ export default {
               });
             } else if (this.ViewName === "vpn_tunnel") {
               let params = {
-                Version: "2017-03-12",
-                Limit: 50,
-                Offset: this.pageIndex
+                Version: "2017-03-12"
               };
               params["Filters.0.Name"] = "vpn-connection-id";
               for (let i in _enterList) {
@@ -3338,9 +3332,7 @@ export default {
               });
             } else if (this.ViewName === "nat_tc_stat") {
               let params = {
-                Version: "2017-03-12",
-                Limit: this.pageSize,
-                Offset: this.pageIndex
+                Version: "2017-03-12"
               };
               params["Filters.0.Name"] = "nat-gateway-id";
               for (let i in _enterList) {
@@ -3382,9 +3374,7 @@ export default {
               });
             } else if (this.ViewName === "DC_GW") {
               let params = {
-                Version: "2017-03-12",
-                Limit: this.pageSize,
-                Offset: this.pageIndex
+                Version: "2017-03-12"
               };
               params["Filters.0.Name"] = "direct-connect-gateway-id";
               for (let i in _enterList) {
@@ -3434,8 +3424,7 @@ export default {
             } else if (this.ViewName === "EIP") {
               let params = {
                 Version: "2017-03-12",
-                Limit: this.pageSize,
-                Offset: this.pageIndex
+                Limit:100
               };
               params["Filters.0.Name"] = "address-ip";
               for (let i in _enterList) {
@@ -3480,9 +3469,7 @@ export default {
               });
             } else if (this.ViewName === "cdb_detail") {
               let params = {
-                Version: "2017-03-20",
-                Limit: this.pageSize,
-                Offset: this.pageIndex
+                Version: "2017-03-20"
               };
               for (let i in _enterList) {
                 params["InstanceIds." + i] = JSON.parse(
@@ -3531,9 +3518,7 @@ export default {
               });
             } else if (this.ViewName === "REDIS-CLUSTER") {
               let params = {
-                Version: "2018-04-12",
-                Limit: this.pageSize,
-                Offset: this.pageIndex
+                Version: "2018-04-12"
               };
               for (let i in _enterList) {
                 params["SearchKeys." + i] = JSON.parse(
@@ -3583,9 +3568,7 @@ export default {
               });
             } else if (this.ViewName === "dcchannel") {
               let params = {
-                Version: "2018-04-10",
-                Limit: 50,
-                Offset: this.pageIndex
+                Version: "2018-04-10"
               };
               params["Filters.0.Name"] = "direct-connect-tunnel-id";
               for (let i in _enterList) {
@@ -3634,9 +3617,7 @@ export default {
               });
             } else if (this.ViewName === "dcline") {
               let params = {
-                Version: "2018-04-10",
-                Limit: this.pageSize,
-                Offset: this.pageIndex
+                Version: "2018-04-10"
               };
               for (let i in _enterList) {
                 params["DirectConnectIds." + i] = JSON.parse(

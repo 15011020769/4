@@ -610,8 +610,7 @@ export default {
             if (this.viewName === "cvm_device") {
               let params = {
                 Version: "2017-03-12",
-                Limit: this.pageSize,
-                Offset: this.pageIndex
+                Limit: 100
               };
               for (let i in _enterList) {
                 params["InstanceIds." + i] = JSON.parse(
@@ -632,7 +631,6 @@ export default {
                       }
                     }
                   }
-                  console.log(this.enterList);
                   this.loadShow = false;
                 } else {
                   let ErrTips = {
@@ -657,8 +655,7 @@ export default {
             } else if (this.viewName === "BS") {
               let params = {
                 Version: "2017-03-12",
-                Limit: this.pageSize,
-                Offset: this.pageIndex
+                Limit: 100
               };
               params["Filters.0.Name"] = "disk-id";
               for (let i in _enterList) {
@@ -699,11 +696,9 @@ export default {
               });
             } else if (this.viewName === "VPN_GW") {
               let params = {
-                Version: "2017-03-12",
-                Limit: this.pageSize,
-                Offset: this.pageIndex
+                Version: "2017-03-12"
               };
-              console.log(_enterList);
+
               params["Filters.0.Name"] = "public-ip-address";
               for (let i in _enterList) {
                 params["Filters.0.Values." + i] = JSON.parse(
@@ -743,9 +738,7 @@ export default {
               });
             } else if (this.viewName === "vpn_tunnel") {
               let params = {
-                Version: "2017-03-12",
-                Limit: this.pageSize,
-                Offset: this.pageIndex
+                Version: "2017-03-12"
               };
               params["Filters.0.Name"] = "vpn-connection-id";
               for (let i in _enterList) {
@@ -784,9 +777,7 @@ export default {
               });
             } else if (this.viewName === "nat_tc_stat") {
               let params = {
-                Version: "2017-03-12",
-                Limit: this.pageSize,
-                Offset: this.pageIndex
+                Version: "2017-03-12"
               };
               params["Filters.0.Name"] = "nat-gateway-id";
               for (let i in _enterList) {
@@ -822,9 +813,7 @@ export default {
               });
             } else if (this.viewName === "DC_GW") {
               let params = {
-                Version: "2017-03-12",
-                Limit: this.pageSize,
-                Offset: this.pageIndex
+                Version: "2017-03-12"
               };
               params["Filters.0.Name"] = "direct-connect-gateway-id";
               for (let i in _enterList) {
@@ -867,8 +856,7 @@ export default {
             } else if (this.viewName === "EIP") {
               let params = {
                 Version: "2017-03-12",
-                Limit: this.pageSize,
-                Offset: this.pageIndex
+                Limit: 100
               };
               params["Filters.0.Name"] = "address-ip";
               for (let i in _enterList) {
@@ -906,9 +894,7 @@ export default {
               });
             } else if (this.viewName === "cdb_detail") {
               let params = {
-                Version: "2017-03-20",
-                Limit: this.pageSize,
-                Offset: this.pageIndex
+                Version: "2017-03-20"
               };
               for (let i in _enterList) {
                 params["InstanceIds." + i] = JSON.parse(
@@ -950,9 +936,7 @@ export default {
               });
             } else if (this.viewName === "REDIS-CLUSTER") {
               let params = {
-                Version: "2018-04-12",
-                Limit: this.pageSize,
-                Offset: this.pageIndex
+                Version: "2018-04-12"
               };
               for (let i in _enterList) {
                 params["SearchKeys." + i] = JSON.parse(
@@ -995,11 +979,8 @@ export default {
               });
             } else if (this.viewName === "dcchannel") {
               let params = {
-                Version: "2018-04-10",
-                Limit: this.pageSize,
-                Offset: this.pageIndex
+                Version: "2018-04-10"
               };
-              console.log(_enterList);
               params["Filters.0.Name"] = "direct-connect-tunnel-id";
               for (let i in _enterList) {
                 params["Filters.0.Values." + i] = JSON.parse(
@@ -1042,12 +1023,8 @@ export default {
               });
             } else if (this.viewName === "dcline") {
               let params = {
-                Version: "2018-04-10",
-                Limit: this.pageSize,
-                Offset: this.pageIndex
+                Version: "2018-04-10"
               };
-              console.log(_enterList);
-
               for (let i in _enterList) {
                 params["DirectConnectIds." + i] = JSON.parse(
                   _enterList[i].Dimensions
@@ -1096,7 +1073,6 @@ export default {
             } else if (this.viewName === "COS") {
               this.axios.get(OBJ_LIST).then(res => {
                 var _arr = res.Buckets.Bucket;
-                console.log(_arr);
                 for (let i in _enterList) {
                   for (let j in _arr) {
                     if (
@@ -1108,7 +1084,6 @@ export default {
                     }
                   }
                 }
-                console.log(this.enterList);
                 this.loadShow = false;
               });
             }
