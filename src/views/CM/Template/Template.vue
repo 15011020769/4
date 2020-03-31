@@ -519,7 +519,7 @@ export default {
             message: '條件範本名稱修改成功',
             type: 'success',
             showClose: true,
-            // duration: 2000
+            duration: 0
           })
         } else {
           this.errorPrompt(res)
@@ -550,7 +550,7 @@ export default {
             message: '複製成功',
             type: 'success',
             showClose: true,
-            // duration: 2000
+            duration: 0
           })
           this.loadShow = false
         } else {
@@ -584,7 +584,7 @@ export default {
             message: '刪除成功',
             type: 'success',
             showClose: true,
-            // duration: 2000
+            duration: 0
           })
         } else {
           this.showDelDialog = false
