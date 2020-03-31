@@ -117,7 +117,7 @@
       <!-- <p style="color:#444;font-weight:bolder;margin-bottom:30px">修改條件範本名稱</p> -->
           <div>
             <el-input maxlength="20" show-word-limit @input="editNameChange"
-            v-model="editGroupName" style="width:300px"></el-input>
+            v-model="editGroupName"></el-input>
             <p v-if="editGroupName==''" class="edit-text-tips">條件範本名稱不能爲空</p>
             <p v-if="VerifyName" class="edit-text-tips">含有非法字符,请输入1-20個中英文字符或下劃線</p>
           </div>
