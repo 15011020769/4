@@ -21,7 +21,7 @@
       <div class="domainTitleBnt">
         <div class="bntWrap" style="flex:1">
           <el-button type="primary" @click="addDomin">添加域名</el-button>
-          <!-- <el-button type="primary" @click="editTags">编辑标签</el-button> -->
+          <el-button type="primary" @click="editTags">编辑标签</el-button>
         </div>
         <div class="input">
           <el-input
@@ -47,7 +47,9 @@
             ref="multipleTable"
             tooltip-effect="dark"
             v-loading="loadShow"
+            @selection-change="handleSelectionChange"
           >
+            <el-table-column type="selection" />
             <el-table-column prop="Name" label="域名" width>
               <template slot-scope="scope">
                 <el-button type="text" @click="toDetail(scope.row)">{{
@@ -165,10 +167,12 @@
         :con="deleteDominArr"
         @closedeleteDominModel="closedeleteDominModel"
       />
-      <editTagsModel
-        :isShow="editTagsModel"
-        @closeEditTagsModel="closeEditTagsModel"
-      />
+      <el-dialog title="编辑标签" :visible.sync="editTagsModel" width="45%" destroy-on-close>
+        <editTagsModel
+          :domains="checkArr"
+          :visible.sync="editTagsModel"
+        />
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -218,6 +222,9 @@ export default {
     this.describeLiveDomains()
   },
   methods: {
+    handleSelectionChange(val) {
+      this.checkArr = val
+    },
     // 1.1.查询域名列表(支持分页查询)
     describeLiveDomains () {
       this.loadShow = true
@@ -236,7 +243,6 @@ export default {
           element.isOwnDomain = isOwnDomain(element.Name)
         })
 
-        console.log(res.Response.DomainList)
         this.allData = res.Response.DomainList
         this.tableDataBegin = res.Response.DomainList
         this.totalItems = res.Response.AllCount
@@ -258,13 +264,11 @@ export default {
     },
     // 切换pagesize
     handleSizeChange (val) {
-      console.log(`每页 ${val} 条`)
       this.pageSize = val
       this.$nextTick(this.describeLiveDomains)
     },
     // 切换分页
     handleCurrentChange (val) {
-      console.log(`当前页: ${val}`)
       this.currentPage = val
       // 分页查询
       this.$nextTick(this.describeLiveDomains)
@@ -307,8 +311,6 @@ export default {
     // 关闭禁用域名弹框
     closeStopDominModel (isShow) {
       if (isShow) {
-        // 是否确认禁用
-        console.log(isShow)
         let param = {
           Version: '2018-08-01',
           DomainName: this.DomainName
@@ -333,7 +335,6 @@ export default {
       this.deleteModel = true
       this.deleteDominArr.push(row.Name)
       this.deleteDominArr.push(row.Type)
-      // console.log(this.deleteDominArr)
     },
     // 关闭删除弹框
     closedeleteDominModel (isShow) {
