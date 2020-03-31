@@ -90,9 +90,9 @@
                     <template slot-scope="scope">
                       <span v-if="scope.row.NotifyWay[0]=='EMAIL'">郵件</span>
                       <span v-if="scope.row.NotifyWay[1]=='EMAIL'">郵件</span>
-                       <span v-if="scope.row.NotifyWay[0]=='CALL'">站内信</span>
+                      <span v-if="scope.row.NotifyWay[0]=='CALL'">站内信</span>
                       <span v-if="scope.row.NotifyWay[1]=='CALL'">站内信</span>
-                      </template>
+                    </template>
                   </el-table-column>
                   <el-table-column prop label="告警狀態" width="100">
                     <template slot-scope="scope">
@@ -135,6 +135,107 @@
                           <span>雲伺服器-基礎監控策略</span>
                         </el-tooltip>
                       </div>
+                      <div v-if="scope.row.ViewName=='BS'">
+                        <el-tooltip
+                          class="item"
+                          effect="dark"
+                          content="策略類型: 雲伺服器-儲存監控"
+                          placement="bottom-start"
+                        >
+                          <span>雲伺服器-儲存監控</span>
+                        </el-tooltip>
+                      </div>
+                      <div v-if="scope.row.ViewName=='cdb_detail'">
+                        <el-tooltip
+                          class="item"
+                          effect="dark"
+                          content="策略類型: 雲資料庫-MySQL-主機監控"
+                          placement="bottom-start"
+                        >
+                          <span>雲資料庫-MySQL-主機監控</span>
+                        </el-tooltip>
+                      </div>
+                      <div v-if="scope.row.ViewName=='COS'">
+                        <el-tooltip
+                          class="item"
+                          effect="dark"
+                          content="策略類型: 物件儲存"
+                          placement="bottom-start"
+                        >
+                          <span>物件儲存</span>
+                        </el-tooltip>
+                      </div>
+                      <div v-if="scope.row.ViewName=='VPN_GW'">
+                        <el-tooltip
+                          class="item"
+                          effect="dark"
+                          content="策略類型: 私有網絡-VPN閘道"
+                          placement="bottom-start"
+                        >
+                          <span>私有網絡-VPN閘道</span>
+                        </el-tooltip>
+                      </div>
+                      <div v-if="scope.row.ViewName=='EIP'">
+                        <el-tooltip
+                          class="item"
+                          effect="dark"
+                          content="策略類型: 私有網絡-彈性公網IP"
+                          placement="bottom-start"
+                        >
+                          <span>私有網絡-彈性公網IP</span>
+                        </el-tooltip>
+                      </div>
+                      <div v-if="scope.row.ViewName=='nat_tc_stat'">
+                        <el-tooltip
+                          class="item"
+                          effect="dark"
+                          content="策略類型: 私有網絡-NAT閘道"
+                          placement="bottom-start"
+                        >
+                          <span>私有網絡-NAT閘道</span>
+                        </el-tooltip>
+                      </div>
+                      <div v-if="scope.row.ViewName=='REDIS-CLUSTER'">
+                        <el-tooltip
+                          class="item"
+                          effect="dark"
+                          content="策略類型: 雲資料庫-Redis-社區版"
+                          placement="bottom-start"
+                        >
+                          <span>雲資料庫-Redis-社區版</span>
+                        </el-tooltip>
+                      </div>
+                      <div v-if="scope.row.ViewName=='vpn_tunnel'">
+                        <el-tooltip
+                          class="item"
+                          effect="dark"
+                          content="策略類型: 私有網絡-VPN通道"
+                          placement="bottom-start"
+                        >
+                          <span>私有網絡-VPN通道</span>
+                        </el-tooltip>
+                      </div>
+                      <div v-if="scope.row.ViewName=='dcline'">
+                        <el-tooltip
+                          class="item"
+                          effect="dark"
+                          content="策略類型: 專線接入-物理專線"
+                          placement="bottom-start"
+                        >
+                          <span>專線接入-物理專線</span>
+                        </el-tooltip>
+                      </div>
+
+                      <!-- <div v-if="scope.row.ViewName=='dcline'">
+                        <el-tooltip
+                          class="item"
+                          effect="dark"
+                          content="策略類型: 專線接入-物理專線"
+                          placement="bottom-start"
+                        >
+                          <span>專線接入-物理專線</span>
+                        </el-tooltip>
+                      </div>-->
                     </template>
                   </el-table-column>
 
