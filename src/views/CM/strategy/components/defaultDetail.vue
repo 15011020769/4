@@ -3424,7 +3424,7 @@ export default {
             } else if (this.ViewName === "EIP") {
               let params = {
                 Version: "2017-03-12",
-                Limit:100
+                Limit: 100
               };
               params["Filters.0.Name"] = "address-ip";
               for (let i in _enterList) {
@@ -3689,7 +3689,6 @@ export default {
                     }
                   }
                 }
-                console.log("COS", this.alarmObjectData);
                 this.alarmObjecLoad = false;
                 this.alarmInstanceLond = false;
               });
