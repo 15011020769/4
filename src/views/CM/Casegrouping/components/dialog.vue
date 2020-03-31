@@ -146,7 +146,7 @@ export default {
       if (this.groupingName === "") {
         this.nameTips = "分組名稱不能爲空";
         this.groupingNameTips = false;
-      } else if (this.groupingName.length == 20) {
+      } else if (this.groupingName.length > 20) {
         this.nameTips = "分組名稱不能超過 20 字";
         this.groupingNameTips = false;
       } else {

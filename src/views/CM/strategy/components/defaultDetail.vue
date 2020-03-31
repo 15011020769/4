@@ -88,12 +88,14 @@
             {{ i.CalcType | CalcType }} {{ i.CalcValue }}{{ i.Unit }}，持續{{
               i.ContinueTime / 60
             }}分钟，
-            <span v-if="i.AlarmNotifyType != 1">
-              <i v-if="i.AlarmNotifyType != 0"
-                >按{{ i.AlarmNotifyPeriod | AlarmNotifyPeriod }}</i
-              >{{ i.AlarmNotifyPeriod > 0 ? "重复告警" : "不重复告警" }}
+            <span v-if="i.AlarmNotifyType == 0 && i.AlarmNotifyPeriod == 0">
+              {{ i.AlarmNotifyPeriod > 0 ? "重複告警" : "不重複告警" }}
             </span>
-            <span v-else>
+            <span v-if="i.AlarmNotifyType == 0 && i.AlarmNotifyPeriod != 0">
+              按{{ i.AlarmNotifyPeriod | AlarmNotifyPeriod
+              }}{{ i.AlarmNotifyPeriod > 0 ? "重複告警" : "不重複告警" }}
+            </span>
+            <span v-if="i.AlarmNotifyType == 1">
               按週期指数递增重复告警
             </span>
           </p>
@@ -222,7 +224,7 @@
           <!-- vpn_tunnel -->
           <el-table-column label="ID/名稱" v-if="ViewName === 'vpn_tunnel'">
             <template slot-scope="scope">
-              <p>{{ scope.row.VpnGatewayId }}</p>
+              <p>{{ scope.row.VpnConnectionId }}</p>
               <p>{{ scope.row.VpnConnectionName }}</p>
             </template>
           </el-table-column>
