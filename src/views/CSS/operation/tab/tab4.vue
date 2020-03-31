@@ -3,7 +3,7 @@
     <el-row type="flex" justify="space-between">
       <h3>
         併發連接數趨勢
-        <span style="color:#bbb;">(單位:MB)</span>
+        <span style="color:#bbb;">(單位:次)</span>
       </h3>
       <p class="iconBtn"><i class="el-icon-download" @click="_export"></i></p>
     </el-row>
