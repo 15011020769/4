@@ -92,7 +92,7 @@
             </p>
           </div>
           <div class="chartContent" v-show="item.openChartFlag">
-            <el-table :data="item.Instances" :id="'exportTable'+item.ViewID">
+            <el-table :data="item.Instances.length != 0 ? item.Instances : []" :id="'exportTable'+item.ViewID">
               <el-table-column prop="" label="" width="50">
                 <template slot-scope="scope">
                   <div :style='"width: 10px;height: 10px;border-radius: 50%;background:" + scope.row.bgColor'></div>
@@ -736,10 +736,10 @@
                 });
               }
           });
-          const item = this.ViewList[index];
-          item.DataPoints = DataPoints;
+          const eg = this.ViewList[index];
+          eg.DataPoints = DataPoints;
         } else { // 大于10条数据
-          var DataPoints = []; // 取出这个空数组
+          let DataPoints = []; // 取出这个空数组
           let DimensionsArr = []; // Dimensions数组外的数组
           DimensionsArr[0] = {}; DimensionsArr[1] = {};
           Instances.forEach((ele, i) => {
@@ -752,24 +752,29 @@
           });
           // 两次调用获取Y轴数据接口
           DimensionsArr.forEach((item, j) => {
+            this.ViewList[index].DataPoints = new Array(0);
             let oldParams = {};
             oldParams = JSON.parse(JSON.stringify(params));
             let newParams = Object.assign(oldParams, item);
-
             this.axios.get(GET_MONITOR_DATA, {params: newParams})
               .then(res => {
                 this.mainLoading = false;
                 this.chartsLoading = false;
+                let DataPointsIn = []; // 内循环外放一个数组
                 if (res.Response.Error === undefined) {
                   res.Response.DataPoints.forEach((ele, i) => {
-                    DataPoints.push({
+                    let newPoints = [];
+                    ele.Points.forEach((el, k)=> {
+                      newPoints.push(el == null ? '' : el);
+                    });
+                    DataPointsIn.push({
                       type: "line",
                       connectNulls: true,
-                      data: ele.Points.map((item,i) => {
+                      data: ele.Points.map((item,k) => {
                         // 存在坐标为null的情况，应该是接口问题
                         return item === null ? "" : item
                       }),
-                      // data: ele.Points,
+                      // data: newPoints,
                       name: ele.Dimensions[InstanceName], // Id名对应的Id
                       itemStyle: {
                         normal: {
@@ -794,10 +799,15 @@
                     duration: 0
                   });
                 }
+                DataPoints = [...DataPoints, ...DataPointsIn];
+                // console.log(DataPoints, 'DataPoints1');
+                
+                const eg = this.ViewList[index];
+                eg.DataPoints = JSON.parse(JSON.stringify(DataPoints));
+                // this.$set(this.ViewList, index, eg);
+                // console.log(DataPoints, 'DataPoints2', eg, eg.DataPoints);
               }); // .then结束
           });// foreach结束
-          const item = this.ViewList[index];
-          item.DataPoints = DataPoints;
         }
         
       },
