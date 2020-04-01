@@ -278,7 +278,7 @@ export default {
       let number = 0
       if (this.rightData.length) {
         if(this.DashboardData.length<=10){
-           this.createDashboard();
+           this.createDashboard(0,this.DashboardData.length);
             this.$router.push({
               name: "Dashboard",
               query: {
@@ -295,14 +295,25 @@ export default {
                }
               this.createDashboard(i*10,(i+1)*10)
             }
+             this.$router.push({
+              name: "Dashboard",
+              query: {
+                DashboardID: this.DashboardID
+              }
+            });
           } else {
             number = parseInt(this.DashboardData.length/10)
             for(let i=0;i<number;i++){
                this.createDashboard(i,(i+1)*10)
             }
+            this.$router.push({
+              name: "Dashboard",
+              query: {
+                DashboardID: this.DashboardID
+              }
+            });
           }
         }
-       
       }
     },
     // 跳转
