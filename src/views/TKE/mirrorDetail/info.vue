@@ -227,7 +227,7 @@ export default {
   name: "MirrorInfos",
   data() {
     return {
-      userID: this.$cookie.get("uuid"),
+      userID: this.$cookie.get("uin"),
       radio: "keep_last_nums",
       flag1: false,
       flag2: true,

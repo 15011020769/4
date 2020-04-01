@@ -527,7 +527,7 @@ export default {
         // password: word
         // Version: "2019-09-24",
         password: word,
-        RequestOperator:this.$cookie.get('uuid')
+        RequestOperator:this.$cookie.get('uin')
       }
       this.axios.post(TKE_CHANGEPASSWORD, param).then(res => {
         // console.log(res)
