@@ -21,7 +21,7 @@
       <div class="domainTitleBnt">
         <div class="bntWrap" style="flex:1">
           <el-button type="primary" @click="addDomin">添加域名</el-button>
-          <el-button type="primary" @click="editTags">编辑标签</el-button>
+          <el-button type="primary" @click="editTags">編輯標籤</el-button>
         </div>
         <div class="input">
           <el-input
@@ -167,10 +167,11 @@
         :con="deleteDominArr"
         @closedeleteDominModel="closedeleteDominModel"
       />
-      <el-dialog title="编辑标签" :visible.sync="editTagsModel" width="45%" destroy-on-close>
+      <el-dialog title="編輯標籤" :visible.sync="editTagsModel" width="45%" destroy-on-close>
         <editTagsModel
           :domains="checkArr"
           :visible.sync="editTagsModel"
+          @success="onSuccess"
         />
       </el-dialog>
     </div>
@@ -222,6 +223,15 @@ export default {
     this.describeLiveDomains()
   },
   methods: {
+    onSuccess() {
+      this.$message({ 
+        message: '編輯成功',
+        type: 'success',
+        showClose: true,
+        duration: 0
+      })
+      this.editTagsModel = false
+    },
     handleSelectionChange(val) {
       this.checkArr = val
     },

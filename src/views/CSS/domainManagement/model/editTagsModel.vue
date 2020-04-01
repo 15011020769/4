@@ -6,23 +6,23 @@
           :data="tags"
           style="width: 100%;"
         >
-          <el-table-column prop="Key" label="标签键">
+          <el-table-column prop="Key" label="標籤鍵">
             <template slot-scope="scope">
               <el-input
                 v-model.trim="scope.row.tagKey"
                 autocomplete="off"
                 class="inputKey"
-                placeholder="请输入标签键"
+                placeholder="請輸入標籤鍵"
               ></el-input>
             </template>
           </el-table-column>
-          <el-table-column prop="Value" label="标签值">
+          <el-table-column prop="Value" label="標籤值">
             <template slot-scope="scope">
               <el-input
                 v-model.trim="scope.row.tagValue"
                 autocomplete="off"
                 class="inputKey"
-                placeholder="请输入标签值"
+                placeholder="請輸入標籤值"
               ></el-input>
             </template>
           </el-table-column>
@@ -52,7 +52,7 @@
       <el-button type="text" @click="addRow">添加</el-button>
     </div>
     <el-row type="flex" align="middle" justify="center">
-      <el-button type="primary" size="small" @click="editTagsSure">确 定</el-button>
+      <el-button type="primary" size="small" @click="editTagsSure">確 定</el-button>
       <el-button size="small" @click="handleClose">取 消</el-button>
     </el-row>
   </div>
@@ -120,10 +120,10 @@ export default {
               resource: `qcs::lvb:ap-guangzhou:uin/${VueCookie.get('uin')}:live/${domain.Name}`,
               replaceTags: tags.map(tag => ({ tagKey: tag.tagKey, tagValue: tag.tagValue }))
             })))).then(res => {
-              this.$emit("update:visible", false)
+              this.$emit("success")
             })
           } else {
-            this.$emit("update:visible", false)
+            this.$emit("success")
           }
         })
       } else {
@@ -132,10 +132,10 @@ export default {
             resource: `qcs::lvb:ap-guangzhou:uin/${VueCookie.get('uin')}:live/${domain.Name}`,
             replaceTags: tags.map(tag => ({ tagKey: tag.tagKey, tagValue: tag.tagValue }))
           })))).then(res => {
-            this.$emit("update:visible", false)
+            this.$emit("success")
           })
         } else {
-          this.$emit("update:visible", false)
+          this.$emit("success")
         }
       }
     },
