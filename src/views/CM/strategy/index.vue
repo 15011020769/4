@@ -166,19 +166,25 @@
                     {{ item.CalcType | CalcType }} {{ item.CalcValue
                     }}{{ item.Unit }}，持續{{ item.ContinueTime / 60 }}分鍾，
                     <span
-                      v-if="i.AlarmNotifyType == 0 && i.AlarmNotifyPeriod == 0"
+                      v-if="
+                        item.AlarmNotifyType == 0 && item.AlarmNotifyPeriod == 0
+                      "
                     >
-                      {{ i.AlarmNotifyPeriod > 0 ? "重複告警" : "不重複告警" }}
-                    </span>
-                    <span
-                      v-if="i.AlarmNotifyType == 0 && i.AlarmNotifyPeriod != 0"
-                    >
-                      按{{ i.AlarmNotifyPeriod | AlarmNotifyPeriod
-                      }}{{
-                        i.AlarmNotifyPeriod > 0 ? "重複告警" : "不重複告警"
+                      {{
+                        item.AlarmNotifyPeriod > 0 ? "重複告警" : "不重複告警"
                       }}
                     </span>
-                    <span v-if="i.AlarmNotifyType == 1">
+                    <span
+                      v-if="
+                        item.AlarmNotifyType == 0 && item.AlarmNotifyPeriod != 0
+                      "
+                    >
+                      按{{ item.AlarmNotifyPeriod | AlarmNotifyPeriod
+                      }}{{
+                        item.AlarmNotifyPeriod > 0 ? "重複告警" : "不重複告警"
+                      }}
+                    </span>
+                    <span v-if="item.AlarmNotifyType == 1">
                       按週期指数递增重复告警
                     </span>
                   </p>
@@ -364,17 +370,23 @@
                   {{ item.CalcType | CalcType }} {{ item.CalcValue
                   }}{{ item.Unit }}，持續{{ item.ContinueTime / 60 }}分鍾，
                   <span
-                    v-if="i.AlarmNotifyType == 0 && i.AlarmNotifyPeriod == 0"
+                    v-if="
+                      item.AlarmNotifyType == 0 && item.AlarmNotifyPeriod == 0
+                    "
                   >
-                    {{ i.AlarmNotifyPeriod > 0 ? "重複告警" : "不重複告警" }}
+                    {{ item.AlarmNotifyPeriod > 0 ? "重複告警" : "不重複告警" }}
                   </span>
                   <span
-                    v-if="i.AlarmNotifyType == 0 && i.AlarmNotifyPeriod != 0"
+                    v-if="
+                      item.AlarmNotifyType == 0 && item.AlarmNotifyPeriod != 0
+                    "
                   >
-                    按{{ i.AlarmNotifyPeriod | AlarmNotifyPeriod
-                    }}{{ i.AlarmNotifyPeriod > 0 ? "重複告警" : "不重複告警" }}
+                    按{{ item.AlarmNotifyPeriod | AlarmNotifyPeriod
+                    }}{{
+                      item.AlarmNotifyPeriod > 0 ? "重複告警" : "不重複告警"
+                    }}
                   </span>
-                  <span v-if="i.AlarmNotifyType == 1">
+                  <span v-if="item.AlarmNotifyType == 1">
                     按週期指数递增重复告警
                   </span>
                 </p>
