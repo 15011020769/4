@@ -27,7 +27,7 @@
           <template slot-scope="scope">
             <!-- <div class="a" @click="jump(scope.row.DirectConnectGatewayName)"></div> -->
             <el-button type="text" class="iconfont icon-tubiaozhanshi" style="color: #888;"
-              @click="jump(scope.row.DirectConnectGatewayName)"></el-button>
+              @click="jump(scope.row.DirectConnectGatewayId)"></el-button>
           </template>
         </el-table-column>
         <el-table-column prop :label="$t('CVM.clBload.sswl')">
