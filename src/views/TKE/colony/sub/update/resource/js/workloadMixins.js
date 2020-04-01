@@ -77,6 +77,7 @@ let instanceContent = {
       completed: false, // 判断是否该验证的都验证完成
       editStatus: true, // 编辑状态
       mountPoint:mountPoint,//挂载点数据
+      mirrorImgTagArr: [], // 镜像版本数组
     })
   },
   //默认添加
@@ -85,6 +86,7 @@ let instanceContent = {
       name: '', // 名称
       mirrorImg: '', // 镜像
       versions: '', // 镜像版本
+      mirrorImgTagArr: [], // 镜像版本数组
       mirrorPullTactics: '', // 镜像拉取策略
       requestCpu: '250', // cpu 限制
       limitCpu: '500',

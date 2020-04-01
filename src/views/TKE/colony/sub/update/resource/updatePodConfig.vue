@@ -134,10 +134,14 @@
                  <el-form-item :label="$t('TKE.overview.jx')">
                    <el-input class="w192" v-model="v.mirrorImg"></el-input>
                    <el-button type="text" size="mini" @click="SelectMirrorImgFlag=true">{{$t('TKE.subList.xzjxiang')}}</el-button>
-                   <SelectMirrorImg :dialogVisible.sync='SelectMirrorImgFlag' @confirm='confirmMirrorImg($event, i)'></SelectMirrorImg>
+                   <SelectMirrorImg :dialogVisible.sync='SelectMirrorImgFlag' @confirm='confirmMirrorImg($event, i)'
+                    @getMirrorImgTag="describeImagePersonal($event, i)" @getMirrorImgHubTag="describeDockerHubImagePersonal($event, i)"
+                   ></SelectMirrorImg>
                  </el-form-item>
                  <el-form-item :label="$t('TKE.subList.jxbbt')">
-                   <el-input class="w192" v-model="v.versions"></el-input>
+                     <el-input class="w192" v-model="v.versions" v-if="v.mirrorImgTagArr.length === 0"></el-input>
+                     <el-autocomplete class="w192" v-model="v.versions" v-else :fetch-suggestions="(queryStr, callback)=>{callback(querySearch(i, queryStr))}"></el-autocomplete>
+                   <!-- <el-input class="w192" v-model="v.versions"></el-input> -->
                  </el-form-item>
                  <el-form-item :label="$t('TKE.subList.jxlqcl')">
                    <template>
@@ -1083,6 +1087,63 @@ export default {
           this.secrets = JSON.parse(ResponseBody)
           console.log(this.secrets.items,'this.secrets')
         })
+      })
+    },
+    querySearch: function (index, queryStr) {
+      console.log(index, queryStr)
+      let mirrorImgTagArr = this.wl.instanceContent[index].mirrorImgTagArr.map(item => ({ value: item }))
+      // let queryArr = mirrorImgTagArr.filter(item => item.value.includes(queryStr))
+      // return queryArr
+      return mirrorImgTagArr
+    },
+    // 获取镜像的版本Tag
+    describeImagePersonal: async function (mirrorImgName, index) {
+      this.wl.instanceContent[index].mirrorImgTagArr = []
+      await this.axios.post(TKE_IMAGEVERSIONLIST, {
+        Version: '2019-09-24',
+        RepoName: mirrorImgName
+      }).then(res => {
+        let { TagCount, Server, TagInfo, RepoName } = res.Response.Data
+        console.log(Server, RepoName)
+        if (TagCount > 0) {
+          let tagArr = TagInfo.map(item => item.TagName)
+          this.wl.instanceContent[index].mirrorImgTagArr = tagArr
+          this.wl.instanceContent[index].versions = tagArr[0]
+          this.describeImageConfigPersonal(index, RepoName, tagArr[0])
+        }
+      })
+    },
+    // 获取镜像的变量
+    describeImageConfigPersonal: async function (index, repoName, tag) {
+      this.wl.instanceContent[index].environmentVar = []
+      await this.axios.post(TKE_DESCRIBEIMAGECONFIGPERSONAL, {
+        Version: '2019-09-24',
+        RepoName: repoName,
+        Tag: tag
+      }).then(res => {
+        let { config: { Env } } = JSON.parse(res.Response.Data)
+        if (Env && Env.length > 0) {
+          this.wl.instanceContent[index].environmentVar = Env.map((item, index) => {
+            let varArr = item.split('=')
+            return {
+              onlyId: Date.now() + index,
+              key: varArr[0],
+              value: varArr[1]
+            }
+          })
+        }
+      })
+    },
+     // 获取hub镜像的版本Tag
+    describeDockerHubImagePersonal: async function (mirrorImgHubName, index) {
+      this.wl.instanceContent[index].mirrorImgTagArr = []
+      await this.axios.post(TKE_DESCRIBEDOCKERHUBIMAGEPERSONAL, {
+        Version: '2019-09-24',
+        RepoName: mirrorImgHubName
+      }).then(res => {
+        let { TagList } = res.Response.Data
+        this.wl.instanceContent[index].mirrorImgTagArr = TagList
+        this.wl.instanceContent[index].versions = TagList[0]
       })
     },
     getDescribeDisks:async function(){
