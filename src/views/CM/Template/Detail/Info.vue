@@ -105,7 +105,6 @@
       </span>
     </el-dialog>
     <!-- 告警触发条件编辑弹框 -->
-     <!--  @open="openEditloadShow=true"   @open="openEdit()"-->
     <el-dialog class="dil" :visible.sync="showDelDialog3" width="65%">
       <p class="title">修改觸發條件</p>
       <!-- <div v-if="!checkedZhibiao" style="color:red;margin-top:-10px;">请至少配置1项触发条件</div> -->
@@ -137,11 +136,9 @@
               </p>
               <!-- -->
               <ul>
-                <!-- <li style="display:flex;align-items: center;cursor: pointer;"> -->
                 <li style="display:flex;align-items: center;cursor: pointer;" v-for="(it,i) in indexAry" :key="i">
                   <p>
                     if&nbsp;
-                    <!-- <el-select :disabled="isDisabled" v-model="formInline.projectName" style="width:150px;" size="small"> -->
                     <el-select :disabled="!checkedZhibiao" v-model="it.MetricID" style="width:150px;" size="small">
                       <el-option
                         v-for="(item,index) in zhibiaoType"
@@ -151,7 +148,6 @@
                         label-width="40px"
                       ></el-option>
                     </el-select>&nbsp;
-                    <!-- <el-select :disabled="isDisabled" v-model="formInline.projectName" style="width:130px;" size="small"> -->
                     <el-select :disabled="!checkedZhibiao" v-model="it.Period" style="width:130px;" size="small">
                       <el-option
                         v-for="(item,index) in tongjiZQ"
@@ -161,7 +157,6 @@
                         label-width="40px"
                       ></el-option>
                     </el-select>&nbsp;
-                    <!-- <el-select :disabled="isDisabled" v-model="formInline.projectName" style="width:60px;" size="small"> -->
                       <el-select :disabled="!checkedZhibiao" v-model="it.CalcType" style="width:75px;" size="small">
                       <el-option
                         v-for="(item,index) in SymbolList"
@@ -340,44 +335,7 @@ export default {
         { label: '每1天警告壹次', value: 86400 },
         { label: '週期指數遞增', value: 1 }
       ],
-      formInline: {
-        jieshou: '接收組',
-        jieshouArr: [
-          { value: '0', name: '接收組' },
-          {
-            value: '1',
-            name: '接收人'
-          }
-        ],
-        apiStr: 'http', // 接口回调
-        apiArr: [
-          {
-            value: 0,
-            name: 'http'
-          },
-          {
-            value: 1,
-            name: 'https'
-          }
-        ], // 接口回调数据
-        strategy_name: '', // 策略名称
-        textareas: '', // 备注
-        strategy: '云服务器-基础监控',
-        strategy_kind: [
-          {
-            value: 0,
-            name: '云服务器-基础监控'
-          }
-        ], // 策略类型
-        alarm: '', // 策略类型
-        projectName: '預設專案',
-        project: [
-          {
-            value: 0,
-            name: '預設專案'
-          }
-        ]
-      },
+      formInline: {},
       indexAry: [], // 编辑弹框打开后的指标告警数组
       zhibiaoType: [], // 触发条件数据
       eventAry: [], // 事件告警数组
@@ -392,7 +350,6 @@ export default {
       allProjectName: [], // 项目名称列表
       projectId: 0,
       searchParam: {},
-      //  value: 'ins-6oz38wnu', label: 'instance-id'  cvm_device
       productValue: ''
     }
   },
@@ -525,7 +482,50 @@ export default {
           this.loadShow = false
         } else {
           this.loadShow = false
-          this.errorPrompt(res)
+          let ErrTips = {
+            'AuthFailure.UnauthorizedOperation': '請求未授權。請參考 CAM 文件對鑒權的說明。',
+            DryRunOperation: 'DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。',
+            'FailedOperation.AlertFilterRuleDeleteFailed': '刪除過濾條件失敗。',
+            'FailedOperation.AlertPolicyCreateFailed': '創建告警策略失敗。',
+            'FailedOperation.AlertPolicyDeleteFailed': '告警策略刪除失敗。',
+            'FailedOperation.AlertPolicyDescribeFailed': '告警策略查詢失敗。',
+            'FailedOperation.AlertPolicyModifyFailed': '告警策略修改失敗。',
+            'FailedOperation.AlertTriggerRuleDeleteFailed': '刪除觸發條件失敗。',
+            'FailedOperation.DbQueryFailed': '數據庫查詢失敗。',
+            'FailedOperation.DbRecordCreateFailed': '創建數據庫記錄失敗。',
+            'FailedOperation.DbRecordDeleteFailed': '數據庫記錄刪除失敗。',
+            'FailedOperation.DbRecordUpdateFailed': '數據庫記錄更新失敗。',
+            'FailedOperation.DbTransactionBeginFailed': '數據庫事務開始失敗。',
+            'FailedOperation.DbTransactionCommitFailed': '數據庫事務提交失敗。',
+            'FailedOperation.DimQueryRequestFailed': '請求維度查詢服務失敗。',
+            'FailedOperation.DruidQueryFailed': '查詢分析數據失敗。',
+            'FailedOperation.DuplicateName': '名字重複。',
+            'FailedOperation.ServiceNotEnabled': '服務未啓用，開通服務後方可使用。',
+            InternalError: '內部錯誤。',
+            'InternalError.ExeTimeout': '執行超時。',
+            InvalidParameter: '參數錯誤。',
+            'InvalidParameter.InvalidParameter': '參數錯誤。',
+            'InvalidParameter.InvalidParameterParam': '參數錯誤。',
+            InvalidParameterValue: '無效的參數值。',
+            LimitExceeded: '超過配額限制。',
+            'LimitExceeded.MetricQuotaExceeded': '指標數量達到配額限制，禁止含有未注冊指標的請求。',
+            MissingParameter: '缺少參數錯誤。',
+            ResourceInUse: '資源被占用。',
+            ResourceInsufficient: '資源不足。',
+            ResourceNotFound: '資源不存在。',
+            ResourceUnavailable: '資源不可用。',
+            ResourcesSoldOut: '資源售罄。',
+            UnauthorizedOperation: '未授權操作。',
+            UnknownParameter: '未知參數錯誤。',
+            UnsupportedOperation: '操作不支持。'
+          }
+          let ErrOr = Object.assign(ErrorTips, ErrTips)
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: 'error',
+            showClose: true,
+            duration: 0
+          })
         }
       })
     },
@@ -592,7 +592,50 @@ export default {
           this.openLoadShow = false
         }else{
           this.openLoadShow = false
-          this.errorPrompt(res)
+          let ErrTips = {
+            'AuthFailure.UnauthorizedOperation': '請求未授權。請參考 CAM 文件對鑒權的說明。',
+            DryRunOperation: 'DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。',
+            'FailedOperation.AlertFilterRuleDeleteFailed': '刪除過濾條件失敗。',
+            'FailedOperation.AlertPolicyCreateFailed': '創建告警策略失敗。',
+            'FailedOperation.AlertPolicyDeleteFailed': '告警策略刪除失敗。',
+            'FailedOperation.AlertPolicyDescribeFailed': '告警策略查詢失敗。',
+            'FailedOperation.AlertPolicyModifyFailed': '告警策略修改失敗。',
+            'FailedOperation.AlertTriggerRuleDeleteFailed': '刪除觸發條件失敗。',
+            'FailedOperation.DbQueryFailed': '數據庫查詢失敗。',
+            'FailedOperation.DbRecordCreateFailed': '創建數據庫記錄失敗。',
+            'FailedOperation.DbRecordDeleteFailed': '數據庫記錄刪除失敗。',
+            'FailedOperation.DbRecordUpdateFailed': '數據庫記錄更新失敗。',
+            'FailedOperation.DbTransactionBeginFailed': '數據庫事務開始失敗。',
+            'FailedOperation.DbTransactionCommitFailed': '數據庫事務提交失敗。',
+            'FailedOperation.DimQueryRequestFailed': '請求維度查詢服務失敗。',
+            'FailedOperation.DruidQueryFailed': '查詢分析數據失敗。',
+            'FailedOperation.DuplicateName': '名字重複。',
+            'FailedOperation.ServiceNotEnabled': '服務未啓用，開通服務後方可使用。',
+            InternalError: '內部錯誤。',
+            'InternalError.ExeTimeout': '執行超時。',
+            InvalidParameter: '參數錯誤。',
+            'InvalidParameter.InvalidParameter': '參數錯誤。',
+            'InvalidParameter.InvalidParameterParam': '參數錯誤。',
+            InvalidParameterValue: '無效的參數值。',
+            LimitExceeded: '超過配額限制。',
+            'LimitExceeded.MetricQuotaExceeded': '指標數量達到配額限制，禁止含有未注冊指標的請求。',
+            MissingParameter: '缺少參數錯誤。',
+            ResourceInUse: '資源被占用。',
+            ResourceInsufficient: '資源不足。',
+            ResourceNotFound: '資源不存在。',
+            ResourceUnavailable: '資源不可用。',
+            ResourcesSoldOut: '資源售罄。',
+            UnauthorizedOperation: '未授權操作。',
+            UnknownParameter: '未知參數錯誤。',
+            UnsupportedOperation: '操作不支持。'
+          }
+          let ErrOr = Object.assign(ErrorTips, ErrTips)
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: 'error',
+            showClose: true,
+            duration: 0
+          })
         }
       })
     },
@@ -653,7 +696,50 @@ export default {
           this.getDetailInfo()
         }else{
           this.showDelDialog3 = false
-          this.errorPrompt(res)
+          let ErrTips = {
+            'AuthFailure.UnauthorizedOperation': '請求未授權。請參考 CAM 文件對鑒權的說明。',
+            DryRunOperation: 'DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。',
+            'FailedOperation.AlertFilterRuleDeleteFailed': '刪除過濾條件失敗。',
+            'FailedOperation.AlertPolicyCreateFailed': '創建告警策略失敗。',
+            'FailedOperation.AlertPolicyDeleteFailed': '告警策略刪除失敗。',
+            'FailedOperation.AlertPolicyDescribeFailed': '告警策略查詢失敗。',
+            'FailedOperation.AlertPolicyModifyFailed': '告警策略修改失敗。',
+            'FailedOperation.AlertTriggerRuleDeleteFailed': '刪除觸發條件失敗。',
+            'FailedOperation.DbQueryFailed': '數據庫查詢失敗。',
+            'FailedOperation.DbRecordCreateFailed': '創建數據庫記錄失敗。',
+            'FailedOperation.DbRecordDeleteFailed': '數據庫記錄刪除失敗。',
+            'FailedOperation.DbRecordUpdateFailed': '數據庫記錄更新失敗。',
+            'FailedOperation.DbTransactionBeginFailed': '數據庫事務開始失敗。',
+            'FailedOperation.DbTransactionCommitFailed': '數據庫事務提交失敗。',
+            'FailedOperation.DimQueryRequestFailed': '請求維度查詢服務失敗。',
+            'FailedOperation.DruidQueryFailed': '查詢分析數據失敗。',
+            'FailedOperation.DuplicateName': '名字重複。',
+            'FailedOperation.ServiceNotEnabled': '服務未啓用，開通服務後方可使用。',
+            InternalError: '內部錯誤。',
+            'InternalError.ExeTimeout': '執行超時。',
+            InvalidParameter: '參數錯誤。',
+            'InvalidParameter.InvalidParameter': '參數錯誤。',
+            'InvalidParameter.InvalidParameterParam': '參數錯誤。',
+            InvalidParameterValue: '無效的參數值。',
+            LimitExceeded: '超過配額限制。',
+            'LimitExceeded.MetricQuotaExceeded': '指標數量達到配額限制，禁止含有未注冊指標的請求。',
+            MissingParameter: '缺少參數錯誤。',
+            ResourceInUse: '資源被占用。',
+            ResourceInsufficient: '資源不足。',
+            ResourceNotFound: '資源不存在。',
+            ResourceUnavailable: '資源不可用。',
+            ResourcesSoldOut: '資源售罄。',
+            UnauthorizedOperation: '未授權操作。',
+            UnknownParameter: '未知參數錯誤。',
+            UnsupportedOperation: '操作不支持。'
+          }
+          let ErrOr = Object.assign(ErrorTips, ErrTips)
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: 'error',
+            showClose: true,
+            duration: 0
+          })
         }
       })
     },
