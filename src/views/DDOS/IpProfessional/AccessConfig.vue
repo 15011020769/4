@@ -81,7 +81,7 @@
               <el-table-column prop="SourcePort" label="源站端口">
                 <template slot-scope="scope">{{scope.row.SourcePort}}</template>
               </el-table-column>
-              <el-table-column prop="SourceList" label="源站IP/域名">
+              <el-table-column prop="SourceList" label="源站IP/權重">
                 <template slot-scope="scope">
                   <span
                     v-for="(item, index) in scope.row.SourceList"

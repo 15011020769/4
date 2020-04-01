@@ -80,9 +80,10 @@
                 <div v-else-if="selectedSubarea == 'nat'">
                   <!-- <span v-if="scope.row.PublicIpAddressSet.length ===1"> -->
                     <!-- 參照騰訊云 只展示第一個 -->
-                    <span>
+                    <span v-if="scope.row.PublicIpAddressSet.length >1" >
                     {{ scope.row.PublicIpAddressSet[0].PublicIpAddress }}
                   </span>
+                  <span v-else>-</span>
                   <!-- <span v-else
                     v-for="(item, index) in scope.row.PublicIpAddressSet"
                     :key="index"
@@ -203,6 +204,9 @@
                   <!-- 攻擊 -->
                   <span v-else-if="scope.row.State == '3'">{{
                     $t("DDOS.basicProtection.gongjiz")}}</span>
+                    <span v-else>{{
+                    $t("DDOS.basicProtection.zcyx")
+                    }} </span>
                 </div>
                  </div>
               </template>
@@ -449,7 +453,15 @@ export default {
           this.tableDataBegin = res.Response.NatGatewaySet;
           this.totalItems = res.Response.TotalCount;
           // 查詢安全狀態
-          let IpList = this.tableDataBegin.filter(machine => (machine.PublicIpAddressSet)[0].PublicIpAddress).map(machine =>(machine.PublicIpAddressSet)[0].PublicIpAddress)
+          let IpList = this.tableDataBegin.filter(machine => {
+            if (machine.PublicIpAddressSet.length >0 ) {
+              return (machine.PublicIpAddressSet)[0].PublicIpAddress
+            }
+          }).map(machine =>{
+            if (machine.PublicIpAddressSet.length >0) {
+             return  (machine.PublicIpAddressSet)[0].PublicIpAddress
+            }
+          })
           let params = {
             Version: '2018-07-09',
             Region: this.selectedRegion
@@ -466,7 +478,9 @@ export default {
               })
             }
             this.tableDataBegin.map(record => {
-              record.State = statusValue[(record.PublicIpAddressSet)[0].PublicIpAddress]
+              if (record.PublicIpAddressSet.length > 0 ) {
+                record.State = statusValue[(record.PublicIpAddressSet)[0].PublicIpAddress]
+              }
             })
           })
         } else {
