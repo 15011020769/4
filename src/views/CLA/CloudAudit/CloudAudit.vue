@@ -432,19 +432,29 @@
         }
       },
       seachpicker() {
-        if (this.value1[0].getTime() == this.value1[1].getTime()) {
-          this.value1[0] = moment(new Date(this.value1[0])).format("YYYY/MM/DD 00:00:00")
-          this.value1[1] = moment(new Date(this.value1[1])).format("YYYY/MM/DD 23:59:59")
-          this.oldTim = parseInt(moment(this.value1[0], 'YYYY-MM-DD HH:mm:ss').valueOf() / 1000)
-          this.nowtime = parseInt(moment(this.value1[1], 'YYYY-MM-DD HH:mm:ss').valueOf() / 1000)
-          this.tableData = []
-          this.Loading()
-        } else {
-          this.oldTime = parseInt(this.value1[0].getTime() / 1000)
-          this.nowtime = parseInt(this.value1[1].getTime() / 1000)
-          this.tableData = []
-          this.Loading()
-        }
+         if(this.value1){
+           if (this.value1[0].getTime() == this.value1[1].getTime()) {
+             this.value1[0] = moment(new Date(this.value1[0])).format("YYYY/MM/DD 00:00:00")
+             this.value1[1] = moment(new Date(this.value1[1])).format("YYYY/MM/DD 23:59:59")
+             this.oldTim = parseInt(moment(this.value1[0], 'YYYY-MM-DD HH:mm:ss').valueOf() / 1000)
+             this.nowtime = parseInt(moment(this.value1[1], 'YYYY-MM-DD HH:mm:ss').valueOf() / 1000)
+             this.tableData = []
+             this.Loading()
+           } else {
+             this.oldTime = parseInt(this.value1[0].getTime() / 1000)
+             this.nowtime = parseInt(this.value1[1].getTime() / 1000)
+             this.tableData = []
+             this.Loading()
+           }
+         }else{
+             let myDate = new Date();
+             let _nowtime = myDate.getTime() / 1000;
+             this.nowtime = parseFloat(_nowtime).toFixed(); // 现在当前时间
+             let lw = new Date(myDate - 1000 * 60 * 60 * 24 * 7).getTime() / 1000;
+             this.oldTime = parseFloat(lw).toFixed();
+             this.tableData = []
+             this.Loading()
+         }
 
 
       },
