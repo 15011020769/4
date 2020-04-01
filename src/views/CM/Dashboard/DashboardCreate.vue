@@ -258,6 +258,7 @@ export default {
       if (this.rightData.length) {
         this.series = []
         this.getMonitorList();
+        this.selectDashboardData()
       }
     },
     Type_loading(val) {
@@ -274,19 +275,124 @@ export default {
     },
     // 创建
     createJump() {
+      let number = 0
       if (this.rightData.length) {
-        this.createDashboard();
-        this.$router.push({
-          name: "Dashboard",
-          query: {
-            DashboardID: this.DashboardID
+        if(this.DashboardData.length<=10){
+           this.createDashboard(number,this.DashboardData.length);
+            this.$router.push({
+              name: "Dashboard",
+              query: {
+                DashboardID: this.DashboardID
+              }
+            });
+        } else {
+          if(this.DashboardData.length%10!=0){
+            number = parseInt(this.DashboardData.length/10)+1
+            for(let i=0;i<number;i++){
+               if(number === (i+1)){
+                  this.createDashboard(i*10,this.DashboardData.length)
+                  break
+               }
+              this.createDashboard(i*10,(i+1)*10)
+            }
+             this.$router.push({
+              name: "Dashboard",
+              query: {
+                DashboardID: this.DashboardID
+              }
+            });
+          } else {
+            number = parseInt(this.DashboardData.length/10)
+            for(let i=0;i<number;i++){
+               this.createDashboard(i,(i+1)*10)
+            }
+            this.$router.push({
+              name: "Dashboard",
+              query: {
+                DashboardID: this.DashboardID
+              }
+            });
           }
-        });
+        }
       }
     },
     // 跳转
     jump() {
       this.$router.go(-1);
+    },
+
+    selectDashboardData(){
+      for (let i = 0;i < this.rightData.length;i++) {
+        if (this.productValue === "cvm_device") {
+          // 云服务器
+          this.DashboardData.push({
+            regionId: "39",
+            unInstanceId: this.rightData[i].InstanceId
+          });
+        } else if (this.productValue === "VPN_GW") {
+          // VPN网关
+          this.DashboardData.push({
+            regionId: "39",
+            vpnGwId: this.rightData[i].VpnGatewayId
+          });
+        } else if (this.productValue === "vpn_tunnel") {
+          // vpn通道
+          this.DashboardData.push({
+            regionId: "39",
+            vpnConnId: this.rightData[i].VpnConnectionId
+          });
+        } else if (this.productValue === "nat_tc_stat") {
+          // Nat网关
+          this.DashboardData.push({
+            regionId: "39",
+            natId: this.rightData[i].NatGatewayId
+          });
+        } else if (this.productValue === "DC_GW") {
+          // 专线网关
+          this.DashboardData.push({
+            regionId: "39",
+            directConnectGatewayId: this.rightData[i].DirectConnectGatewayId
+          });
+        } else if (this.productValue === "REDIS-CLUSTER") {
+          // Redis
+          this.DashboardData.push({
+            regionId: "39",
+            appid: this.rightData[i].Appid,
+            instanceid: this.rightData[i].InstanceId
+          });
+        } else if (this.productValue === "dcchannel") {
+          // 专用通道
+          this.DashboardData.push({
+            regionId: "39",
+            directConnectConnId: this.rightData[i].DirectConnectTunnelId
+          });
+        } else if (this.productValue === "COS") {
+          // 对象存储
+          this.DashboardData.push({
+            regionId: "39",
+            bucket: this.rightData[i].Name
+          });
+        } else if (this.productValue === "dcline") {
+          // 物理专线
+          this.DashboardData.push({
+            regionId: "39",
+            directConnectId: this.rightData[i].DirectConnectId
+          });
+        } else if (this.productValue === "cdb_detail") {
+          // MYSQL
+          this.DashboardData.push({
+            regionId: "39",
+            uInstanceId: this.rightData[i].InstanceId
+          });
+        } else if (this.productValue === "BS") {
+          // 云硬盘
+          this.DashboardData.push({
+            regionId: "39",
+            diskId: this.rightData[i].DiskId
+          });
+        }
+      }
+      console.log(this.DashboardData)
     },
     // 获取监控列表
     async getMonitorList() {
@@ -316,48 +422,48 @@ export default {
           params["Dimensions." + i + ".unInstanceId"] = this.rightData[
             i
           ].InstanceId;
-          this.DashboardData.push({
-            regionId: "39",
-            unInstanceId: this.rightData[i].InstanceId
-          });
+          // this.DashboardData.push({
+          //   regionId: "39",
+          //   unInstanceId: this.rightData[i].InstanceId
+          // });
         } else if (this.productValue === "VPN_GW") {
           // VPN网关
           this.pointId = "vpnGwId"
           params["Dimensions." + i + ".vpnGwId"] = this.rightData[
             i
           ].VpnGatewayId;
-          this.DashboardData.push({
-            regionId: "39",
-            vpnGwId: this.rightData[i].VpnGatewayId
-          });
+          // this.DashboardData.push({
+          //   regionId: "39",
+          //   vpnGwId: this.rightData[i].VpnGatewayId
+          // });
         } else if (this.productValue === "vpn_tunnel") {
           // vpn通道
           this.pointId = "vpnConnId"
           params["Dimensions." + i + ".vpnConnId"] = this.rightData[
             i
           ].VpnConnectionId;
-          this.DashboardData.push({
-            regionId: "39",
-            vpnConnId: this.rightData[i].VpnConnectionId
-          });
+          // this.DashboardData.push({
+          //   regionId: "39",
+          //   vpnConnId: this.rightData[i].VpnConnectionId
+          // });
         } else if (this.productValue === "nat_tc_stat") {
           // Nat网关
           this.pointId = "natId"
           params["Dimensions." + i + ".natId"] = this.rightData[i].NatGatewayId;
-          this.DashboardData.push({
-            regionId: "39",
-            natId: this.rightData[i].NatGatewayId
-          });
+          // this.DashboardData.push({
+          //   regionId: "39",
+          //   natId: this.rightData[i].NatGatewayId
+          // });
         } else if (this.productValue === "DC_GW") {
           // 专线网关
           this.pointId = "directConnectGatewayId"
           params[
             "Dimensions." + i + ".directConnectGatewayId"
           ] = this.rightData[i].DirectConnectGatewayId;
-          this.DashboardData.push({
-            regionId: "39",
-            directConnectGatewayId: this.rightData[i].DirectConnectGatewayId
-          });
+          // this.DashboardData.push({
+          //   regionId: "39",
+          //   directConnectGatewayId: this.rightData[i].DirectConnectGatewayId
+          // });
         } else if (this.productValue === "REDIS-CLUSTER") {
           // Redis
           this.pointId = "instanceid"
@@ -365,57 +471,57 @@ export default {
           params["Dimensions." + i + ".instanceid"] = this.rightData[
             i
           ].InstanceId;
-          this.DashboardData.push({
-            regionId: "39",
-            appid: this.rightData[i].Appid,
-            instanceid: this.rightData[i].InstanceId
-          });
+          // this.DashboardData.push({
+          //   regionId: "39",
+          //   appid: this.rightData[i].Appid,
+          //   instanceid: this.rightData[i].InstanceId
+          // });
         } else if (this.productValue === "dcchannel") {
           // 专用通道
           this.pointId = "directConnectConnId"
           params["Dimensions." + i + ".directConnectConnId"] = this.rightData[
             i
           ].DirectConnectTunnelId;
-          this.DashboardData.push({
-            regionId: "39",
-            directConnectConnId: this.rightData[i].DirectConnectTunnelId
-          });
+          // this.DashboardData.push({
+          //   regionId: "39",
+          //   directConnectConnId: this.rightData[i].DirectConnectTunnelId
+          // });
         } else if (this.productValue === "COS") {
           // 对象存储
           this.pointId = "bucket"
           params["Dimensions." + i + ".bucket"] = this.rightData[i].Name;
-          this.DashboardData.push({
-            regionId: "39",
-            bucket: this.rightData[i].Name
-          });
+          // this.DashboardData.push({
+          //   regionId: "39",
+          //   bucket: this.rightData[i].Name
+          // });
         } else if (this.productValue === "dcline") {
           // 物理专线
           this.pointId = "directConnectId"
           params["Dimensions." + i + ".directConnectId"] = this.rightData[
             i
           ].DirectConnectId;
-          this.DashboardData.push({
-            regionId: "39",
-            directConnectId: this.rightData[i].DirectConnectId
-          });
+          // this.DashboardData.push({
+          //   regionId: "39",
+          //   directConnectId: this.rightData[i].DirectConnectId
+          // });
         } else if (this.productValue === "cdb_detail") {
           // MYSQL
           this.pointId = "uInstanceId"
           params["Dimensions." + i + ".uInstanceId"] = this.rightData[
             i
           ].InstanceId;
-          this.DashboardData.push({
-            regionId: "39",
-            uInstanceId: this.rightData[i].InstanceId
-          });
+          // this.DashboardData.push({
+          //   regionId: "39",
+          //   uInstanceId: this.rightData[i].InstanceId
+          // });
         } else if (this.productValue === "BS") {
           // 云硬盘
           this.pointId = "diskId"
           params["Dimensions." + i + ".diskId"] = this.rightData[i].DiskId;
-          this.DashboardData.push({
-            regionId: "39",
-            diskId: this.rightData[i].DiskId
-          });
+          // this.DashboardData.push({
+          //   regionId: "39",
+          //   diskId: this.rightData[i].DiskId
+          // });
         }
       }
       await this.axios.post(All_MONITOR, params).then(res => {
@@ -497,7 +603,7 @@ export default {
       });
     },
     // 创建Dashboard
-    async createDashboard() {
+    async createDashboard(key,length) {
       const param = {
         Version: "2018-07-24",
         Region: "ap-taipei",
@@ -521,8 +627,8 @@ export default {
           timeAggregate: "last"
         })
       };
-      for (let i in this.DashboardData) {
-        param["Instances." + i] = JSON.stringify(this.DashboardData[i]);
+      for (let i=key ;i<length;i++) {
+        param["Instances." + (i%10)] = JSON.stringify(this.DashboardData[i]);
       }
       await this.axios.post(CREATDASHBORD, param).then(res => {
         if (res.Response.Error === undefined) {

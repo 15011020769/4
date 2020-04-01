@@ -270,4 +270,9 @@ export default {
     }
   }
 }
+::v-deep .el-range-separator {
+  line-height: 30px !important;
+  height: 30px;
+  width: 7%;
+}
 </style>

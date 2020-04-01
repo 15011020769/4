@@ -339,7 +339,7 @@
               (function (o) {
                 setTimeout(() => {
                   _this._GetMonitorData(_this.BaseListK[o].MetricName)
-                }, o * 50);
+                }, o * 1000);
               })(k)
             }
           } else {

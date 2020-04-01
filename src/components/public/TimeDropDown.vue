@@ -142,11 +142,11 @@
           this.Start_End.XAxis = this.getXAxis(this.Start_End.StartTIme, this.Start_End.EndTIme);
         } else if (this.TimeValue === 'Nearly_7_days') {
           this.Start_End.EndTIme = moment(new Date()).format("YYYY/MM/DD HH:mm:ss"); //获取当前时间
-          this.Start_End.StartTIme = moment(new Date()).subtract(6, 'days').format("YYYY/MM/DD HH:mm:ss");;
+          this.Start_End.StartTIme = moment(new Date()).subtract(7, 'days').format("YYYY/MM/DD HH:mm:ss");;
           this.Start_End.XAxis = this.getXAxis(this.Start_End.StartTIme, this.Start_End.EndTIme);
         } else if (this.TimeValue === 'Nearly_15_days') {
           this.Start_End.EndTIme = moment(new Date()).format("YYYY/MM/DD HH:mm:ss"); //获取当前时间
-          this.Start_End.StartTIme = moment(new Date()).subtract(14, 'days').format("YYYY/MM/DD HH:mm:ss");;
+          this.Start_End.StartTIme = moment(new Date()).subtract(15, 'days').format("YYYY/MM/DD HH:mm:ss");;
           this.Start_End.XAxis = this.getXAxis(this.Start_End.StartTIme, this.Start_End.EndTIme);
         } else if (this.TimeValue === 'Today') {
           this.Start_End.EndTIme = moment(new Date()).format("YYYY/MM/DD HH:mm:ss"); //获取当前时间
@@ -158,7 +158,7 @@
           this.Start_End.XAxis = this.getXAxis(this.Start_End.StartTIme, this.Start_End.EndTIme);
         } else if (this.TimeValue === 'Nearly_30_days') {
           this.Start_End.EndTIme = moment(new Date()).format("YYYY/MM/DD HH:mm:ss"); //获取当前时间
-          this.Start_End.StartTIme = moment(new Date()).subtract(29, 'days').format("YYYY/MM/DD HH:mm:ss");;
+          this.Start_End.StartTIme = moment(new Date()).subtract(30, 'days').format("YYYY/MM/DD HH:mm:ss");;
           this.Start_End.XAxis = this.getXAxis(this.Start_End.StartTIme, this.Start_End.EndTIme);
         }
         this.Start_End.StartTIme = moment(new Date(this.Start_End.StartTIme)).format("YYYY-MM-DD HH:mm:ss")
@@ -177,16 +177,16 @@
           Basis = 'realTime'
         } else if (endTime.diff(startTime, 'd') <= 1 && this.Difference == 'H') {
           Basis = 'Nearly_24_hours'
-        } else if ((endTime.diff(startTime, 'd') <= 6 && this.Difference == 'H') || (endTime.diff(startTime, 'd') > 6 &&
+        } else if ((endTime.diff(startTime, 'd') <= 7 && this.Difference == 'H') || (endTime.diff(startTime, 'd') > 7 &&
             this.Difference == 'H')) {
           Basis = 'Nearly_7_days'
         } else if (endTime.diff(startTime, 'd') <= 1 && this.Difference == 'D') {
           Basis = 'Today'
-        } else if (endTime.diff(startTime, 'd') <= 6 && this.Difference == 'D') {
+        } else if (endTime.diff(startTime, 'd') <= 7 && this.Difference == 'D') {
           Basis = 'Nearly_7_days'
-        } else if (endTime.diff(startTime, 'd') <= 14 && this.Difference == 'D') {
+        } else if (endTime.diff(startTime, 'd') <= 15 && this.Difference == 'D') {
           Basis = 'Nearly_15_days'
-        } else if (endTime.diff(startTime, 'd') <= 29 && this.Difference == 'D') {
+        } else if (endTime.diff(startTime, 'd') <= 30 && this.Difference == 'D') {
           Basis = 'Nearly_30_days'
         }
         if (endTime.diff(startTime, 'd') > 60 && this.Difference == 'H') {

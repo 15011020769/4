@@ -133,7 +133,7 @@
           }
         ],
         ID: this.$route.query.id,
-        Appid:this.$route.query.appid,
+        Appid: this.$route.query.appid,
         BaseList: [], //全部指标列表
         BaseListK: [], //用到的指标列表
         TableLoad: true,
@@ -471,7 +471,7 @@
               (function (o) {
                 setTimeout(() => {
                   _this._GetMonitorData(_this.BaseListK[o].MetricName)
-                }, o * 50);
+                }, o * 1000);
               })(k)
             }
           } else {

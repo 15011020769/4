@@ -43,10 +43,14 @@ export default {
     }
   },
   methods: {
+    
     setupEcharts(myCharts, startTimes, endTimes, otherInfo) {
+      otherInfo = otherInfo
+      console.log(otherInfo)
       let contentData = [];
       let timeShow = "";
-
+      let starts = 100;
+      let ends = 60;
       let currentMoment = moment(this.day);
       let current = currentMoment.format("YYYY-MM-DD");
 
@@ -100,7 +104,21 @@ export default {
       });
 
       const that = this;
-
+      console.log(otherInfo.length)
+        if (otherInfo.length > 50 && otherInfo.length < 80) {
+            ends = 70;
+        }else if (otherInfo.length < 10) {
+            ends = 0;
+        }else if (otherInfo.length >= 80 && otherInfo.length < 100) {
+            ends = 80;
+        }else if (otherInfo.length >= 100 && otherInfo.length < 150) {
+            ends = 90;
+        }else if (otherInfo.length >= 150 && otherInfo.length < 200) {
+            ends = 95;
+        }else if (otherInfo.length >= 200) {
+            ends = 98;
+        }
+      console.log(ends)
       myCharts.setOption({
         tooltip: {
           trigger: "item",
@@ -126,9 +144,10 @@ export default {
             type: "slider",
             yAxisIndex: 0,
             filterMode: "filter",
-            start: 60,
-            end: 100,
-            showDetail: false
+            start: starts,
+            end: ends,
+            showDetail: false,
+            zoomLock: true
           }
         ],
         xAxis: {
@@ -144,7 +163,7 @@ export default {
         },
         yAxis: {
           type: "value",
-          show: false
+          show: false,
         },
         series: [
           {
@@ -153,6 +172,8 @@ export default {
               show: true,
               formatter: function(value) {
                 const info = value.data[4];
+                info.Title = info.Title.replace('&&','\n') ;
+                info.Title = info.Title;
                 return info.Title;
               },
               position: "right",
@@ -172,7 +193,13 @@ export default {
               ) {
                 let start = api.coord([value0, value2]);
                 let end = api.coord([value1, value2]);
-                let height = api.size([5, 10])[1];
+                let height = 0;
+                if (otherInfo.length < 10) {
+                  height = 20;
+                } else {
+                  height = api.size([5, 10])[1];
+                }
+               
 
                 let gap = end[0] - start[0];
 
@@ -193,7 +220,7 @@ export default {
                   width: params.coordSys.width,
                   height: params.coordSys.height
                 };
-
+                
                 let rectShape = echarts.graphic.clipRectByRect(rect, coordRect);
 
                 return (

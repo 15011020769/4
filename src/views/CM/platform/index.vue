@@ -65,6 +65,7 @@
             <el-pagination
                 @size-change="handleSizeChange"
                 @current-change="handleCurrentChange"
+                :pager-count="7"
                 :current-page="pageIndex"
                 :page-sizes="[10, 20, 50, 100]"
                 :page-size="pageSize"
@@ -217,9 +218,9 @@ export default {
 
     // 分頁
     handleCurrentChange(val) {
-      this.pageIndex = val - 1;
+      this.pageIndex = (val - 1) * this.pageSize;
       this.GetPlatformList();
-      this.pageIndex += 1;
+      this.pageIndex += (val - 1) * this.pageSize;
     },
     handleSizeChange(val) {
       // console.log(`每頁 ${val} 條`);

@@ -105,7 +105,7 @@ export default {
       const params = {
         Version: '2018-08-01',
         Granularity: 'Day',
-        Zone: 'Oversea',
+        // Zone: 'Oversea', // TODO
         StartTime: moment().subtract(6, 'months').endOf('months').utc().format(),
         EndTime: moment().utc().format()
       }
@@ -161,7 +161,7 @@ export default {
       const params = {
         Version: '2018-08-01',
         Granularity: 'Minute',
-        Zone: 'Oversea',
+        // Zone: 'Oversea', // TODO
         StartTime: moment(this.StartTIme).utc().format(),
         EndTime: moment(this.EndTIme).utc().format()
       }

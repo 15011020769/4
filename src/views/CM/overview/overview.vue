@@ -2,26 +2,7 @@
   <div class="overview-wrap">
     <Header :title="$t('CVM.jkgl')" />
     <div class="overview-main">
-      <!-- <div class="explain">
-        <p>
-          {{ $t("CVM.overview.xbysx") }}
-          <a>{{ $t("CVM.overview.sqncty") }}</a>
-        </p>
-        <p>
-          {{ $t("CVM.overview.zdjk") }}
-          <a>{{ $t("CVM.lljk") }}</a> {{ $t("CVM.overview.pzljgd") }}
-        </p>
-        <p>
-          [{{ $t("CVM.overview.wgzd") }} <a>dashboard</a>，{{
-            $t("CVM.overview.hyty")
-          }}
-        </p>
-        <p>
-          {{ $t("CVM.overview.gwlljksj") }}
-          <a>{{ $t("CVM.lljk") }}</a
-          >{{ $t("CVM.overview.ymck") }}
-        </p>
-      </div> -->
+
       <div class="main-box">
         <div class="left">
           <!-- 近24小时服务健康状态 -->
@@ -153,6 +134,7 @@
                 :projectId="projectId"
                 :searchParam="searchParam"
                 :productValue="productValue"
+                @loading = "loading"
               />
               <div style="margin-left:-1px;">
                 <el-button type="primary" v-show="region != ''">{{
@@ -186,43 +168,10 @@
             </div>
           </div>
         </div>
-        <!-- <div class="right">
-           當月已使用間訊統計
-          <div class="box">
-            <div class="head">
-              <h3 style="flex:1;">
-                {{ $t("CVM.overview.dxtj") }}
-                <el-tooltip class="item" effect="light" placement="bottom">
-                  <div slot="content">
-                    {{ $t("CVM.overview.gjdx") }}
-                    <br />{{ $t("CVM.overview.dxpe") }} <br />{{
-                      $t("CVM.overview.mfpe")
-                    }}
-                  </div>
-                  <i class="el-icon-info cursor"></i>
-                </el-tooltip>
-              </h3>
-              <a @click="buyMessgae">{{ $t("CVM.overview.gmdx") }}</a>
-            </div>
-            <div class="box-main" style="margin-top:10px;">
-              <div class="progress" v-for="item in quotaList" :key="item.Type">
-                <p>
-                  {{ item.Name }}
-                  <span>剩餘{{ item.FreeLeft }}條/已使用{{ item.Used }}條</span>
-                </p>
-                <el-progress
-                  :percentage="100 * (item.Used / (item.Used + item.FreeLeft))"
-                  :stroke-width="20"
-                  :show-text="false"
-                ></el-progress>
-              </div>
-            </div>
-          </div>
-        </div> -->
+
       </div>
     </div>
-    <!-- 购买簡訊 -->
-    <!-- <bugmsg :dialogVisible="dialogVisible" @cancel="cancel" @save="save" /> -->
+
   </div>
 </template>
 
@@ -393,6 +342,9 @@ export default {
   },
 
   methods: {
+    loading (val) {
+      this.chartLoading = true;
+    },
     //购买簡訊
     buyMessgae() {
       this.dialogVisible = true;
@@ -411,31 +363,7 @@ export default {
         this.region = res.data[0].zone;
       });
     },
-    // 当月已使用簡訊统计
-    // getSMS() {
-    //   let params = {
-    //     Version: "2018-07-24",
-    //     Module: "monitor"
-    //   };
-    //   this.axios.post(OVERVIEW_SMS_LIST, params).then(res => {
-    //     if (res.Response.Error === undefined) {
-    //       // this.tableData=res.data;//lxx
-    //       this.quotaList = res.Response.QuotaList;
-    //     } else {
-    //       let ErrTips = {
-    //         InternalError: "內部錯誤",
-    //         UnauthorizedOperation: "未授權操作"
-    //       };
-    //       let ErrOr = Object.assign(ErrorTips, ErrTips);
-    //       this.$message({
-    //         message: ErrOr[res.Response.Error.Code],
-    //         type: "error",
-    //         showClose: true,
-    //         duration: 0
-    //       });
-    //     }
-    //   });
-    // },
+
     //获取项目列表
     getProject() {
       this.axios.get(ALL_PROJECT).then(res => {
@@ -450,6 +378,12 @@ export default {
             this.options1.push(obj);
             this.options2.push(obj);
           });
+          const obj1 = {
+              label: '預設專案',
+              projectId: 0
+            };
+          this.options1.splice(0,0,obj1)
+          this.options2.splice(0,0,obj1)
         } else {
           let ErrTips = {
             InternalError: "內部錯誤",
@@ -465,41 +399,7 @@ export default {
         }
       });
     },
-    // getServiceType() {
-    //   let params = {
-    //     Version: "2018-07-24",
-    //     Module: "monitor"
-    //   };
-    //   this.axios.post(POLICY_CONDITIONS_LIST, params).then(res => {
-    //     if (res.Response.Error === undefined) {
-    //       let result = res.Response.Conditions.filter(item => {
-    //         if (!item.SupportRegions.includes("tpe")) {
-    //           return false;
-    //         }
 
-    //         // if (item.PolicyViewName !== "cvm_device") {
-    //         //   return false;
-    //         // }
-
-    //         return true;
-    //       });
-
-    //       // console.log(result);
-    //     } else {
-    //       let ErrTips = {
-    //         InternalError: "內部錯誤",
-    //         UnauthorizedOperation: "未授權操作"
-    //       };
-    //       let ErrOr = Object.assign(ErrorTips, ErrTips);
-    //       this.$message({
-    //         message: ErrOr[res.Response.Error.Code],
-    //         type: "error",
-    //         showClose: true,
-    //         duration: 0
-    //       });
-    //     }
-    //   });
-    // },
     getHealthStatusList() {
       //获取项目列表数据
       let params = {
@@ -530,11 +430,7 @@ export default {
               item.tips = [];
             }
 
-            // if (viewNameObj !== undefined) {
-            //   item.desc = item.subtitle + "：" + viewNameObj.AbnormalCount;
-            // } else {
-            //   item.desc = "-";
-            // }
+          
 
             if (viewNameObj !== undefined) {
               item.desc = viewNameObj.AbnormalCount;
@@ -711,13 +607,7 @@ export default {
           chartsObjects.sort((value1, value2) => {
             return this.sortChartObject(value1, value2);
           });
-
-          // this.chartsObjects = chartsObjects;
-          // const monitorStartTime = this.monitorStartTime;
-          // chartsObjects = chartsObjects.filter(function(item) {
-          //   const firstOccurTime = moment(item.FirstOccurTime);
-          //   return firstOccurTime.isBefore(monitorStartTime, "day");
-          // });
+          
 
           chartsObjects.forEach(item => {
             startTimes.push(item.FirstOccurTime);

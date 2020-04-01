@@ -28,7 +28,7 @@
             <!-- <i @click="jump(scope.row.DiskId)" style="cursor:pointer;"><i class="el-icon-share"></i></a> -->
             <!-- <div class="a" @click="jump(scope.row.DiskId)"></div> -->
             <el-button type="text" class="iconfont icon-tubiaozhanshi" style="color: #888;"
-             @click="jump(scope.row.DiskId)"></el-button>
+              @click="jump(scope.row.DiskId)"></el-button>
           </template>
         </el-table-column>
         <el-table-column prop :label="$t('CVM.cloudDisk.dx')">
@@ -55,44 +55,40 @@
         </el-pagination>
       </div>
     </div>
-
-
-
     <div class="Table-SY" v-show="false">
-      <el-table :data="TbaleData1" height="550" style="width: 100%" id="exportTable" v-loading="loadShow"
+      <el-table :data="TbaleData1" height="550" style="width: 100%" v-loading="loadShow" id="exportTable"
         :empty-text="$t('CVM.clBload.zwsj')">
         <el-table-column prop label="ID">
           <template slot-scope="scope">
-            {{scope.row.DiskId}}
+            <p>
+              <a @click="jump(scope.row.DiskId)" style="cursor:pointer;">{{scope.row.DiskId}}</a>
+            </p>
+            {{ scope.row.DiskName}}
           </template>
         </el-table-column>
+
         <el-table-column prop label="名稱">
           <template slot-scope="scope">
             {{ scope.row.DiskName}}
           </template>
         </el-table-column>
+
         <el-table-column prop :label="$t('CVM.cloudDisk.dx')">
           <template slot-scope="scope">{{scope.row.DiskSize}}</template>
         </el-table-column>
+
         <el-table-column prop :label="$t('CVM.cloudDisk.yplx')">
           <template slot-scope="scope">
-            <p>{{DiskType[scope.row.DiskType]}}</p>
+            <p>{{DiskType[scope.row.DiskType]}}</p>/
             <p>{{DiskUsage[scope.row.DiskUsage]}}</p>
           </template>
         </el-table-column>
-        <el-table-column prop label="ID">
+        <el-table-column prop :label="$t('CVM.cloudDisk.glyzj')">
           <template slot-scope="scope">
-            <p>
-              {{scope.row.InstanceId}}
-            </p>
+            <p>{{scope.row.InstanceId}}</p>/
+            <p>{{scope.row.InstanceName}}</p>
           </template>
         </el-table-column>
-        <el-table-column prop label="主機名">
-          <template slot-scope="scope">
-            {{ scope.row.InstanceName}}
-          </template>
-        </el-table-column>
-
       </el-table>
     </div>
   </div>

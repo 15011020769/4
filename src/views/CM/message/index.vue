@@ -10,7 +10,7 @@
           <a>购买簡訊</a>
         </p>
       </div>
-    </div> -->
+    </div>-->
     <div class="table">
       <div class="addBtn">
         <el-row>
@@ -43,13 +43,13 @@
             <p>{{scope.row.PolicyName}}</p>
           </template>
         </el-table-column>
-        <el-table-column prop="chufa" label="近24小时触发告警">
+        <el-table-column prop="chufa" label="近24小時觸發告警">
           <template slot-scope="scope">
             {{scope.row.AlarmCount}}
             <!-- <a @click="alarmDialog">{{scope.row.AlarmCount}}</a> -->
           </template>
         </el-table-column>
-        <el-table-column prop="type" label="訊息接收组">
+        <el-table-column prop="type" label="訊息接收組">
           <template slot-scope="scope">
             {{scope.row.ReceiverGroupIds.length}}
             <!-- <a @click="receiverGroup(scope.row)">{{scope.row.ReceiverGroupIds.length}}</a> -->
@@ -68,8 +68,8 @@
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button type="text" class="cloneBtn" @click="Edit(scope.row)">编辑</el-button>
-            <el-button type="text" class="deleteBtn" @click="Delete(scope.row)">删除</el-button>
+            <el-button type="text" class="cloneBtn" @click="Edit(scope.row)">編輯</el-button>
+            <el-button type="text" class="deleteBtn" @click="Delete(scope.row)">刪除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -94,7 +94,7 @@
 
     <!-- 近24小时触发告警 -->
     <el-dialog
-      title="告警记录详情"
+      title="告警記錄詳情"
       :visible.sync="deleteDialogVisible2"
       width="900px"
       style="height:100%"
@@ -106,7 +106,7 @@
             <XTimeX v-on:switchData="getAlarmList" :classsvalue="valueT"></XTimeX>
           </div>
           <div class="seek">
-            <el-input v-model="input" placeholder="请输入訊息内容关键字或监控组件主机IP" @input="searchZIID"></el-input>
+            <el-input v-model="input" placeholder="請輸入訊息內容關鍵字或監控組件主機IP" @input="searchZIID"></el-input>
             <el-button icon="el-icon-search" style="margin-left:-1px;" @click="searchZIIDBtn"></el-button>
           </div>
         </div>
@@ -122,38 +122,38 @@
         </div>
         <div>
           <el-table :data="lists" style="width: 100%" height="330">
-            <el-table-column prop label="发生时间">
+            <el-table-column prop label="發生時間">
               <template slot-scope="scope">111</template>
             </el-table-column>
             <el-table-column prop label="訊息内容">
               <template slot-scope="scope">22222</template>
             </el-table-column>
-            <el-table-column prop label="訊息来源">
+            <el-table-column prop label="訊息來源">
               <template slot-scope="scope">3333</template>
             </el-table-column>
           </el-table>
-          <span>共 {{nums}} 项</span>
+          <span>共 {{nums}} 項</span>
         </div>
       </div>
     </el-dialog>
 
     <!-- 删除 -->
     <el-dialog
-      title="确定删除所选策略？"
+      title="確定刪除所選策略？"
       :visible.sync="deleteDialogVisible"
       width="500px"
       custom-class="tke-dialog"
     >
-      <p>删除后,相关接收人将不能接收到对应的告警内容</p>
+      <p>刪除后,相關接收人將不能接收到對應的告警內容</p>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="DeleteList">确定删除</el-button>
+        <el-button type="primary" @click="DeleteList">確定刪除</el-button>
         <el-button @click="deleteDialogVisible = false">取消</el-button>
       </div>
     </el-dialog>
 
     <!-- 接收组 -->
     <el-dialog
-      title="訊息接收组详情"
+      title="訊息接收組詳情"
       :visible.sync="deleteDialogVisible1"
       width="500px"
       custom-class="tke-dialog"
@@ -161,22 +161,22 @@
       <div>
         <p>策略名：{{groups.PolicyName}}</p>
         <div>
-          接收组：
+          接收組：
           <el-table :data="lists" style="width: 490px" height="100">
-            <el-table-column prop="index" label="序号">
+            <el-table-column prop="index" label="序號">
               <template slot-scope="scope">111</template>
             </el-table-column>
             <el-table-column prop="chufa" label="接收人">
               <template slot-scope="scope">22222</template>
             </el-table-column>
-            <el-table-column prop="type" label="接收组">
+            <el-table-column prop="type" label="接收組">
               <template slot-scope="scope">3333</template>
             </el-table-column>
           </el-table>
         </div>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="ok">确定</el-button>
+        <el-button type="primary" @click="ok">確定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -207,7 +207,7 @@ export default {
       TotalCount: 0, //总条数
       pageSize: 10, // 分页条数
       currpage: 1, // 当前页码
-      deteleId:"",//要删除的id
+      deteleId: "", //要删除的id
       operationFlag: -1, //按钮禁用开关
       searchName: "",
       valueT: "",
@@ -259,11 +259,11 @@ export default {
         } else {
           this.loadShow = false;
           let ErrTips = {
-            FailedOperation: "操作失败。",
-            InternalError: "内部错误。",
-            InvalidParameter: "参数错误。",
-            LimitExceeded: "超过配额限制。",
-            UnknownParameter: "未知参数错误。",
+            FailedOperation: "操作失敗。",
+            InternalError: "內部錯誤。",
+            InvalidParameter: "參數錯誤。",
+            LimitExceeded: "超過配額限制。",
+            UnknownParameter: "未知參數錯誤。",
             UnsupportedOperation: "操作不支持。"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -314,7 +314,7 @@ export default {
     getAlarmList() {},
     // 删除
     Delete(row) {
-      this.deteleId=row.PolicyID;
+      this.deteleId = row.PolicyID;
       this.deleteDialogVisible = true;
     },
     DeleteList() {
@@ -328,8 +328,8 @@ export default {
       this.axios.post(DETELE_CUSTON_MESSAGE, param).then(res => {
         if (res.Response.Error === undefined) {
           this.getCustomMessage();
-           this.$message({
-            message: "删除成功",
+          this.$message({
+            message: "刪除成功",
             type: "success",
             showClose: true,
             duration: 0
@@ -337,12 +337,12 @@ export default {
           this.deleteDialogVisible = false;
         } else {
           let ErrTips = {
-            FailedOperation: "操作失败。",
-            InternalError: "内部错误。",
-            InvalidParameter: "参数错误。",
-            InvalidParameterValue: "无效的参数值。",
-            UnknownParameter: "未知参数错误。",
-            UnsupportedOperation: "操作不支持"
+            FailedOperation: "操作失敗。",
+            InternalError: "內部錯誤。",
+            InvalidParameter: "參數錯誤。",
+            LimitExceeded: "超過配額限制。",
+            UnknownParameter: "未知參數錯誤。",
+            UnsupportedOperation: "操作不支持。"
           };
           this.loadShow = false;
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -400,7 +400,7 @@ export default {
       // }
       this.$router.push({
         name: "messageEdit",
-        query:data
+        query: data
       });
     }
   }

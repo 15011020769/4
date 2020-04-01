@@ -19,21 +19,30 @@
           <p>{{ $t("CSS.detailPlay.playArea") }}</p>
           <p>{{ info.PlayType | playType }}</p>
         </div>
-        <!-- <div class="newClear newList">
-          <p>API Key</p>
-          <p>{{ apiKey }}</p>
-        </div> -->
+        <div class="newClear newList">
+          <p>標籤</p>
+          <p>
+            <span class="tag" v-for="tag in tags" :key="tag.tagKeyMd5">{{tag.tagKey}}:{{tag.tagValue}}</span>
+            <i class="el-icon-edit icon" @click="editTags" />
+            <i class="el-icon-close icon" v-if="tags.length" @click="removeTags" />
+          </p>
+        </div>
       </div>
-      <editTagsModel
+      <el-dialog title="編輯標籤" :visible.sync="modelEdit" width="45%" destroy-on-close>
+        <editTagsModel :domains="[{Name: $route.query.Name}]" :visible.sync="modelEdit" @success="onSuccess" />
+      </el-dialog>
+      <!-- <editTagsModel
         :isShow="modelEdit"
         @closeEditTagsModel="closeEditTagsModel"
-      />
+      /> -->
     </div>
   </div>
 </template>
 <script>
 import editTagsModel from '../model/editTagsModel'
 import { LIVE_DESCRIBELIVE_PUSHAUTHKEY } from '@/constants'
+import { flatObj } from '@/utils'
+import VueCookie from 'vue-cookie'
 export default {
   props: {
     info: {
@@ -45,14 +54,14 @@ export default {
     editTagsModel: editTagsModel
   },
   filters: {
-    typeCh (val) {
+    typeCh(val) {
       if (val === 0) {
         return '推流域名'
       } else if (val === 1) {
         return '播放域名'
       }
     },
-    playType (val) {
+    playType(val) {
       switch (val) {
         case 1:
           return '中國大陸'
@@ -63,7 +72,8 @@ export default {
       }
     }
   },
-  mounted () {
+  mounted() {
+    this.getTags()
     this.axios
       .post(LIVE_DESCRIBELIVE_PUSHAUTHKEY, {
         Version: '2018-08-01',
@@ -73,19 +83,62 @@ export default {
         this.apiKey = PushAuthKeyInfo.MasterAuthKey
       })
   },
-  data () {
+  data() {
     return {
       modelEdit: false, // 编辑弹框
-      apiKey: ''
+      apiKey: '',
+      tags: [],
     }
   },
   methods: {
     // 编辑标签
-    editTags () {
+    editTags() {
       this.modelEdit = true
     },
+    onSuccess() {
+      this.$message({ 
+        message: '編輯成功',
+        type: 'success',
+        showClose: true,
+        duration: 0
+      })
+      this.modelEdit = false
+      this.getTags()
+    },
+    getTags() {
+      this.$axios.post('tag/GetResourceTagsByResourceIds', {
+        "Version": "2018-08-01",
+        "serviceType": "lvb",
+        "resourcePrefix": "live",
+        "region": "ap-guangzhou",
+        'resourceIds.0': this.$route.query.Name
+      }).then(res => {
+        this.tags = res.data.rows
+        // this.totalItems = res.data.total
+      })
+    },
+    removeTags() {
+      this.$confirm('確認清除標籤', '清除標籤', {
+        confirmButtonText: '確定',
+        cancelButtonText: '取消',
+        type: '',
+      }).then(() => {
+        this.$axios.post('tag/ModifyResourceTags', flatObj({
+          resource: `qcs::lvb:ap-guangzhou:uin/${VueCookie.get('uin')}:live/${this.$route.query.Name}`,
+          deleteTags: this.tags.map(tag => ({ tagKey: tag.tagKey, tagValue: tag.tagValue, resourceId: '' }))
+        })).then(res => {
+          this.$message({
+            message: '清除成功',
+            type: 'success',
+            showClose: true,
+            duration: 0
+          })
+          this.getTags()
+        })
+      }).catch(() => {})
+    },
     // 关闭弹框
-    closeEditTagsModel (isShow) {
+    closeEditTagsModel(isShow) {
       this.modelEdit = isShow
     }
   }
@@ -134,5 +187,16 @@ export default {
       }
     }
   }
+}
+.tag {
+  background: #f2f2f2;
+  border: 1px solid #ddd;
+  padding: 3px 5px;
+  margin-right: 5px;
+}
+.icon {
+  font-size: 16px;
+  margin-right: 5px;
+  cursor: pointer;
 }
 </style>
