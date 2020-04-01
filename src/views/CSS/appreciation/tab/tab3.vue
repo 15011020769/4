@@ -14,6 +14,7 @@
       <el-table
         :data="tableData"
         style="width: 100%;margin-top:20px;"
+        v-loading="tableLoading"
       >
         <el-table-column prop="time" label="月份"></el-table-column>
         <el-table-column prop="num" label="錄製任務數量（個）"></el-table-column>
@@ -49,7 +50,8 @@ export default {
       legendText: '錄製任務個數',
       start: moment(this.StartTIme).format('YYYY-MM-DD HH:mm:ss'),
       line_json: [],
-      table_json: []
+      table_json: [],
+      tableloadin: true,
     };
   },
   components: {
@@ -106,7 +108,7 @@ export default {
     },
     //获取表格数据
     init() {
-      this.loading = true;
+      this.tableLoading = true;
       let arrTotal = [];
       let arrDetail = [];
       for (let i = 0 ; i < 5; i++) {
@@ -158,7 +160,10 @@ export default {
             this.tableData = json_arr.sort((a, b) => moment(b.time) - moment(a.time));
             this.totalItems = json_arr.length;
           }
-          this.loading = false;
+          if (i === 4){
+            console.log(121)
+            this.tableLoading = false;
+          }
         });
       }
     },
