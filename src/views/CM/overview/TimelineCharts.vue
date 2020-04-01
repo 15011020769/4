@@ -31,13 +31,6 @@ export default {
   beforeDestroy() {
     window.onresize = null;
   },
-  data () {
-    return {
-      resdata:{},
-      starts: 100,
-      ends: 60
-    }
-  },
   watch: {
     timelineData: function(n, o) {
       let myCharts = echarts.init(this.$refs.chart);
@@ -52,11 +45,12 @@ export default {
   methods: {
     
     setupEcharts(myCharts, startTimes, endTimes, otherInfo) {
-      this.resdata = otherInfo
-      console.log(this.resdata)
+      otherInfo = otherInfo
+      console.log(otherInfo)
       let contentData = [];
       let timeShow = "";
-
+      let starts = 100;
+      let ends = 60;
       let currentMoment = moment(this.day);
       let current = currentMoment.format("YYYY-MM-DD");
 
@@ -110,16 +104,18 @@ export default {
       });
 
       const that = this;
-        if (this.resdata.length > 50 && this.resdata.length < 80) {
-            this.ends = 70;
-        }else if (this.resdata.length >= 80 && this.resdata.length < 100) {
-            this.ends = 80;
-        }else if (this.resdata.length >= 100 && this.resdata.length < 150) {
-            this.ends = 90;
-        }else if (this.resdata.length >= 150 && this.resdata.length < 200) {
-            this.ends = 95;
-        }else if (this.resdata.length >= 200) {
-            this.ends = 98;
+        if (otherInfo.length > 50 && otherInfo.length < 80) {
+            ends = 70;
+        }else if (otherInfo.length < 10) {
+            ends = 0;
+        }else if (otherInfo.length >= 80 && otherInfo.length < 100) {
+            ends = 80;
+        }else if (otherInfo.length >= 100 && otherInfo.length < 150) {
+            ends = 90;
+        }else if (otherInfo.length >= 150 && otherInfo.length < 200) {
+            ends = 95;
+        }else if (otherInfo.length >= 200) {
+            ends = 98;
         }
 
       myCharts.setOption({
@@ -147,8 +143,8 @@ export default {
             type: "slider",
             yAxisIndex: 0,
             filterMode: "filter",
-            start: that.starts,
-            end: that.ends,
+            start: starts,
+            end: ends,
             showDetail: false
           }
         ],
@@ -165,7 +161,7 @@ export default {
         },
         yAxis: {
           type: "value",
-          show: false
+          show: false,
         },
         series: [
           {
@@ -195,7 +191,13 @@ export default {
               ) {
                 let start = api.coord([value0, value2]);
                 let end = api.coord([value1, value2]);
-                let height = api.size([5, 10])[1];
+                let height = 0;
+                if (otherInfo.length < 10) {
+                  height = 20;
+                } else {
+                  height = api.size([5, 10])[1];
+                }
+               
 
                 let gap = end[0] - start[0];
 
@@ -216,7 +218,7 @@ export default {
                   width: params.coordSys.width,
                   height: params.coordSys.height
                 };
-
+                
                 let rectShape = echarts.graphic.clipRectByRect(rect, coordRect);
 
                 return (
