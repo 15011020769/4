@@ -422,7 +422,7 @@
         </div>
         <div slot="footer" class="dialog-footer">
           <el-button type="primary" @click="DeleteList()"
-            >確萣簃炪葰選實唎</el-button
+            >確定移出選中實例</el-button
           >
           <el-button @click="allDelete = false">取消</el-button>
         </div>
