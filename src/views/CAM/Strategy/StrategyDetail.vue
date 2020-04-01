@@ -234,14 +234,13 @@ export default {
             this.loadingMonaco = false
           })
         });
-        // editor.getAction('editor.action.formatDocument').run().then(() => editor.updateOptions({ readOnly: true}));
-        // loadingMonaco
-        // setTimeout(() => {
-        //   editor.trigger('anyString', 'editor.action.formatDocument')
-        // }, 300)
-        // setTimeout(() => {
-        //   editor.updateOptions({ readOnly: true })
-        // }, 400)
+        setTimeout(() => {
+          editor.trigger('anyString', 'editor.action.formatDocument')
+        }, 300)
+        setTimeout(() => {
+          editor.updateOptions({ readOnly: true })
+          this.loadingMonaco = false
+        }, 400)
         
         this.inputValue = res.Response.PresetAlias
         this.infoLoad = false;
