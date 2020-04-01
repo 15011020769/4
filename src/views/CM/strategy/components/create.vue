@@ -612,6 +612,7 @@ export default {
       this.axios.post(CM_CALLBACK_HISTORY, param).then(res => {
         this.axiosUtils(res, () => {
           let { List } = res.Response
+          if (!List) List = []
           List.forEach(item => {
             let [protocol, website] = item.Url.split('://')
             item.website = website
@@ -795,7 +796,7 @@ export default {
         GroupName: this.formInline.strategy_name,
         Module: 'monitor',
         ViewName: productValue,
-        ProjectId: productValue === 'cvm_device' || productValue === 'BS' ? this.formInline.projectId : -1,
+        ProjectId: productValue === 'cvm_device' || productValue === 'BS' ? this.formInline.projectId : 0,
         IsShielded: 0
       }
       if (textarea !== '') params.Remark = textarea
