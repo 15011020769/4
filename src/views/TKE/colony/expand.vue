@@ -80,12 +80,13 @@
           >
             <p>{{$t('TKE.colony.jfms')}}<i class="el-icon-info"></i></p>
             <div class="tke-second-radio-btn tke-second-icon-btn">
+              {{nodeForm.internetChargeType}}
               <el-radio-group
                 v-model="nodeForm.instanceChargeType"
                 @change="SecondCharging();costPrice()"
               >
                 <el-radio-button label="POSTPAID_BY_HOUR">{{$t('TKE.colony.aljf')}}</el-radio-button>
-                <!-- <el-radio-button label="PREPAID">包年包月</el-radio-button> -->
+                <el-radio-button label="PREPAID">包年包月</el-radio-button>
               </el-radio-group>
               <!-- <a href="#">详细对比</a> -->
             </div>
@@ -362,7 +363,10 @@
             <p>{{$t('TKE.colony.gwdk')}}<i class="el-icon-info"></i></p>
             <div class="tke-second-radio-btn tke-third-radio-btn">
               <el-radio-group v-model="nodeForm.internetChargeType" @change="changeInternetType">
-                <el-radio-button label="BANDWIDTH_POSTPAID_BY_HOUR">{{$t('TKE.colony.adkjf')}}</el-radio-button>
+                <!-- 包年包月的带宽 -->
+                <el-radio-button label="BANDWIDTH_PREPAID" v-if="nodeForm.instanceChargeType === 'PREPAID'">包年包月的{{$t('TKE.colony.adkjf')}}</el-radio-button>
+                <!-- 按量计费的带宽 -->
+                <el-radio-button label="BANDWIDTH_POSTPAID_BY_HOUR" v-else>按量计费的{{$t('TKE.colony.adkjf')}}</el-radio-button>
                 <el-radio-button label="TRAFFIC_POSTPAID_BY_HOUR">按使用流量</el-radio-button>
               </el-radio-group>
               <div style="overflow:hidden;margin-left:120px;">
@@ -691,9 +695,8 @@
           </el-form-item>
           <el-form-item :label="$t('TKE.colony.zjfy')" v-if="nodeForm.instanceChargeType === 'PREPAID'">
             <div class="tke-second-cost">
-              <span class="tke-second-cost-num">{{nodeForm.totalPrice}}</span
-              ><span class="tke-second-cost-h">元</span
-              >
+              <span class="tke-second-cost-num">NT${{nodeForm.networkCost}}</span>
+              <!-- <span class="tke-second-cost-h">元</span> -->
 
             </div>
           </el-form-item>
@@ -959,7 +962,7 @@ export default {
         projectId: '',//项目id
         buyTime: 36, // 购买时长
         renew: false, // 自动续费
-        totalPrice: '',//报年报月费用
+        totalPrice: '',//包年包月费用
         allocationCost: '',//配置费用
         networkCost: '',//网络费用
         isShowathirdNext: false,//是否禁用第三步下一步
@@ -996,6 +999,20 @@ export default {
   components: {
     // HeadCom,
     // SEARCH
+  },
+  watch: {
+    'nodeForm.instanceChargeType'(n) { // 计费类型 切换到包年包月时，公网频宽设置为按年 否则按量
+      // 计费类型为包年包月 并且公网频宽是按量，设置公网频宽为包年包月
+      if (n === 'PREPAID') {
+        if (this.nodeForm.internetChargeType === 'BANDWIDTH_POSTPAID_BY_HOUR') {
+          this.nodeForm.internetChargeType = 'BANDWIDTH_PREPAID'
+        }
+      } else {
+        if (this.nodeForm.internetChargeType === 'BANDWIDTH_PREPAID') {
+          this.nodeForm.internetChargeType = 'BANDWIDTH_POSTPAID_BY_HOUR'
+        }
+      }
+    }
   },
   created() {
     this.clusterId = this.$route.query.clusterId;
@@ -1903,8 +1920,8 @@ export default {
       } else {
         await this.axios.post(TKE_PRICE, param).then(res => {
           if(res.Response.Error === undefined) {
-            // let price = res.Response.Price;
-            // this.nodeForm.networkCost = price.InstancePrice.UnitPrice.toFixed(2);
+            const { InstancePrice: { UnitPrice: instancePrice }, BandwidthPrice: { UnitPrice: bandwidthPrice }} = res.Response.Price
+            this.nodeForm.networkCost = instancePrice + bandwidthPrice;
             this.loadShow = false;
           } else {
             this.loadShow = false;
@@ -2000,7 +2017,7 @@ export default {
     //宽带类型
     internetChargeType(val) {
       if(val) {
-        if(val === 'BANDWIDTH_POSTPAID_BY_HOUR') {
+        if(val.startsWith('BANDWIDTH')) {
           return '按頻寬計費';
         } else {
           return '按使用流量';
