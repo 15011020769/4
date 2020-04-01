@@ -31,6 +31,13 @@ export default {
   beforeDestroy() {
     window.onresize = null;
   },
+  data () {
+    return {
+      resdata:{},
+      starts: 100,
+      ends: 60
+    }
+  },
   watch: {
     timelineData: function(n, o) {
       let myCharts = echarts.init(this.$refs.chart);
@@ -43,7 +50,10 @@ export default {
     }
   },
   methods: {
+    
     setupEcharts(myCharts, startTimes, endTimes, otherInfo) {
+      this.resdata = otherInfo
+      console.log(this.resdata)
       let contentData = [];
       let timeShow = "";
 
@@ -100,6 +110,17 @@ export default {
       });
 
       const that = this;
+        if (this.resdata.length > 50 && this.resdata.length < 80) {
+            this.ends = 70;
+        }else if (this.resdata.length >= 80 && this.resdata.length < 100) {
+            this.ends = 80;
+        }else if (this.resdata.length >= 100 && this.resdata.length < 150) {
+            this.ends = 90;
+        }else if (this.resdata.length >= 150 && this.resdata.length < 200) {
+            this.ends = 95;
+        }else if (this.resdata.length >= 200) {
+            this.ends = 98;
+        }
 
       myCharts.setOption({
         tooltip: {
@@ -126,8 +147,8 @@ export default {
             type: "slider",
             yAxisIndex: 0,
             filterMode: "filter",
-            start: 60,
-            end: 100,
+            start: that.starts,
+            end: that.ends,
             showDetail: false
           }
         ],
@@ -153,6 +174,8 @@ export default {
               show: true,
               formatter: function(value) {
                 const info = value.data[4];
+                info.Title = info.Title.replace('&&','\n') ;
+                info.Title = info.Title;
                 return info.Title;
               },
               position: "right",
