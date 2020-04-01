@@ -425,11 +425,9 @@ export default {
       this.selectUserList.forEach((item, index) => {
         var data = {};
         data.username = item.Name;
-        data.uin = item.Uid;
-        //params.Receivers = data;
-        console.log(item);
-
-        params["Receivers." + index] = data;
+        data.uid = item.Uid;
+        data = JSON.stringify(data)
+        params["Receivers"] = data;
       });
       //  var key, value;
       //   key = item.Name;
