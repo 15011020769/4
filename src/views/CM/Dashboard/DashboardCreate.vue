@@ -278,7 +278,7 @@ export default {
       let number = 0
       if (this.rightData.length) {
         if(this.DashboardData.length<=10){
-           this.createDashboard(0,this.DashboardData.length);
+           this.createDashboard(number,this.DashboardData.length);
             this.$router.push({
               name: "Dashboard",
               query: {
