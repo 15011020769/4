@@ -109,7 +109,7 @@ export default {
       this.loading = true;
       let arrTotal = [];
       let arrDetail = [];
-      for (let i = 0 ; i < 6; i++) {
+      for (let i = 0 ; i < 5; i++) {
         const params = {
           Version: "2018-08-01",
           MainlandOrOversea: "Oversea",

@@ -88,12 +88,14 @@
             {{ i.CalcType | CalcType }} {{ i.CalcValue }}{{ i.Unit }}，持續{{
               i.ContinueTime / 60
             }}分钟，
-            <span v-if="i.AlarmNotifyType != 1">
-              <i v-if="i.AlarmNotifyType != 0"
-                >按{{ i.AlarmNotifyPeriod | AlarmNotifyPeriod }}</i
-              >{{ i.AlarmNotifyPeriod > 0 ? "重复告警" : "不重复告警" }}
+            <span v-if="i.AlarmNotifyType == 0 && i.AlarmNotifyPeriod == 0">
+              {{ i.AlarmNotifyPeriod > 0 ? "重複告警" : "不重複告警" }}
             </span>
-            <span v-else>
+            <span v-if="i.AlarmNotifyType == 0 && i.AlarmNotifyPeriod != 0">
+              按{{ i.AlarmNotifyPeriod | AlarmNotifyPeriod
+              }}{{ i.AlarmNotifyPeriod > 0 ? "重複告警" : "不重複告警" }}
+            </span>
+            <span v-if="i.AlarmNotifyType == 1">
               按週期指数递增重复告警
             </span>
           </p>
@@ -222,7 +224,7 @@
           <!-- vpn_tunnel -->
           <el-table-column label="ID/名稱" v-if="ViewName === 'vpn_tunnel'">
             <template slot-scope="scope">
-              <p>{{ scope.row.VpnGatewayId }}</p>
+              <p>{{ scope.row.VpnConnectionId }}</p>
               <p>{{ scope.row.VpnConnectionName }}</p>
             </template>
           </el-table-column>
@@ -2212,41 +2214,13 @@ export default {
               _ReceiverUserList = this.basicNews.ReceiverInfos[0]
                 .ReceiverGroupList;
 
-              for (let i in _ReceiverUserList) {
-                let params = {
-                  Version: "2019-01-16",
-                  GroupId: _ReceiverUserList[i]
-                };
-                this.axios
-                  .post(CM_ALARM_RECEIVE_OBJECT_GetGroup, params)
-                  .then(res => {
-                    if (res.Response.Error === undefined) {
-                      this.receivingObjectData.push(res.Response);
-                      this.receivingObjectLoad = false;
-                    } else {
-                      let ErrTips = {
-                        FailedOperation: "操作失敗。",
-                        InternalError: "內部錯誤。",
-                        InvalidParameter: "參數錯誤。",
-                        LimitExceeded: "超過配額限制。",
-                        MissingParameter: "缺少參數錯誤。",
-                        ResourceInUse: "資源被占用。",
-                        ResourceInsufficient: "資源不足。",
-                        ResourceNotFound: "資源不存在。",
-                        ResourceUnavailable: "資源不可用。",
-                        UnauthorizedOperation: "未授權操作。",
-                        UnknownParameter: "未知參數錯誤。",
-                        UnsupportedOperation: "操作不支持。"
-                      };
-                      let ErrOr = Object.assign(ErrorTips, ErrTips);
-                      this.$message({
-                        message: ErrOr[res.Response.Error.Code],
-                        type: "error",
-                        showClose: true,
-                        duration: 0
-                      });
-                    }
-                  });
+              for (let k = 0; k < _ReceiverUserList.length; k++) {
+                let _this = this;
+                (function(o) {
+                  setTimeout(() => {
+                    _this.JieShouGroup(_ReceiverUserList[k]);
+                  }, o * 50);
+                })(k);
               }
             } else {
               _ReceiverUserList = this.basicNews.ReceiverInfos[0]
@@ -2286,17 +2260,6 @@ export default {
                     "this.receivingObjectData",
                     this.receivingObjectData
                   );
-                  // if (
-                  //   this.Offset ==
-                  //   Math.ceil(Number(this.describeContactListLength) / 100)
-                  // ) {
-                  //   console.log(
-                  //     Number(this.describeContactListLength / 100)
-                  //   );
-                  //   clearInterval(setTime);
-                  //   this.receivingObjectLoad = false;
-                  //   return false;
-                  // }
                 } else {
                   let ErrTips = {
                     FailedOperation: "操作失敗。",
@@ -2367,6 +2330,40 @@ export default {
             ResourceNotFound: "資源不存在。",
             ResourceUnavailable: "資源不可用。",
             ResourcesSoldOut: "資源售罄。",
+            UnauthorizedOperation: "未授權操作。",
+            UnknownParameter: "未知參數錯誤。",
+            UnsupportedOperation: "操作不支持。"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+    JieShouGroup(i) {
+      let params = {
+        Version: "2019-01-16",
+        GroupId: i
+      };
+      this.axios.post(CM_ALARM_RECEIVE_OBJECT_GetGroup, params).then(res => {
+        if (res.Response.Error === undefined) {
+          this.receivingObjectData.push(res.Response);
+          this.receivingObjectLoad = false;
+        } else {
+          let ErrTips = {
+            FailedOperation: "操作失敗。",
+            InternalError: "內部錯誤。",
+            InvalidParameter: "參數錯誤。",
+            LimitExceeded: "超過配額限制。",
+            MissingParameter: "缺少參數錯誤。",
+            ResourceInUse: "資源被占用。",
+            ResourceInsufficient: "資源不足。",
+            ResourceNotFound: "資源不存在。",
+            ResourceUnavailable: "資源不可用。",
             UnauthorizedOperation: "未授權操作。",
             UnknownParameter: "未知參數錯誤。",
             UnsupportedOperation: "操作不支持。"
@@ -3146,8 +3143,7 @@ export default {
             if (this.ViewName === "cvm_device") {
               let params = {
                 Version: "2017-03-12",
-                Limit: 50,
-                Offset: this.pageIndex
+                Limit: 100
               };
               for (let i in _enterList) {
                 params["InstanceIds." + i] = JSON.parse(
@@ -3198,8 +3194,7 @@ export default {
             } else if (this.ViewName === "BS") {
               let params = {
                 Version: "2017-03-12",
-                Limit: 50,
-                Offset: this.pageIndex
+                Limit: 100
               };
               params["Filters.0.Name"] = "disk-id";
               for (let i in _enterList) {
@@ -3246,9 +3241,7 @@ export default {
               });
             } else if (this.ViewName === "VPN_GW") {
               let params = {
-                Version: "2017-03-12",
-                Limit: 50,
-                Offset: this.pageIndex
+                Version: "2017-03-12"
               };
               params["Filters.0.Name"] = "public-ip-address";
               for (let i in _enterList) {
@@ -3295,9 +3288,7 @@ export default {
               });
             } else if (this.ViewName === "vpn_tunnel") {
               let params = {
-                Version: "2017-03-12",
-                Limit: 50,
-                Offset: this.pageIndex
+                Version: "2017-03-12"
               };
               params["Filters.0.Name"] = "vpn-connection-id";
               for (let i in _enterList) {
@@ -3343,9 +3334,7 @@ export default {
               });
             } else if (this.ViewName === "nat_tc_stat") {
               let params = {
-                Version: "2017-03-12",
-                Limit: this.pageSize,
-                Offset: this.pageIndex
+                Version: "2017-03-12"
               };
               params["Filters.0.Name"] = "nat-gateway-id";
               for (let i in _enterList) {
@@ -3387,9 +3376,7 @@ export default {
               });
             } else if (this.ViewName === "DC_GW") {
               let params = {
-                Version: "2017-03-12",
-                Limit: this.pageSize,
-                Offset: this.pageIndex
+                Version: "2017-03-12"
               };
               params["Filters.0.Name"] = "direct-connect-gateway-id";
               for (let i in _enterList) {
@@ -3439,8 +3426,7 @@ export default {
             } else if (this.ViewName === "EIP") {
               let params = {
                 Version: "2017-03-12",
-                Limit: this.pageSize,
-                Offset: this.pageIndex
+                Limit: 100
               };
               params["Filters.0.Name"] = "address-ip";
               for (let i in _enterList) {
@@ -3485,9 +3471,7 @@ export default {
               });
             } else if (this.ViewName === "cdb_detail") {
               let params = {
-                Version: "2017-03-20",
-                Limit: this.pageSize,
-                Offset: this.pageIndex
+                Version: "2017-03-20"
               };
               for (let i in _enterList) {
                 params["InstanceIds." + i] = JSON.parse(
@@ -3536,9 +3520,7 @@ export default {
               });
             } else if (this.ViewName === "REDIS-CLUSTER") {
               let params = {
-                Version: "2018-04-12",
-                Limit: this.pageSize,
-                Offset: this.pageIndex
+                Version: "2018-04-12"
               };
               for (let i in _enterList) {
                 params["SearchKeys." + i] = JSON.parse(
@@ -3588,9 +3570,7 @@ export default {
               });
             } else if (this.ViewName === "dcchannel") {
               let params = {
-                Version: "2018-04-10",
-                Limit: 50,
-                Offset: this.pageIndex
+                Version: "2018-04-10"
               };
               params["Filters.0.Name"] = "direct-connect-tunnel-id";
               for (let i in _enterList) {
@@ -3639,9 +3619,7 @@ export default {
               });
             } else if (this.ViewName === "dcline") {
               let params = {
-                Version: "2018-04-10",
-                Limit: this.pageSize,
-                Offset: this.pageIndex
+                Version: "2018-04-10"
               };
               for (let i in _enterList) {
                 params["DirectConnectIds." + i] = JSON.parse(
@@ -3713,7 +3691,6 @@ export default {
                     }
                   }
                 }
-                console.log("COS", this.alarmObjectData);
                 this.alarmObjecLoad = false;
                 this.alarmInstanceLond = false;
               });

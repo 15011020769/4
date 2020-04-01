@@ -633,8 +633,8 @@ export default {
           this.$message({
             message: "新建成功",
             type: "success",
-            showClose: true,
-            // duration: 2000
+            duration: 0,
+            showClose: true
           });
           this.createSuccess(); // 更新列表
         } else {

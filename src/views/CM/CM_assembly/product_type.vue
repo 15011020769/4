@@ -47,10 +47,11 @@
         productOptions: [{
             label: '雲伺服器',
             viewName: 'cvm_device',
-          }, {
-            label: '云硬碟',
-            viewName: 'BS',
           },
+          //  {
+          //   label: '云硬碟',
+          //   viewName: 'BS',
+          // },
           {
             label: 'VPN閘道',
             viewName: 'VPN_GW',

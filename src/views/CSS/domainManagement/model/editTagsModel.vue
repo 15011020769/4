@@ -1,173 +1,166 @@
 <template>
   <div>
     <div>
-      <el-dialog title="编辑标签" :visible.sync="editModel" width="45%" :before-close="handleClose">
-        <div>
-          <div class="tableCon">
-            <el-table
-              :data="tags.slice((currentPage-1)*pageSize,currentPage*pageSize)"
-              style="width: 100%;margin: 18px 0 20px;"
-            >
-              <el-table-column prop="Key" label="标签键">
-                <template slot-scope="scope">
-                  <el-input
-                    v-model="scope.row.Key"
-                    autocomplete="off"
-                    class="inputKey"
-                    placeholder="请输入标签键"
-                  ></el-input>
-                </template>
-              </el-table-column>
-              <el-table-column prop="Value" label="标签值">
-                <template slot-scope="scope">
-                  <el-input
-                    v-model="scope.row.Value"
-                    autocomplete="off"
-                    class="inputKey"
-                    placeholder="请输入标签值"
-                  ></el-input>
-                </template>
-              </el-table-column>
-              <el-table-column prop="operate" label="操作">
-                <template slot-scope="scope">
-                  <el-button
-                    @click.native.prevent="deleteRow(scope.$index, tags)"
-                    type="text"
-                    size="small"
-                  >删除</el-button>
-                </template>
-              </el-table-column>
-            </el-table>
-          </div>
-          <div class="tabListPage">
-            <el-pagination
-              @size-change="handleSizeChange"
-              @current-change="handleCurrentChange"
-              :current-page="currentPage"
-              :page-sizes="[10, 20, 30, 50]"
-              :page-size="pageSize"
-              layout="total, sizes, prev, pager, next, jumper"
-              :total="totalItems"
-            ></el-pagination>
-          </div>
-          <a v-on:click="addRow(tags)">添加</a>
-        </div>
-        <span slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="editTagsSure">确 定</el-button>
-          <el-button @click="handleClose">取 消</el-button>
-        </span>
-      </el-dialog>
+      <div class="tableCon">
+        <el-table
+          :data="tags"
+          style="width: 100%;"
+        >
+          <el-table-column prop="Key" label="标签键">
+            <template slot-scope="scope">
+              <el-input
+                v-model.trim="scope.row.tagKey"
+                autocomplete="off"
+                class="inputKey"
+                placeholder="请输入标签键"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column prop="Value" label="标签值">
+            <template slot-scope="scope">
+              <el-input
+                v-model.trim="scope.row.tagValue"
+                autocomplete="off"
+                class="inputKey"
+                placeholder="请输入标签值"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column prop="operate" label="操作">
+            <template slot-scope="scope">
+              <el-button
+                @click.native.prevent="deleteRow(scope.$index)"
+                type="text"
+                size="small"
+              >删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+      <div class="tabListPage">
+        <el-pagination
+          :disabled="disabledPagination"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="currentPage"
+          :page-sizes="[10, 20, 30, 50]"
+          :page-size="pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="totalItems"
+        ></el-pagination>
+      </div>
+      <el-button type="text" @click="addRow">添加</el-button>
     </div>
+    <el-row type="flex" align="middle" justify="center">
+      <el-button type="primary" size="small" @click="editTagsSure">确 定</el-button>
+      <el-button size="small" @click="handleClose">取 消</el-button>
+    </el-row>
   </div>
 </template>
 <script>
+import { flatObj } from '@/utils'
+import VueCookie from 'vue-cookie'
+import axios from "axios"
 export default {
   props: {
-    isShow: Boolean
+    domains: Array,
+    visible: Boolean,
   },
   data() {
     return {
-      dialogModel: "", //弹框
-      tags: [
-        {
-          Key: "123",
-          Value: "123"
-        },
-        {
-          Key: "123",
-          Value: "123"
-        }
-      ], //表格绑定数据
+      tags: [], //表格绑定数据
+      removeTags: [],
       currentPage: 1,
       pageSize: 10,
       totalItems: 0,
-      flag: false,
-      tableDataEnd: []
+      disabledPagination: false,
     };
   },
-  computed: {
-    editModel() {
-      this.dialogModel = this.isShow;
-      return this.isShow;
+  watch: {
+    visible: {
+      handler(n) {
+        if (n) {
+          this.getData()
+        }
+      },
+      immediate: true
     }
-  },
-  mounted() {
-    this.getData();
   },
   methods: {
     //获取数据
     getData() {
-      // this.$axios.get("/src/assets/demo.json", {}).then(res => {
-        // console.log(res.data.tableData);
-        // this.tags = res.data.tableData;
-        // this.allData = this.tableDataBegin;
-        // 将数据的长度赋值给totalItems
-        this.totalItems = this.tags.length;
-        if (this.totalItems > this.pageSize) {
-          for (let index = 0; index < this.pageSize; index++) {
-            this.tableDataEnd.push(this.tags[index]);
-          }
-        } else {
-          this.tableDataEnd = this.tags;
-        }
-      // });
+      this.removeTags = []
+      this.$axios.post('tag/GetResourceTagsByResourceIds', flatObj({
+      "Version": "2018-08-01",
+      "serviceType": "lvb",
+      "resourcePrefix": "live",
+      "region": "ap-guangzhou",
+      rp: this.pageSize,
+      page: this.currentPage,
+      resourceIds: this.domains.map(domain => domain.Name)
+      })).then(res => {
+        this.tags = res.data.rows
+        this.totalItems = res.data.total
+      })
     },
     //关闭弹框按钮
     handleClose() {
-      this.dialogModel = false;
-      this.$emit("closeEditTagsModel", this.dialogModel);
+      this.$emit("update:visible", false)
     },
     //确定按钮
-    editTagsSure() {
-      this.dialogModel = false;
-      this.$emit("closeEditTagsModel", this.dialogModel);
-    },
-    // 生产一个新的obj对象
-    copyObj: function() {
-      var des = {
-        Key: "",
-        Value: ""
-      };
-      return des;
-    },
-    addRow(tagsN,event){
-				//新增一行
-      tagsN.push({
-        Key: "",
-        Value: ""
-      })
-      this.tags=tagsN;
-      },
-    // 删除一行
-    deleteRow(index, rows) {
-      rows.splice(index, 1);
-      this.totalItems-=1;
-    },
-    handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
-      this.pageSize = val;
-      this.handleCurrentChange(this.currentPage);
-    },
-    handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
-      this.currentPage = val;
-      //需要判断是否检索
-      if (!this.flag) {
-        this.currentChangePage(this.tableDataEnd);
+    async editTagsSure() {
+      const tags = this.tags.filter(tag => tag.tagKey && tag.tagValue)
+      if (this.removeTags.length) {
+        Promise.all(this.domains.map(domain => this.$axios.post('tag/ModifyResourceTags', flatObj({
+          resource: `qcs::lvb:ap-guangzhou:uin/${VueCookie.get('uin')}:live/${domain.Name}`,
+          deleteTags: this.removeTags.map(tag => ({ tagKey: tag.tagKey, tagValue: tag.tagValue, resourceId: '' }))
+        })))).then(res => {
+          if (tags.length) {
+            Promise.all(this.domains.map(domain => this.$axios.post('tag/ModifyResourceTags', flatObj({
+              resource: `qcs::lvb:ap-guangzhou:uin/${VueCookie.get('uin')}:live/${domain.Name}`,
+              replaceTags: tags.map(tag => ({ tagKey: tag.tagKey, tagValue: tag.tagValue }))
+            })))).then(res => {
+              this.$emit("update:visible", false)
+            })
+          } else {
+            this.$emit("update:visible", false)
+          }
+        })
       } else {
-        this.currentChangePage(this.filterTableDataEnd);
-      }
-    }, //组件自带监控当前页码
-    currentChangePage(list) {
-      let from = (this.currentPage - 1) * this.pageSize;
-      let to = this.currentPage * this.pageSize;
-      this.tableDataEnd = [];
-      for (; from < to; from++) {
-        if (list[from]) {
-          this.tableDataEnd.push(list[from]);
+        if (tags.length) {
+          Promise.all(this.domains.map(domain => this.$axios.post('tag/ModifyResourceTags', flatObj({
+            resource: `qcs::lvb:ap-guangzhou:uin/${VueCookie.get('uin')}:live/${domain.Name}`,
+            replaceTags: tags.map(tag => ({ tagKey: tag.tagKey, tagValue: tag.tagValue }))
+          })))).then(res => {
+            this.$emit("update:visible", false)
+          })
+        } else {
+          this.$emit("update:visible", false)
         }
       }
-    }
+    },
+    addRow(){
+      if (!this.tags.some(tag => !tag.tagKey || !tag.tagValue)) {
+        this.disabledPagination = true
+        this.tags.push({
+          tagKey: '',
+          tagValue: '',
+        });
+      }
+    },
+    // 删除一行
+    deleteRow(index) {
+      this.removeTags.push(this.tags[index])
+      this.tags.splice(index, 1)
+    },
+    handleSizeChange(val) {
+      this.pageSize = val;
+      this.getData()
+    },
+    handleCurrentChange(val) {
+      this.currentPage = val;
+      this.getData()
+    },
   }
 };
 </script>
@@ -189,6 +182,7 @@ export default {
   width: 100%;
   height: 50px;
   border: 1px solid #ddd;
+  border-top: none;
   text-align: right;
   padding-top: 8px;
 }

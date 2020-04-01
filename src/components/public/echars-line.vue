@@ -5,134 +5,135 @@
 </template>
 
 <script>
-  export default {
-    name: "echart-line",
-    props: {
-      MetricName: String,
-      id: String,
-      time: [Array, String, Number],
-      opData: Array,
-      scale: Number,
-      xdata: Boolean,
-      period: String,
-      Company: String
-    },
-    mounted() {
-      this.init();
-    },
-    watch: {
-      time: {
-        handler() {
-          this.init();
-        }
-      },
-      opData: {
-        handler() {
-          this.init();
-        }
+export default {
+  name: "echart-line",
+  props: {
+    MetricName: String,
+    id: String,
+    time: [Array, String, Number],
+    opData: Array,
+    scale: Number,
+    xdata: Boolean,
+    period: String,
+    Company: String
+  },
+  mounted() {
+    this.init();
+  },
+  watch: {
+    time: {
+      handler() {
+        this.init();
       }
     },
-    methods: {
-      init() {
-        if (this.Company != undefined) {
-          var Company = this.Company
-        } else {
-          Company = ''
-        }
+    opData: {
+      handler() {
+        this.init();
+      }
+    }
+  },
+  methods: {
+    init() {
+      if (this.Company != undefined) {
+        var Company = this.Company;
+      } else {
+        Company = "";
+      }
 
-        const TimeGranularity = {
-          '5': '5秒',
-          '10': '10秒',
-          '60': '1分鐘',
-          '300': '5分鐘',
-          '3600': '1小時',
-          '86400': '1天',
-        }
-        const period = this.period;
-        const chartView = this.$refs.chart;
-        const myChart = this.$echarts.init(chartView);
-        myChart.setOption({
+      const TimeGranularity = {
+        "5": "5秒",
+        "10": "10秒",
+        "60": "1分鐘",
+        "300": "5分鐘",
+        "3600": "1小時",
+        "86400": "1天"
+      };
+      const period = this.period;
+      const chartView = this.$refs.chart;
+      const myChart = this.$echarts.init(chartView);
+      myChart.setOption({
+        tooltip: {
+          enterable: true,
+          trigger: "axis",
+          position: function(point, params, dom, rect, size) {
+            // 鼠标坐标和提示框位置的参考坐标系是：以外层div的左上角那一点为原点，x轴向右，y轴向下
+            // 提示框位置
+            var x = 0; // x坐标位置
+            var y = 0; // y坐标位置
 
-          tooltip: {
-            enterable: true,
-            trigger: "axis",
-            position: function (point, params, dom, rect, size) {
-              // 鼠标坐标和提示框位置的参考坐标系是：以外层div的左上角那一点为原点，x轴向右，y轴向下
-              // 提示框位置
-              var x = 0; // x坐标位置
-              var y = 0; // y坐标位置
+            // 当前鼠标位置
+            var pointX = point[0];
+            var pointY = point[1];
 
-              // 当前鼠标位置
-              var pointX = point[0];
-              var pointY = point[1];
+            // 外层div大小
+            // var viewWidth = size.viewSize[0];
+            // var viewHeight = size.viewSize[1];
 
-              // 外层div大小
-              // var viewWidth = size.viewSize[0];
-              // var viewHeight = size.viewSize[1];
+            // 提示框大小
+            var boxWidth = size.contentSize[0];
+            var boxHeight = size.contentSize[1];
 
-              // 提示框大小
-              var boxWidth = size.contentSize[0];
-              var boxHeight = size.contentSize[1];
+            // boxWidth > pointX 说明鼠标左边放不下提示框
+            if (boxWidth > pointX) {
+              x = 5;
+            } else {
+              // 左边放的下
+              x = pointX - boxWidth;
+            }
 
-              // boxWidth > pointX 说明鼠标左边放不下提示框
-              if (boxWidth > pointX) {
-                x = 5;
-              } else { // 左边放的下
-                x = pointX - boxWidth;
-              }
+            // boxHeight > pointY 说明鼠标上边放不下提示框
+            if (boxHeight > pointY) {
+              y = 5;
+            } else {
+              // 上边放得下
+              y = pointY - boxHeight;
+            }
 
-              // boxHeight > pointY 说明鼠标上边放不下提示框
-              if (boxHeight > pointY) {
-                y = 5;
-              } else { // 上边放得下
-                y = pointY - boxHeight;
-              }
+            return [x, y];
+          },
 
-              return [x, y];
+          axisPointer: {
+            type: "line",
+            lineStyle: {
+              width: 1
             },
+            label: {
+              backgroundColor: "#6a7985"
+            }
+          },
 
-            axisPointer: {
-              type: "line",
-              lineStyle: {
-                width: 1
-              },
-              label: {
-                backgroundColor: "#6a7985"
-              }
-            },
-
-            formatter(params) {
-              if (params[0].data === null) {
-                params[0].data = ''
-              }
-              let relVal = `${params[0].name}<br/>
+          formatter(params) {
+            if (params[0].data === null) {
+              params[0].data = "";
+            }
+            let relVal = `${params[0].name}<br/>
            ${params[0].data}${Company}<br />`;
-              relVal += `粒度：${TimeGranularity[period]}</br>`;
-              return relVal;
+            relVal += `粒度：${TimeGranularity[period]}</br>`;
+            return relVal;
+          }
+        },
+        toolbox: {
+          feature: {
+            saveAsImage: {
+              show: true,
+              name: this.MetricName,
+              title: "導出圖片"
             }
-          },
-          toolbox: {
-            feature: {
-              saveAsImage: {
-                show: true,
-                name: this.MetricName,
-                title: "導出圖片"
-              }
-
-            }
-          },
-          legend: {
-            // data: this.title,
-            y: "bottom"
-          },
-          grid: {
-            x: 50,
-            y: 45,
-            x2: 5,
-            y2: 20,
-            borderWidth: 1
-          },
-          xAxis: [{
+          }
+        },
+        legend: {
+          // data: this.title,
+          y: "bottom"
+        },
+        grid: {
+          x: 60,
+          y: 45,
+          x2: 5,
+          y2: 20,
+          borderWidth: 1
+        },
+        xAxis: [
+          {
             type: "category",
             boundaryGap: false,
             data: this.time,
@@ -152,8 +153,10 @@
               // y轴显示
               show: this.xdata
             }
-          }],
-          yAxis: [{
+          }
+        ],
+        yAxis: [
+          {
             splitLine: {
               // 网格线
               show: false
@@ -164,9 +167,11 @@
             },
             type: "value",
             splitNumber: this.scale
-          }],
+          }
+        ],
 
-          series: [{
+        series: [
+          {
             labelLine: {
               normal: {
                 show: false
@@ -183,34 +188,33 @@
                 }
               }
             }
-          }]
-        });
-        window.addEventListener("resize", () => {
-          myChart.resize();
-        });
-      },
-      beforrDestroy() {
-        if (this.myChart) {
-          this.myChart.clear();
-        }
+          }
+        ]
+      });
+      window.addEventListener("resize", () => {
+        myChart.resize();
+      });
+    },
+    beforrDestroy() {
+      if (this.myChart) {
+        this.myChart.clear();
       }
     }
-  };
-
+  }
+};
 </script>
 
 <style lang="scss" scoped>
-  i {
-    float: right;
-    font-size: 15px;
-    margin-top: 12px;
-    cursor: pointer;
-  }
+i {
+  float: right;
+  font-size: 15px;
+  margin-top: 12px;
+  cursor: pointer;
+}
 
-  #id {
-    min-width: 500px;
-    min-height: 120px;
-    height: 100%;
-  }
-
+#id {
+  min-width: 500px;
+  min-height: 120px;
+  height: 100%;
+}
 </style>

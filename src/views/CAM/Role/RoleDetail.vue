@@ -279,7 +279,7 @@
             </div>
           </el-tab-pane>
           <!-- tab  角色载体 end -->
-          <el-tab-pane :label="$t('CAM.Role.Cancel')" name="third">
+          <!-- <el-tab-pane :label="$t('CAM.Role.Cancel')" name="third">
             <div class="explain">
               <p>
                 {{ $t("CAM.Role.cancelSessionTitle1") }}RevokeOlderSessionFor{{
@@ -288,12 +288,13 @@
               </p>
             </div>
             <el-button
+              disabled
               size="small"
               type="primary"
               @click="dialogVisibleCancelAllSession = true"
               >{{ $t("CAM.Role.cancelAll") }}</el-button
             >
-          </el-tab-pane>
+          </el-tab-pane> -->
         </el-tabs>
       </div>
       <el-dialog

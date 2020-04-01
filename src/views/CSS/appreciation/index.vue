@@ -245,6 +245,11 @@ export default {
 .appreciation-wrap >>> .el-range-input {
   margin-top: 5px;
 }
+ ::v-deep .el-input__inner {
+    height: 30px !important;
+    line-height: 30px !important;
+    border-radius: 0;
+  }
 .appreciation-wrap {
   .seek {
     display: flex;
@@ -308,11 +313,7 @@ export default {
       .selectDomin {
         width: 230px;
       }
-      ::v-deep .el-input__inner {
-        height: 30px;
-        line-height: 30px;
-        border-radius: 0;
-      }
+
       ::v-deep {
         
         flex-wrap: wrap !important;
@@ -321,10 +322,10 @@ export default {
         font-size: 12px !important;
       }
       ::v-deep .el-range__icon {
-          line-height: 22px;
+          line-height: 22px !important;
       }
       ::v-deep .el-range-separator {
-        line-height: 22px;
+        line-height: 22px !important;
         width: 7%;
       }
       ::v-deep .el-select {

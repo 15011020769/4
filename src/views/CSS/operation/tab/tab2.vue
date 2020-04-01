@@ -95,14 +95,14 @@ export default {
         Version: "2018-08-01",
         StartTime: moment(this.StartTIme).format("YYYY-MM-DD HH:mm:ss"),
         EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:mm:ss"),
-        MainlandOrOversea: "Mainland"
+        // MainlandOrOversea: "Mainland"
         // "CountryOrAreaNames.0": "Taiwan"
       };
       const params2 = {
         Version: "2018-08-01",
         StartTime: moment(this.StartTIme).format("YYYY-MM-DD HH:mm:ss"),
         EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:mm:ss"),
-        MainlandOrOversea: "Mainland"
+        // MainlandOrOversea: "Mainland"
         // "CountryOrAreaNames.0": "Taiwan"
       };
       if (this.domainCheckedListCopy.length !== this.domainsData.length) {
@@ -122,48 +122,7 @@ export default {
       // if (this.operator) {
       //   params1["IspNames.0"] = this.operator
       //   params2["IspNames.0"] = this.operator
-        // this.axios.post(DESCRIBE_PLAY_STAT_INFOLIST, params1).then(res => {
-        //   if (res.Response.Error) {
-        //     this.$message({
-        //       message: res.Response.Error.Message,
-        //       type: "error",
-        //       showClose: true,
-        //       duration: 0
-        //     })
-        //   } else {
-        //     // 表格数据
-        //     this.tableData = res.Response.DataInfoList;
-        //     this.totalItems = res.Response.DataInfoList.length;
-        //   }
-        //   this.loading = false;
-        // });
-        // this.axios.post(DESCRIBE_PLAY_STAT_INFOLIST, params2).then(res => {
-        //   if (res.Response.Error) {
-        //     this.$message({
-        //       message: res.Response.Error.Message,
-        //       type: "error",
-        //       showClose: true,
-        //       duration: 0
-        //     })
-        //   } else {
-        //     // 图表数据
-        //     var xAxis = [];
-        //     var series = [];
-        //     let _json = []
-        //     res.Response.DataInfoList.forEach(item => {
-        //       xAxis.push(item.Time);
-        //       series.push(item.Flux);
-        //       _json.push({"Time": item.Time, "Flux (MB)": item.Flux})
-        //     });
-        //     this.xAxis = xAxis;
-        //     this.series = series;
-        //     this.json = _json
-        //   }
-        //   this.loading = false;
-        // });
-      // }
-      // else {
-         this.axios.post(CSS_MBPS, params1).then(res => {
+        this.axios.post(DESCRIBE_PLAY_STAT_INFOLIST, params1).then(res => {
           if (res.Response.Error) {
             this.$message({
               message: res.Response.Error.Message,
@@ -178,9 +137,8 @@ export default {
           }
           this.loading = false;
         });
-        this.axios.post(CSS_MBPS, params2).then(res => {
+        this.axios.post(DESCRIBE_PLAY_STAT_INFOLIST, params2).then(res => {
           if (res.Response.Error) {
-            // this.$message.error(res.Response.Error.Message);
             this.$message({
               message: res.Response.Error.Message,
               type: "error",
@@ -191,15 +149,57 @@ export default {
             // 图表数据
             var xAxis = [];
             var series = [];
+            let _json = []
             res.Response.DataInfoList.forEach(item => {
               xAxis.push(item.Time);
               series.push(item.Flux);
+              _json.push({"Time": item.Time, "Flux (MB)": item.Flux})
             });
             this.xAxis = xAxis;
             this.series = series;
+            this.json = _json
           }
           this.loading = false;
         });
+      // }
+      // else {
+        //  this.axios.post(CSS_MBPS, params1).then(res => {
+        //   if (res.Response.Error) {
+        //     this.$message({
+        //       message: res.Response.Error.Message,
+        //       type: "error",
+        //       showClose: true,
+        //       duration: 0
+        //     })
+        //   } else {
+        //     // 表格数据
+        //     this.tableData = res.Response.DataInfoList;
+        //     this.totalItems = res.Response.DataInfoList.length;
+        //   }
+        //   this.loading = false;
+        // });
+        // this.axios.post(CSS_MBPS, params2).then(res => {
+        //   if (res.Response.Error) {
+        //     // this.$message.error(res.Response.Error.Message);
+        //     this.$message({
+        //       message: res.Response.Error.Message,
+        //       type: "error",
+        //       showClose: true,
+        //       duration: 0
+        //     })
+        //   } else {
+        //     // 图表数据
+        //     var xAxis = [];
+        //     var series = [];
+        //     res.Response.DataInfoList.forEach(item => {
+        //       xAxis.push(item.Time);
+        //       series.push(item.Flux);
+        //     });
+        //     this.xAxis = xAxis;
+        //     this.series = series;
+        //   }
+        //   this.loading = false;
+        // });
       // }
     },
   }

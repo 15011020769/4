@@ -3,7 +3,7 @@
     <el-row type="flex" justify="space-between">
       <h3>
         併發連接數趨勢
-        <span style="color:#bbb;">(單位:MB)</span>
+        <span style="color:#bbb;">(單位:次)</span>
       </h3>
       <p class="iconBtn"><i class="el-icon-download" @click="_export"></i></p>
     </el-row>
@@ -96,14 +96,14 @@ export default {
         StartTime: moment(this.StartTIme).format("YYYY-MM-DD HH:MM:SS"),
         EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:MM:SS"),
         // "CountryOrAreaNames.0": "Taiwan"
-        MainlandOrOversea: "Mainland"
+        // MainlandOrOversea: "Mainland"
       };
       const params2 = { // 图表
         Version: "2018-08-01",
         StartTime: moment(this.StartTIme).format("YYYY-MM-DD HH:MM:SS"),
         EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:MM:SS"),
         // "CountryOrAreaNames.0": "Taiwan"
-        MainlandOrOversea: "Mainland"
+        // MainlandOrOversea: "Mainland"
       };
       if (this.domainCheckedListCopy.length !== this.domainsData.length) {
         this.domainCheckedListCopy.forEach((item, index) => {

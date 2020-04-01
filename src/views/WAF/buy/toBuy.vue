@@ -1,55 +1,19 @@
 <template>
-  <div>
-    <div class="topHead"></div>
+  <!-- <div> -->
+    <!-- <div class="topHead"></div> -->
     <div class="wrapper">
       <div class="content">
         
-        <h1>{{t('欢迎使用Web应用防火墙', 'WAF.hysywaf')}}</h1>
-        <h2>{{t('Web应用防火墙是一款基于网站防护的一站式安全服务平台，可以为网站开发者提供网站入侵防护、业务访问风险、网站传播护航等安全服务', 'WAF.wafsykjy')}}</h2>
-        <div class="boxAll newClear">
-          <div class="boxC">
-            <div>
-              <img :src="imgUrl1" width="80" height="80" alt="">
-            </div>
-            <p class="litTitle">{{t('专业的网站防护能力', 'WAF.zydwzfh')}}</p>
-            <p class="botPcon">{{t('千余条防御规则全面防护各种Web入侵攻击，专业攻防团队7*24小时实时防护', 'WAF.qwtfhg')}}</p>
-          </div>
-          <div class="boxC">
-            <div>
-              <img :src="imgUrl2" width="80" height="80" alt="">
-            </div>
-            <p class="litTitle">{{t('及时的补订修复保障', 'WAF.jsdbdxf')}}</p>
-            <p class="botPcon">
-              {{t('12h内更新高危漏洞补丁', 'WAF.ngxgwld')}}<br/>
-              {{t('24h更新常见通用型漏洞补丁', 'WAF.gxcjlg')}}<br/>
-              {{t('云端自动升级 秒级同步下发', 'WAF.ydzdsj')}}
-            </p>
-          </div>
-          <div class="boxC">
-            <div>
-              <img :src="imgUrl3" width="80" height="80" alt="">
-            </div>
-            <p class="litTitle">{{t('稳定的高可用业务保障', 'WAF.wddgky')}}</p>
-            <p class="botPcon" style="text-align: center;">
-              {{t('BGP线路接入 多地容灾', 'WAF.bgpxljr')}}<br/>
-              {{t('一键DNS接入 隐藏源站', 'WAF.yjdnsjr')}}<br/>
-              {{t('一键大流量BGP高防整合', 'WAF.yjdll')}}
-            </p>
-          </div>
-          <div class="boxC">
-            <div>
-              <img :src="imgUrl4" width="80" height="80" alt="">
-            </div>
-            <p class="litTitle">{{t('常见web攻击防护', 'WAF.cjwebsj')}}</p>
-            <p class="botPcon">{{t('防御SQL注入、XSS跨站脚本、Web服务器插件漏洞等常见攻击', 'WAF.fysqlzr')}}</p>
-          </div>
-        </div>
+        <h1>{{t('欢迎使用负载均衡WAF(CLBWAF)', 'WAF.hysywaf')}}</h1>
+        <p>{{t('台富云负载均衡WAF（CLBWAF）为台富云所有使用负载均衡产品（7层）的用户提供一站式Web安全解决方案，通过创建CLBWAF实例绑定负载均衡监听器，对所有经过负载均衡的HTTP/HTTPs进行旁路检测和防护，最大限度减少安全防护对网站稳定性的影响，保护网站稳定运行。', 'WAF.wafsykjy')}}</p>
+        <p>{{t('CLBWAF通过提供AI +规则双引擎防护Web漏洞攻击，通过BOT行为管理对抗机器人、爬虫、恶意刷量等行为，通过共享台富云大数据威胁情报和攻防对抗最佳实践对抗最新威胁，保护网站基础设施、核心业务安全，一站式解决网站安全问题，保障网站安全无忧。', 'WAF.zydwzfh')}}</p>
+        <img src="~@/assets/WAF/waf-describe.png" />
         <div class="botBtn">
           <el-button class="immeBuy" @click="immeBuy">{{t('立即购买', 'WAF.ljgm')}}</el-button>
         </div>
       </div>
     </div>
-  </div>
+  <!-- </div> -->
 </template>
 <script>
 export default {
@@ -72,65 +36,31 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.newClear:after{
-  content:'';
-  display:block;
-  clear:both;
-}
-.topHead{
-  width:100%;
-  height:50px;
-  background-color:#fff;
-  border-bottom:1px solid #ddd;
-}
 .wrapper{
+  background-color:#fff;
   width:100%;
-  padding:20px;
+  height: 100%;
   .content{
-    box-shadow: 0 2px 3px #e2e9ee;
-    border:1px solid #ddd;
-    background-color:#fff;
-    padding:80px 0;
+  height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    justify-content: center;
+    max-width: 860px;
+    margin-left: auto;
+    margin-right: auto;
     h1{
       font-size:16px;
       font-weight:600;
       color:#000;
       text-align:center;
+      margin-bottom: 30px;
     }
-    h2{
-      font-size:14px;
-      text-align:center;
-      color:#666;
-      margin:20px 0;
-    }
-    .boxAll{
-      margin:40px 0 40px;
-      text-align:center;
-      width:920px;
-      margin:0 auto;
-    }
-    .boxC{
-      border:1px solid #ddd;
-      padding:20px;
-      width:210px;
-      height:210px;
-      float:left;
-      margin-right:20px;
-    }
-    .boxC:bth-child(4){
-      margin-right:0;
-    }
-    .litTitle{
-      font-size:14px;
-      color:#666;
-      margin-top:12px;
-    }
-    .botPcon{
-      margin-top: 15px;
-      font-size: 12px;
-      color: #888;
-      line-height: 20px;
-      text-align: left;
+    p {
+      color: #666;
+      text-indent: 25px;
+      line-height: 30px;
+      margin-bottom: 20px;
     }
   }
 }

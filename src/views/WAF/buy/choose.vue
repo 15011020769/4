@@ -165,7 +165,7 @@ export default {
     this.axios.post(DESCRIBE_USER_EDITION, {
       Version: '2018-01-25'
     }).then(({ Response }) => {
-      if (Response.Data.includes('clb-waf')) {
+      if (Response.Data && Response.Data.includes('clb-waf')) {
         this.ordered = 1
       } else {
         this.ordered = 0

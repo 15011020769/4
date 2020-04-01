@@ -87,8 +87,12 @@
                     <template slot-scope="scope">{{formatSeconds(scope.row.Duration)}}</template>
                   </el-table-column>
                   <el-table-column prop label="告警管道" width="130">
-                    <!-- <template slot-scope="scope">郵件、簡訊</template> -->
-                    <template slot-scope="scope">郵件</template>
+                    <template slot-scope="scope">
+                      <span v-if="scope.row.NotifyWay[0]=='EMAIL'">郵件</span>
+                      <span v-if="scope.row.NotifyWay[1]=='EMAIL'">郵件</span>
+                      <span v-if="scope.row.NotifyWay[0]=='CALL'">站内信</span>
+                      <span v-if="scope.row.NotifyWay[1]=='CALL'">站内信</span>
+                    </template>
                   </el-table-column>
                   <el-table-column prop label="告警狀態" width="100">
                     <template slot-scope="scope">
@@ -112,20 +116,126 @@
                     </template>
                   </el-table-column>
                   <el-table-column prop label="告警類型">
-                    <template slot-scope="scope" v-if="scope.row.AlarmType==0">指標</template>
-                    <template slot-scope="scope" v-else-if="scope.row.AlarmType==2">産品事件</template>
-                    <template slot-scope="scope" v-else-if="scope.row.AlarmType==3">平台事件</template>
+                    <template slot-scope="scope">
+                      <span v-if="scope.row.AlarmType==0">指標</span>
+                      <span v-else-if="scope.row.AlarmType==2">産品事件</span>
+                      <span v-else-if="scope.row.AlarmType==3">平台事件</span>
+                    </template>
                   </el-table-column>
+
                   <el-table-column prop label="策略類型" width="180">
                     <template slot-scope="scope">
-                      <el-tooltip
-                        class="item"
-                        effect="dark"
-                        content="策略類型: 雲伺服器-基礎監控策略"
-                        placement="bottom-start"
-                      >
-                        <span v-if="scope.row.ViewName=='cvm_device'">雲伺服器-基礎監控策略</span>
-                      </el-tooltip>
+                      <div v-if="scope.row.ViewName=='cvm_device'">
+                        <el-tooltip
+                          class="item"
+                          effect="dark"
+                          content="策略類型: 雲伺服器-基礎監控策略"
+                          placement="bottom-start"
+                        >
+                          <span>雲伺服器-基礎監控策略</span>
+                        </el-tooltip>
+                      </div>
+                      <div v-if="scope.row.ViewName=='BS'">
+                        <el-tooltip
+                          class="item"
+                          effect="dark"
+                          content="策略類型: 雲伺服器-儲存監控"
+                          placement="bottom-start"
+                        >
+                          <span>雲伺服器-儲存監控</span>
+                        </el-tooltip>
+                      </div>
+                      <div v-if="scope.row.ViewName=='cdb_detail'">
+                        <el-tooltip
+                          class="item"
+                          effect="dark"
+                          content="策略類型: 雲資料庫-MySQL-主機監控"
+                          placement="bottom-start"
+                        >
+                          <span>雲資料庫-MySQL-主機監控</span>
+                        </el-tooltip>
+                      </div>
+                      <div v-if="scope.row.ViewName=='COS'">
+                        <el-tooltip
+                          class="item"
+                          effect="dark"
+                          content="策略類型: 物件儲存"
+                          placement="bottom-start"
+                        >
+                          <span>物件儲存</span>
+                        </el-tooltip>
+                      </div>
+                      <div v-if="scope.row.ViewName=='VPN_GW'">
+                        <el-tooltip
+                          class="item"
+                          effect="dark"
+                          content="策略類型: 私有網絡-VPN閘道"
+                          placement="bottom-start"
+                        >
+                          <span>私有網絡-VPN閘道</span>
+                        </el-tooltip>
+                      </div>
+                      <div v-if="scope.row.ViewName=='EIP'">
+                        <el-tooltip
+                          class="item"
+                          effect="dark"
+                          content="策略類型: 私有網絡-彈性公網IP"
+                          placement="bottom-start"
+                        >
+                          <span>私有網絡-彈性公網IP</span>
+                        </el-tooltip>
+                      </div>
+                      <div v-if="scope.row.ViewName=='nat_tc_stat'">
+                        <el-tooltip
+                          class="item"
+                          effect="dark"
+                          content="策略類型: 私有網絡-NAT閘道"
+                          placement="bottom-start"
+                        >
+                          <span>私有網絡-NAT閘道</span>
+                        </el-tooltip>
+                      </div>
+                      <div v-if="scope.row.ViewName=='REDIS-CLUSTER'">
+                        <el-tooltip
+                          class="item"
+                          effect="dark"
+                          content="策略類型: 雲資料庫-Redis-社區版"
+                          placement="bottom-start"
+                        >
+                          <span>雲資料庫-Redis-社區版</span>
+                        </el-tooltip>
+                      </div>
+                      <div v-if="scope.row.ViewName=='vpn_tunnel'">
+                        <el-tooltip
+                          class="item"
+                          effect="dark"
+                          content="策略類型: 私有網絡-VPN通道"
+                          placement="bottom-start"
+                        >
+                          <span>私有網絡-VPN通道</span>
+                        </el-tooltip>
+                      </div>
+                      <div v-if="scope.row.ViewName=='dcline'">
+                        <el-tooltip
+                          class="item"
+                          effect="dark"
+                          content="策略類型: 專線接入-物理專線"
+                          placement="bottom-start"
+                        >
+                          <span>專線接入-物理專線</span>
+                        </el-tooltip>
+                      </div>
+
+                      <!-- <div v-if="scope.row.ViewName=='dcline'">
+                        <el-tooltip
+                          class="item"
+                          effect="dark"
+                          content="策略類型: 專線接入-物理專線"
+                          placement="bottom-start"
+                        >
+                          <span>專線接入-物理專線</span>
+                        </el-tooltip>
+                      </div>-->
                     </template>
                   </el-table-column>
 
@@ -370,29 +480,30 @@ export default {
           Version: "2018-07-24",
           Module: "monitor",
           Limit: this.pageSize,
-          // Offset: (this.pageIndex - 1) * this.pageSize
-          Offset: this.pageIndex 
+          Offset: this.pageIndex
 
+          // Offset: (this.pageIndex - 1) * this.pageSize
         };
         params.ObjLike = this.input;
         params.StartTime = Date.parse(this.StartTime) / 1000; //开始时间戳
-        params.EndTime = new Date(this.EndTime).getTime()/1000; //结束时间戳
+        params.EndTime = new Date(this.EndTime).getTime() / 1000; //结束时间戳
       } else {
         var params = {
           Region: localStorage.getItem("regionv2"),
           Version: "2018-07-24",
           Module: "monitor",
           Limit: this.pageSize,
-          Offset: this.pageIndex 
+          Offset: this.pageIndex
 
           // Offset: (this.pageIndex - 1) * this.pageSize
         };
         params.ObjLike = this.input;
       }
+      // console.log(params)
       this.axios.post(BASICS_ALARM_LIST, params).then(res => {
         if (res.Response.Error === undefined) {
           this.tableData = res.Response.Alarms;
-          console.log(this.tableData)
+          // console.log(this.tableData);
           this.totals = res.Response.Total;
           this.loadShow = false; //取消加載
         } else {

@@ -33,12 +33,12 @@
         <div class="footer-left-left" v-loading="loading">
           <h4>{{ $t("CVM.DashboardCreate.tbpz") }}</h4>
           <div style="margin-top:30px">
-            <p style="margin-bottom:10px">图表名称</p>
+            <p style="margin-bottom:10px">圖表名稱</p>
             <el-popover
               placement="right"
               width="100"
               trigger="click"
-              content="已达到最大限度"
+              content="已達到最大限度"
               :disabled="picName.length === 30 ? false:true">
               <el-input size="mini" v-model="picName" style="max-width:250px" maxlength='30' slot="reference"></el-input>
            </el-popover>

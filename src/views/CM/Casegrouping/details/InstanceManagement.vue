@@ -5,9 +5,9 @@
         <div class="btn">
           <div>
             <el-row>
-              <el-button type="primary" @click="AddBtn">{{
-                $t("CVM.Casegrouping.xz")
-              }}</el-button>
+              <el-button type="primary" @click="AddBtn">
+                {{ $t("CVM.Casegrouping.xz") }}
+              </el-button>
               <el-button disabled v-if="multipleSelection1.length === 0"
                 >移出</el-button
               >
@@ -49,32 +49,29 @@
             <el-table-column
               :label="$t('CVM.Casegrouping.wllx')"
               v-if="viewName === 'cvm_device'"
+              >VPC 類型</el-table-column
             >
-              VPC 類型
-            </el-table-column>
             <el-table-column label="IP地址" v-if="viewName === 'cvm_device'">
               <template slot-scope="scope">
                 <p>
                   <span
                     v-for="(item, index) in scope.row.PrivateIpAddresses"
                     :key="index"
-                  >
-                    {{ item }}(内網)</span
+                    >{{ item }}(内網)</span
                   >
                 </p>
                 <p>
                   <span
                     v-for="(item, index) in scope.row.PublicIpAddresses"
                     :key="index"
-                  >
-                    {{ item }}(外網)</span
+                    >{{ item }}(外網)</span
                   >
                 </p>
               </template>
             </el-table-column>
-            <el-table-column label="地域" v-if="viewName === 'cvm_device'">
-              台灣台北
-            </el-table-column>
+            <el-table-column label="地域" v-if="viewName === 'cvm_device'"
+              >台灣台北</el-table-column
+            >
             <el-table-column label="ID/名稱" v-if="viewName === 'BS'">
               <template slot-scope="scope">
                 <p>{{ scope.row.DiskId }}</p>
@@ -98,9 +95,9 @@
                 <!-- <p>{{ scope.row. }}</p> -->
               </template>
             </el-table-column>
-            <el-table-column label="地域" v-if="viewName === 'BS'">
-              台灣台北
-            </el-table-column>
+            <el-table-column label="地域" v-if="viewName === 'BS'"
+              >台灣台北</el-table-column
+            >
             <!-- VPN_GW -->
             <el-table-column label="ID/名稱" v-if="viewName === 'VPN_GW'">
               <template slot-scope="scope">
@@ -119,13 +116,13 @@
                 <!-- <p>{{scope.row.}}</p> -->
               </template>
             </el-table-column>
-            <el-table-column label="地域" v-if="viewName === 'VPN_GW'">
-              台灣台北
-            </el-table-column>
+            <el-table-column label="地域" v-if="viewName === 'VPN_GW'"
+              >台灣台北</el-table-column
+            >
             <!-- vpn_tunnel -->
             <el-table-column label="ID/名稱" v-if="viewName === 'vpn_tunnel'">
               <template slot-scope="scope">
-                <p>{{ scope.row.VpnGatewayId }}</p>
+                <p>{{ scope.row.VpnConnectionId }}</p>
                 <p>{{ scope.row.VpnConnectionName }}</p>
               </template>
             </el-table-column>
@@ -152,9 +149,9 @@
                 <!-- <p>{{scope.row.}}</p> -->
               </template>
             </el-table-column>
-            <el-table-column label="地域" v-if="viewName === 'vpn_tunnel'">
-              台灣台北
-            </el-table-column>
+            <el-table-column label="地域" v-if="viewName === 'vpn_tunnel'"
+              >台灣台北</el-table-column
+            >
             <!-- nat_tc_stat -->
             <el-table-column label="ID/名稱" v-if="viewName === 'nat_tc_stat'">
               <template slot-scope="scope">
@@ -179,9 +176,9 @@
                 <p>最大併發連接數{{ scope.row.maxConcurrent / 100 }}萬</p>
               </template>
             </el-table-column>
-            <el-table-column label="地域" v-if="viewName === 'nat_tc_stat'">
-              台灣台北
-            </el-table-column>
+            <el-table-column label="地域" v-if="viewName === 'nat_tc_stat'"
+              >台灣台北</el-table-column
+            >
             <!-- DC_GW -->
             <el-table-column label="ID/名稱" v-if="viewName === 'DC_GW'">
               <template slot-scope="scope">
@@ -200,9 +197,9 @@
                 <!-- <p>{{scope.row.}}</p> -->
               </template>
             </el-table-column>
-            <el-table-column label="地域" v-if="viewName === 'DC_GW'">
-              台灣台北
-            </el-table-column>
+            <el-table-column label="地域" v-if="viewName === 'DC_GW'"
+              >台灣台北</el-table-column
+            >
             <!-- EIP -->
             <el-table-column label="ID/名稱" v-if="viewName === 'EIP'">
               <template slot-scope="scope">
@@ -214,9 +211,9 @@
                 <span>{{ scope.row.AddressIp }}</span>
               </template>
             </el-table-column>
-            <el-table-column label="地域" v-if="viewName === 'EIP'">
-              台灣台北
-            </el-table-column>
+            <el-table-column label="地域" v-if="viewName === 'EIP'"
+              >台灣台北</el-table-column
+            >
             <!-- cdb_detail -->
             <el-table-column label="ID/名稱" v-if="viewName === 'cdb_detail'">
               <template slot-scope="scope">
@@ -239,18 +236,16 @@
               </template>
             </el-table-column>
             <el-table-column label="網路類型" v-if="viewName === 'cdb_detail'">
-              <template slot-scope="scope">
-                VPC
-              </template>
+              <template slot-scope="scope">VPC</template>
             </el-table-column>
             <el-table-column label="類型" v-if="viewName === 'cdb_detail'">
-              <template slot-scope="scope">
-                {{ CDB_InstanceType(scope.row.InstanceType) }}
-              </template>
+              <template slot-scope="scope">{{
+                CDB_InstanceType(scope.row.InstanceType)
+              }}</template>
             </el-table-column>
-            <el-table-column label="地域" v-if="viewName === 'cdb_detail'">
-              台灣台北
-            </el-table-column>
+            <el-table-column label="地域" v-if="viewName === 'cdb_detail'"
+              >台灣台北</el-table-column
+            >
             <!-- REDIS-CLUSTER -->
             <el-table-column
               label="ID/名稱"
@@ -267,21 +262,17 @@
               </template>
             </el-table-column>
             <el-table-column label="規格" v-if="viewName === 'REDIS-CLUSTER'">
-              <template slot-scope="scope">
-                master-slave
-              </template>
+              <template slot-scope="scope">master-slave</template>
             </el-table-column>
             <el-table-column
               label="内網地址"
               v-if="viewName === 'REDIS-CLUSTER'"
             >
-              <template slot-scope="scope">
-                {{ scope.row.WanIp }}
-              </template>
+              <template slot-scope="scope">{{ scope.row.WanIp }}</template>
             </el-table-column>
-            <el-table-column label="地域" v-if="viewName === 'REDIS-CLUSTER'">
-              台灣台北
-            </el-table-column>
+            <el-table-column label="地域" v-if="viewName === 'REDIS-CLUSTER'"
+              >台灣台北</el-table-column
+            >
             <!-- dcchannel -->
             <el-table-column label="ID/名稱" v-if="viewName === 'dcchannel'">
               <template slot-scope="scope">
@@ -295,14 +286,10 @@
               </template>
             </el-table-column>
             <el-table-column label="規格" v-if="viewName === 'dcchannel'">
-              <template slot-scope="scope">
-                master-slave
-              </template>
+              <template slot-scope="scope">master-slave</template>
             </el-table-column>
             <el-table-column label="内網地址" v-if="viewName === 'dcchannel'">
-              <template slot-scope="scope">
-                {{ scope.row.WanIp }}
-              </template>
+              <template slot-scope="scope">{{ scope.row.WanIp }}</template>
             </el-table-column>
             <!-- dcline -->
             <el-table-column label="名稱/ID" v-if="viewName === 'dcline'">
@@ -333,9 +320,9 @@
               </template>
             </el-table-column>
             <el-table-column label="創建時間" v-if="viewName === 'COS'">
-              <template slot-scope="scope">
-                {{ CreationDate(scope.row.CreationDate) }}
-              </template>
+              <template slot-scope="scope">{{
+                CreationDate(scope.row.CreationDate)
+              }}</template>
             </el-table-column>
 
             <el-table-column prop="address" label="操作">
@@ -369,7 +356,7 @@
         :show-close="false"
         class="dialog-box"
       >
-        <div class="title">
+        <div class="title" style="padding:20px 0">
           <h3>新建</h3>
           <a href="javascript:;" @click="newBuildByVal.newBuildState = false">
             <i class="el-icon-close"></i>
@@ -449,7 +436,7 @@ import CamTransferCpt from "@/views/CM/CM_assembly/CamTransferCpt";
 import { ErrorTips } from "@/components/ErrorTips";
 import {
   CM_GROUPING_MANAGE,
-  CM_GROUPING_MANAGELIST,
+  CVM_LIST,
   CM_GROUPING_MOVE,
   CM_GROUPING_MANAGELIST_ADD,
   ALL_PROJECT,
@@ -604,21 +591,22 @@ export default {
       await this.axios.post(CM_GROUPING_MANAGE, param).then(res => {
         if (res.Response.Error === undefined) {
           var _enterList = res.Response.InstanceList;
+          console.log(_enterList);
           this.total = res.Response.Total;
           if (_enterList.length > 0) {
             if (this.viewName === "cvm_device") {
               let params = {
                 Version: "2017-03-12",
-                Limit: this.pageSize,
-                Offset: this.pageIndex
+                Limit: 100
               };
               for (let i in _enterList) {
                 params["InstanceIds." + i] = JSON.parse(
                   _enterList[i].Dimensions
                 ).unInstanceId;
               }
-              this.axios.post(CM_GROUPING_MANAGELIST, params).then(res => {
+              this.axios.post(CVM_LIST, params).then(res => {
                 if (res.Response.Error === undefined) {
+                  // console.log(res.Response);
                   this.enterList = res.Response.InstanceSet;
                   for (let i in _enterList) {
                     for (let j in this.enterList) {
@@ -630,7 +618,6 @@ export default {
                       }
                     }
                   }
-                  console.log(this.enterList);
                   this.loadShow = false;
                 } else {
                   let ErrTips = {
@@ -655,8 +642,7 @@ export default {
             } else if (this.viewName === "BS") {
               let params = {
                 Version: "2017-03-12",
-                Limit: this.pageSize,
-                Offset: this.pageIndex
+                Limit: 100
               };
               params["Filters.0.Name"] = "disk-id";
               for (let i in _enterList) {
@@ -697,11 +683,9 @@ export default {
               });
             } else if (this.viewName === "VPN_GW") {
               let params = {
-                Version: "2017-03-12",
-                Limit: this.pageSize,
-                Offset: this.pageIndex
+                Version: "2017-03-12"
               };
-              console.log(_enterList);
+
               params["Filters.0.Name"] = "public-ip-address";
               for (let i in _enterList) {
                 params["Filters.0.Values." + i] = JSON.parse(
@@ -741,9 +725,7 @@ export default {
               });
             } else if (this.viewName === "vpn_tunnel") {
               let params = {
-                Version: "2017-03-12",
-                Limit: this.pageSize,
-                Offset: this.pageIndex
+                Version: "2017-03-12"
               };
               params["Filters.0.Name"] = "vpn-connection-id";
               for (let i in _enterList) {
@@ -782,9 +764,7 @@ export default {
               });
             } else if (this.viewName === "nat_tc_stat") {
               let params = {
-                Version: "2017-03-12",
-                Limit: this.pageSize,
-                Offset: this.pageIndex
+                Version: "2017-03-12"
               };
               params["Filters.0.Name"] = "nat-gateway-id";
               for (let i in _enterList) {
@@ -820,9 +800,7 @@ export default {
               });
             } else if (this.viewName === "DC_GW") {
               let params = {
-                Version: "2017-03-12",
-                Limit: this.pageSize,
-                Offset: this.pageIndex
+                Version: "2017-03-12"
               };
               params["Filters.0.Name"] = "direct-connect-gateway-id";
               for (let i in _enterList) {
@@ -865,8 +843,7 @@ export default {
             } else if (this.viewName === "EIP") {
               let params = {
                 Version: "2017-03-12",
-                Limit: this.pageSize,
-                Offset: this.pageIndex
+                Limit: 100
               };
               params["Filters.0.Name"] = "address-ip";
               for (let i in _enterList) {
@@ -904,9 +881,7 @@ export default {
               });
             } else if (this.viewName === "cdb_detail") {
               let params = {
-                Version: "2017-03-20",
-                Limit: this.pageSize,
-                Offset: this.pageIndex
+                Version: "2017-03-20"
               };
               for (let i in _enterList) {
                 params["InstanceIds." + i] = JSON.parse(
@@ -948,9 +923,7 @@ export default {
               });
             } else if (this.viewName === "REDIS-CLUSTER") {
               let params = {
-                Version: "2018-04-12",
-                Limit: this.pageSize,
-                Offset: this.pageIndex
+                Version: "2018-04-12"
               };
               for (let i in _enterList) {
                 params["SearchKeys." + i] = JSON.parse(
@@ -993,11 +966,8 @@ export default {
               });
             } else if (this.viewName === "dcchannel") {
               let params = {
-                Version: "2018-04-10",
-                Limit: this.pageSize,
-                Offset: this.pageIndex
+                Version: "2018-04-10"
               };
-              console.log(_enterList);
               params["Filters.0.Name"] = "direct-connect-tunnel-id";
               for (let i in _enterList) {
                 params["Filters.0.Values." + i] = JSON.parse(
@@ -1040,12 +1010,8 @@ export default {
               });
             } else if (this.viewName === "dcline") {
               let params = {
-                Version: "2018-04-10",
-                Limit: this.pageSize,
-                Offset: this.pageIndex
+                Version: "2018-04-10"
               };
-              console.log(_enterList);
-
               for (let i in _enterList) {
                 params["DirectConnectIds." + i] = JSON.parse(
                   _enterList[i].Dimensions
@@ -1094,7 +1060,6 @@ export default {
             } else if (this.viewName === "COS") {
               this.axios.get(OBJ_LIST).then(res => {
                 var _arr = res.Buckets.Bucket;
-                console.log(_arr);
                 for (let i in _enterList) {
                   for (let j in _arr) {
                     if (
@@ -1106,7 +1071,6 @@ export default {
                     }
                   }
                 }
-                console.log(this.enterList);
                 this.loadShow = false;
               });
             }
@@ -1485,9 +1449,9 @@ export default {
     },
     // 分页
     handleCurrentChange(val) {
-      this.pageIndex = (val - 1) * this.pageSize;
+      this.pageIndex = val - 1;
       this.ListInit();
-      this.pageIndex += (val - 1) * this.pageSize;
+      this.pageIndex += 1;
     },
     handleSizeChange(val) {
       // console.log(`每页 ${val} 条`);
@@ -1516,6 +1480,9 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.security-rules >>> .el-table__body-wrapper {
+  height: 440px !important;
+}
 .security-rules {
   .tab {
     ::v-deep .el-tabs__nav-scroll {
