@@ -222,7 +222,7 @@ export default {
       })
     }
     return {
-      nameId: this.$cookie.get('uuid'),
+      nameId: this.$cookie.get('uin'),
       name: '',
       input: '',
       input2: '',
