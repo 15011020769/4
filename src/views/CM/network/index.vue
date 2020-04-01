@@ -12,7 +12,7 @@
     </div>
     <!-- 表格 -->
     <div class="Table-SY">
-      <el-table :data="TbaleData" height="550" style="width: 100%" id="exportTable" v-loading="loadShow"
+      <el-table :data="TbaleData" height="550" style="width: 100%" v-loading="loadShow"
         :empty-text="$t('CVM.clBload.zwsj')">
         <el-table-column prop :label="$t('CVM.cloudDisk.mc')">
           <template slot-scope="scope">
@@ -23,9 +23,40 @@
         </el-table-column>
         <el-table-column prop :label="$t('CVM.clBload.jk')">
           <template slot-scope="scope">
-            <!-- <div class="a" @click="jump(scope.row.AddressIp)"></div> -->
             <el-button type="text" class="iconfont icon-tubiaozhanshi" style="color: #888;"
               @click="jump(scope.row.AddressIp)"></el-button>
+          </template>
+        </el-table-column>
+        <el-table-column prop :label="$t('CVM.clBload.txdz')">
+          <template slot-scope="scope">
+            <p>{{scope.row.AddressIp}}</p>
+          </template>
+        </el-table-column>
+        <el-table-column prop :label="$t('CVM.clBload.cjsj')">
+          <template slot-scope="scope">
+            <p>{{scope.row.CreatedTime |UpTime()}}</p>
+          </template>
+        </el-table-column>
+        <el-table-column prop :label="$t('CVM.clBload.slid')">
+          <template slot-scope="scope">
+            <p>{{scope.row.InstanceId}}</p>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div class="Right-style pagstyle">
+        <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CVM.strip")}}</span>
+        <el-pagination :page-size="pagesize" :pager-count="7" layout="prev, pager, next"
+          @current-change="handleCurrentChange" :total="TotalCount"></el-pagination>
+      </div>
+    </div>
+    <div class="Table-SY" v-show="false">
+      <el-table :data="TbaleData" height="550" style="width: 100%" id="exportTable" v-loading="loadShow"
+        :empty-text="$t('CVM.clBload.zwsj')">
+        <el-table-column prop :label="$t('CVM.cloudDisk.mc')">
+          <template slot-scope="scope">
+            <p>
+              <a @click="jump(scope.row.AddressIp)" style="cursor:pointer;">{{scope.row.AddressId}}</a>
+            </p>
           </template>
         </el-table-column>
         <el-table-column prop :label="$t('CVM.clBload.txdz')">
