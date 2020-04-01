@@ -88,10 +88,13 @@
                   </el-table-column>
                   <el-table-column prop label="告警管道" width="130">
                     <template slot-scope="scope">
-                      <span v-if="scope.row.NotifyWay[0]=='EMAIL'">郵件</span>
-                      <span v-if="scope.row.NotifyWay[1]=='EMAIL'">郵件</span>
-                      <span v-if="scope.row.NotifyWay[0]=='CALL'">站内信</span>
-                      <span v-if="scope.row.NotifyWay[1]=='CALL'">站内信</span>
+                      <p v-if="scope.row.NotifyWay.length>0">
+                        <span v-if="scope.row.NotifyWay[0]=='EMAIL'">郵件</span>
+                        <span v-if="scope.row.NotifyWay[1]=='EMAIL'">郵件</span>
+                        <span v-if="scope.row.NotifyWay[0]=='CALL'">站内信</span>
+                        <span v-if="scope.row.NotifyWay[1]=='CALL'">站内信</span>
+                      </p>
+                      <p v-else>-</p>
                     </template>
                   </el-table-column>
                   <el-table-column prop label="告警狀態" width="100">
