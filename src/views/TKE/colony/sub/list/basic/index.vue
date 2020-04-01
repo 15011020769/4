@@ -123,6 +123,8 @@
             <div class="rich-content">
               <pre class="rich-text"> {{security.Kubeconfig}}</pre>
             </div>
+            <!-- ref="myDown" -->
+            <a class="down" :href="url" @click="downText" :download="`${clusterId}-config`">下载</a>
           </div>
         </el-form-item>
       </el-form>
@@ -294,6 +296,7 @@ export default {
   name: 'colonyBasic',
   data () {
     return {
+      url:'',
       clusterId: '', // 集群id
       vpcList: [],//vpc列表
       clusterInfo: {},//集群信息
@@ -381,6 +384,12 @@ export default {
     this.getClusterVersion();
   },
   methods: {
+    downText(){
+      let blob = new Blob([this.security.Kubeconfig], {
+        type: 'application/octet-stream'
+      })
+      this.url = URL.createObjectURL(blob)
+    },
     //获取集群信息
     async getColonyInfo () {
       this.loadShow = true;
@@ -1063,6 +1072,7 @@ export default {
       outline: 0;
       display: inline-block;
       word-break: break-word;
+      position: relative;
       .rich-text{
         margin: 0;
         font-size: 12px;
@@ -1077,6 +1087,21 @@ export default {
         &:hover{
           background-color: #fafafa;
         }
+      }
+    }
+    .down{
+      font-size:12px;
+      color:#2177D9;
+      background-color:#E1E1E1;
+      text-align:center;
+      padding:0 5px;
+      cursor:pointer;
+      position:absolute;
+      top:0;
+      right:0;
+      z-index:10;
+      &:hover{
+        text-decoration:underline;
       }
     }
   }
