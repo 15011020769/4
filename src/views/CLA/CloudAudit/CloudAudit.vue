@@ -338,6 +338,7 @@
       },
       //列表数据
       Loading() {
+        this.tableData = []
         this.vloading = true;
         const params = {
           Version: "2019-03-19",
