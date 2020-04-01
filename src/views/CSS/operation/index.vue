@@ -550,10 +550,10 @@ export default {
       font-size: 12px !important;
     }
     ::v-deep .el-range__icon {
-        line-height: 22px;
+        line-height: 22px !important;
     }
     ::v-deep .el-range-separator {
-      line-height: 22px;
+      line-height: 22px !important;
       width: 7%;
     }
     ::v-deep .el-select {
