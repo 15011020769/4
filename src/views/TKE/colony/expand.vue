@@ -80,13 +80,12 @@
           >
             <p>{{$t('TKE.colony.jfms')}}<i class="el-icon-info"></i></p>
             <div class="tke-second-radio-btn tke-second-icon-btn">
-              {{nodeForm.internetChargeType}}
               <el-radio-group
                 v-model="nodeForm.instanceChargeType"
                 @change="SecondCharging();costPrice()"
               >
                 <el-radio-button label="POSTPAID_BY_HOUR">{{$t('TKE.colony.aljf')}}</el-radio-button>
-                <el-radio-button label="PREPAID">包年包月</el-radio-button>
+                <!-- <el-radio-button label="PREPAID">包年包月</el-radio-button> -->
               </el-radio-group>
               <!-- <a href="#">详细对比</a> -->
             </div>
