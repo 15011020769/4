@@ -393,10 +393,7 @@
         this.Time = data[1]
         this.TableLoad = true
         this._GetBase()
-        setTimeout(() => {
-          this._GetBase1()
-        }, 3000);
-
+        this._GetBase1()
       },
       //获取基础指标详情
       _GetBase() {
@@ -428,7 +425,7 @@
               (function (o) {
                 setTimeout(() => {
                   _this._GetMonitorData(_this.BaseListK[o].MetricName)
-                }, o * 50);
+                }, o * 1000);
               })(k)
             }
           } else {
@@ -497,7 +494,7 @@
               (function (o) {
                 setTimeout(() => {
                   _this._GetMonitorData1(_this.BaseListKd[o].MetricName)
-                }, o * 50);
+                }, o * 1000);
               })(k)
             }
           } else {
