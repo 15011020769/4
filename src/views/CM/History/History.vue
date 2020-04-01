@@ -384,7 +384,7 @@ export default {
       //分页
       totals: 0, //总条数
       pageSize: 10, //每页10条
-      pageIndex: 1, // 当前页码
+      pageIndex: 0, // 当前页码
       StartTime: "",
       EndTime: "",
       Period: {}
@@ -488,6 +488,7 @@ export default {
           // Offset: (this.pageIndex - 1) * this.pageSize
         };
         params.ObjLike = this.input;
+        
         params.StartTime = Date.parse(this.StartTime) / 1000; //开始时间戳
         params.EndTime = new Date(this.EndTime).getTime() / 1000; //结束时间戳
       } else {
@@ -529,28 +530,24 @@ export default {
     },
     //分頁
     handleCurrentChange(val) {
-      this.pageIndex = val - 1;
+      this.pageIndex = (val - 1) * this.pageSize;
       this.getBasicsList(this.timeObjs);
-      this.pageIndex += 1;
+      this.pageIndex += (val - 1) * this.pageSize;
     },
     searchName() {
       this.pageIndex = 1;
       //搜索框
       if (this.input == "") {
-        this.input = "";
         this.getBasicsList(this.timeObjs);
       }
-      this.getBasicsList(this.timeObjs);
     },
     searchBtn() {
       this.pageIndex = 1;
 
       //搜索按鈕
       if (this.input == "") {
-        this.input = "";
         this.getBasicsList(this.timeObjs);
       }
-      // params.ObjLike = this.input;
       this.getBasicsList(this.timeObjs);
     },
     // 導出表格
