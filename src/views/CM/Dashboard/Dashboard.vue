@@ -702,7 +702,7 @@
         } else {
           const item = this.ViewList[index];
           item.DataPoints = [];
-          this.$set(this.ViewList, index, item);
+          // this.$set(this.ViewList, index, item);
           return;
         }
         await this.axios
@@ -736,7 +736,7 @@
               });
               const item = this.ViewList[index];
               item.DataPoints = DataPoints;
-              this.$set(this.ViewList, index, item);
+              // this.$set(this.ViewList, index, item);
             } else {
               let ErrTips = {
                 'InternalError': 'InternalError',
@@ -755,17 +755,20 @@
       getAllMonitorData() {
         this.chartsLoading = true;
         this.ViewList.forEach((ele, index) => {
-          // Y轴数据
-          this.getSingleMonitorData(
-            ele.Namespace,
-            ele.MetricName[0],
-            this.period,
-            this.startEnd.StartTime,
-            this.startEnd.EndTime,
-            ele.Instances,
-            index,
-            ele.InstanceName
-          );
+          // Instances的数组长度大于0，才去请求echarts的Y轴数据
+          if (ele.Instances.length > 0) {
+            // Y轴数据
+            this.getSingleMonitorData(
+              ele.Namespace,
+              ele.MetricName[0],
+              this.period,
+              this.startEnd.StartTime,
+              this.startEnd.EndTime,
+              ele.Instances,
+              index,
+              ele.InstanceName
+            );
+          }
         });
       },
       refresh() {
