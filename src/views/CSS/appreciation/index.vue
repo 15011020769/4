@@ -324,8 +324,12 @@ export default {
       ::v-deep .el-range__icon {
           line-height: 22px !important;
       }
+      ::v-deep .el-range-input {
+        width: 43%;
+      }
       ::v-deep .el-range-separator {
-        line-height: 22px !important;
+        line-height: 30px !important;
+        height: 30px;
         width: 7%;
       }
       ::v-deep .el-select {
