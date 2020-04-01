@@ -607,7 +607,6 @@ export default {
           chartsObjects.sort((value1, value2) => {
             return this.sortChartObject(value1, value2);
           });
-
           
 
           chartsObjects.forEach(item => {

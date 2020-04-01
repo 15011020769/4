@@ -104,6 +104,7 @@ export default {
       });
 
       const that = this;
+      console.log(otherInfo.length)
         if (otherInfo.length > 50 && otherInfo.length < 80) {
             ends = 70;
         }else if (otherInfo.length < 10) {
@@ -117,7 +118,7 @@ export default {
         }else if (otherInfo.length >= 200) {
             ends = 98;
         }
-
+      console.log(ends)
       myCharts.setOption({
         tooltip: {
           trigger: "item",
@@ -145,7 +146,8 @@ export default {
             filterMode: "filter",
             start: starts,
             end: ends,
-            showDetail: false
+            showDetail: false,
+            zoomLock: true
           }
         ],
         xAxis: {
