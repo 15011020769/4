@@ -2219,7 +2219,7 @@ export default {
                 (function(o) {
                   setTimeout(() => {
                     _this.JieShouGroup(_ReceiverUserList[k]);
-                  }, o * 50);
+                  }, o * 1000);
                 })(k);
               }
             } else {
