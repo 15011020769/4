@@ -228,17 +228,6 @@
                           <span>專線接入-物理專線</span>
                         </el-tooltip>
                       </div>
-
-                      <!-- <div v-if="scope.row.ViewName=='dcline'">
-                        <el-tooltip
-                          class="item"
-                          effect="dark"
-                          content="策略類型: 專線接入-物理專線"
-                          placement="bottom-start"
-                        >
-                          <span>專線接入-物理專線</span>
-                        </el-tooltip>
-                      </div>-->
                     </template>
                   </el-table-column>
 
@@ -250,6 +239,7 @@
                   <el-table-column prop label="所屬網路" width="120">
                     <template slot-scope="scope">
                       <div v-if="scope.row.Vpc=='1'">VPC網路</div>
+                      <div v-else>-</div>
                     </template>
                   </el-table-column>
                   <el-table-column prop label="所屬專案" width="120">
@@ -533,17 +523,19 @@ export default {
     handleCurrentChange(val) {
       this.pageIndex = (val - 1) * this.pageSize;
       this.getBasicsList(this.timeObjs);
+      this.pageIndex = val;
+
       this.pageIndex1 = val;
     },
     searchName() {
-      this.pageIndex = 1;
+      this.pageIndex = 0;
       //搜索框
       if (this.input == "") {
         this.getBasicsList(this.timeObjs);
       }
     },
     searchBtn() {
-      this.pageIndex = 1;
+      this.pageIndex = 0;
 
       //搜索按鈕
       if (this.input == "") {
