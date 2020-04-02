@@ -382,8 +382,8 @@ export default {
               label: '預設專案',
               projectId: 0
             };
-          this.options1.splice(0,0,obj1)
-          this.options2.splice(0,0,obj1)
+          this.options1.splice(1,0,obj1)
+          this.options2.splice(1,0,obj1)
         } else {
           let ErrTips = {
             InternalError: "內部錯誤",
