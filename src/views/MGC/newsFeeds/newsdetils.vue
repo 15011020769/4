@@ -1,41 +1,41 @@
 <template>
-  <div class="news-wrap">
+  <div class="newswrap">
     <HeaderCom :title="$t('MGC.tzggxq')" @_back="back"  :backShow="true"></HeaderCom>
     <div class="head">
     <p class="time">{{$route.query.publishTime}}</p>
      <p class="title">{{$route.query.title}}</p>
     </div>
-    <div id="detilswrap">
-        <mavon-editor :value="content" 
-    :toolbarsFlag="false" 
-    :editable="false" 
-    :subfield="false"
-    defaultOpen="preview" 
-    :boxShadow="false" 
-    previewBackground="#fff"
-    style="margin: 20px auto; border:0;">
-    </mavon-editor>
-        </div>
+      <div id="detilswrap">
+        <mavon-editor 
+           :value="content" 
+           :toolbarsFlag="false" 
+           :editable="false" 
+           :subfield="false"
+           defaultOpen="preview" 
+           :boxShadow="false" 
+           previewBackground="#fff"
+           style="margin: 20px auto; border:0;">
+           </mavon-editor>
     </div>
-  </div>
+    </div> 
 </template>
 <script>
 import HeaderCom from "@/components/public/Head";
 import { mavonEditor } from "mavon-editor";
-import "mavon-editor/dist/css/index.css";
+// import "mavon-editor/dist/css/index.css";
 import {NOTICE_DETILS} from '@/constants/MGC.js';
 export default {
-  components: {
-    HeaderCom,
-    mavonEditor
+  created(){
+    this.init()
   },
   data() {
     return {
        content:''
     }
   },
-  created(){
-    this.init()
+   components: {
+    HeaderCom,
+    mavonEditor
   },
   methods:{
     //返回上一页
@@ -50,15 +50,22 @@ export default {
             this.content = res.notice.content
        })
     },
-  }
+  },
+  
 }
 </script>
 <style lang="scss" scoped>
+.newswrap{
     #detilswrap{
      width:80%;
-  margin:0 auto;
-  min-height:700px;
-  padding:30px 0;
+     margin:0 auto;
+     min-height:700px;
+     padding:30px 0;
+     z-index:1;
+     border: 1px solid #cdcdcd;
+      ::v-deep .v-note-wrapper .v-note-panel {
+       min-height:700px;
+     }
    }
     .head{
     font-size:15px;
@@ -75,4 +82,6 @@ export default {
     margin-left:20px;
   }
  }
+}
+   
 </style>
