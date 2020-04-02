@@ -274,7 +274,7 @@
                       @size-change="handleSizeChange"
                       :pager-count="7"
                       @current-change="handleCurrentChange"
-                      :current-page="pageIndex"
+                      :current-page="pageIndex1"
                       :page-sizes="[10, 20, 50, 100]"
                       :page-size="pageSize"
                       layout="total, sizes, prev, pager, next"
@@ -385,6 +385,7 @@ export default {
       totals: 0, //总条数
       pageSize: 10, //每页10条
       pageIndex: 0, // 当前页码
+      pageIndex1: 0, // 当前页码
       StartTime: "",
       EndTime: "",
       Period: {}
@@ -532,7 +533,7 @@ export default {
     handleCurrentChange(val) {
       this.pageIndex = (val - 1) * this.pageSize;
       this.getBasicsList(this.timeObjs);
-      this.pageIndex += (val - 1) * this.pageSize;
+      this.pageIndex1 = val;
     },
     searchName() {
       this.pageIndex = 1;
