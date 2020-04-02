@@ -1,6 +1,6 @@
 <template>
   <div class="CLA">
-    <div class="big-title">容器服務</div>
+    <div class="big-title">容器服務TKE</div>
     <el-menu
       default-active="2"
       class="el-menu-vertical-demo"
@@ -40,7 +40,7 @@
         </el-menu-item-group>
       </el-submenu>
       <el-menu-item index="/logCollection" @click="_class" :class="{'active':classValue=='/logCollection'}">
-        <span slot="title">日誌採集</span>
+        <span slot="title">日誌收集</span>
       </el-menu-item>
       <!-- <el-menu-item index="/warnings" @click="_class" :class="{'active':classValue=='/warnings'}">
         <span slot="title">告警设置</span>
