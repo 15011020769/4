@@ -3,34 +3,66 @@
   <div id="ipConfigFourth" class="wrap">
     <div class="allContent">
       <div class="ReportTit newClear">
-        <h3 class="ReportTitH3">{{ $t("DDOS.Protective.professionalEdition") }}</h3>
+        <h3 class="ReportTitH3">
+          {{ $t("DDOS.Protective.professionalEdition") }}
+        </h3>
         <el-select v-model="listSelect" class="selectListResou">
-          <el-option :label="$t('DDOS.AssetList.resourceList')" value="resourceList"></el-option>
-          <el-option :label="$t('DDOS.AssetList.businessList')" value="businessList"></el-option>
+          <el-option
+            :label="$t('DDOS.AssetList.resourceList')"
+            value="resourceList"
+          ></el-option>
+          <el-option
+            :label="$t('DDOS.AssetList.businessList')"
+            value="businessList"
+          ></el-option>
         </el-select>
         <!-- 新购 -->
-        <el-button class="ReportTitBtn" type="primary" @click="newBuy">{{$t('DDOS.total.new_buy')}}</el-button>
+        <el-button class="ReportTitBtn" type="primary" @click="newBuy">{{
+          $t("DDOS.total.new_buy")
+        }}</el-button>
       </div>
       <div class="mainContentCenter">
         <div class="textAlignTop newClear">
           <div class="addBgColor" style="display:flex;">
             <!-- 即将过期 -->
-            <el-checkbox-group v-model="expireFilter" class="checkOne" @change="expireChange">
-              <el-checkbox :label="$t('DDOS.AssetList.willExpire')"></el-checkbox>
+            <el-checkbox-group
+              v-model="expireFilter"
+              class="checkOne"
+              @change="expireChange"
+            >
+              <el-checkbox
+                :label="$t('DDOS.AssetList.willExpire')"
+              ></el-checkbox>
             </el-checkbox-group>
             <!-- 运行状态 -->
-            <span class="runningStatusText">{{ $t("DDOS.AssetList.RunningState") }}:</span>
-            <el-checkbox-group v-model="runningStatus" class="checkTwo" @change="statusChange">
-              <el-checkbox :label="0">{{ $t("DDOS.AssetList.Running") }}</el-checkbox>
-              <el-checkbox :label="1">{{ $t("DDOS.Protective.Protectivewash") }}</el-checkbox>
-              <el-checkbox :label="2">{{ $t("DDOS.Protective.blockIng") }}</el-checkbox>
+            <span class="runningStatusText"
+              >{{ $t("DDOS.AssetList.RunningState") }}:</span
+            >
+            <el-checkbox-group
+              v-model="runningStatus"
+              class="checkTwo"
+              @change="statusChange"
+            >
+              <el-checkbox :label="0">{{
+                $t("DDOS.AssetList.Running")
+              }}</el-checkbox>
+              <el-checkbox :label="1">{{
+                $t("DDOS.Protective.Protectivewash")
+              }}</el-checkbox>
+              <el-checkbox :label="2">{{
+                $t("DDOS.Protective.blockIng")
+              }}</el-checkbox>
             </el-checkbox-group>
           </div>
           <span style="float:right;">
             <el-input
               v-model="selectResourceInput"
               class="searchs"
-              :placeholder="this.listSelect == 'resourceList'?$t('DDOS.AssetList.searchAssetList'):$t('DDOS.AssetList.searchAssetListS')"
+              :placeholder="
+                this.listSelect == 'resourceList'
+                  ? $t('DDOS.AssetList.searchAssetList')
+                  : $t('DDOS.AssetList.searchAssetListS')
+              "
             ></el-input>
             <el-button class="el-icon-search" @click="doFilter"></el-button>
           </span>
@@ -40,33 +72,60 @@
           <div class="mainTable">
             <!-- 资源列表 -->
             <el-table
-              :data="tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)"
+              :data="
+                tableData.slice(
+                  (currentPage - 1) * pageSize,
+                  currentPage * pageSize
+                )
+              "
               v-if="listSelect == 'resourceList'"
               v-loading="loading"
               height="460"
               empty-text="暫無數據"
             >
-              <el-table-column prop="Record" :label="$t('DDOS.AssetList.AssetListName')">
+              <el-table-column
+                prop="Record"
+                :label="$t('DDOS.AssetList.AssetListName')"
+              >
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
-                    <a v-if="item.Key == 'Id'" @click="toDetailResourse(scope.row)">{{ item.Value }}</a>
+                    <a
+                      v-if="item.Key == 'Id'"
+                      @click="toDetailResourse(scope.row)"
+                      >{{ item.Value }}</a
+                    >
                   </div>
-                  <div v-for="(item, index) in scope.row.Record" :key="index + 'i'">
-                    <span v-if="item.Key == 'Name'">{{ item.Value == "" ? "未命名" : item.Value }}</span>
+                  <div
+                    v-for="(item, index) in scope.row.Record"
+                    :key="index + 'i'"
+                  >
+                    <span v-if="item.Key == 'Name'">{{
+                      item.Value == "" ? "未命名" : item.Value
+                    }}</span>
                   </div>
                 </template>
               </el-table-column>
-              <el-table-column prop="Record" :label="$t('DDOS.AssetList.Forwarding')">
+              <el-table-column
+                prop="Record"
+                :label="$t('DDOS.AssetList.Forwarding')"
+              >
                 <template slot-scope="scope">
                   <div>
-                    {{ (scope.row.RuleNum === undefined || scope.row.RuleNum == "") ? 0 : scope.row.RuleNum}}
+                    {{
+                      scope.row.RuleNum === undefined || scope.row.RuleNum == ""
+                        ? 0
+                        : scope.row.RuleNum
+                    }}
                     <a @click="toAccest(scope.row.Record)">
                       {{ $t("DDOS.AssetList.AssetListSet") }}
                     </a>
                   </div>
                 </template>
               </el-table-column>
-              <el-table-column prop="Record" :label="$t('DDOS.AssetList.protectionNum')">
+              <el-table-column
+                prop="Record"
+                :label="$t('DDOS.AssetList.protectionNum')"
+              >
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
                     <div v-if="item.Key == 'IPText'">
@@ -83,45 +142,57 @@
                 </template>
               </el-table-column>
               <!-- 初始区域（接口未对字段说明，部分值无法解析直接输出） -->
-              <el-table-column prop="origin" :label="$t('DDOS.AssetList.initialRegio')">
+              <el-table-column
+                prop="origin"
+                :label="$t('DDOS.AssetList.initialRegio')"
+              >
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
-                    <span
-                      v-if="item.Key == 'OriginRegion'"
-                    >{{ item.Value == "tpe" ? $t("DDOS.total.address") : item.Value }}</span>
+                    <span v-if="item.Key == 'OriginRegion'">{{
+                      item.Value == "tpe"
+                        ? $t("DDOS.total.address")
+                        : item.Value
+                    }}</span>
                   </div>
                 </template>
               </el-table-column>
               <!-- 状态 -->
-              <el-table-column prop="status" :label="$t('DDOS.UnlockOperation.Unlockstate')">
+              <el-table-column
+                prop="status"
+                :label="$t('DDOS.UnlockOperation.Unlockstate')"
+              >
                 <template slot-scope="scope">
                   <span v-for="(item, index) in scope.row.Record" :key="index">
                     <!-- (idle:运行中, attacking:攻击中, blocking:封堵中, isolate:隔离中) -->
                     <span v-if="item.Key == 'Status' && item.Value == 'idle'">
-                      {{
-                      $t("DDOS.AssetList.Running")
-                      }}
+                      {{ $t("DDOS.AssetList.Running") }}
                     </span>
                     <span
                       v-else-if="
                         item.Key == 'Status' && item.Value == 'attacking'
                       "
                       style="color: red;"
-                    >{{ $t("DDOS.AssetList.Attacking") }}</span>
+                      >{{ $t("DDOS.AssetList.Attacking") }}</span
+                    >
                     <span
                       v-else-if="
                         item.Key == 'Status' && item.Value == 'blocking'
                       "
-                    >{{ $t("DDOS.AssetList.Blocking") }}</span>
+                      >{{ $t("DDOS.AssetList.Blocking") }}</span
+                    >
                     <span
                       v-else-if="
                         item.Key == 'Status' && item.Value == 'isolate'
                       "
-                    >{{ $t("DDOS.AssetList.Isolate") }}</span>
+                      >{{ $t("DDOS.AssetList.Isolate") }}</span
+                    >
                   </span>
                 </template>
               </el-table-column>
-              <el-table-column prop="dataTime" :label="$t('DDOS.AssetList.DueTime')">
+              <el-table-column
+                prop="dataTime"
+                :label="$t('DDOS.AssetList.DueTime')"
+              >
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
                     <span v-if="item.Key == 'Expire'">{{ item.Value }}</span>
@@ -129,7 +200,10 @@
                 </template>
               </el-table-column>
               <!-- 自动续费 -->
-              <el-table-column prop="renewFlag" :label="$t('DDOS.choose.renewalMoney')">
+              <el-table-column
+                prop="renewFlag"
+                :label="$t('DDOS.choose.renewalMoney')"
+              >
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
                     <el-switch
@@ -146,27 +220,33 @@
               </el-table-column>
               <el-table-column prop="action" label="操作" width="230">
                 <template slot-scope="scope">
-                  <a class="marginRightA" href="#" @click="upgradeButton(scope.row)">
-                    {{
-                    $t("DDOS.AssetList.upgrade")
-                    }}
+                  <a
+                    class="marginRightA"
+                    href="#"
+                    @click="upgradeButton(scope.row)"
+                  >
+                    {{ $t("DDOS.AssetList.upgrade") }}
                   </a>
-                  <a class="marginRightA" href="#" @click="renewModelButton(scope.row)">
-                    {{
-                    $t("DDOS.AssetList.renewal")
-                    }}
+                  <a
+                    class="marginRightA"
+                    href="#"
+                    @click="renewModelButton(scope.row)"
+                  >
+                    {{ $t("DDOS.AssetList.renewal") }}
                   </a>
                   <!-- 防护配置 -->
                   <a
                     class="marginRightA"
                     href="#"
                     @click="configModel(scope.row)"
-                  >{{ $t("DDOS.AssetList.ProtectionConfig") }}</a>
+                    >{{ $t("DDOS.AssetList.ProtectionConfig") }}</a
+                  >
                   <a
                     class="marginRightA"
                     href="#"
                     @click="lookReportList(scope.row.Record)"
-                  >{{ $t("DDOS.AssetList.CheckReport") }}</a>
+                    >{{ $t("DDOS.AssetList.CheckReport") }}</a
+                  >
                 </template>
               </el-table-column>
             </el-table>
@@ -188,33 +268,67 @@
                   <div v-for="(item, index) in scope.row.Record" :key="index">
                     <span v-if="item.Key == 'CName'">{{ item.Value }}</span>
                   </div>
-                  <div v-for="(item, index) in scope.row.Record" :key="index + 'i'">
-                    <a v-if="item.Key == 'Id'" @click="toDetailResourse(scope.row)">{{ item.Value }}</a>
+                  <div
+                    v-for="(item, index) in scope.row.Record"
+                    :key="index + 'i'"
+                  >
+                    <a
+                      v-if="item.Key == 'Id'"
+                      @click="toDetailResourse(scope.row)"
+                      >{{ item.Value }}</a
+                    >
                   </div>
                 </template>
               </el-table-column>
-              <el-table-column prop="RuleNameList" :label="$t('DDOS.AssetList.domainName')">
+              <el-table-column
+                prop="RuleNameList"
+                :label="$t('DDOS.AssetList.domainName')"
+              >
                 <template slot-scope="scope">
-                  {{ (scope.row.RuleNameList === undefined || scope.row.RuleNameList == "") ? "-" :  scope.row.RuleNameList}}
+                  {{
+                    scope.row.RuleNameList === undefined ||
+                    scope.row.RuleNameList == ""
+                      ? "-"
+                      : scope.row.RuleNameList
+                  }}
                   <a @click="toAccest(scope.row.Record)">
-                    {{
-                    $t("DDOS.AssetList.AssetListSet")
-                    }}
+                    {{ $t("DDOS.AssetList.AssetListSet") }}
                   </a>
                 </template>
               </el-table-column>
-              <el-table-column prop="nowIp" :label="$t('DDOS.AssetList.currentIp')">
+              <el-table-column
+                prop="nowIp"
+                :label="$t('DDOS.AssetList.currentIp')"
+              >
                 <!-- 当前IP-->
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
                     <div v-if="item.Key == 'GroupIpList'">
-                      <div v-for="(item2, index2) in item.Value.split(';')" :key="index2+'i'">
-                        <div v-for="(item3, index3) in scope.row.Record" :key="index3+'j'">
+                      <div
+                        v-for="(item2, index2) in item.Value.split(';')"
+                        :key="index2 + 'i'"
+                      >
+                        <div
+                          v-for="(item3, index3) in scope.row.Record"
+                          :key="index3 + 'j'"
+                        >
                           <div v-if="item3.Key == 'CurrentGroup'">
-                            <div v-if="item2.indexOf('-'+item3.Value+'-')>-1">
-                              {{ item2.substring(0, item2.indexOf('-')) }}
+                            <div
+                              v-if="item2.indexOf('-' + item3.Value + '-') > -1"
+                            >
+                              {{ item2.substring(0, item2.indexOf("-")) }}
                               <span style="color: #999;">
-                                {{ item2.substring(item2.indexOf('-')+1, item2.indexOf('-', item2.indexOf('-')+1)) == 'tpe'?'台湾台北(BGP)':item2.substring(item2.indexOf('-')+1, item2.indexOf('-', 2)) }}
+                                {{
+                                  item2.substring(
+                                    item2.indexOf("-") + 1,
+                                    item2.indexOf("-", item2.indexOf("-") + 1)
+                                  ) == "tpe"
+                                    ? "台湾台北(BGP)"
+                                    : item2.substring(
+                                        item2.indexOf("-") + 1,
+                                        item2.indexOf("-", 2)
+                                      )
+                                }}
                               </span>
                             </div>
                           </div>
@@ -224,12 +338,20 @@
                   </div>
                 </template>
               </el-table-column>
-              <el-table-column prop="backSelf" :label="$t('DDOS.AssetList.AutomaticBack')">
+              <el-table-column
+                prop="backSelf"
+                :label="$t('DDOS.AssetList.AutomaticBack')"
+              >
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
-                    <el-tooltip v-if="item.Key == 'AutoReturn'" class="tooltip" effect="light" placement="bottom-start">
+                    <el-tooltip
+                      v-if="item.Key == 'AutoReturn'"
+                      class="tooltip"
+                      effect="light"
+                      placement="bottom-start"
+                    >
                       <div slot="content" class="tooltip_text">
-                        {{ $t('DDOS.AssetList.OpenAutoReturn') }}
+                        {{ $t("DDOS.AssetList.OpenAutoReturn") }}
                       </div>
                       <el-switch
                         v-model="item.Value"
@@ -242,17 +364,28 @@
                       ></el-switch>
                     </el-tooltip>
                     <div v-if="item.Key == 'AutoReturn' && item.Value == 1">
-                      <div v-for="(item2, index2) in scope.row.Record" :key="index2+'i'">
-                        <el-tooltip v-if="item2.Key == 'ReturnHour'" class="tooltip" effect="light" placement="bottom">
+                      <div
+                        v-for="(item2, index2) in scope.row.Record"
+                        :key="index2 + 'i'"
+                      >
+                        <el-tooltip
+                          v-if="item2.Key == 'ReturnHour'"
+                          class="tooltip"
+                          effect="light"
+                          placement="bottom"
+                        >
                           <div slot="content" class="tooltip_text">
-                            <p
-                              style="height: 20px;"
-                            >{{$t('DDOS.AssetList.autoHourText1')}}{{item2.Value}}{{$t('DDOS.AssetList.autoHourText2')}}</p>
+                            <p style="height: 20px;">
+                              {{ $t("DDOS.AssetList.autoHourText1")
+                              }}{{ item2.Value
+                              }}{{ $t("DDOS.AssetList.autoHourText2") }}
+                            </p>
                             <a
                               href="#"
                               @click="changeAutoReturnTime(scope.row)"
                               style="text-decoration: underline;"
-                            >{{$t('DDOS.AssetList.changeTime')}}</a>
+                              >{{ $t("DDOS.AssetList.changeTime") }}</a
+                            >
                           </div>
                           <i class="el-icon-info"></i>
                         </el-tooltip>
@@ -263,25 +396,32 @@
               </el-table-column>
               <el-table-column prop="action" label="操作" width="180">
                 <template slot-scope="scope">
-                  <div v-for="(item, index) in scope.row.Record" :key="index" style="float: left;">
+                  <div
+                    v-for="(item, index) in scope.row.Record"
+                    :key="index"
+                    style="float: left;"
+                  >
                     <a
                       class="marginRightA"
                       href="#"
                       style="pointer-events:none; color:#999;"
                       v-if="item.Key == 'CurrentGroup' && item.Value == '100'"
-                    >{{ $t("DDOS.AssetList.keyBack") }}</a>
+                      >{{ $t("DDOS.AssetList.keyBack") }}</a
+                    >
                     <a
                       class="marginRightA"
                       href="#"
                       v-if="item.Key == 'CurrentGroup' && item.Value == '300'"
                       @click="toNetReturn(scope.row)"
-                    >{{ $t("DDOS.AssetList.keyBack") }}</a>
+                      >{{ $t("DDOS.AssetList.keyBack") }}</a
+                    >
                   </div>
                   <a
                     class="marginRightA"
                     href="#"
                     @click="lookReportList(scope.row.Record)"
-                  >{{ $t("DDOS.AssetList.CheckReport") }}</a>
+                    >{{ $t("DDOS.AssetList.CheckReport") }}</a
+                  >
                 </template>
               </el-table-column>
             </el-table>
@@ -294,7 +434,7 @@
             >
               <div v-for="(item, index) in resourceObj.Record" :key="index">
                 <div v-if="item.Key == 'ReturnHour'">
-                  {{$t('DDOS.AssetList.changeAutoHourText1')}}
+                  {{ $t("DDOS.AssetList.changeAutoHourText1") }}
                   <el-select
                     v-model="item.Value"
                     :placeholder="$t('DDOS.AccesstoCon.searchAccess')"
@@ -307,15 +447,16 @@
                       :key="index"
                     ></el-option>
                   </el-select>
-                  {{$t('DDOS.AssetList.changeAutoHourText2')}}
+                  {{ $t("DDOS.AssetList.changeAutoHourText2") }}
                 </div>
               </div>
               <div slot="footer" style="text-align: center">
-                <el-button
-                  type="primary"
-                  @click="changeAutoReturnHour"
-                >{{$t('DDOS.Proteccon_figura.Determination')}}</el-button>
-                <el-button @click="autoReturnTimeDialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="changeAutoReturnHour">{{
+                  $t("DDOS.Proteccon_figura.Determination")
+                }}</el-button>
+                <el-button @click="autoReturnTimeDialogVisible = false"
+                  >取 消</el-button
+                >
               </div>
             </el-dialog>
             <!-- 一键回切确认弹框 -->
@@ -325,14 +466,15 @@
               width="43%"
             >
               <div>
-                {{ $t('DDOS.AssetList.netReturnSureMsg') }}
+                {{ $t("DDOS.AssetList.netReturnSureMsg") }}
               </div>
               <div slot="footer" style="text-align: center">
-                <el-button
-                  type="primary"
-                  @click="netReturnSure"
-                >{{$t('DDOS.AssetList.return')}}</el-button>
-                <el-button @click="netReturnDialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="netReturnSure">{{
+                  $t("DDOS.AssetList.return")
+                }}</el-button>
+                <el-button @click="netReturnDialogVisible = false"
+                  >取 消</el-button
+                >
               </div>
             </el-dialog>
             <!-- 一键回切成功返回弹框 -->
@@ -341,13 +483,14 @@
               width="43%"
             >
               <div>
-                {{ $t('DDOS.AssetList.netReturnSuccessMsg') }}
+                {{ $t("DDOS.AssetList.netReturnSuccessMsg") }}
               </div>
               <div slot="footer" style="text-align: center">
                 <el-button
                   type="primary"
                   @click="netReturnSuccessDialogVisible = false"
-                >{{$t('DDOS.AssetList.iKnow')}}</el-button>
+                  >{{ $t("DDOS.AssetList.iKnow") }}</el-button
+                >
               </div>
             </el-dialog>
             <!-- 一键回切失败返回弹框 -->
@@ -357,13 +500,14 @@
               width="43%"
             >
               <div>
-                {{ $t('DDOS.AssetList.netReturnErrorMsg') }}
+                {{ $t("DDOS.AssetList.netReturnErrorMsg") }}
               </div>
               <div slot="footer" style="text-align: center">
                 <el-button
                   type="primary"
                   @click="netReturnErrorDialogVisible = false"
-                >{{$t('DDOS.AssetList.iKnow')}}</el-button>
+                  >{{ $t("DDOS.AssetList.iKnow") }}</el-button
+                >
               </div>
             </el-dialog>
             <!-- 资源列表详情弹框 -->
@@ -394,9 +538,7 @@
           </div>
           <div class="Right-style pagstyle">
             <span class="pagtotal">
-              共&nbsp;{{ totalItems }}&nbsp;{{
-              $t("DDOS.UnsealCode.tiao")
-              }}
+              共&nbsp;{{ totalItems }}&nbsp;{{ $t("DDOS.UnsealCode.tiao") }}
             </span>
             <el-pagination
               :page-size="pageSize"
@@ -487,6 +629,13 @@ export default {
     }
   },
   created() {
+      if (this.$route.query.clickType === 1) {
+        this.runningStatus = [1];
+      } else if (this.$route.query.clickType === 2) {
+        this.runningStatus = [2];
+      } else if (this.$route.query.clickType === 3) {
+        this.expireFilter = true;
+      }
     this.describeResourceList(); // 获取资源列表接口
   },
   methods: {
@@ -522,7 +671,10 @@ export default {
           var regIP = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
           if (regIP.test(this.selectResourceInput)) {
             params["IpList.0"] = this.selectResourceInput;
-          } else if (this.selectResourceInput.length == 12 && this.selectResourceInput.substring(0,4) == "net-") {
+          } else if (
+            this.selectResourceInput.length == 12 &&
+            this.selectResourceInput.substring(0, 4) == "net-"
+          ) {
             params["IdList.0"] = this.selectResourceInput;
           } else {
             params["Name"] = this.selectResourceInput;
@@ -551,7 +703,9 @@ export default {
                 let ipDetailArr = element.split("-");
                 if (ipDetailArr[3] == "100") {
                   //IP显示顺序处理
-                  IPText.splice(0, 0,
+                  IPText.splice(
+                    0,
+                    0,
                     ipDetailArr[0] +
                       "(" +
                       (ipDetailArr[1] == "tpe" ? "台灣台北" : ipDetailArr[1]) +
@@ -619,7 +773,7 @@ export default {
                         item.RuleNameList = map3.Value;
                       } else if (map3.Key == "RuleNum") {
                         // item.RuleNum = map3.Value;
-                        this.$set(item, 'RuleNum', map3.Value);
+                        this.$set(item, "RuleNum", map3.Value);
                       }
                     });
                   }
@@ -690,7 +844,7 @@ export default {
           params.Id = row.Record[i].Value;
         } else if (row.Record[i].Key == "AutoRenewFlag") {
           params.RenewFlag = row.Record[i].Value; // RenewFlag是Integer	自动续费标记（0手动续费；1自动续费；2到期不续费）
-        } 
+        }
       }
       this.axios.post(MODIFY_RENEWFLAG, params).then(res => {
         if (res.Response.Error === undefined) {
@@ -732,15 +886,15 @@ export default {
         if (res.Response.Error === undefined) {
           this.describeResourceList();
         } else {
-          let ErrTips = {}
-          let ErrOr = Object.assign(ErrorTips, ErrTips)
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
             message: ErrOr[res.Response.Error.Code],
-            type: 'error',
+            type: "error",
             showClose: true,
             duration: 0
           });
-          return
+          return;
         }
       });
     },
@@ -775,7 +929,7 @@ export default {
           id = this.resourceObj.Record[i].Value;
           this.creatNetReturn(id);
           this.netReturnDialogVisible = false;
-          return
+          return;
         }
       }
     },
@@ -788,7 +942,7 @@ export default {
           id = row.Record[i].Value;
         } else if (row.Record[i].Key == "AutoReturn") {
           status = row.Record[i].Value;
-        } 
+        }
       }
       this.modifyNetReturnSwitch(id, status, 2);
     },

@@ -10,6 +10,7 @@
             <template slot-scope="scope">
               <el-input
                 v-model.trim="scope.row.tagKey"
+                @input="v => scope.row.tagKey = v.replace(/[^\w\u4e00-\u9fa5]/g, '')"
                 autocomplete="off"
                 class="inputKey"
                 placeholder="請輸入標籤鍵"
@@ -20,6 +21,7 @@
             <template slot-scope="scope">
               <el-input
                 v-model.trim="scope.row.tagValue"
+                @input="v => scope.row.tagValue = v.replace(/[^\w\u4e00-\u9fa5]/g, '')"
                 autocomplete="off"
                 class="inputKey"
                 placeholder="請輸入標籤值"

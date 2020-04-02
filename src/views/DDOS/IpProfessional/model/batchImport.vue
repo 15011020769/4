@@ -96,13 +96,12 @@ export default {
         params['Rules.'+i+'.LbType'] = 1;
         params['Rules.'+i+'.KeepTime'] = 0;
         params['Rules.'+i+'.KeepEnable'] = 0;
-        
         if(this.flag) { //业务域名省略
           if(!this.flag2) { //回源域名
             params['Rules.'+i+'.SourceType'] = 1
             for (let j=3; j<this.rules[i].length; j++) {
               params['Rules.'+i+'.SourceList.'+(j-3)+'.Source'] = this.rules[i][j]
-              params['Rules.'+i+'.SourceList.'+(j-3)+'.Weight'] = 0
+              params['Rules.'+i+'.SourceList.'+(j-3)+'.Weight'] = this.rules[i][j+1]
             }
           } else { //回源IP和权重
             params['Rules.'+i+'.SourceType'] = 2
@@ -117,7 +116,7 @@ export default {
             params['Rules.'+i+'.SourceType'] = 1
             for (let j=4; j<this.rules[i].length; j++) {
               params['Rules.'+i+'.SourceList.'+(j-4)+'.Source'] = this.rules[i][j]
-              params['Rules.'+i+'.SourceList.'+(j-4)+'.Weight'] = 0
+              params['Rules.'+i+'.SourceList.'+(j-4)+'.Weight'] = this.rules[i][++j]
             }
           } else { //回源IP和权重
             params['Rules.'+i+'.SourceType'] = 2

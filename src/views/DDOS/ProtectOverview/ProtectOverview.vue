@@ -98,28 +98,28 @@
                 <el-row class="productRow">
                   <el-col :span="12" class="productRow1">
                     {{ $t("DDOS.Protective.professionalEdition") }}
-                    <span>{{ packDataIP[0].Value }}</span>
+                    <span @click="jumpAssetList(0)">{{ packDataIP[0].Value }}</span>
                   </el-col>
                   <el-col :span="12" class="productRow2">
                     <p>
                       <span></span>
                       <span>{{ $t("DDOS.Protective.Protectivewash") }}</span>
-                      <span>{{ packDataIP[1].Value }}</span>
+                      <span @click="jumpAssetList(1)">{{ packDataIP[1].Value }}</span>
                     </p>
                     <p>
                       <span></span>
                       <span>{{ $t("DDOS.Protective.blockIng") }}</span>
-                      <span>{{ packDataIP[2].Value }}</span>
+                      <span @click="jumpAssetList(2)">{{ packDataIP[2].Value }}</span>
                     </p>
                     <p>
                       <span></span>
                       <span>{{ $t("DDOS.Protective.aboutExpire") }}</span>
-                      <span>{{ packDataIP[4].Value }}</span>
+                      <span @click="jumpAssetList(3)">{{ packDataIP[4].Value }}</span>
                     </p>
                     <p>
                       <span></span>
                       <span>{{ $t("DDOS.Protective.Expiring") }}</span>
-                      <span>{{ packDataIP[3].Value }}</span>
+                      <span @click="jumpAssetList(4)">{{ packDataIP[3].Value }}</span>
                     </p>
                   </el-col>
                 </el-row>
@@ -555,6 +555,14 @@ export default {
       sessionStorage.setItem("IpPro", JSON.stringify(scopeRow))
       this.$router.push({
         path: '/IpProfessional'
+      })
+    },
+    jumpAssetList(clickType) {
+      this.$router.push({
+        path: "/AssetList",
+        query: {
+          clickType: clickType
+        }
       })
     }
   }
