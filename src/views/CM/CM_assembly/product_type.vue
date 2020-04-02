@@ -98,6 +98,8 @@
         }
       },
       productValue1() {
+        this.searchParam.label = undefined
+        this.searchParam.value = undefined
         this._Metrics()
       },
       projectId() {
@@ -139,6 +141,8 @@
         this.Pass.id = this.id
         this.Pass.Metrics = this.Metrics
         this.Pass.EventMetrics = this.EventMetrics
+        this.Pass.searchParam = this.searchParam.label
+        console.log(this.searchParam.label)
         if (this.Pass.productValue === "cvm_device") {
           this.Pass.Metrics.splice(1, 2)
           this.Pass.Metrics.splice(3, 1)

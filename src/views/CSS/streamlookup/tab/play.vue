@@ -116,7 +116,7 @@ export default {
         } else {
           if (res.Response.DataInfoList.length != 0) {
             this.showEchart = true
-            this.legendText1 = '帶寬'
+            this.legendText1 = '頻寬'
             this.legendText2 = '流量'
             this.legendText3 = '併發連接數'
             res.Response.DataInfoList.map(v => {

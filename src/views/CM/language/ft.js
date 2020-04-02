@@ -15,7 +15,7 @@ module.exports = {
     title13: '專線接入',
     title14: '物理專線',
     title15: '專線通道',
-    title16: '對象儲存'
+    title16: '物件儲存'
   },
   CVM: {
     strip: '條',
@@ -30,7 +30,7 @@ module.exports = {
     zxwg: '專線閘道',
     cftjmb: '觸發條件模板',
     gjpz: '告警配置',
-    dxcc: '對象儲存',
+    dxcc: '物件儲存',
     ddlj: '對等連接',
     wlzx: '專線接入-物理專線',
     zxtd: '專線接入-專線通道',
@@ -240,7 +240,7 @@ module.exports = {
       gjdx: '告警簡訊發送優先扣除每月免費簡訊配額，免費配額',
       dxtj: '當月已使用簡訊統計',
       jksjz: '近7天監控時間軸',
-      yxdxs: '影響對象數',
+      yxdxs: '影響物件數',
       dqzt: '當前狀態',
       fwlx: '服務類型',
       fwjkzt: '近24小時服務健康狀態',

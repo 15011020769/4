@@ -16,11 +16,10 @@
       <div class="head-container">
         <el-input
           size="small"
-          v-model="searchValue"
+          v-model="searchValueTemp"
           clearable
           placeholder="支持搜索用戶組名稱/備註"
           style="width: 300px;"
-          @change="toQuery"
         >
           <i slot="suffix" class="el-input__icon el-icon-search" @click="toQuery"></i>
         </el-input>
@@ -178,6 +177,7 @@ export default {
         resource: "",
         desc: ""
       },
+      searchValueTemp: "",
       searchValue: "",
       gear: false,
       loading1: true,
@@ -413,6 +413,7 @@ export default {
     // 用户组查询方法
     toQuery() {
       this.currpage = 1;
+      this.searchValue = this.searchValueTemp
       this.init();
     },
     // 子用户穿梭框查询

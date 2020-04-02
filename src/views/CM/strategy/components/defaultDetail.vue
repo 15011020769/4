@@ -2416,9 +2416,33 @@ export default {
       }
     },
     isURL(str) {
-      var Expression = /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?/;
-      var objExp = new RegExp(Expression);
-      if (objExp.test(str) != true) {
+      // var Expression = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\*\+,;=.]+$/;
+      // var objExp = new RegExp(Expression);
+      // if (objExp.test(str) != true) {
+      //   this.$message({
+      //     message: "請輸入正確的url",
+      //     type: "error",
+      //     showClose: true,
+      //     duration: 0
+      //   });
+      //   this.codeSure = false;
+      // } else {
+      //   this.codeSure = true;
+      // }
+      if (str.indexOf(".") != -1) {
+        let _str = str.split(".");
+        if (_str[1].length >= 1) {
+          this.codeSure = true;
+        } else {
+          this.$message({
+            message: "請輸入正確的url",
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+          this.codeSure = false;
+        }
+      } else {
         this.$message({
           message: "請輸入正確的url",
           type: "error",
@@ -2426,8 +2450,6 @@ export default {
           duration: 0
         });
         this.codeSure = false;
-      } else {
-        this.codeSure = true;
       }
     },
     // 編輯告警對象

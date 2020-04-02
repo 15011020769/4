@@ -698,7 +698,7 @@
               '加密演算法：' + this.thisAddSuan + '\n' +
               '加密公鑰文件：public_key' + '\n' +
               '導入令牌文件：ImportToken' + '\n' +
-              '密鑰導入材料過期時間：' + this.timestampToTime(this.GetParameters.ParametersValidTo)
+              '金鑰導入材料過期時間：' + this.timestampToTime(this.GetParameters.ParametersValidTo)
             this.exportRaw('README' + '.txt', README)
           } else {
             let ErrTips = {
@@ -747,7 +747,7 @@
               "InternalError": '內部錯誤',
               "InvalidParameter": '參數錯誤',
               "InvalidParameter.DecryptMaterialError": '解密EncryptedKeyMaterial失敗',
-              "InvalidParameterValue.MaterialNotMatch": '導入的密鑰材料和歷史導入不同',
+              "InvalidParameterValue.MaterialNotMatch": '導入的金鑰材料和歷史導入不同',
               "ResourceUnavailable.CmkNotFound": 'CMK不存在',
               "ResourceUnavailable.CmkStateNotSupport": 'CMK狀態不支持該操作',
               "ResourceUnavailable.TokenExpired": 'Token已過期',
@@ -818,7 +818,7 @@
           if (res.Response.Error === undefined) {
             this.$message({
               showClose: true,
-              message: '刪除密鑰材料成功',
+              message: '刪除金鑰材料成功',
               type: 'success',
               duration: 0
             });

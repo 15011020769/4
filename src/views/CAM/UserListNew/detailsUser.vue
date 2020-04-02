@@ -820,11 +820,11 @@ export default {
             let ErrTips = {
               "InternalError.SystemError": "內部錯誤",
               "InvalidParameter.AttachmentFull":
-                "principal欄位的授權對象關聯策略數已達到上限",
+                "principal欄位的授權物件關聯策略數已達到上限",
               "InvalidParameter.ParamError": "非法入參",
               "InvalidParameter.PolicyIdError": "輸入參數PolicyId不合法",
               "InvalidParameter.PolicyIdNotExist": "策略ID不存在",
-              "InvalidParameter.UserNotExist": "principal欄位的授權對象不存在",
+              "InvalidParameter.UserNotExist": "principal欄位的授權物件不存在",
               "ResourceNotFound.PolicyIdNotFound": "PolicyId指定的資源不存在",
               "ResourceNotFound.UserNotExist": "用戶不存在"
             };

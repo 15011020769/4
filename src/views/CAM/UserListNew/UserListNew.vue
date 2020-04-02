@@ -25,14 +25,12 @@
         class="addUser"
         @click="addToGroup"
       >{{$t('CAM.userList.userAddGroup')}}</el-button>
-
       <el-input
         clearable
         placeholder="支持多關鍵詞(間隔為空格)搜索用戶名/賬戶ID/備註"
         size="small"
         class="inputSearch"
-        v-model="inpVal"
-        @change="userSearch"
+        v-model="inpValtemp"
         style="margin-right:0;width:300px;"
       >
         <i slot="suffix" class="el-input__icon el-icon-search" @click="userSearch"></i>
@@ -375,6 +373,7 @@ export default {
       multipleSelection: [],
       dialogVisible: false,
       json: [],
+      inpValtemp: "", //搜索
       inpVal: "", //搜索
       flag: false, //删除弹框组件
       form: {}, //点击详情,form获取详情数据
@@ -679,6 +678,8 @@ export default {
     },
     //搜索
     userSearch() {
+      this.inpVal = this.inpValtemp
+      console.log(133)
       this.currpage = 1
       this.init()
     },
@@ -934,12 +935,12 @@ export default {
                   "FailedOperation.PolicyFull": "用戶策略數超過上限",
                   "InternalError.SystemError": "內部錯誤",
                   "InvalidParameter.AttachmentFull":
-                    "principal欄位的授權對象關聯策略數已達到上限",
+                    "principal欄位的授權物件關聯策略數已達到上限",
                   "InvalidParameter.ParamError": "非法入參",
                   "InvalidParameter.PolicyIdError": "輸入參數PolicyId不合法",
                   "InvalidParameter.PolicyIdNotExist": "策略ID不存在",
                   "InvalidParameter.UserNotExist":
-                    "principal欄位的授權對象不存在",
+                    "principal欄位的授權物件不存在",
                   "ResourceNotFound.PolicyIdNotFound": "PolicyId指定的資源不存在",
                   "ResourceNotFound.UserNotExist": "用戶不存在"
                 };

@@ -36,7 +36,7 @@
                 </td>
                 <td>
                   <p v-if="allData1.address!==''"><span>地域{{allData1.address}}</span></p>
-                  <p v-if="allData1.savePeak!==''"><span>防護帶寬峰值：{{allData1.savePeak}}Gbps</span></p>
+                  <p v-if="allData1.savePeak!==''"><span>防護頻寬峰值：{{allData1.savePeak}}Gbps</span></p>
                   <p v-if="allData1.elasticPeak!==''"><span>彈性防護峰值：{{allData1.elasticPeak}}Gbps</span></p>
                   <p v-if="allData1.autoPay!==''"><span>自動續費：{{allData1.autoPay}}</span></p>
                   <p v-if="allData1.BusinessBroadband!==''"><span>業務寬頻(Mbps)：{{allData1.BusinessBroadband}}</span></p>

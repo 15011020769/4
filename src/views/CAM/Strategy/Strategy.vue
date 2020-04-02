@@ -31,8 +31,7 @@
             style="width:300px;"
             placeholder="支持搜索策略名稱/備註"
             size="small"
-            v-model="searchValue"
-            @change="toQuery"
+            v-model="searchValueTemp"
             clearable
           >
             <i
@@ -190,6 +189,7 @@ export default {
       ],
       policyScope: "QCS",
       searchValue: "",
+      searchValueTemp: "",
       tableData: [], //策略列表数据
       selectedData: [], //选择要删除的
       table_options: [
@@ -457,6 +457,7 @@ export default {
       this.getData();
     },
     toQuery() {
+      this.searchValue = this.searchValueTemp
       this.currentPage = 1;
       this.getData();
     },

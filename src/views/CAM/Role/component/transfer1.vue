@@ -280,7 +280,7 @@ export default {
         }else{
             let ErrTips = {
              "InternalError.SystemError":'內部錯誤',
-             "InvalidParameter.AttachmentFull":'principal欄位的授權對象關聯策略數已達到上限',
+             "InvalidParameter.AttachmentFull":'principal欄位的授權物件關聯策略數已達到上限',
              "InvalidParameter.ParamError":'非法入參',
              "InvalidParameter.PolicyIdNotExist":'策略ID不存在',
              "InvalidParameter.RoleNotExist":'角色不存在'
