@@ -171,8 +171,8 @@
             name: "近7天",
             Time: "Nearly_7_days",
             TimeGranularity: [{
-              value: "3600",
-              label: "1小時"
+              value: "86400",
+              label: "1天"
             }]
           },
           {
@@ -314,7 +314,7 @@
         });
       },
       GetDat(data) {
-        // console.log(data, '时间控件')
+        // console.log(data, '时间控件');
         this.time = data[1].XAxis; // 横坐标时间
         this.startEnd.StartTime = data[1].StartTIme; // 开始时间
         this.startEnd.EndTime = data[1].EndTIme; //  结束时间
@@ -827,7 +827,6 @@
         };
         let color = this.colorArr;
         if (Instances.length != 0) {
-          console.log("Ins", Instances)
           Instances.forEach((ele, i) => {
             params["Dimensions." + i + '.' + InstanceName] = ele[InstanceName];
           });
@@ -889,7 +888,6 @@
         this.ViewList.forEach((ele, index) => {
           // Instances的数组长度大于0，才去请求echarts的Y轴数据
           if (ele.Instances.length > 0) {
-            console.log(ele, 'ele')
             // Y轴数据
             this.getSingleMonitorData(
               ele.Namespace,

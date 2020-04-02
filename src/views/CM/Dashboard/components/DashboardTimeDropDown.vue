@@ -241,7 +241,7 @@ export default {
           "YYYY/MM/DD HH:mm:ss"
         ); //获取当前时间
         this.Start_End.StartTIme = moment(new Date())
-          .subtract(6, "days")
+          .subtract(7, "days")
           .format("YYYY/MM/DD HH:mm:ss");
         this.Start_End.XAxis = this.getXAxis(
           this.Start_End.StartTIme,
@@ -252,7 +252,7 @@ export default {
           "YYYY/MM/DD HH:mm:ss"
         ); //获取当前时间
         this.Start_End.StartTIme = moment(new Date())
-          .subtract(14, "days")
+          .subtract(15, "days")
           .format("YYYY/MM/DD HH:mm:ss");
         this.Start_End.XAxis = this.getXAxis(
           this.Start_End.StartTIme,
@@ -287,7 +287,7 @@ export default {
           "YYYY/MM/DD HH:mm:ss"
         ); //获取当前时间
         this.Start_End.StartTIme = moment(new Date())
-          .subtract(29, "days")
+          .subtract(30, "days")
           .format("YYYY/MM/DD HH:mm:ss");
         this.Start_End.XAxis = this.getXAxis(
           this.Start_End.StartTIme,
@@ -325,11 +325,11 @@ export default {
         Basis = "Nearly_7_days";
       } else if (endTime.diff(startTime, "d") <= 1 && this.Difference == "D") {
         Basis = "Today";
-      } else if (endTime.diff(startTime, "d") <= 6 && this.Difference == "D") {
+      } else if (endTime.diff(startTime, "d") <= 7 && this.Difference == "D") {
         Basis = "Nearly_7_days";
-      } else if (endTime.diff(startTime, "d") <= 14 && this.Difference == "D") {
+      } else if (endTime.diff(startTime, "d") <= 15 && this.Difference == "D") {
         Basis = "Nearly_15_days";
-      } else if (endTime.diff(startTime, "d") <= 29 && this.Difference == "D") {
+      } else if (endTime.diff(startTime, "d") <= 30 && this.Difference == "D") {
         Basis = "Nearly_30_days";
       }
       this.TimeArr.forEach(item => {
