@@ -1002,7 +1002,7 @@ export default {
       this.$router.push({
         path: "/StrategyDetail",
         query: {
-          policy: obj.PolicyId
+          policy: obj.policyId
         }
       });
     },
