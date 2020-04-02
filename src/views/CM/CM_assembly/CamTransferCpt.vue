@@ -486,7 +486,10 @@ export default {
           this.selected();
           this.searchItemOptions = value.SearchConfig;
           if (this.searchItemOptions.length > 0) {
-            this.searchItem = this.searchItemOptions[0].value;
+            value.searchParam === undefined && (this.searchInput = '')
+            this.searchItem = value.searchParam === undefined ? this.searchItemOptions[0].value : value.searchParam;
+            
+            // this.searchItem = this.searchItemOptions[0].value
           }
           this.headConfig = value.HeadConfig;
           this.productValue = value.productValue;
@@ -529,6 +532,7 @@ export default {
       if (this.$refs.multipleTable !== undefined) {
         this.$refs.multipleTable.clearSelection();
       }
+      console.log(this.tableData)
 
       this.tableData.forEach(row => {
         const found = this.selectedList.find(item => {
