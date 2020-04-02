@@ -577,7 +577,7 @@
                   // 加一个id
                   if (ele.Namespace == 'qce/cvm') {
                     newEl.Id = newEl.unInstanceId; // 与Namespace相对应
-                  } else if (ele.Namespace == 'QCE/VPNGW') {
+                  } else if (ele.Namespace == 'qce/vpngw') {
                     newEl.Id = newEl.vpnGwId; // 与Namespace相对应
                   } else if (ele.Namespace == 'qce/vpnx') {
                     newEl.Id = newEl.vpnConnId; // 与Namespace相对应
@@ -606,7 +606,7 @@
                 ele.DataPoints = []; // 占位，让vue响应
                 if (ele.Namespace == 'qce/cvm') {
                   ele.InstanceName = 'unInstanceId'; // 与Namespace相对应
-                } else if (ele.Namespace == 'QCE/VPNGW') {
+                } else if (ele.Namespace == 'qce/vpngw') {
                   ele.InstanceName = 'vpnGwId'; // 与Namespace相对应
                 } else if (ele.Namespace == 'qce/vpnx') {
                   ele.InstanceName = 'vpnConnId'; // 与Namespace相对应
@@ -676,180 +676,31 @@
           });
       },
       // 获取监控面板echarts数据
-      getSingleMonitorData(
-        Namespace, MetricName, Period, StartTime, EndTime, Instances, index, InstanceName
-      ) {
-        let params = {
-          Version: "2017-03-12", Namespace, MetricName, Period, StartTime: StartTime,EndTime: EndTime,
-        };
-        let color = this.colorArr;
-        if (Instances.length <= 10) {
-          var DataPoints = []; // 取出这个空数组
-          if (Instances.length != 0) {
-            Instances.forEach((ele, i) => {
-              params["Dimensions." + i + '.' + InstanceName] = ele[InstanceName];
-            });
-          } else {
-            const item = this.ViewList[index];
-            item.DataPoints = [];
-            // this.$set(this.ViewList, index, item);
-            return;
-          }
-          this.axios
-            .get(GET_MONITOR_DATA, {params: params})
-            .then(res => {
-            this.mainLoading = false;
-            this.chartsLoading = false;
-            if (res.Response.Error === undefined) {
-              res.Response.DataPoints.forEach((ele, i) => {
-                DataPoints.push({
-                  type: "line",
-                  connectNulls: true,
-                  data: ele.Points.map((item,i) => {
-                    // 存在坐标为null的情况，应该是接口问题
-                    return item === null ? "" : item
-                  }),
-                  // data: ele.Points,
-                  name: ele.Dimensions[InstanceName], // Id名对应的Id
-                  itemStyle: {
-                    normal: {
-                      color: color[i] ? color[i] : color[i % 10],
-                      lineStyle: {
-                        color: color[i] ? color[i] : color[i % 10]
-                      }
-                    }
-                  }
-                });
-              });
-              // this.$set(this.ViewList, index, item);
-              } else {
-                let ErrTips = {
-                  'InternalError': 'InternalError',
-                  'InvalidParameterValue': 'there are no valid dimession values'
-                };
-                let ErrOr = Object.assign(ErrorTips, ErrTips);
-                this.$message({
-                  message: ErrOr[res.Response.Error.Code],
-                  type: "error",
-                  showClose: true,
-                  duration: 0
-                });
-              }
-          });
-          const eg = this.ViewList[index];
-          eg.DataPoints = DataPoints;
-        } else { // 大于10条数据
-          let DataPoints = []; // 取出这个空数组
-          let DimensionsArr = []; // Dimensions数组外的数组
-          DimensionsArr[0] = {}; DimensionsArr[1] = {};
-          Instances.forEach((ele, i) => {
-            if (i < 10) {
-              DimensionsArr[0]["Dimensions." + i + '.' + InstanceName] = ele[InstanceName];
-            } else if (i>=10) {
-              let s = i - 10;
-              DimensionsArr[1]["Dimensions." + s + '.' + InstanceName] = ele[InstanceName];
-            }
-          });
-          // 两次调用获取Y轴数据接口
-          DimensionsArr.forEach((item, j) => {
-            this.ViewList[index].DataPoints = new Array(0);
-            let oldParams = {};
-            oldParams = JSON.parse(JSON.stringify(params));
-            let newParams = Object.assign(oldParams, item);
-            this.axios.get(GET_MONITOR_DATA, {params: newParams})
-              .then(res => {
-                this.mainLoading = false;
-                this.chartsLoading = false;
-                let DataPointsIn = []; // 内循环外放一个数组
-                if (res.Response.Error === undefined) {
-                  res.Response.DataPoints.forEach((ele, i) => {
-                    let newPoints = [];
-                    ele.Points.forEach((el, k)=> {
-                      newPoints.push(el == null ? '' : el);
-                    });
-                    DataPointsIn.push({
-                      type: "line",
-                      connectNulls: true,
-                      data: ele.Points.map((item,k) => {
-                        // 存在坐标为null的情况，应该是接口问题
-                        return item === null ? "" : item
-                      }),
-                      // data: newPoints,
-                      name: ele.Dimensions[InstanceName], // Id名对应的Id
-                      itemStyle: {
-                        normal: {
-                          color: color[i] ? color[i] : color[i % 10],
-                          lineStyle: {
-                            color: color[i] ? color[i] : color[i % 10]
-                          }
-                        }
-                      }
-                    });
-                  });
-                } else {
-                  let ErrTips = {
-                    'InternalError': 'InternalError',
-                    'InvalidParameterValue': 'there are no valid dimession values'
-                  };
-                  let ErrOr = Object.assign(ErrorTips, ErrTips);
-                  this.$message({
-                    message: ErrOr[res.Response.Error.Code],
-                    type: "error",
-                    showClose: true,
-                    duration: 0
-                  });
-                }
-                DataPoints = [...DataPoints, ...DataPointsIn];
-                // console.log(DataPoints, 'DataPoints1');
-                
-                const eg = this.ViewList[index];
-                eg.DataPoints = JSON.parse(JSON.stringify(DataPoints));
-                // this.$set(this.ViewList, index, eg);
-                // console.log(DataPoints, 'DataPoints2', eg, eg.DataPoints);
-              }); // .then结束
-          });// foreach结束
-        }
-        
-      },
-      // 获取监控面板echarts数据 old
-      // async getSingleMonitorData(
-      //   Namespace,
-      //   MetricName,
-      //   Period,
-      //   StartTime,
-      //   EndTime,
-      //   Instances,
-      //   index,
-      //   InstanceName
+      // getSingleMonitorData(
+      //   Namespace, MetricName, Period, StartTime, EndTime, Instances, index, InstanceName
       // ) {
       //   let params = {
-      //     Version: "2017-03-12",
-      //     Namespace,
-      //     MetricName,
-      //     Period,
-      //     StartTime: StartTime,
-      //     EndTime: EndTime,
+      //     Version: "2017-03-12", Namespace, MetricName, Period, StartTime: StartTime,EndTime: EndTime,
       //   };
       //   let color = this.colorArr;
-      //   if (Instances.length != 0) {
-      //     Instances.forEach((ele, i) => {
-      //       params["Dimensions." + i + '.' + InstanceName] = ele[InstanceName];
-      //     });
-      //   } else {
-      //     const item = this.ViewList[index];
-      //     item.DataPoints = [];
-      //     // this.$set(this.ViewList, index, item);
-      //     return;
-      //   }
-      //   await this.axios
-      //     .get(GET_MONITOR_DATA, {
-      //       params: params
-      //     })
-      //     .then(res => {
+      //   if (Instances.length <= 10) {
+      //     var DataPoints = []; // 取出这个空数组
+      //     if (Instances.length != 0) {
+      //       Instances.forEach((ele, i) => {
+      //         params["Dimensions." + i + '.' + InstanceName] = ele[InstanceName];
+      //       });
+      //     } else {
+      //       const item = this.ViewList[index];
+      //       item.DataPoints = [];
+      //       // this.$set(this.ViewList, index, item);
+      //       return;
+      //     }
+      //     this.axios
+      //       .get(GET_MONITOR_DATA, {params: params})
+      //       .then(res => {
       //       this.mainLoading = false;
       //       this.chartsLoading = false;
       //       if (res.Response.Error === undefined) {
-      //         var DataPoints = []; // 取出这个空数组
       //         res.Response.DataPoints.forEach((ele, i) => {
       //           DataPoints.push({
       //             type: "line",
@@ -870,29 +721,175 @@
       //             }
       //           });
       //         });
-      //         const item = this.ViewList[index];
-      //         item.DataPoints = DataPoints;
       //         // this.$set(this.ViewList, index, item);
-      //       } else {
-      //         let ErrTips = {
-      //           'InternalError': 'InternalError',
-      //           'InvalidParameterValue': 'there are no valid dimession values'
-      //         };
-      //         let ErrOr = Object.assign(ErrorTips, ErrTips);
-      //         this.$message({
-      //           message: ErrOr[res.Response.Error.Code],
-      //           type: "error",
-      //           showClose: true,
-      //           duration: 0
-      //         });
+      //         } else {
+      //           let ErrTips = {
+      //             'InternalError': 'InternalError',
+      //             'InvalidParameterValue': 'there are no valid dimession values'
+      //           };
+      //           let ErrOr = Object.assign(ErrorTips, ErrTips);
+      //           this.$message({
+      //             message: ErrOr[res.Response.Error.Code],
+      //             type: "error",
+      //             showClose: true,
+      //             duration: 0
+      //           });
+      //         }
+      //     });
+      //     const eg = this.ViewList[index];
+      //     eg.DataPoints = DataPoints;
+      //   } else { // 大于10条数据
+      //     let DataPoints = []; // 取出这个空数组
+      //     let DimensionsArr = []; // Dimensions数组外的数组
+      //     DimensionsArr[0] = {}; DimensionsArr[1] = {};
+      //     Instances.forEach((ele, i) => {
+      //       if (i < 10) {
+      //         DimensionsArr[0]["Dimensions." + i + '.' + InstanceName] = ele[InstanceName];
+      //       } else if (i>=10) {
+      //         let s = i - 10;
+      //         DimensionsArr[1]["Dimensions." + s + '.' + InstanceName] = ele[InstanceName];
       //       }
       //     });
+      //     // 两次调用获取Y轴数据接口
+      //     DimensionsArr.forEach((item, j) => {
+      //       let oldParams = {};
+      //       oldParams = JSON.parse(JSON.stringify(params));
+      //       let newParams = Object.assign(oldParams, item);
+      //       this.axios.get(GET_MONITOR_DATA, {params: newParams})
+      //         .then(res => {
+      //           this.mainLoading = false;
+      //           this.chartsLoading = false;
+      //           // let DataPointsIn = []; // 内循环外放一个数组
+      //           if (res.Response.Error === undefined) {
+      //             res.Response.DataPoints.forEach((ele, i) => {
+      //               let newPoints = [];
+      //               ele.Points.forEach((el, k)=> {
+      //                 newPoints.push(el == null ? '' : el);
+      //               });
+      //               DataPoints.push({
+      //                 type: "line",
+      //                 connectNulls: true,
+      //                 data: ele.Points.map((item,k) => {
+      //                   // 存在坐标为null的情况，应该是接口问题
+      //                   return item === null ? "" : item
+      //                 }),
+      //                 // data: newPoints,
+      //                 name: ele.Dimensions[InstanceName], // Id名对应的Id
+      //                 itemStyle: {
+      //                   normal: {
+      //                     color: color[i] ? color[i] : color[i % 10],
+      //                     lineStyle: {
+      //                       color: color[i] ? color[i] : color[i % 10]
+      //                     }
+      //                   }
+      //                 }
+      //               });
+      //             });
+      //           } else {
+      //             let ErrTips = {
+      //               'InternalError': 'InternalError',
+      //               'InvalidParameterValue': 'there are no valid dimession values'
+      //             };
+      //             let ErrOr = Object.assign(ErrorTips, ErrTips);
+      //             this.$message({
+      //               message: ErrOr[res.Response.Error.Code],
+      //               type: "error",
+      //               showClose: true,
+      //               duration: 0
+      //             });
+      //           }
+      //           console.log(DataPoints, 'DataPoints1');
+      //         }); // .then结束
+      //     });// foreach结束
+      //     let eg = this.ViewList[index];
+      //     eg.DataPoints = DataPoints;
+      //     console.log(DataPoints, 'DataPoints2', eg, eg.DataPoints);
+      //   }
       // },
+      // 获取监控面板echarts数据 old
+      getSingleMonitorData(
+        Namespace,
+        MetricName,
+        Period,
+        StartTime,
+        EndTime,
+        Instances,
+        index,
+        InstanceName
+      ) {
+        let params = {
+          Version: "2017-03-12",
+          Namespace,
+          MetricName,
+          Period,
+          StartTime: StartTime,
+          EndTime: EndTime,
+        };
+        let color = this.colorArr;
+        if (Instances.length != 0) {
+          console.log("Ins", Instances)
+          Instances.forEach((ele, i) => {
+            params["Dimensions." + i + '.' + InstanceName] = ele[InstanceName];
+          });
+          this.axios
+            .get(GET_MONITOR_DATA, {
+              params: params
+            })
+            .then(res => {
+              this.mainLoading = false;
+              this.chartsLoading = false;
+              if (res.Response.Error === undefined) {
+                var DataPoints = []; // 取出这个空数组
+                res.Response.DataPoints.forEach((ele, i) => {
+                  DataPoints.push({
+                    type: "line",
+                    connectNulls: true,
+                    data: ele.Points.map((item,i) => {
+                      // 存在坐标为null的情况，应该是接口问题
+                      return item === null ? "" : item
+                    }),
+                    // data: ele.Points,
+                    name: ele.Dimensions[InstanceName], // Id名对应的Id
+                    itemStyle: {
+                      normal: {
+                        color: color[i] ? color[i] : color[i % 10],
+                        lineStyle: {
+                          color: color[i] ? color[i] : color[i % 10]
+                        }
+                      }
+                    }
+                  });
+                });
+                const item = this.ViewList[index];
+                item.DataPoints = DataPoints;
+                // this.$set(this.ViewList, index, item);
+              } else {
+                let ErrTips = {
+                  'InternalError': 'InternalError',
+                  'InvalidParameterValue': 'there are no valid dimession values'
+                };
+                let ErrOr = Object.assign(ErrorTips, ErrTips);
+                this.$message({
+                  message: ErrOr[res.Response.Error.Code],
+                  type: "error",
+                  showClose: true,
+                  duration: 0
+                });
+              }
+            });
+        } else {
+          const item = this.ViewList[index];
+          item.DataPoints = [];
+          // this.$set(this.ViewList, index, item);
+          return;
+        }
+      },
       getAllMonitorData() {
         this.chartsLoading = true;
         this.ViewList.forEach((ele, index) => {
           // Instances的数组长度大于0，才去请求echarts的Y轴数据
           if (ele.Instances.length > 0) {
+            console.log(ele, 'ele')
             // Y轴数据
             this.getSingleMonitorData(
               ele.Namespace,
