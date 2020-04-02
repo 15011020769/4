@@ -16,7 +16,8 @@ import { message } from '@/utils/resetMessage' // 重写element-ui的message方�
 import echarts from 'echarts'
 import locale from 'element-ui/lib/locale/lang/zh-TW'
 import '@/assets/iconfont2/iconfont.css'
-
+import GetX from './plugin' // 引入
+import Getdata from './DataPoints' // 引入
 Vue.prototype.$echarts = echarts
 
 for (let key in CMfilters) {
@@ -27,6 +28,9 @@ for (let key in CMfilters) {
 Vue.config.productionTip = false
 Vue.use(ElementUI, { locale })
 Vue.use(VueCookie)
+Vue.use(GetX)
+Vue.use(Getdata)
+
 Vue.prototype.$message = message // 覆盖原有的message方法
 // Vue.use(FileSaver)
 // Vue.use(XLSX)

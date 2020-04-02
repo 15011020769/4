@@ -28,9 +28,11 @@
           <template slot-scope="scope">
             <p v-if="scope.row.DataPoints[0].Values.length==0">暂无数据</p>
             <div v-if="scope.row.DataPoints[0].Values.length!=0">
-              <echart-line id="diskEchearrts-line" :time="scope.row.DataPoints[0].Timestamps | UpTime"
+              <echart-line id="diskEchearrts-line" :time="scope.row.DataPoints[0].Timestamps"
                 :opData="scope.row.DataPoints[0].Values" :scale="3" :period="Period" :xdata="false"
-                :MetricName='disName[scope.row.MetricName]'></echart-line>
+                :MetricName='disName[scope.row.MetricName]' :upDate='true' :StartTime='echart.StartTime'
+                :EndTime='echart.EndTime'>
+              </echart-line>
             </div>
           </template>
         </el-table-column>
@@ -88,9 +90,10 @@
           <template slot-scope="scope">
             <p v-if="scope.row.DataPoints[0].Values.length==0">暫無數據</p>
             <div v-if="scope.row.DataPoints[0].Values.length!=0">
-              <echart-line id="diskEchearrts-line" :time="scope.row.DataPoints[0].Timestamps | UpTime"
+              <echart-line id="diskEchearrts-line" :time="scope.row.DataPoints[0].Timestamps"
                 :opData="scope.row.DataPoints[0].Values" :scale="3" :period="Period" :xdata="false"
-                :MetricName='disName[scope.row.MetricName]'></echart-line>
+                :MetricName='disName[scope.row.MetricName]' :upDate='true' :StartTime='echart.StartTime'
+                :EndTime='echart.EndTime'></echart-line>
             </div>
           </template>
         </el-table-column>
@@ -136,7 +139,7 @@
 <script>
   import moment from "moment";
   import TimeDropDown from '@/components/public/TimeDropDown' //引入时间组件
-  import echartLine from "@/components/public/echars-line"; //引入图标组件
+  import echartLine from "@/components/public/echars-line1"; //引入图标组件
   import {
     ErrorTips
   } from "@/components/ErrorTips";
@@ -350,6 +353,10 @@
           'DiskWriteIops': '硬碟平均每秒寫次數',
           'DiskWriteTraffic': '平均每秒從記憶體寫到硬碟的數據量'
         },
+        echart: {
+          StartTime: '',
+          EndTime: ''
+        }
       }
     },
     components: {
@@ -454,6 +461,8 @@
         this.axios.post(All_MONITOR, parms).then(data => {
           if (data.Response.Error == undefined) {
             this.MonitorData.push(data.Response);
+            this.echart.StartTime = data.Response.StartTime
+            this.echart.EndTime = data.Response.EndTime
           } else {
             this.$message({
               message: ErrorTips[data.Response.Error.Code],
@@ -523,6 +532,8 @@
         this.axios.post(All_MONITOR, parms).then(data => {
           if (data.Response.Error == undefined) {
             this.MonitorData1.push(data.Response);
+            this.echart.StartTime = data.Response.StartTime
+            this.echart.EndTime = data.Response.EndTime
           } else {
             this.$message({
               message: ErrorTips[data.Response.Error.Code],
