@@ -197,42 +197,9 @@ export default {
     Loading
   },
   created () {
-    this.getDataInit()
+    this.getTemplateList()
   },
   methods: {
-    async getDataInit () {
-      // await this.getPolicyType()
-      await this.getTemplateList()
-    },
-    // 获取策略类型
-    async getPolicyType  () {
-      // this.loadShow = true
-      // let params = {
-      //   Version: '2018-07-24',
-      //   Module: 'monitor'
-      // }
-      // this.loadShow = true
-      // await this.axios.post(GET_POLICY_GROUP_TYPE, params).then(res => {
-      //   if (res.Response.Error === undefined) {
-      //     this.Conditions = res.Response.Conditions
-      //     // console.log(this.Conditions)
-      //     this.Conditions.forEach(ele => {
-      //       this.PolicyType.push({ text: ele.Name, value: ele.Name })
-      //     })
-      //     this.loadShow = false
-      //   } else {
-      //     this.loadShow = false
-      //     let ErrTips = {}
-      //     let ErrOr = Object.assign(ErrorTips, ErrTips)
-      //     this.$message({
-      //       message: ErrOr[res.Response.Error.Code],
-      //       type: 'error',
-      //       showClose: true,
-      //       duration: 0
-      //     })
-      //   }
-      // })
-    },
     // 获取触发条件列表
     async getTemplateList (val) {
       this.loadShow = true
@@ -249,14 +216,6 @@ export default {
         if (res.Response.Error === undefined) {
           this.TotalCount = res.Response.Total
           let msg = res.Response.TemplateGroupList
-          // let ct = this.Conditions
-          // for (let i in msg) {
-          //   for (let j in ct) {
-          //     if (msg[i].ViewName === ct[j].PolicyViewName) {
-          //       msg[i]['Name'] = ct[j].Name
-          //     }
-          //   }
-          // }
           msg.forEach(ele => {
             ele.Conditions.forEach((item, i) => {
               let ct = Number(item.CalcType)
@@ -633,28 +592,9 @@ export default {
     buyMessgae () {
       this.panelFlag = true
     },
-    // 取消设置弹框
-    // cancel () {
-    //   this.panelFlag = false
-    // },
     // 确定设置弹框
     save () {
       this.panelFlag = false
-    },
-    handleClose (done) {
-
-      // this.$confirm("確認關閉？")
-      //   .then(_ => {
-      //     done();
-      //   })
-      //   .catch(_ => {});
-    },
-    addTemplate () {
-      // 新建触发条件範本
-      this.dialogFormVisible = true
-    },
-    onSubmit () {
-      console.log('submit!')
     },
     // 策略类型下拉框回调
     // filterName (value, row) {
