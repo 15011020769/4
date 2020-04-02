@@ -161,7 +161,7 @@
           </el-radio-group>
           <br />
           <!-- <span  v-if="form.InstanceChargeType=='PREPAID'" class="hint trankHint">{{ $t('CCN.total.mode3') }}</span> -->
-          <span  v-if="form.InstanceChargeType=='POSTPAID'" class="hint trankHint">默認帶寬上限爲1Gbps，按當月實際使用帶寬</span>
+          <span  v-if="form.InstanceChargeType=='POSTPAID'" class="hint trankHint">默認頻寬上限爲1Gbps，按當月實際使用頻寬</span>
         </el-form-item>
         <el-form-item :label="$t('CCN.total.new3')">
           <el-radio-group v-model="form.BandwidthLimitType">

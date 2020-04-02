@@ -51,7 +51,7 @@ export default {
       // 图表数据
       xAxis: [],
       series: [],
-      legendText: '帶寬',
+      legendText: '頻寬',
       tableData: [], // 表格数据
       currpage: 1, // 页数
       pagesize: 10, // 每页数量

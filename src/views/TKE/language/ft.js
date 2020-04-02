@@ -265,7 +265,7 @@ module.exports = {
       zdcxzl: '自動重新整理',
       ww: '外網',
       nw: '内網',
-      dk: '帶寬',
+      dk: '頻寬',
       qsrmcss: '請輸入名稱搜索',
       jk: '監控',
       lxzt: '類型/狀態',

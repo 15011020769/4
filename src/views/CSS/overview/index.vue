@@ -146,7 +146,7 @@
         >
       </div>
       <el-tabs v-model="activeName" style="margin-top:10px;">
-        <el-tab-pane :label="$t('CSS.overview.10')" name="帶寬"></el-tab-pane>
+        <el-tab-pane :label="$t('CSS.overview.10')" name="頻寬"></el-tab-pane>
         <el-tab-pane :label="$t('CSS.overview.11')" name="流量"></el-tab-pane>
       </el-tabs>
       <el-card>
@@ -159,7 +159,7 @@
           :legendText="activeName"
           :tooltip="{
             trigger: 'axis',
-            formatter: `{b}<br/>{a} {c}${activeName === '帶寬' ? 'Mpbs' : 'MB'}`
+            formatter: `{b}<br/>{a} {c}${activeName === '頻寬' ? 'Mpbs' : 'MB'}`
           }"
         />
       </el-card>
@@ -213,7 +213,7 @@ export default {
       fluxPackageCount: 0,
       value: 1,
       granularity: 300,
-      activeName: '帶寬',
+      activeName: '頻寬',
       region: '',
       StartTime: '',
       EndTime: '',
@@ -258,7 +258,7 @@ export default {
   },
   watch: {
     activeName () {
-      if (this.activeName === '帶寬') {
+      if (this.activeName === '頻寬') {
         this.series = [...this.bandwidthData]
       } else {
         this.series = [...this.fluxData]
@@ -323,7 +323,7 @@ export default {
     },
     exportEchart () {
       let json
-      if (this.activeName === '帶寬') {
+      if (this.activeName === '頻寬') {
         json = this.bandwidth_json
       } else {
         json = this.flux_json
@@ -392,7 +392,7 @@ export default {
           this.domainCheckedListCopy = domains
         })
     },
-    // 实时下行帶寬 今日下行流量 直播在线数
+    // 实时下行頻寬 今日下行流量 直播在线数
     getHeadData () {
       const params = {
         ...defaultParams,
@@ -412,7 +412,7 @@ export default {
           this.totalBandwidth = `${bandwidth} Mbps`
         }
       })
-      // 查询实时总帶寬 实时总连接数
+      // 查询实时总頻寬 实时总连接数
       this.axios
         .post(DESCRIBE_PLAY_STAT_INFOLIST, params)
         .then(({ Response }) => {
@@ -478,7 +478,7 @@ export default {
           this.fluxData = fluxData
           this.bandwidth_json = bandwidthArr
           this.flux_json = fluxArr
-          if (this.activeName === '帶寬') {
+          if (this.activeName === '頻寬') {
             this.series = bandwidthData
           } else {
             this.series = fluxData

@@ -138,7 +138,7 @@
                     <!-- <span class="spanList" :class="type4==6?'seceltList':''" @click="checkListFour(6,'2Gbps')">2Gbps</span> -->
                   </div>
                   <div class="tipList">
-                    <!-- 移除免費贈送100M的業務帶寬 -->
+                    <!-- 移除免費贈送100M的業務頻寬 -->
                     <!-- <p class="tipListThree">{{$t('DDOS.choose.toBychoose')}}</p> -->
                     <p class="tipListThree">
                       {{ $t("DDOS.choose.bandwidth") }}: {{ checked4 }}

@@ -168,11 +168,11 @@
         disName: {
           'InBandwidth': '入带宽',
           'InPkg': '入包量',
-          'OutBandwidth': '出帶寬',
+          'OutBandwidth': '出頻寬',
           'OutPkg': '出包量',
-          'RegionInBandwidth': '地域總入帶寬',
+          'RegionInBandwidth': '地域總入頻寬',
           'RegionInPkg': '地域總入包量',
-          'RegionOutBandwidth': '地域總出帶寬',
+          'RegionOutBandwidth': '地域總出頻寬',
           'RegionOutPkg': '地域總出包量'
         },
         Company: {
@@ -188,11 +188,11 @@
         Tips: {
           'InBandwidth': '地域间入带宽',
           'InPkg': '地域间入包量',
-          'OutBandwidth': '地域间出帶寬',
+          'OutBandwidth': '地域间出頻寬',
           'OutPkg': '地域间出包量',
-          'RegionInBandwidth': '地域總入帶寬',
+          'RegionInBandwidth': '地域總入頻寬',
           'RegionInPkg': '地域總入包量',
-          'RegionOutBandwidth': '地域總出帶寬',
+          'RegionOutBandwidth': '地域總出頻寬',
           'RegionOutPkg': '地域總出包量'
         }
 
