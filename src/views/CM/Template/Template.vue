@@ -105,7 +105,7 @@
           @current-change="handleCurrentChange"
           :page-size="pageSize"
           :page-sizes="[10,20,50,100]"
-          :current-page="currpage"
+          :current-page="currentPage"
           :pager-count="7"
           layout="sizes,prev, pager, next"
           :total="TotalCount"
@@ -186,6 +186,7 @@ export default {
       TotalCount: 0, // 總條數
       pageSize: 10, // 分頁條數
       currpage: 0, // 當前頁碼
+      currentPage:0,
       operationFlag: -1, // 按鈕禁用開關
       searchName: '',
       triggerInput: '' // 觸發條件範本名
@@ -602,9 +603,9 @@ export default {
     // },
     // 分页
     handleCurrentChange (val) {
-      this.currpage = val - 1
+      this.currpage = (val - 1)* this.pageSize;
       this.getTemplateList()
-      this.currpage += 1
+      this.currentPage = val
     },
     handleSizesChange (val) {
       this.pageSize = val

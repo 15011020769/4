@@ -44,7 +44,6 @@
         <el-form-item label="最後修改時間">
           <!-- formatDate -->
           <span class="text">{{upTime(information.updateTime)}}</span>
-          <!-- <span class="text">{{information.updateTime|formatDate}}</span> -->
         </el-form-item>
       </el-form>
       <hr style="margin-bottom:20px;color:#ddd"/>
@@ -98,9 +97,9 @@ export default {
         Version: '2018-07-24',
         Module: 'monitor',
         ModuleId: 1,
-        DId: this.groudId
-        // limit: 20,
-        // offset: 0
+        DId: this.groudId,
+        // Limit: this.pagesize,
+        // Offset: this.currpage
       }
       await this.axios.post(GET_DESCRIBETRANSLOG, params).then(res => {
         if (res.Response.Error === undefined) {
@@ -165,6 +164,7 @@ export default {
     handleCurrentChange (val) {
       this.currpage = val
       this.getTransLog()
+      this.currpage += val
     },
     // 格式化时间
     upTime (value) {
