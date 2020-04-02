@@ -22,7 +22,7 @@
 <script>
 import HeaderCom from "@/components/public/Head";
 import { mavonEditor } from "mavon-editor";
-// import "mavon-editor/dist/css/index.css";
+import "mavon-editor/dist/css/index.css";
 import {NOTICE_DETILS} from '@/constants/MGC.js';
 export default {
   created(){
@@ -63,7 +63,7 @@ export default {
      padding:30px 0;
      z-index:1;
      border: 1px solid #cdcdcd;
-      ::v-deep .v-note-wrapper .v-note-panel {
+     ::v-deep .v-note-wrapper .v-note-panel {
        min-height:700px;
      }
    }
