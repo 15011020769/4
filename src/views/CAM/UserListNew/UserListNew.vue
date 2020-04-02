@@ -25,14 +25,12 @@
         class="addUser"
         @click="addToGroup"
       >{{$t('CAM.userList.userAddGroup')}}</el-button>
-
       <el-input
         clearable
         placeholder="支持多關鍵詞(間隔為空格)搜索用戶名/賬戶ID/備註"
         size="small"
         class="inputSearch"
-        v-model="inpVal"
-        @change="userSearch"
+        v-model="inpValtemp"
         style="margin-right:0;width:300px;"
       >
         <i slot="suffix" class="el-input__icon el-icon-search" @click="userSearch"></i>
@@ -375,6 +373,7 @@ export default {
       multipleSelection: [],
       dialogVisible: false,
       json: [],
+      inpValtemp: "", //搜索
       inpVal: "", //搜索
       flag: false, //删除弹框组件
       form: {}, //点击详情,form获取详情数据
@@ -679,6 +678,8 @@ export default {
     },
     //搜索
     userSearch() {
+      this.inpVal = this.inpValtemp
+      console.log(133)
       this.currpage = 1
       this.init()
     },
