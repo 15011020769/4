@@ -388,7 +388,7 @@ export default {
     Dialog
   },
   created() {
-    this.getBasicsList(); //获取基础告警列表
+    // this.getBasicsList(); //获取基础告警列表
   },
   methods: {
     GetDate(val) {
