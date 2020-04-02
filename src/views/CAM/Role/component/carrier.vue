@@ -427,14 +427,14 @@ export default {
           let ErrTips = {
             "InternalError.SystemError": "內部錯誤。",
             "InvalidParameter.AttachmentFull":
-              "principal欄位的授權對象關聯策略數已達到上限。",
+              "principal欄位的授權物件關聯策略數已達到上限。",
             "InvalidParameter.ConditionError":
               "策略文檔的condition欄位不合法。",
             "InvalidParameter.ParamError": "非法入參。",
             "InvalidParameter.PrincipalError":
               "策略文檔的principal欄位不合法。",
             "InvalidParameter.RoleNotExist": "角色不存在。",
-            "InvalidParameter.UserNotExist": "principal欄位的授權對象不存在。"
+            "InvalidParameter.UserNotExist": "principal欄位的授權物件不存在。"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({

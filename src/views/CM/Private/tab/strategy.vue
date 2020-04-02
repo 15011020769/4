@@ -46,7 +46,7 @@
       width="500px"
       custom-class="tke-dialog"
     >
-      <p>確定解除該告警策略與對象的關聯？</p>
+      <p>確定解除該告警策略與物件的關聯？</p>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="LiftingOperation()">解除</el-button>
         <el-button @click="deleteDialogVisible = false">取消</el-button>
