@@ -105,12 +105,8 @@ export default {
     
      z-index:1;
      border: 1px solid #cdcdcd;
-<<<<<<< HEAD
-     ::v-deep .v-note-wrapper .v-note-panel {
-=======
    
       ::v-deep .v-note-wrapper .v-note-panel {
->>>>>>> mgc style
        min-height:700px;
      }
    }
