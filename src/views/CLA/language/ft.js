@@ -53,7 +53,7 @@ module.exports = {
       z: '至',
       ksrq: '開始日期',
       jsrq: '結束日期',
-      fwmy: '訪問密鑰',
+      fwmy: '訪問金鑰',
       qy: '區域',
       cwm: 'CAM錯誤碼',
       sj: '事件 ID',
