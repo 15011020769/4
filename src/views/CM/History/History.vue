@@ -172,30 +172,30 @@
                         <el-tooltip
                           class="item"
                           effect="dark"
-                          content="策略類型: 私有網絡-VPN閘道"
+                          content="策略類型: 私有網路-VPN閘道"
                           placement="bottom-start"
                         >
-                          <span>私有網絡-VPN閘道</span>
+                          <span>私有網路-VPN閘道</span>
                         </el-tooltip>
                       </div>
                       <div v-if="scope.row.ViewName=='EIP'">
                         <el-tooltip
                           class="item"
                           effect="dark"
-                          content="策略類型: 私有網絡-彈性公網IP"
+                          content="策略類型: 私有網路-彈性公網IP"
                           placement="bottom-start"
                         >
-                          <span>私有網絡-彈性公網IP</span>
+                          <span>私有網路-彈性公網IP</span>
                         </el-tooltip>
                       </div>
                       <div v-if="scope.row.ViewName=='nat_tc_stat'">
                         <el-tooltip
                           class="item"
                           effect="dark"
-                          content="策略類型: 私有網絡-NAT閘道"
+                          content="策略類型: 私有網路-NAT閘道"
                           placement="bottom-start"
                         >
-                          <span>私有網絡-NAT閘道</span>
+                          <span>私有網路-NAT閘道</span>
                         </el-tooltip>
                       </div>
                       <div v-if="scope.row.ViewName=='REDIS-CLUSTER'">
@@ -212,10 +212,10 @@
                         <el-tooltip
                           class="item"
                           effect="dark"
-                          content="策略類型: 私有網絡-VPN通道"
+                          content="策略類型: 私有網路-VPN通道"
                           placement="bottom-start"
                         >
-                          <span>私有網絡-VPN通道</span>
+                          <span>私有網路-VPN通道</span>
                         </el-tooltip>
                       </div>
                       <div v-if="scope.row.ViewName=='dcline'">

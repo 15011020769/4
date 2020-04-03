@@ -187,7 +187,7 @@ module.exports = {
       xz: "新增",
       zjm: "ID/主機名",
       zt: "狀態",
-      wllx: "網絡類型"
+      wllx: "網路類型"
     },
     Dashboard:{
       qxz: '請選擇',
@@ -269,7 +269,7 @@ module.exports = {
       xgsj: "修改時間",
       bhsl: "包含實例",
       zjm: "ID/主機名",
-      wllx: "網絡類型"
+      wllx: "網路類型"
     },
     CamTransferCpt: {
       qxz: "請選擇",
