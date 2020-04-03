@@ -1,10 +1,10 @@
 <template>
   <div class="CCN">
-    <div class="big-title">{{$t('CCN.menu.title')}}</div>
+    <div class="big-title">雲聯網 CCN</div>
     <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose"
       background-color="#292b36" text-color="#fff" active-text-color="#fff" :router="true">
       <el-menu-item index="ccnPage" @click="_class" :class="{'active':classValue=='ccnPage'}">
-        <span slot="title">{{$t('CCN.menu.title')}}</span>
+        <span slot="title">雲聯網 CCN</span>
       </el-menu-item>
     </el-menu>
   </div>

@@ -50,7 +50,7 @@
               style="font-size: 12px;"
               type="text"
               @click="visible = true"
-              >添加賬戶</el-button
+              >添加帳戶</el-button
             >
           </div>
         </div>
@@ -99,7 +99,7 @@
       />
     </el-dialog>
     <el-dialog
-      title="添加新賬戶"
+      title="添加新帳戶"
       :visible.sync="visible"
       @close="beforeClose"
       width="500px"

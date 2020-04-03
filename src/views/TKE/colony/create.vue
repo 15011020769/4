@@ -5001,7 +5001,7 @@ export default {
               "InvalidClientToken.TooLong":
                 "指定的ClientToken字元串長度超出限制，必須小於等於64位元組。",
               "InvalidHostId.NotFound":
-                "指定的HostId不存在，或不屬於該請求賬號所有。",
+                "指定的HostId不存在，或不屬於該請求帳號所有。",
               "InvalidInstanceName.TooLong":
                 "指定的InstanceName字元串長度超出限制，必須小於等於60位元組。",
               "InvalidInstanceType.Malformed":
@@ -5091,7 +5091,7 @@ export default {
                 "InvalidClientToken.TooLong":
                   "指定的ClientToken字元串長度超出限制，必須小於等於64位元組。",
                 "InvalidHostId.NotFound":
-                  "指定的HostId不存在，或不屬於該請求賬號所有。",
+                  "指定的HostId不存在，或不屬於該請求帳號所有。",
                 "InvalidInstanceName.TooLong":
                   "指定的InstanceName字元串長度超出限制，必須小於等於60位元組。",
                 "InvalidInstanceType.Malformed":

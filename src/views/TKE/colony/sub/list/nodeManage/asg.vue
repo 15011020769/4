@@ -779,7 +779,7 @@
                "InvalidParameterValue.LbProjectInconsistent": "負載均衡器專案不一致。",
                "InvalidParameterValue.LbVpcInconsistent": "負載均衡器和伸縮組的VPC不一致。",
                "InvalidParameterValue.LimitExceeded": "取值超出限制。",
-               "InvalidParameterValue.OnlyVpc": "賬號僅支持VPC網路。",
+               "InvalidParameterValue.OnlyVpc": "帳號僅支持VPC網路。",
                "InvalidParameterValue.Range": "取值超出指定範圍。",
                "InvalidParameterValue.Size": "伸縮組最大數量、最小數量、期望實例數取值不合法。",
                "InvalidParameterValue.SubnetIds": "子網訊息不合法。",
