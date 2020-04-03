@@ -164,7 +164,8 @@
                       <div class="indication-alarm">
                         <span>if</span>
                         <el-form-item label-width="0px" style="display: inline-block">
-                          <el-select v-model="cItem.MetricId" style="width:150px;" :disabled="!formInline.alarmCheckbok.includes('指標告警')">
+                          <el-select v-model="cItem.MetricId" style="width:150px;" :disabled="!formInline.alarmCheckbok.includes('指標告警')"
+                                      @change="configTriggerConditionCalcValueChange">
                             <el-option v-for="(item, index) in product.Metrics" :key="index" :label="item.MetricShowName" :value="item.MetricId"></el-option>
                           </el-select>
                         </el-form-item>
@@ -178,7 +179,7 @@
                             <el-option v-for="(item, index) in symbolList" :key="index" :label="item.label" :value="item.id"></el-option>
                           </el-select>
                         </el-form-item>
-                        <el-form-item label-width="0px" style="display: inline-block">
+                        <el-form-item label-width="0px" style="display: inline-block" :prop="`configTrigger.Conditions.${cIndex}.CalcValue`" :rules="configTriggerCalcValueValidator">
                           <el-input style="vertical-align: baseline;width: 140px" placeholder="指標" value="0" min="0" max="100" type="number"
                                     v-model.number="cItem.CalcValue" :disabled="!formInline.alarmCheckbok.includes('指標告警')">
                             <template slot="append">{{ cItem.Unit }}</template>
@@ -220,8 +221,9 @@
                   </p>
                   <div style="padding-left: 21px" v-if="product.EventMetrics !== undefined">
                     <div v-for="(feItem, feIndex) in formInline.configTrigger.EventConditions" :key="feIndex">
-                      <el-form-item label-width="0px">
-                        <el-select v-model="feItem.EventID" style="width:180px;" :disabled="!formInline.alarmCheckbok.includes('事件告警')">
+                      <el-form-item label-width="0px" :prop="`configTrigger.EventConditions.${feIndex}.EventID`" :rules="configTriggerEventIDValidator">
+                        <el-select v-model="feItem.EventID" style="width:180px;" :disabled="!formInline.alarmCheckbok.includes('事件告警')"
+                                  @change="configTriggerEventConditionEventIDChange">
                           <el-option v-for="(item, index) in product.EventMetrics" :key="index"
                                      :label="item.EventShowName" :value="item.EventId" label-width="40px"></el-option>
                         </el-select>
@@ -325,6 +327,40 @@ export default {
             }
           },
           trigger: 'blur'
+        }
+      ],
+      configTriggerEventIDValidator: [
+        {
+          validator: (rule, value, callback) => {
+            if (this.radioChufa === '2') {
+              let index = parseInt(rule.field.split('.')[2])
+              let EventConditions = this.formInline.configTrigger.EventConditions
+              for (let i = 0; i < index; i++) {
+                if (EventConditions[index].EventID === EventConditions[i].EventID) {
+                  callback(new Error('請勿重複配置'))
+                  return
+                }
+              }
+            }
+            callback()
+          }
+        }
+      ],
+      configTriggerCalcValueValidator: [
+        {
+          validator: (rule, value, callback) => {
+            if (this.radioChufa === '2') {
+              let index = parseInt(rule.field.split('.')[2])
+              let Conditions = this.formInline.configTrigger.Conditions
+              for (let i = 0; i < index; i++) {
+                if (Conditions[index].CalcValue === Conditions[i].CalcValue && Conditions[index].MetricId === Conditions[i].MetricId) {
+                  callback(new Error('請勿重複配置'))
+                  return
+                }
+              }
+            }
+            callback()
+          }
         }
       ],
       radio: '2', // 选择告警对象类型
@@ -457,6 +493,7 @@ export default {
       this.projectId = val
     },
     passData: async function (val) {
+      this.multipleSelection = []
       this.product = { ...val, projectId: this.formInline.projectId }
       await this.initRequest()
       if (this.isInit) {
@@ -512,6 +549,9 @@ export default {
     },
     configTriggerDelConditions: function (arr, index) {
       arr.splice(index, 1)
+      this.$nextTick(() => {
+        this.configTriggerConditionCalcValueChange()
+      })
     },
     configTriggerAddConditions: function () {
       let { Metrics } = this.product
@@ -530,6 +570,9 @@ export default {
             ContinueTime: 1,
             AlarmNotifyPeriod: 86400
           })
+          this.$nextTick(() => {
+            this.configTriggerConditionCalcValueChange()
+          })
           return
         }
       }
@@ -543,9 +586,20 @@ export default {
         ContinueTime: 1,
         AlarmNotifyPeriod: 86400
       })
+      this.$nextTick(() => {
+        this.configTriggerConditionCalcValueChange()
+      })
+    },
+    configTriggerConditionCalcValueChange: function () {
+      this.formInline.configTrigger.Conditions.forEach((item, idx) => {
+        this.$refs['form'].validateField(`configTrigger.Conditions.${idx}.CalcValue`)
+      })
     },
     configTriggerDelEventConditions: function (arr, index) {
       arr.splice(index, 1)
+      this.$nextTick(() => {
+        this.configTriggerEventConditionEventIDChange()
+      })
     },
     configTriggerAddEventConditions: function () {
       let { EventMetrics } = this.product
@@ -565,6 +619,9 @@ export default {
             AlarmNotifyType: 0,
             EventID: EventMetrics[i].EventId
           })
+          this.$nextTick(() => {
+            this.configTriggerEventConditionEventIDChange()
+          })
           return
         }
       }
@@ -573,6 +630,13 @@ export default {
         AlarmNotifyPeriod: 0,
         AlarmNotifyType: 0,
         EventID: EventMetrics[0].EventId
+      })
+      this.$nextTick(() => {
+      })
+    },
+    configTriggerEventConditionEventIDChange: function () {
+      this.formInline.configTrigger.EventConditions.forEach((item, idx) => {
+        this.$refs['form'].validateField(`configTrigger.EventConditions.${idx}.EventID`)
       })
     },
     initRequest: async function () {
@@ -741,6 +805,37 @@ export default {
     // 保存
     save: async function () {
       let { multipleSelection, radio, cam } = this
+      let { Conditions, EventConditions } = this.formInline.configTrigger
+      for (let i = 0; i < Conditions.length; i++) {
+        let errMsg = ''
+        this.$refs['form'].validateField(`configTrigger.Conditions.${i}.CalcValue`, (errorMessage) => {
+          errMsg = errorMessage
+        })
+        if (errMsg !== '') {
+          this.$message({
+            message: '請選擇告警條件',
+            type: 'error',
+            showClose: true,
+            duration: 0
+          })
+          return
+        }
+      }
+      for (let i = 0; i < EventConditions.length; i++) {
+        let errMsg = ''
+        this.$refs['form'].validateField(`configTrigger.EventConditions.${i}.EventID`, (errorMessage) => {
+          errMsg = errorMessage
+        })
+        if (errMsg !== '') {
+          this.$message({
+            message: '請選擇告警條件',
+            type: 'error',
+            showClose: true,
+            duration: 0
+          })
+          return
+        }
+      }
       this.$refs['form'].validate(valid => {
         if (valid) {
           if (radio === '2' && multipleSelection.length <= 0) {
