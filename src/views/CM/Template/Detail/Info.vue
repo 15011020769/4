@@ -385,37 +385,8 @@ export default {
   },
   methods: {
     async getInfo () {
-      // await this.getPolicyType()
       await this.getProjectName()
       await this.getDetailInfo()
-      // await this.getPolicyGroupList()
-    },
-    // 獲取策略類型
-    async getPolicyType  () {
-      // this.loadShow = true
-      // let params = {
-      //   Version: '2018-07-24',
-      //   // Region:"",
-      //   Module: 'monitor'
-      // }
-      // this.loadShow = true
-      // await this.axios.post(GET_POLICY_GROUP_TYPE, params).then(res => {
-      //   if (res.Response.Error === undefined) {
-      //     this.Conditions = res.Response.Conditions
-      //     // console.log(this.Conditions)
-      //     this.loadShow = false
-      //   } else {
-      //     this.loadShow = false
-      //     let ErrTips = {}
-      //     let ErrOr = Object.assign(ErrorTips, ErrTips)
-      //     this.$message({
-      //       message: ErrOr[res.Response.Error.Code],
-      //       type: 'error',
-      //       showClose: true,
-      //       duration: 0
-      //     })
-      //   }
-      // })
     },
     // 获取项目名称
     async getProjectName () {
@@ -733,50 +704,6 @@ export default {
             UnknownParameter: '未知參數錯誤。',
             UnsupportedOperation: '操作不支持。'
           }
-          let ErrOr = Object.assign(ErrorTips, ErrTips)
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: 'error',
-            showClose: true,
-            duration: 0
-          })
-        }
-      })
-    },
-    // 獲取策略組列表(未完成  參數有誤)
-    async getPolicyGroupList () {
-      this.loadShow = true
-      let params = {
-        conditionTempGroupId: this.id,
-        lang: 'zh',
-        like: '',
-        limit: 20,
-        offset: 0,
-        Version: '2018-07-24'
-      }
-      await this.axios.post(GET_GROUP_LIST, params).then(res => {
-        if (res.codeDesc === 'Success') {
-          let msg = res.data.groupList
-          this.total = res.data.total
-          msg.forEach(ele => {
-            ele.receiverGroup = ele.receiverInfos && ele.receiverInfos[0].receiverGroupList.length
-            if (ele.receiverInfos.length > 0) {
-              ele.receiverInfos.notifyWay.forEach(item => {
-                if (item === 'EMAIL') {
-                  this.channelList.push('郵件')
-                } else if (item === 'SMS') {
-                  this.channelList.push('簡訊')
-                } else if (item === 'WECHAT') {
-                  this.channelList.push('微信')
-                }
-              })
-            }
-          })
-          this.groupList = msg
-          this.loadShow = false
-        } else {
-          this.loadShow = false
-          let ErrTips = {}
           let ErrOr = Object.assign(ErrorTips, ErrTips)
           this.$message({
             message: ErrOr[res.Response.Error.Code],

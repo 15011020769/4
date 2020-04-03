@@ -92,7 +92,7 @@
               <el-pagination
                 @size-change="handleSizeChange"
                 @current-change="handleCurrentChange"
-                :current-page="pageIndex"
+                :current-page="pageIndex1"
                 :page-sizes="[10, 20, 50, 100]"
                 :page-size="pageSize"
                 layout="total, sizes, prev, pager, next"
@@ -181,6 +181,7 @@ export default {
       total: 0, //总条数
       pageSize: 10, // 分页条数
       pageIndex: 0, // 当前页码
+      pageIndex1: 0, // 当前分页页码
       deleteDialogVisible: false,
       instanceGroupId: "",
       copyDialogVisible: false,
@@ -554,7 +555,7 @@ export default {
     handleCurrentChange(val) {
       this.pageIndex = (val - 1) * this.pageSize;
       this.ListInit();
-      this.pageIndex += (val - 1) * this.pageSize;
+      this.pageIndex1 = val;
     },
     handleSizeChange(val) {
       // console.log(`每页 ${val} 条`);

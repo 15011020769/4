@@ -1,7 +1,7 @@
 <template>
   <div class="wrap">
     <div class="title_top">
-      <h1>{{ $t('CCN.total.title') }}</h1>
+      <h1>雲聯網 CCN</h1>
     </div>
     <div class="tea-content__body">
       <div>

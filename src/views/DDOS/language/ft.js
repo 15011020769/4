@@ -330,7 +330,7 @@ module.exports = {
     },
     Proteccon_figura: {
       Proteccon_title: '防護配置',
-      DDosprotection: 'DDoS防護',
+      DDosprotection: 'DDoS 基礎防護',
       Id_name: 'ID/名稱',
       region: '地區',
       Protection_state: '防護狀態',

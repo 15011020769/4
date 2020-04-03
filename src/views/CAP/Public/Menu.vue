@@ -1,6 +1,6 @@
 <template>
   <div class="CAP">
-    <div class="big-title">CAP</div>
+    <div class="big-title">驗證碼 Captcha</div>
     <el-menu
       default-active="2"
       class="el-menu-vertical-demo"

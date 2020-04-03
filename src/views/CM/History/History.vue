@@ -172,30 +172,30 @@
                         <el-tooltip
                           class="item"
                           effect="dark"
-                          content="策略類型: 私有網絡-VPN閘道"
+                          content="策略類型: 私有網路-VPN閘道"
                           placement="bottom-start"
                         >
-                          <span>私有網絡-VPN閘道</span>
+                          <span>私有網路-VPN閘道</span>
                         </el-tooltip>
                       </div>
                       <div v-if="scope.row.ViewName=='EIP'">
                         <el-tooltip
                           class="item"
                           effect="dark"
-                          content="策略類型: 私有網絡-彈性公網IP"
+                          content="策略類型: 私有網路-彈性公網IP"
                           placement="bottom-start"
                         >
-                          <span>私有網絡-彈性公網IP</span>
+                          <span>私有網路-彈性公網IP</span>
                         </el-tooltip>
                       </div>
                       <div v-if="scope.row.ViewName=='nat_tc_stat'">
                         <el-tooltip
                           class="item"
                           effect="dark"
-                          content="策略類型: 私有網絡-NAT閘道"
+                          content="策略類型: 私有網路-NAT閘道"
                           placement="bottom-start"
                         >
-                          <span>私有網絡-NAT閘道</span>
+                          <span>私有網路-NAT閘道</span>
                         </el-tooltip>
                       </div>
                       <div v-if="scope.row.ViewName=='REDIS-CLUSTER'">
@@ -212,10 +212,10 @@
                         <el-tooltip
                           class="item"
                           effect="dark"
-                          content="策略類型: 私有網絡-VPN通道"
+                          content="策略類型: 私有網路-VPN通道"
                           placement="bottom-start"
                         >
-                          <span>私有網絡-VPN通道</span>
+                          <span>私有網路-VPN通道</span>
                         </el-tooltip>
                       </div>
                       <div v-if="scope.row.ViewName=='dcline'">
@@ -228,17 +228,6 @@
                           <span>專線接入-物理專線</span>
                         </el-tooltip>
                       </div>
-
-                      <!-- <div v-if="scope.row.ViewName=='dcline'">
-                        <el-tooltip
-                          class="item"
-                          effect="dark"
-                          content="策略類型: 專線接入-物理專線"
-                          placement="bottom-start"
-                        >
-                          <span>專線接入-物理專線</span>
-                        </el-tooltip>
-                      </div>-->
                     </template>
                   </el-table-column>
 
@@ -250,6 +239,7 @@
                   <el-table-column prop label="所屬網路" width="120">
                     <template slot-scope="scope">
                       <div v-if="scope.row.Vpc=='1'">VPC網路</div>
+                      <div v-else>-</div>
                     </template>
                   </el-table-column>
                   <el-table-column prop label="所屬專案" width="120">
@@ -274,7 +264,7 @@
                       @size-change="handleSizeChange"
                       :pager-count="7"
                       @current-change="handleCurrentChange"
-                      :current-page="pageIndex"
+                      :current-page="pageIndex1"
                       :page-sizes="[10, 20, 50, 100]"
                       :page-size="pageSize"
                       layout="total, sizes, prev, pager, next"
@@ -385,6 +375,7 @@ export default {
       totals: 0, //总条数
       pageSize: 10, //每页10条
       pageIndex: 0, // 当前页码
+      pageIndex1: 0, // 当前页码
       StartTime: "",
       EndTime: "",
       Period: {}
@@ -397,7 +388,7 @@ export default {
     Dialog
   },
   created() {
-    this.getBasicsList(); //获取基础告警列表
+    // this.getBasicsList(); //获取基础告警列表
   },
   methods: {
     GetDate(val) {
@@ -532,17 +523,19 @@ export default {
     handleCurrentChange(val) {
       this.pageIndex = (val - 1) * this.pageSize;
       this.getBasicsList(this.timeObjs);
-      this.pageIndex += (val - 1) * this.pageSize;
+      this.pageIndex = val;
+
+      this.pageIndex1 = val;
     },
     searchName() {
-      this.pageIndex = 1;
+      this.pageIndex = 0;
       //搜索框
       if (this.input == "") {
         this.getBasicsList(this.timeObjs);
       }
     },
     searchBtn() {
-      this.pageIndex = 1;
+      this.pageIndex = 0;
 
       //搜索按鈕
       if (this.input == "") {

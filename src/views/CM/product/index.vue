@@ -181,8 +181,7 @@
             <el-pagination
               @size-change="handleSizeChange"
               @current-change="handleCurrentChange"
-              :pager-count="7"
-              :current-page="pageIndex"
+              :current-page="pageIndex1"
               :page-sizes="[10, 20, 50, 100]"
               :page-size="pageSize"
               layout="total, sizes, prev, pager, next"
@@ -254,6 +253,7 @@ export default {
       TotalCount: 0, //总条数
       pageSize: 10, // 分页条数
       pageIndex: 0, // 当前页码
+      pageIndex1: 0, // 当前页码
       TimeArr: [
         {
           name: "近7天",
@@ -371,7 +371,7 @@ export default {
     handleCurrentChange(val) {
       this.pageIndex = (val - 1) * this.pageSize;
       this.getProductList();
-      this.pageIndex += (val - 1) * this.pageSize;
+      this.pageIndex1 = val;
     },
     handleSizeChange(val) {
       // console.log(`每頁 ${val} 條`);

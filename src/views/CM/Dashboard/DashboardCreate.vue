@@ -27,7 +27,12 @@
         <div class="top-two-see">{{ $t("CVM.DashboardCreate.mxst") }}</div>
       </div>
     </div>
-    <h3 style="margin-bottom:20px">{{ $t("CVM.DashboardCreate.pzjktb") }}</h3>
+    <h3 style="margin-bottom:20px">{{ $t("CVM.DashboardCreate.pzjktb") }}
+      <el-tooltip class="item" effect="light" placement="top">
+         <div slot="content">单张曲线图可监控的实例数量上限为<span style="color:red;">(10个)</span><br>当您选择的实例数量超出单张曲线图的上限<br>我们将为您按实例列表的顺序批量创建多个曲线图。</div>
+          <i class="el-icon-info"></i>
+      </el-tooltip>
+    </h3>
     <div class="footer">
       <div class="footer-left">
         <div class="footer-left-left" v-loading="loading">
@@ -79,7 +84,7 @@
           <div>
             <div style="width:100%;height:30px;background-color:#f2f2f2;margin:10px 0px;" v-if='rightData.length'>
                 <div style="margin-left:20px;line-height:30px">
-                    <span>共有{{rightData.length}}個實例</span>
+                    <span>共有{{rightData.length>10?10:rightData.length}}個實例</span>
                     <span style="margin-left:20px">監控明細({{StartTime}})</span>
                 </div>
                 <el-table
@@ -422,48 +427,30 @@ export default {
           params["Dimensions." + i + ".unInstanceId"] = this.rightData[
             i
           ].InstanceId;
-          // this.DashboardData.push({
-          //   regionId: "39",
-          //   unInstanceId: this.rightData[i].InstanceId
-          // });
         } else if (this.productValue === "VPN_GW") {
           // VPN网关
           this.pointId = "vpnGwId"
           params["Dimensions." + i + ".vpnGwId"] = this.rightData[
             i
           ].VpnGatewayId;
-          // this.DashboardData.push({
-          //   regionId: "39",
-          //   vpnGwId: this.rightData[i].VpnGatewayId
-          // });
         } else if (this.productValue === "vpn_tunnel") {
           // vpn通道
           this.pointId = "vpnConnId"
           params["Dimensions." + i + ".vpnConnId"] = this.rightData[
             i
           ].VpnConnectionId;
-          // this.DashboardData.push({
-          //   regionId: "39",
-          //   vpnConnId: this.rightData[i].VpnConnectionId
-          // });
+
         } else if (this.productValue === "nat_tc_stat") {
           // Nat网关
           this.pointId = "natId"
           params["Dimensions." + i + ".natId"] = this.rightData[i].NatGatewayId;
-          // this.DashboardData.push({
-          //   regionId: "39",
-          //   natId: this.rightData[i].NatGatewayId
-          // });
+
         } else if (this.productValue === "DC_GW") {
           // 专线网关
           this.pointId = "directConnectGatewayId"
           params[
             "Dimensions." + i + ".directConnectGatewayId"
           ] = this.rightData[i].DirectConnectGatewayId;
-          // this.DashboardData.push({
-          //   regionId: "39",
-          //   directConnectGatewayId: this.rightData[i].DirectConnectGatewayId
-          // });
         } else if (this.productValue === "REDIS-CLUSTER") {
           // Redis
           this.pointId = "instanceid"
@@ -471,57 +458,32 @@ export default {
           params["Dimensions." + i + ".instanceid"] = this.rightData[
             i
           ].InstanceId;
-          // this.DashboardData.push({
-          //   regionId: "39",
-          //   appid: this.rightData[i].Appid,
-          //   instanceid: this.rightData[i].InstanceId
-          // });
         } else if (this.productValue === "dcchannel") {
           // 专用通道
           this.pointId = "directConnectConnId"
           params["Dimensions." + i + ".directConnectConnId"] = this.rightData[
             i
           ].DirectConnectTunnelId;
-          // this.DashboardData.push({
-          //   regionId: "39",
-          //   directConnectConnId: this.rightData[i].DirectConnectTunnelId
-          // });
         } else if (this.productValue === "COS") {
           // 对象存储
           this.pointId = "bucket"
           params["Dimensions." + i + ".bucket"] = this.rightData[i].Name;
-          // this.DashboardData.push({
-          //   regionId: "39",
-          //   bucket: this.rightData[i].Name
-          // });
         } else if (this.productValue === "dcline") {
           // 物理专线
           this.pointId = "directConnectId"
           params["Dimensions." + i + ".directConnectId"] = this.rightData[
             i
           ].DirectConnectId;
-          // this.DashboardData.push({
-          //   regionId: "39",
-          //   directConnectId: this.rightData[i].DirectConnectId
-          // });
         } else if (this.productValue === "cdb_detail") {
           // MYSQL
           this.pointId = "uInstanceId"
           params["Dimensions." + i + ".uInstanceId"] = this.rightData[
             i
           ].InstanceId;
-          // this.DashboardData.push({
-          //   regionId: "39",
-          //   uInstanceId: this.rightData[i].InstanceId
-          // });
         } else if (this.productValue === "BS") {
           // 云硬盘
           this.pointId = "diskId"
           params["Dimensions." + i + ".diskId"] = this.rightData[i].DiskId;
-          // this.DashboardData.push({
-          //   regionId: "39",
-          //   diskId: this.rightData[i].DiskId
-          // });
         }
       }
       await this.axios.post(All_MONITOR, params).then(res => {
