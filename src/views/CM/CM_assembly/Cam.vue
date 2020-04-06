@@ -299,9 +299,14 @@ export default {
           }
         })
         .then(() => {
-          this.tableData.forEach(item => {
-            this.userGroupDetail(item.GroupId);
-          });
+          let _this = this;
+          for (let k = 0; k < _this.tableData.length; k++) {
+            (function(o) {
+              setTimeout(() => {
+                _this.userGroupDetail(_this.tableData[k].GroupId);
+              }, o * 1000);
+            })(k);
+          }
         });
     },
 
