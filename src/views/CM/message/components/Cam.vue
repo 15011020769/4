@@ -20,13 +20,13 @@
           v-model="triggerInput"
           style="margin-left:-1px;margin-top:1px;"
           v-if="formInline.jieshou === '0'"
-          placeholder="請輸入用護組名稱"
+          placeholder="請輸入用戶組名稱"
         ></el-input>
         <el-input
           v-model="triggerInput"
           style="margin-left:-1px;margin-top:1px;"
           v-if="formInline.jieshou === '1'"
-          placeholder="請輸入用護名稱"
+          placeholder="請輸入用戶名稱"
         ></el-input>
         <el-button
           icon="el-icon-search"
@@ -50,13 +50,14 @@
         <el-table-column prop="GroupName" label="用戶組名"></el-table-column>
         <el-table-column label="用戶名">
           <template slot-scope="scope">
-            <span
-              v-if="scope.row.UserInfo.length !== 0"
-              v-for="(item,index) in scope.row.UserInfo"
-              :key="index"
-            >
-              <span>{{item.Name}}</span>
-              <span v-show="scope.row.UserInfo.length-1 !== index">、</span>
+            <span v-if="scope.row.UserInfo.length !== 0">
+              <span
+                v-for="(item,index) in scope.row.UserInfo"
+                :key="index"
+              >
+                <span>{{item.Name}}</span>
+                <span v-show="scope.row.UserInfo.length-1 !== index">、</span>
+              </span>
             </span>
             <span v-if="scope.row.UserInfo.length === 0">未配置接收人</span>
           </template>
@@ -120,7 +121,7 @@ export default {
         jieshouArr: [
           {
             value: "0",
-            name: "用護組名"
+            name: "用戶組名"
           }
           //   {
           //     value: "1",
@@ -226,7 +227,7 @@ export default {
             }
           } else {
             let ErrTips = {
-              "ResourceNotFound.UserNotExist": "用護不存在"
+              "ResourceNotFound.UserNotExist": "用戶不存在"
             };
             this.loadingShow = false;
             let ErrOr = Object.assign(ErrorTips, ErrTips);
