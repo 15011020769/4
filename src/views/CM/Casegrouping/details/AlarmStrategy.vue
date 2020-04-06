@@ -339,7 +339,8 @@ export default {
       this.$router.push({
         name: "strategyCreate",
         query: {
-          instanceGroupId: this.Rules.instanceGroupId
+          instanceGroupId: this.Rules.instanceGroupId,
+          viewName: this.Rules.viewName
         }
       });
     },
