@@ -113,7 +113,7 @@ module.exports = {
       ddwg: '對端閘道',
     },
     cloudDisk: {
-      yyp: '雲硬碟',
+      yyp: '塊儲存',
       mc: 'ID/名稱',
       dx: '大小(GB)',
       yplx: '硬碟類型',
@@ -189,7 +189,7 @@ module.exports = {
       zt: "狀態",
       wllx: "網路類型"
     },
-    Dashboard:{
+    Dashboard: {
       qxz: '請選擇',
       tjjkmb: '添加監控面板',
       jhtjsj: '現已支持配置和檢視一批資源的聚合統計數據，請在新建圖表配置中選擇“聚合視圖”。',
