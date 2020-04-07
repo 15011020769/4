@@ -126,10 +126,24 @@ export default{
             })
             this.$router.replace('/ProtectOverview')
           } else {
-            let ErrTips = {};
+            let ErrTips = {
+              "FailedOperation": "操作失敗",
+              "FailedOperation.BalanceInsufficient":"賬戶餘額不足",
+              "FailedOperation.AgentPayDealCannotDown": "代理支付設備不能降配",
+              "FailedOperation.InvalidDeal": "訂單狀態錯誤，只有未支付訂單才能支付",
+              "FailedOperation.InvalidVoucher":"代金券不可用",
+              "FailedOperation.NeedPayTogeter": "一起購買的訂單必須同時支付",
+              "FailedOperation.PayPriceError": "支付失敗，請聯繫台富雲工作人員處理",
+              "FailedOperation.PaySuccDeliverFailed":"支付成功但發貨失敗，請聯繫台富雲工作人員處理",
+              "InvalidParameter": "參數錯誤",
+              "InvalidParameterValue": "參數取值錯誤",
+              "UnauthorizedOperation.CertificationNeedUpgrade":"因賬號安全升級，購買雲資源需完善您的實名信息",
+              "UnauthorizedOperation.NotCertification": "賬號沒有實名認證，支付失敗",
+              "UnauthorizedOperation.NotFinanceAuth": "賬號沒有財務授權，支付失敗"
+            };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
-              message: ErrOr[res.Response.Error.Code] === 'FailedOperation.BalanceInsufficient' ? '餘額不足' : '購買失敗',
+              message: ErrOr[res.Response.Error.Code] ,
               type: "error",
               showClose: true,
               duration: 0
