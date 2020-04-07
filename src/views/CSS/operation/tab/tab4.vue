@@ -70,7 +70,7 @@ export default {
     domainCheckedListCopy: Array,
   },
   created() {
-    this.init();
+    // this.init();
   },
   methods: {
     _export() {
@@ -95,15 +95,13 @@ export default {
         Version: "2018-08-01",
         StartTime: moment(this.StartTIme).format("YYYY-MM-DD HH:MM:SS"),
         EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:MM:SS"),
-        // "CountryOrAreaNames.0": "Taiwan"
-        // MainlandOrOversea: "Mainland"
+        "CountryOrAreaNames.0": "Taiwan"
       };
       const params2 = { // 图表
         Version: "2018-08-01",
         StartTime: moment(this.StartTIme).format("YYYY-MM-DD HH:MM:SS"),
         EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:MM:SS"),
-        // "CountryOrAreaNames.0": "Taiwan"
-        // MainlandOrOversea: "Mainland"
+        "CountryOrAreaNames.0": "Taiwan"
       };
       if (this.domainCheckedListCopy.length !== this.domainsData.length) {
         this.domainCheckedListCopy.forEach((item, index) => {

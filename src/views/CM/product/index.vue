@@ -230,18 +230,6 @@ export default {
           value: "InstanceId.0",
           label: "影響物件ID"
         }
-        // {
-        //   value: "EventName.0",
-        //   label: "事件名"
-        // },
-        // {
-        //   value: "Status.0",
-        //   label: "告警配置狀態"
-        // },
-        // {
-        //   value: "Type.0",
-        //   label: "事件類型"
-        // },
       ],
       searchValue: "", //inp输入的值
 
@@ -323,25 +311,19 @@ export default {
       }
       switch (events) {
         case 1:
-          console.log(events);
           params["Type.0"] = "abnormal";
           break;
         case 2:
-          console.log(events);
           params["Status.0"] = "alarm";
           break;
         case 3:
-          console.log(events);
           params["IsAlarmConfig"] = 0;
           break;
         case 4:
-          console.log(events);
           params["Type.0"] = "status_change";
           break;
       }
 
-      //  monitor2/DescribeProductEventList   //接口
-      // console.log(JSON.stringify(params));
       this.axios.post(PRODUCT_EVENT_LIST, params).then(res => {
         if (res.Response.Error === undefined) {
           this.tableData = res.Response.Events; //列表数据

@@ -209,10 +209,12 @@ export default {
       this.nsOptions = [];
       if (this.autoRefresh == true) {
         this.timeId = setInterval(() => {
+          this.nameSpaceList();
           this.getEventList();
         }, 20000);
       } else {
         clearInterval(this.timeId);
+        this.nameSpaceList();
         this.getEventList();
       }
     },

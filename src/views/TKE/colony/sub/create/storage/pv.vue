@@ -27,7 +27,7 @@
         >
           <el-form-item :label="$t('TKE.storage.lysz')" class="m0">
             <el-radio-group
-              v-model="pv.tabPosition"
+              v-model="tabPosition"
               style="margin-bottom: 30px;"
               @change="getNull()"
             >
@@ -35,7 +35,7 @@
               <el-radio-button label="dt">{{$t('TKE.storage.dtcj')}}</el-radio-button>
             </el-radio-group>
           </el-form-item>
-          <div v-if="pv.tabPosition=='jt'">
+          <div v-show="tabPosition=='jt'">
             <el-form-item :label="$t('TKE.overview.mc')" class="m0" prop="name">
               <el-input class="w200" v-model="pv.name" :placeholder="$t('TKE.myMirror.qsrmc')"></el-input>
               <p>{{$t('TKE.overview.xz')}}</p>
@@ -72,7 +72,7 @@
                 </el-tooltip>
               </el-radio-group>
             </el-form-item>
-            <div v-if="pv.ps=='CBS'">
+            <div v-show="pv.ps=='CBS'">
               <el-form-item label="StorageClass">
                 <el-select v-model="pv.storageValue" :placeholder="$t('TKE.overview.zwsj')">
                   <el-option
@@ -103,7 +103,7 @@
                 <el-radio v-model="pv.radio" label="ext4">ext4</el-radio>
               </el-form-item>
             </div>
-            <!-- <div v-if="pv.ps=='CFS'">
+            <!-- <div v-show="pv.ps=='CFS'">
               <el-form-item label="StorageClass" class="m0">
                 <el-select class="err" v-model="storageValue" placeholder="暂无数据" disabled>
                   <el-option
@@ -135,7 +135,7 @@
             </el-form-item>
             </div>-->
           </div>
-          <div v-if="pv.tabPosition=='dt'">
+          <div v-show="tabPosition=='dt'">
             <el-form-item :label="$t('TKE.storage.sm')">
               <div>{{$t('TKE.storage.dtcjwxnsdcj')}}</div>
             </el-form-item>
@@ -147,7 +147,7 @@
             size="small"
             type="primary"
             @click="submitForm('pv')"
-            :disabled="pv.tabPosition == 'dt'"
+            :disabled="tabPosition == 'dt'"
           >{{$t('TKE.subList.cj')}}PersistentVolume</el-button>
           <el-button size="small" @click="jump()">取消</el-button>
           <div class="explain" v-show="see">
@@ -231,7 +231,7 @@ export default {
   name: "pvCreate",
   data() {
     var validatePass = (rule, value, callback) => {
-      const version = /^(?!_)(?!.*-$)[a-z0-9_]+$/;
+      const version = /^(?!-)(?!.*-$)[a-z0-9-]+$/;
       if (value === "") {
         // console.log(222)
         callback(new Error("請輸入用戶名"));
@@ -244,11 +244,11 @@ export default {
       }
     };
     return {
+      tabPosition: "jt",
       pv: {
         name: "",
-        tabPosition: "jt",
         ps: "CBS",
-        rw: "orw",
+        // rw: "orw",
         value: "cbs",
         radio: "ext4",
         storageValue: ""
@@ -312,6 +312,7 @@ export default {
     },
     getNull() {
       this.$refs["pv"].resetFields([name]);
+      // this.pv.tabPosition = "dt"
     },
     getAllData() {
       let allData = this.form.radio;

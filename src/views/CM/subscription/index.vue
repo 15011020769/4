@@ -75,7 +75,7 @@
           <template slot-scope="scope">
             <i
               v-if="scope.row.NotifyWay"
-              v-show="scope.row.NotifyWay[1] ? true :false"
+              v-show="scope.row.NotifyWay[0] ? true :false"
               class="el-icon-circle-check"
               style="color:#0abf5b"
             ></i>
@@ -86,7 +86,7 @@
           <template slot-scope="scope">
             <i
               v-if="scope.row.NotifyWay"
-              v-show="scope.row.NotifyWay[2] ? true :false"
+              v-show="scope.row.NotifyWay[1] ? true :false"
               class="el-icon-circle-check"
               style="color:#0abf5b"
             ></i>

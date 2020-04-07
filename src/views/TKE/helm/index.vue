@@ -660,10 +660,12 @@ export default {
               console.log('fail')
               this.flagAgin = 2;
               clearInterval(timeId);
+               this.loadShow = false;
             } else {
               this.flagAgin = 2;
               this.loadShow = false;
               clearInterval(timeId);
+               this.loadShow = false;
             }
           } else {
             this.flagAgin = 1;

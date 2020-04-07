@@ -21,14 +21,12 @@
                     :Difference="'H'"
                     v-on:switchData="GetDate"
                   />
-                  <!-- <XTimeX v-on:switchData="getBasicsList" :classsvalue="value"></XTimeX> -->
                 </div>
                 <div class="seek">
                   <el-input v-model="input" placeholder="請輸入告警物件" @input="searchName"></el-input>
                   <el-button icon="el-icon-search" style="margin-left:-1px;" @click="searchBtn"></el-button>
                 </div>
                 <div class="icons">
-                  <!-- <i class="el-icon-setting" @click="setValue"></i> -->
                   <i class="el-icon-download" @click="exportExcel"></i>
                 </div>
               </div>
@@ -172,30 +170,30 @@
                         <el-tooltip
                           class="item"
                           effect="dark"
-                          content="策略類型: 私有網路-VPN閘道"
+                          content="策略類型: 私有網絡-VPN閘道"
                           placement="bottom-start"
                         >
-                          <span>私有網路-VPN閘道</span>
+                          <span>私有網絡-VPN閘道</span>
                         </el-tooltip>
                       </div>
                       <div v-if="scope.row.ViewName=='EIP'">
                         <el-tooltip
                           class="item"
                           effect="dark"
-                          content="策略類型: 私有網路-彈性公網IP"
+                          content="策略類型: 私有網絡-彈性公網IP"
                           placement="bottom-start"
                         >
-                          <span>私有網路-彈性公網IP</span>
+                          <span>私有網絡-彈性公網IP</span>
                         </el-tooltip>
                       </div>
                       <div v-if="scope.row.ViewName=='nat_tc_stat'">
                         <el-tooltip
                           class="item"
                           effect="dark"
-                          content="策略類型: 私有網路-NAT閘道"
+                          content="策略類型: 私有網絡-NAT閘道"
                           placement="bottom-start"
                         >
-                          <span>私有網路-NAT閘道</span>
+                          <span>私有網絡-NAT閘道</span>
                         </el-tooltip>
                       </div>
                       <div v-if="scope.row.ViewName=='REDIS-CLUSTER'">
@@ -212,10 +210,10 @@
                         <el-tooltip
                           class="item"
                           effect="dark"
-                          content="策略類型: 私有網路-VPN通道"
+                          content="策略類型: 私有網絡-VPN通道"
                           placement="bottom-start"
                         >
-                          <span>私有網路-VPN通道</span>
+                          <span>私有網絡-VPN通道</span>
                         </el-tooltip>
                       </div>
                       <div v-if="scope.row.ViewName=='dcline'">
@@ -276,9 +274,6 @@
             </div>
           </div>
         </el-tab-pane>
-        <!-- <el-tab-pane label="配置管理" name="second">配置管理</el-tab-pane>
-        <el-tab-pane label="角色管理" name="third">角色管理</el-tab-pane>
-        <el-tab-pane label="定時任務補償" name="fourth">定時任務補償</el-tab-pane>-->
       </el-tabs>
     </div>
 
@@ -376,8 +371,8 @@ export default {
       pageSize: 10, //每页10条
       pageIndex: 0, // 当前页码
       pageIndex1: 0, // 当前页码
-      StartTime: "",
-      EndTime: "",
+      StartTime: "", //起始时间
+      EndTime: "", //结束时间
       Period: {}
     };
   },
@@ -387,14 +382,14 @@ export default {
     TimeDropDown,
     Dialog
   },
-  created() {
-    // this.getBasicsList(); //获取基础告警列表
-  },
+  created() {},
   methods: {
     GetDate(val) {
       this.Period = val[0];
-      this.StartTime = val[1].StartTIme;
-      this.EndTime = val[1].EndTIme;
+      var StartTIme = val[1].StartTIme.replace(/-/g, "/");
+      var EndTIme = val[1].EndTIme.replace(/-/g, "/");
+      this.StartTime = new Date(StartTIme).getTime() / 1000;
+      this.EndTime = new Date(EndTIme).getTime() / 1000;
       this.loadShow = true;
       this.getBasicsList(val);
     },
@@ -475,13 +470,10 @@ export default {
           Module: "monitor",
           Limit: this.pageSize,
           Offset: this.pageIndex
-
-          // Offset: (this.pageIndex - 1) * this.pageSize
         };
         params.ObjLike = this.input;
-        
-        params.StartTime = Date.parse(this.StartTime) / 1000; //开始时间戳
-        params.EndTime = new Date(this.EndTime).getTime() / 1000; //结束时间戳
+        params.StartTime = this.StartTime; //开始时间戳
+        params.EndTime = this.EndTime; //结束时间戳
       } else {
         var params = {
           Region: localStorage.getItem("regionv2"),
@@ -489,16 +481,12 @@ export default {
           Module: "monitor",
           Limit: this.pageSize,
           Offset: this.pageIndex
-
-          // Offset: (this.pageIndex - 1) * this.pageSize
         };
         params.ObjLike = this.input;
       }
-      // console.log(params)
       this.axios.post(BASICS_ALARM_LIST, params).then(res => {
         if (res.Response.Error === undefined) {
           this.tableData = res.Response.Alarms;
-          // console.log(this.tableData);
           this.totals = res.Response.Total;
           this.loadShow = false; //取消加載
         } else {
@@ -515,7 +503,6 @@ export default {
       });
     },
     handleSizeChange(val) {
-      // console.log(`每頁 ${val} 條`);
       this.pageSize = val;
       this.getBasicsList(this.timeObjs);
     },
@@ -524,7 +511,6 @@ export default {
       this.pageIndex = (val - 1) * this.pageSize;
       this.getBasicsList(this.timeObjs);
       this.pageIndex = val;
-
       this.pageIndex1 = val;
     },
     searchName() {
