@@ -239,10 +239,10 @@
         </div>
         <div class="projectDetailThree newClear">
           <h2>{{$t('KMS.total.onlineTool')}}<i class="el-icon-info" v-popover:popover></i></h2>
-          <el-popover ref="popover" placement="right-start" width="400" trigger="hover" content="在线工具可以使用当前主密钥对文本、密钥等小型数据(小于等于4K)进行方便快捷的加密操作。
-            解密操作根据密文使用的主密钥，自动调用该主密钥进行解密操作。
-            解密后明文以 Base64 展示。
-            （工具仅密钥启用状态时可用）">
+          <el-popover ref="popover" placement="right-start" width="400" trigger="hover" content="在線工具可以使用當前主密鑰對文本、密鑰等小型數據(小於等於4K)進行方便快捷的加密操作。
+            解密操作根據密文使用的主密鑰，自動調用該主密鑰進行解密操作。
+            解密後明文以 Base64 展示。
+            （工具僅密鑰啟用狀態時可用）">
           </el-popover>
           <div class="btnBottom">
             <el-button @click="changeBtnEncrypt(1)"
