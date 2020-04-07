@@ -393,12 +393,11 @@ export default {
   methods: {
     GetDate(val) {
       this.Period = val[0];
-      var StartTIme = data[1].StartTIme.replace(/-/g, "/");
-      var EndTIme = data[1].EndTIme.replace(/-/g, "/");
+      var StartTIme = val[1].StartTIme.replace(/-/g, "/");
+      var EndTIme = val[1].EndTIme.replace(/-/g, "/");
       this.StartTime = new Date(StartTIme).getTime() / 1000;
       this.EndTime = new Date(EndTIme).getTime() / 1000;
-      // this.StartTime = val[1].StartTIme;
-      // this.EndTime = val[1].EndTIme;
+  
       this.loadShow = true;
       this.getBasicsList(val);
     },
