@@ -21,14 +21,12 @@
                     :Difference="'H'"
                     v-on:switchData="GetDate"
                   />
-                  <!-- <XTimeX v-on:switchData="getBasicsList" :classsvalue="value"></XTimeX> -->
                 </div>
                 <div class="seek">
                   <el-input v-model="input" placeholder="請輸入告警物件" @input="searchName"></el-input>
                   <el-button icon="el-icon-search" style="margin-left:-1px;" @click="searchBtn"></el-button>
                 </div>
                 <div class="icons">
-                  <!-- <i class="el-icon-setting" @click="setValue"></i> -->
                   <i class="el-icon-download" @click="exportExcel"></i>
                 </div>
               </div>
@@ -276,9 +274,6 @@
             </div>
           </div>
         </el-tab-pane>
-        <!-- <el-tab-pane label="配置管理" name="second">配置管理</el-tab-pane>
-        <el-tab-pane label="角色管理" name="third">角色管理</el-tab-pane>
-        <el-tab-pane label="定時任務補償" name="fourth">定時任務補償</el-tab-pane>-->
       </el-tabs>
     </div>
 
@@ -387,9 +382,7 @@ export default {
     TimeDropDown,
     Dialog
   },
-  created() {
-    // this.getBasicsList(); //获取基础告警列表
-  },
+  created() {},
   methods: {
     GetDate(val) {
       this.Period = val[0];
@@ -397,7 +390,6 @@ export default {
       var EndTIme = val[1].EndTIme.replace(/-/g, "/");
       this.StartTime = new Date(StartTIme).getTime() / 1000;
       this.EndTime = new Date(EndTIme).getTime() / 1000;
-  
       this.loadShow = true;
       this.getBasicsList(val);
     },
@@ -478,8 +470,6 @@ export default {
           Module: "monitor",
           Limit: this.pageSize,
           Offset: this.pageIndex
-
-          // Offset: (this.pageIndex - 1) * this.pageSize
         };
         params.ObjLike = this.input;
         params.StartTime = this.StartTime; //开始时间戳
@@ -491,12 +481,9 @@ export default {
           Module: "monitor",
           Limit: this.pageSize,
           Offset: this.pageIndex
-
-          // Offset: (this.pageIndex - 1) * this.pageSize
         };
         params.ObjLike = this.input;
       }
-      console.log(params);
       this.axios.post(BASICS_ALARM_LIST, params).then(res => {
         if (res.Response.Error === undefined) {
           this.tableData = res.Response.Alarms;
