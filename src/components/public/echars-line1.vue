@@ -51,6 +51,7 @@
           let timeX = this.$GetX(this.StartTime, this.EndTime, this.period)
           let DataPoint = []
           for (let i = 0; i < timeX.length; i++) {
+            timeX[i] = timeX[i].replace('-', '/').replace('-', '/')
             DataPoint.push({
               time: new Date(timeX[i]).getTime() / 1000,
               value: null
