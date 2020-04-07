@@ -33,7 +33,7 @@
                     :prop="'domains.' + index + '.value'"
                   >
                     <div class="form-input">
-                      <el-input v-model="domain.value" size="mini" :placeholder="$t('TKE.overview.blm')"></el-input>
+                      <el-input v-model="domain.value" size="mini" @input="dataChange(domain,index)"  :placeholder="$t('TKE.overview.blm')"></el-input>
                       <span>=</span>
                       <textarea class="text" v-model="domain.valueKey"></textarea>
                       <el-tooltip v-if="dynamicValidateForm.domains.length=='1'"    class="item" effect="dark" :content="$t('TKE.subList.zsszyx')" placement="right">
@@ -88,7 +88,10 @@ export default {
            valueKey: '',
         }]
       },
-      clusterId: ""
+      clusterId: "",
+      delArr:[],//存放实际删除的数据
+      reflowArr:[],
+      editArr:[],
     };
   },
   watch:{
@@ -116,8 +119,6 @@ export default {
          }else{
              this.nFlag=true
          }   
-
-
       },
       deep:true
     }
@@ -128,7 +129,7 @@ export default {
     if(this.$route.query.np&&this.$route.query.name){
         this.findData()
     }
-    console.log([1].length==[1].length)
+    
   },
   methods: {
     //返回上一层
@@ -140,8 +141,12 @@ export default {
 
       
       let arr=this.dynamicValidateForm.domains;
+      let arr2=this.delArr;
+      let arr3=this.editArr.map(v=>{
+        return {value:v,valueKey:null}
+      })
       let obj={};
-      arr.forEach(v=>{
+      [...arr,...arr2,...arr3].forEach(v=>{
         obj[v.value]=v.valueKey
       })
 
@@ -150,13 +155,15 @@ export default {
        ContentType: "application/strategic-merge-patch+json",
        Method: "PATCH",
        Path: "/api/v1/namespaces/"+this.$route.query.np+"/configmaps/"+this.$route.query.name,
-       RequestBody: {
+       RequestBody:  btoa(JSON.stringify({
            "data":obj
-           },
+        }) ) ,
+      EncodedBody: true,
        Version: "2018-05-25",
       }
+      // console.log(obj,'obj')
       if(!this.errorShow&&this.nFlag){
-
+          console.log(params,'params')
         this.axios.post(TKE_COLONY_QUERY, params).then(res=>{
           if (res.Response.Error == undefined){
               this.$router.go(-1);
@@ -195,21 +202,36 @@ export default {
               })
               var arr=[];
               for(let i in nd[0].data){
-                  arr.push({value:i,valueKey:nd[0].data[i]})
+                  arr.push({value:i,valueKey:nd[0].data[i],reflow:true})
               }
-              console.log(arr)
-              this.dynamicValidateForm.domains=arr
+              this.dynamicValidateForm.domains=[...arr]
+              this.reflowArr=JSON.parse(JSON.stringify(arr))
         }
       })
     },
-
-
-   
+    
+    dataChange(val,index){
+          if(val.reflow&&this.reflowArr[index].value!==val.value){
+            this.editArr.push(this.reflowArr[index].value)
+            this.editArr=Array.from(new Set(this.editArr))
+          }else if(val.reflow&&this.reflowArr[index].value===val.value){
+             let index = this.editArr.findIndex(v=>{
+               return v==val.value
+             })
+             this.editArr.splice(index,1)
+          }
+    },
     removeDomain (item) {
       var index = this.dynamicValidateForm.domains.indexOf(item)
       if (index !== -1) {
         this.dynamicValidateForm.domains.splice(index, 1)
       }
+      console.log(item,'item')
+      item.valueKey=null;
+      if(item.reflow){
+        this.delArr.push(item)
+      }
+      console.log(this.delArr,'this.delArr')
     },
     addDomain () {
       this.dynamicValidateForm.domains.push({
