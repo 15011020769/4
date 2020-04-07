@@ -584,13 +584,19 @@ export default {
             }
             let resInfo = res.Response.RoleInfo;
             let PolicyDocument = JSON.parse(resInfo.PolicyDocument);
+          console.log(PolicyDocument)
             this.consoleLogin = !!resInfo.ConsoleLogin;
-            this.TotalCounts = (
+            const carriers = (
               PolicyDocument.statement[0].principal.service ||
               PolicyDocument.statement[0].principal.qcs ||
               PolicyDocument.statement[0].principal.federated
-            ).length;
-
+            )
+            if (typeof carriers !== 'string') {
+              this.TotalCounts = carriers.length
+            } else {
+              this.TotalCounts = 1
+            }
+            console.log(this.TotalCounts)
             resInfo.PolicyDocument = `qcs::cam::uin/${this.$cookie.get(
               "uin"
             )}:roleName/${resInfo.RoleName}`;
@@ -600,14 +606,14 @@ export default {
             }
             if (PolicyDocument.statement[0].principal.service) {
               this.roleCarrierType = "service";
-              // if (typeof PolicyDocument.statement[0].principal.service === 'string') {
-              //   _this.roleCarrier = PolicyDocument.statement[0].principal.service
-              // } else {
-              //   _this.roleCarrier = PolicyDocument.statement[0].principal.service
-              // }
-              _this.roleCarrier.push(
-                ...PolicyDocument.statement[0].principal.service
-              );
+              if (typeof PolicyDocument.statement[0].principal.service === 'string') {
+                _this.roleCarrier = [PolicyDocument.statement[0].principal.service]
+              } else {
+                _this.roleCarrier = PolicyDocument.statement[0].principal.service
+              }
+              // _this.roleCarrier.push(
+              //   ...PolicyDocument.statement[0].principal.service
+              // );
             }
             if (PolicyDocument.statement[0].principal.qcs) {
               this.roleCarrierType = "qcs";
