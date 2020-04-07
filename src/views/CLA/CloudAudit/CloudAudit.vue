@@ -338,7 +338,6 @@
       },
       //列表数据
       Loading() {
-        this.tableData = []
         this.vloading = true;
         const params = {
           Version: "2019-03-19",
@@ -377,7 +376,7 @@
             this.NextToken1 = res.Response.NextToken
             this.loading = false;
             this.vloading = false;
-            if (this.tableData.length === 1) {
+            if (res.Response.ListOver === true) {
               this.Show = false
             } else {
               this.Show = true
