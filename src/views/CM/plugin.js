@@ -1,3 +1,4 @@
+import moment from "moment"
 export default {
   install(Vue, options) {
     function nowtime(dt) {
@@ -11,24 +12,28 @@ export default {
             dt.getMinutes() : dt.getMinutes()) + ":" + (dt.getSeconds() < 10 ? "0" + dt.getSeconds() : dt
               .getSeconds()));
     }
+    function NewDate(str) {
+      let timeIE = str.replace('-', '/').replace('-', '/')
+      return timeIE
+    }
     Vue.prototype.$GetX = function (startDate, endDate, space) {
       if (!endDate) {
         endDate = new Date();
       } else {
-        endDate = new Date(endDate);
+        endDate = NewDate(endDate)
       }
       if (!startDate) {
         startDate = new Date(new Date().getTime() - 1 * 60 * 60 * 1000);
       } else {
-        startDate = new Date(startDate);
+        startDate = NewDate(startDate)
       }
       if (!space) {
         space = 600 * 1000;
       } else {
         space = space * 1000;
       }
-      var endTime = endDate.getTime();
-      var startTime = startDate.getTime();
+      var endTime = new Date(endDate).getTime();
+      var startTime = new Date(startDate).getTime();
       var mod = endTime - startTime;
       var dateArray = [];
       // 加入结束时间

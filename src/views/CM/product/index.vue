@@ -285,14 +285,13 @@ export default {
 
   methods: {
     // 獲取時間戳
-    GetDat(data) {
-      let StartTIme = new Date(data[1].StartTIme);
-      let EndTIme = new Date(data[1].EndTIme);
-
-      this.StartTime = StartTIme.getTime() / 1000;
-      this.EndTime = EndTIme.getTime() / 1000;
-      this.getProductList();
-    },
+     GetDat(data) {
+      var StartTIme= data[1].StartTIme.replace(/-/g,"/");
+      var EndTIme= data[1].EndTIme.replace(/-/g,"/");
+      this.StartTime =new Date(StartTIme).getTime()/1000 ;
+      this.EndTime = new Date(EndTIme).getTime()/1000;
+      this.getProductList();
+    },
     // 將時間戳轉爲日期格式
     getConvDate(data) {
       var _data = data;

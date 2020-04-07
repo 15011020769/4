@@ -293,8 +293,13 @@ export default {
           }
           if (PolicyDocument.statement[0].principal.service) {
             this.type = "service";
-            const services = [];
-            PolicyDocument.statement[0].principal.service.forEach(item => {
+            let services = [];
+            if (typeof PolicyDocument.statement[0].principal.service === 'string') {
+              services = [PolicyDocument.statement[0].principal.service]
+            } else {
+              services = PolicyDocument.statement[0].principal.service
+            }
+            services.forEach(item => {
               let temp = this.prinCipalService.find(
                 _item => _item.Domain === item
               );

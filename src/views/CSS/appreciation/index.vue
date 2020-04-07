@@ -179,7 +179,7 @@ export default {
       const params = {
         Version: '2018-08-01',
         Granularity: 'Minute',
-        // Zone: "Oversea", // TODO
+        Zone: "Oversea",
         StartTime: moment(this.StartTIme).utc().format(),
         EndTime: moment(this.EndTIme).utc().format()
       }
@@ -199,7 +199,7 @@ export default {
         Version: "2018-08-01",
         StartTime : moment(this.StartTIme).format('YYYY-MM-DD HH:mm:ss'),
         EndTime : moment(this.EndTIme).format('YYYY-MM-DD HH:mm:ss'),
-        // MainlandOrOversea: "Oversea", // TODO
+        MainlandOrOversea: "Oversea",
         LiveType: "NormalLive",
       };
       this.axios.post(CSS_RECORDSTREAM, params).then(res => {
