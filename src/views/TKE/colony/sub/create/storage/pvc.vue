@@ -112,7 +112,8 @@
               </el-tooltip>
             </el-form-item>
             <el-form-item :label="$t('TKE.storage.fy')">
-              <div v-if="!monney">{{$t('TKE.storage.qxsrhfdyprl')}}</div>
+              <div v-if="!monney&&!(type == 'CLOUD_BASIC')">{{$t('TKE.storage.qxsrhfdyprl')}}</div>
+              <div v-if="type == 'CLOUD_BASIC'" style="color:red;">普通雲硬碟無法計算</div>
               <div v-if="monney">NT$<span style="color:#ff9d00">{{monney}}</span>每小時</div>
             </el-form-item>
           </div>
