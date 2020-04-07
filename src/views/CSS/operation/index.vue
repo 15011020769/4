@@ -335,8 +335,7 @@ export default {
         StartTime: moment(this.StartTIme).format('YYYY-MM-DD HH:mm:ss'),
         EndTime: moment(this.EndTIme).format('YYYY-MM-DD HH:mm:ss'),
         Granularity: 60,
-        // MainlandOrOversea: "Mainland"
-        // 'CountryOrAreaNames.0': 'Taiwan'
+        'CountryOrAreaNames.0': 'Taiwan'
       }
       // const params2 = {
       //   Version: "2018-08-01",
