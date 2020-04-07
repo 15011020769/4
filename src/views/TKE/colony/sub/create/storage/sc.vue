@@ -147,7 +147,7 @@ export default {
   name: "scCreate",
   data() {
     var validatePass = (rule, value, callback) => {
-      const version = /^(?!_)(?!.*-$)[a-z0-9_]+$/;
+      const version = /^(?!-)(?!.*-$)[a-z0-9-]+$/;
       if (value === "") {
         // console.log(222)
         callback(new Error("請輸入用戶名"));

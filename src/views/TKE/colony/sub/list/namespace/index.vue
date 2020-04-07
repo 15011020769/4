@@ -61,7 +61,7 @@
           :label="$t('TKE.overview.cjsj')"
           >
           <template slot-scope="scope">
-              <span>{{scope.row.addTime}}</span>
+              <span>{{scope.row.metadata.creationTimestamp | changeTime}}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -152,7 +152,7 @@ export default {
           this.list = [];
           this.loadShow = false;
           let response = JSON.parse(res.Response.ResponseBody);
-          console.log("sss",response.items,"items");
+          // console.log("sss",response.items,"items");
           if(response.items.length > 0) {
             response.items.map(o => {
               o.addTime = moment(o.metadata.creationTimestamp).format("YYYY-MM-DD HH:mm:ss");
@@ -165,6 +165,7 @@ export default {
             this.list = response.items;
             // this.total = response.items.length;
           }
+          console.log("list",this.list);
         } else {
           this.list = [];
           this.loadShow = false;
@@ -198,7 +199,6 @@ export default {
           this.loadShow = false;
           this.total = 0;
           let response = JSON.parse(res.Response.ResponseBody);
-          console.log("sss",response.items,"items");
           if(response.items.length > 0) {
             this.dataList = response.items;
             this.list = response.items.slice(this.pageIndex, this.pageSize);
@@ -379,6 +379,13 @@ export default {
       // this.getNameSpaceList();
     },
 
+  },
+  filters:{
+    changeTime(val) {
+      if(val) {
+        return moment(val).format("YYYY-MM-DD HH:mm:ss")
+      }
+    }
   },
   components: {
     subTitle,
