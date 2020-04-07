@@ -123,7 +123,6 @@ export default {
     },
     // 关闭弹框
     handleClose () {
-      // TODO
       this.initData()
       this.dialogmodel = false
       this.$emit('closeAddModel', this.dialogmodel)
@@ -171,7 +170,6 @@ export default {
         return
       }
 
-      // TODO
       let params = {
         Version: '2018-08-01',
         DomainName: this.dominForm.DominName,
