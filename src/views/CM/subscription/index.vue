@@ -70,7 +70,7 @@
 
             <span v-if="!scope.row.NotifyWay">尚未訂閱</span>
           </template>
-        </el-table-column> -->
+        </el-table-column>-->
         <el-table-column label="郵件" width="180">
           <template slot-scope="scope">
             <i
@@ -125,7 +125,7 @@
             </span>
             <!-- <span style="margin-left:30px">
               <el-checkbox label="2">簡訊</el-checkbox>
-            </span> -->
+            </span>-->
             <span style="margin-left:30px">
               <el-checkbox label="4">站内信</el-checkbox>
             </span>
@@ -175,7 +175,7 @@
                 </el-tooltip>
               </span>
             </template>
-          </el-table-column> -->
+          </el-table-column>-->
           <el-table-column label="郵箱">
             <template slot-scope="scope">
               <span v-if="scope.row.Email !== ''">
@@ -315,21 +315,18 @@ export default {
                   item.index = index;
                   item.subscription = undefined;
                 });
-                this.$nextTick(() => {//回显参数，由于数据返回有误，无法开发
-                
-                    this.okObj.Receivers.forEach((v, i) => {
-                      arr.forEach((item, index) => {
-                        if (item.GroupId == v) {
-                          console.log(item);
-                          this.cam.selectUserGroup = item;
-                          this.$refs.multipleTable.toggleRowSelection(
-                            item,
-                            true
-                          );
-                        }
-                      });
-                    });
+                this.$nextTick(() => {
+                  //回显参数，由于数据返回有误，无法开发
 
+                  this.okObj.Receivers.forEach((v, i) => {
+                    arr.forEach((item, index) => {
+                      if (item.GroupId == v) {
+                        console.log(item);
+                        this.cam.selectUserGroup = item;
+                        this.$refs.multipleTable.toggleRowSelection(item, true);
+                      }
+                    });
+                  });
                 });
                 this.userListArr = arr;
               } else {
@@ -423,19 +420,21 @@ export default {
         params["NotifyWays." + index] = item;
       });
       this.selectUserList.forEach((item, index) => {
-        var data = {};
-        data.username = item.Name;
-        data.uid = item.Uid;
-        data = JSON.stringify(data)
-        params["Receivers"] = data;
+        // var data = {};
+        // data.username = item.Name;
+        // data.uid = item.Uid;
+        // data = JSON.stringify(data)
+        // params["Receivers"] = data;
+
+        var key, value;
+        key = item.Name;
+        value = item.Uid;
+        var data = {
+          key: value
+        };
+        params["Receivers." + index] = JSON.stringify(data);
       });
-      //  var key, value;
-      //   key = item.Name;
-      //   value = item.Uid;
-      //   var data = {
-      //     key: value
-      //   };
-      //   params["Receivers." + index] = JSON.stringify(data);
+
       console.log(params);
       this.axios.post(SUBSCRIPTION_ADMINISTRATION, params).then(res => {
         console.log(res);
