@@ -37,7 +37,7 @@
       </div>
 
       <!-- 编辑器的容器 -->
-      <div v-show="SubmissionValue === 'Inline'" class="content">
+      <div v-show="SubmissionValue === 'Inline'" class="content" v-loading="cslsLoading">
         <div id="container_editor" style="width: 100%; height: 500px;"></div>
       </div>
 
@@ -376,7 +376,8 @@ export default {
         lineWrapping: true, //代码折叠
         matchBrackets: true, //括号匹配
       },
-      cslsSDK: new CloudStudioLiteFilesServiceSDK() // 初始化编辑器
+      cslsSDK: new CloudStudioLiteFilesServiceSDK(), // 初始化编辑器
+      cslsLoading: false            // 编辑器加载动画
 
     }
   },
@@ -446,7 +447,8 @@ export default {
 
     // 获取地址下载
     _Clone(name) {
-      console.log(name)
+      // console.log(name)
+      this.cslsLoading = true     // 打开加载动画
       let param = {
         Region: localStorage.getItem('regionv2'),
         Version: "2018-04-16",
@@ -456,6 +458,7 @@ export default {
       };
       this.axios.post(CLONE_SCF, param).then(res => {
         if (res.Response.Error === undefined) {
+          this.cslsLoading = false     // 关闭加载动画
           if (name === 'download') {
             window.open(res.Response.Url)
           } else if (name === 'address') {
@@ -779,7 +782,7 @@ export default {
           //   showClose: true,
           //   duration: 0
           // });
-          // location.reload()
+          location.reload()
         } else {
           this.$message({
             message: '保存失敗',
