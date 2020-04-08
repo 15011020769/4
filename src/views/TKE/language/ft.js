@@ -1039,7 +1039,7 @@ module.exports = {
       ptyyp: '普通雲硬碟',
       pvcjzdbd: 'PersistentVolumeClaim將自動綁定具有相同StoragClass，且容量大於或等於當前PVC設置的容量大小的靜態創建的PersistentVolume',
       scwcbs: 'StorageClass為cbs，默認為普通雲硬碟，最小為10GiB，',
-      rptypsqs: '若普通云盘售罄时将自动创建高性能云硬盘，最小为10GiB',
+      rptypsqs: '若普通雲盤售罄時將自動創建高性能雲硬碟，最小為10GiB',
       ptyypypdx: '普通雲硬碟硬碟大小為10GB,最大為16000GB',
       fy: '費用',
       qxsrhfdyprl: '請先輸入合法的雲盤容量',

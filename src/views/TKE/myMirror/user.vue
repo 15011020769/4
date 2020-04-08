@@ -440,13 +440,16 @@ export default {
           this.TotalCount = res.data.totalCount
           this.loadShow = false
         } else {
-          console.log(2)
-          this.$message({
-              message: ErrorTips[res.codeDesc],
-              type: "error",
-              showClose: true,
-              duration: 0
-          })
+          if(ErrorTips[res.codeDesc]){
+            this.$message({
+                message: ErrorTips[res.codeDesc],
+                type: "error",
+                showClose: true,
+                duration: 0
+            })
+          } else {
+            return 
+          }
         }
       })
     },
@@ -485,12 +488,16 @@ export default {
           this.spaceName = res.data.namespaceInfo
           console.log(this.spaceName)
         } else {
-          this.$message({
-              message: ErrorTips[res.codeDesc],
-              type: "error",
-              showClose: true,
-              duration: 0
-          })
+          if(ErrorTips[res.codeDesc]){
+            this.$message({
+                message: ErrorTips[res.codeDesc],
+                type: "error",
+                showClose: true,
+                duration: 0
+            })
+          } else {
+            return 
+          }
         }
       })
     },
