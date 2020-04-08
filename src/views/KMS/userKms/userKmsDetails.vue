@@ -772,12 +772,18 @@
       },
       //下载文件函数
       exportRaw(name, data) {
-        var urlObject = window.URL || window.webkitURL || window;
         var export_blob = new Blob([data]);
-        var save_link = document.createElementNS("http://www.w3.org/1999/xhtml", "a")
-        save_link.href = urlObject.createObjectURL(export_blob);
-        save_link.download = name;
-        this.fakeClick(save_link);
+        // for IE
+        if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+            window.navigator.msSaveOrOpenBlob(export_blob, name);
+        } else {
+          // for Non-IE (chrome, firefox etc.)
+          var urlObject = window.URL || window.webkitURL || window;
+          var save_link = document.createElementNS("http://www.w3.org/1999/xhtml", "a")
+          save_link.href = urlObject.createObjectURL(export_blob);
+          save_link.download = name;
+          this.fakeClick(save_link);
+        }
       },
       //第一步的下一步按钮 获取导入主密钥（CMK）材料的参数
       nextStepOne() {
