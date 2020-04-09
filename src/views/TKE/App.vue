@@ -65,14 +65,6 @@ export default {
         localStorage.setItem('tpdRate', data.data.usd2twd)   // 台币汇率
         localStorage.setItem('taRate', data.data.taxRate)   // 税率
       });
-      // this.$http({
-      //   url: `${window.SITE_CONFIG['adminUrl']}taifucloud/texchangerate/getExchange`,
-      //   method: 'get'
-      // }).then(({ data }) => {
-      //   localStorage.setItem('cny2usd', data.cny2usd)   // 美元汇率
-      //   localStorage.setItem('usd2twd', data.usd2twd)   // 台币汇率
-      //   localStorage.setItem('taxRate', data.taxRate)   // 税率
-      // })
     }
   }
 };
