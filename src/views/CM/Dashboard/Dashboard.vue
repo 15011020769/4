@@ -404,9 +404,11 @@
                 };
               });
               this.options = options;
-              if (this.options.length > 0) {
+              if (this.options.length > 0 && !this.$route.query.DashboardID) {
                 this.DashboardID = this.options[0].value; // 首次加载 展示面板的ID
                 this.DashboardName = this.options[0].label;
+              } else if (this.$route.query.DashboardID) {
+                this.DashboardID = this.$route.query.DashboardID;
               } else {
                 this.DashboardID = "";
                 this.DashboardName = "";

@@ -213,7 +213,7 @@ export default {
         this.productListData = data;
         // this.isShow = true;
       }, 600);
-      console.log(this.productListData);
+      // console.log(this.productListData);
       this.Namespace = data.Namespace;
       this.productValue = data.productValue;
       this.optionTarget = data.MetricName;
@@ -234,10 +234,10 @@ export default {
       if (this.rightData.length) {
         this.getMonitorList();
       }
-      console.log(this.MetricName);
+      // console.log(this.MetricName);
     },
     projectIds(data) {
-      console.log(data);
+      // console.log(data);
       this.projectId = data;
     },
     paramValue(evt){
@@ -253,13 +253,13 @@ export default {
         // console.log(evt)
     },
     searchParams(data) {
-      console.log(data);
+      // console.log(data);
       this.searchParam = data;
     },
     selectDatas(val) {
       this.rightData = val;
       this.loadShow = true
-      console.log(val);
+      // console.log(val);
       if (this.rightData.length) {
         this.series = []
         this.getMonitorList();
@@ -276,7 +276,7 @@ export default {
         } else {
           return val
         }
-        console.log(val)
+        // console.log(val)
     },
     // 创建
     createJump() {
@@ -323,7 +323,13 @@ export default {
     },
     // 跳转
     jump() {
-      this.$router.go(-1);
+      // this.$router.go(-1);
+      this.$router.push({
+        name: "DashboardCreate",
+        query: {
+          DashboardID: this.DashboardID
+        }
+      });
     },
 
     selectDashboardData(){
@@ -397,7 +403,7 @@ export default {
           });
         }
       }
-      console.log(this.DashboardData)
+      // console.log(this.DashboardData)
     },
     // 获取监控列表
     async getMonitorList() {
@@ -488,7 +494,7 @@ export default {
       }
       await this.axios.post(All_MONITOR, params).then(res => {
         if (res.Response.Error == undefined) {
-          console.log(res);
+          // console.log(res);
           this.Data = res.Response.DataPoints
           if (res.Response.DataPoints.length) {
             // 监控数据处理
@@ -594,7 +600,7 @@ export default {
       }
       await this.axios.post(CREATDASHBORD, param).then(res => {
         if (res.Response.Error === undefined) {
-          console.log(res);
+          // console.log(res);
         } else {
           let ErrTips = {
             "AuthFailure.UnauthorizedOperation":

@@ -58,11 +58,11 @@
           <h3 style="color:#333;font-weight:400">{{$t('CAM.Role.tencentCard')}}</h3>
           <p>{{$t('CAM.Role.tencentCardTitle')}}</p>
         </div>
-        <div class="createItem" @click="toProvider">
+        <!-- <div class="createItem" @click="toProvider">
           <i class="strategy-icon sf"></i>
           <h3 style="color:#333;font-weight:400">{{$t('CAM.Role.identityProvider')}}</h3>
           <p>{{$t('CAM.Role.sqtfy')}}</p>
-        </div>
+        </div> -->
       </el-dialog>
     </div>
   </div>

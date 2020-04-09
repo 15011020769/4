@@ -27,10 +27,10 @@
           <i class="iconfont"></i>
           <span slot="title">{{$t('CAM.Role.title')}}</span>
         </el-menu-item>
-        <el-menu-item index="/IdentityProvider" :class="{'menu-active': activeMenu === '/IdentityProvider'}">
+        <!-- <el-menu-item index="/IdentityProvider" :class="{'menu-active': activeMenu === '/IdentityProvider'}">
           <i class="iconfont"></i>
           <span slot="title">{{$t('CAM.Role.identityProvider')}}</span>
-        </el-menu-item>
+        </el-menu-item> -->
         <!-- <el-menu-item index="/ApiKeyManager">
           <i class="iconfont"></i>
           <span slot="title">{{$t('CAM.userList.APISecret')}}</span>

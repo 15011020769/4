@@ -440,8 +440,9 @@
             this.tableData = []
             this.Loading()
           } else {
+            this.value1[1] = moment(new Date(this.value1[1])).format("YYYY/MM/DD 23:59:59")
             this.oldTime = parseInt(this.value1[0].getTime() / 1000)
-            this.nowtime = parseInt(this.value1[1].getTime() / 1000)
+            this.nowtime = parseInt(moment(this.value1[1], 'YYYY-MM-DD HH:mm:ss').valueOf() / 1000)
             this.tableData = []
             this.Loading()
           }

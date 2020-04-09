@@ -381,7 +381,7 @@ export default {
                 label: item.metadata.name
               });
             });
-            this.value4 = this.option4[0].value;
+            this.value4 = mes.items[0].metadata.name;
           } else {
             this.option4 = [];
             this.value4 = "Pod" + this.$t("TKE.event.lbwk");
@@ -397,7 +397,7 @@ export default {
                 });
               });
             });
-            this.value5 = this.option5[0].value;
+            this.value5 = mes.items[0].spec.containers[0].name;
             this.autoRefresh = true;
             // this.refresh();
             this.getLog();

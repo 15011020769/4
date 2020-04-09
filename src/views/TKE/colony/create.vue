@@ -1193,6 +1193,7 @@
                           v-model="item.dataNum"
                           :min="1"
                           :max="item.datanum"
+                          @change="changeCount"
                         ></el-input-number>
                         <p v-if="!chargingShow">
                           {{ $t("TKE.colony.cvmzdpe") }}
@@ -2042,6 +2043,7 @@
                           v-model="item.dataNum"
                           :min="1"
                           :max="item.datanum"
+                          @change="changeCount"
                         ></el-input-number>
                         <p v-if="!chargingShow">
                           {{ $t("TKE.colony.cvmzdpe") }}
@@ -4671,6 +4673,23 @@ export default {
       }
       this.TotalCost();
     },
+    //改变数量
+    changeCount() {
+      debugger
+      this.TotalCost();
+      let count = 0;
+      let masterList = this.colonySecond.masterOneList;
+      masterList.forEach(e => {
+        count += Number(e.dataNum);
+      });
+      if (count > 2) {
+        this.colonySecond.masterTips = false;
+        this.colonySecond.secondNextShow = true;
+      } else {
+        this.colonySecond.masterTips = true;
+        this.colonySecond.secondNextShow = false;
+      }
+    },
     // 确定
     WorkerSure(index, a) {
       if (a == 1) {
@@ -4868,7 +4887,11 @@ export default {
 
       this.ChildNodes();
       this.TotalCost();
-      if (this.colonySecond.masterOneList.length > 2) {
+      let count = 0;
+      this.colonySecond.masterOneList.forEach(e => {
+        count += Number(e.dataNum);
+      });
+      if (count > 2 || this.colonySecond.masterOneList.length > 2) {
         this.colonySecond.masterTips = false;
         this.colonySecond.secondNextShow = true;
       }

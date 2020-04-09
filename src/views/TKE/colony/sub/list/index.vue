@@ -27,76 +27,39 @@
       <el-container>
         <!-- 左侧子菜单 -->
         <el-aside class="tke-sub-menu" style="width:180px">
-          <el-menu
-            default-active="/colony/sub/list/basic"
-            :router="true"
-            style="height: 100%"
-            :default-active="this.$route.path"
-          >
+          <el-menu :router="true" style="height: 100%" :default-active="this.$route.path">
             <el-menu-item index="/colony/sub/list/basic">{{$t('TKE.overview.jbxx')}}</el-menu-item>
             <el-submenu index="2">
               <template slot="title"><span>{{$t('TKE.overview.jd')}}管理</span></template>
-              <el-menu-item index="/colony/sub/list/nodeManage/node"
-                >{{$t('TKE.overview.jd')}}</el-menu-item
-              >
-              <el-menu-item index="/colony/sub/list/nodeManage/masteretcd"
-                >Master&amp;Etcd</el-menu-item
-              >
-              <el-menu-item index="/colony/sub/list/nodeManage/asg"
-                >{{$t('TKE.subList.ssz')}}</el-menu-item
-              >
+              <el-menu-item index="/colony/sub/list/nodeManage/node">{{$t('TKE.overview.jd')}}</el-menu-item>
+              <el-menu-item index="/colony/sub/list/nodeManage/masteretcd">Master&amp;Etcd</el-menu-item>
+              <el-menu-item index="/colony/sub/list/nodeManage/asg">{{$t('TKE.subList.ssz')}}</el-menu-item>
             </el-submenu>
-            <el-menu-item index="/colony/sub/list/namespace"
-              >{{$t('TKE.overview.mmkj')}}</el-menu-item
-            >
+            <el-menu-item index="/colony/sub/list/namespace">{{$t('TKE.overview.mmkj')}}</el-menu-item>
             <el-submenu index="4">
               <template slot="title"><span>{{$t('TKE.overview.gzfz')}}</span></template>
-              <el-menu-item index="/colony/sub/list/resource/deployment"
-                >Deployment</el-menu-item
-              >
-              <el-menu-item index="/colony/sub/list/resource/statefulSet"
-                >StatefulSet</el-menu-item
-              >
-              <el-menu-item index="/colony/sub/list/resource/daemonSet"
-                >DaemonSet</el-menu-item
-              >
-              <el-menu-item index="/colony/sub/list/resource/job"
-                >Job</el-menu-item
-              >
-              <el-menu-item index="/colony/sub/list/resource/cronJob"
-                >CronJob</el-menu-item
-              >
+              <el-menu-item index="/colony/sub/list/resource/deployment">Deployment</el-menu-item>
+              <el-menu-item index="/colony/sub/list/resource/statefulSet">StatefulSet</el-menu-item>
+              <el-menu-item index="/colony/sub/list/resource/daemonSet">DaemonSet</el-menu-item>
+              <el-menu-item index="/colony/sub/list/resource/job">Job</el-menu-item>
+              <el-menu-item index="/colony/sub/list/resource/cronJob">CronJob</el-menu-item>
             </el-submenu>
             <el-menu-item index="/colony/sub/list/hpa">{{$t('TKE.overview.zdss')}}</el-menu-item>
             <el-submenu index="6">
               <template slot="title"><span>{{$t('TKE.overview.fw')}}</span></template>
-              <el-menu-item index="/colony/sub/list/service/svc"
-                >Service</el-menu-item
-              >
-              <el-menu-item index="/colony/sub/list/service/ingress"
-                >Ingress</el-menu-item
-              >
+              <el-menu-item index="/colony/sub/list/service/svc">Service</el-menu-item>
+              <el-menu-item index="/colony/sub/list/service/ingress">Ingress</el-menu-item>
             </el-submenu>
             <el-submenu index="7">
               <template slot="title"><span>配置管理</span></template>
-              <el-menu-item index="/colony/sub/list/config/configMap"
-                >ConfigMap</el-menu-item
-              >
-              <el-menu-item index="/colony/sub/list/config/secret"
-                >Secret</el-menu-item
-              >
+              <el-menu-item index="/colony/sub/list/config/configMap">ConfigMap</el-menu-item>
+              <el-menu-item index="/colony/sub/list/config/secret">Secret</el-menu-item>
             </el-submenu>
             <el-submenu index="8">
               <template slot="title"><span>{{$t('TKE.overview.cc')}}</span></template>
-              <el-menu-item index="/colony/sub/list/storage/pv"
-                >PersistentVolume</el-menu-item
-              >
-              <el-menu-item index="/colony/sub/list/storage/pvc"
-                >PersistentVolumeClaim</el-menu-item
-              >
-              <el-menu-item index="/colony/sub/list/storage/sc"
-                >StorageClass</el-menu-item
-              >
+              <el-menu-item index="/colony/sub/list/storage/pv">PersistentVolume</el-menu-item>
+              <el-menu-item index="/colony/sub/list/storage/pvc">PersistentVolumeClaim</el-menu-item>
+              <el-menu-item index="/colony/sub/list/storage/sc">StorageClass</el-menu-item>
             </el-submenu>
             <el-menu-item index="/colony/sub/list/log">{{$t('TKE.event.rz')}}</el-menu-item>
             <el-menu-item index="/colony/sub/list/event">事件</el-menu-item>
@@ -113,66 +76,74 @@
 </template>
 
 <script>
-// import HeadCom from "@/components/public/Head";
-// import SEARCH from "@/components/public/SEARCH";
-// import FileSaver from "file-saver";
-// import XLSX from "xlsx";
-import Loading from "@/components/public/Loading";
-import { ALL_CITY } from "@/constants";
-export default {
-  name: "colonySub",
-  data() {
-    return {};
-  },
-  components: {
-    Loading
-  },
-  created() {},
-  mounted() {
-    console.log(this.ClusterIds);
-  },
-  methods: {
-    //返回上一层
-    goBack() {
-      this.$router.push({
-        name: "colony"
-      });
+  // import HeadCom from "@/components/public/Head";
+  // import SEARCH from "@/components/public/SEARCH";
+  // import FileSaver from "file-saver";
+  // import XLSX from "xlsx";
+  import Loading from "@/components/public/Loading";
+  import {
+    ALL_CITY
+  } from "@/constants";
+  export default {
+    name: "colonySub",
+    data() {
+      return {};
     },
-    createYaml() {
-      this.$router.push({
-        name: "createYaml",
-        query: {
-          clusterId: this.$route.query.clusterId,
-          ProjectId: this.$route.query.ProjectId
-        }
-      });
+    components: {
+      Loading
+    },
+    created() {},
+    mounted() {
+      console.log(this.ClusterIds);
+    },
+    methods: {
+      //返回上一层
+      goBack() {
+        this.$router.push({
+          name: "colony"
+        });
+      },
+      createYaml() {
+        this.$router.push({
+          name: "createYaml",
+          query: {
+            clusterId: this.$route.query.clusterId,
+            ProjectId: this.$route.query.ProjectId
+          }
+        });
+      }
     }
-  }
-};
+  };
+
 </script>
 
 <style lang="scss">
-.tke-colony-sub {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  .el-container {
+  .tke-colony-sub {
     height: 100%;
-  }
-}
-.tke-sub-menu {
-  border-right: 1px solid #ddd;
-  background: #fff;
-  .el-menu {
-    border-right: none;
-    .el-menu-item,
-    .el-submenu__title {
-      height: 34px;
-      line-height: 34px;
-      font-size: 12px !important;
-      padding: 0 0 0 20px;
-      min-width: auto;
+    display: flex;
+    flex-direction: column;
+
+    .el-container {
+      height: 100%;
     }
   }
-}
+
+  .tke-sub-menu {
+    border-right: 1px solid #ddd;
+    background: #fff;
+
+    .el-menu {
+      border-right: none;
+
+      .el-menu-item,
+      .el-submenu__title {
+        height: 34px;
+        line-height: 34px;
+        font-size: 12px !important;
+        padding: 0 0 0 20px;
+        min-width: auto;
+      }
+    }
+  }
+
 </style>

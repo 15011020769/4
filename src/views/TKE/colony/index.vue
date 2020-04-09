@@ -69,7 +69,7 @@
               </p>
             </template>
           </el-table-column>
-          <el-table-column prop :label="$t('TKE.colony.jk')">
+          <el-table-column :label="$t('TKE.colony.jk')">
             <template slot-scope="scope">
               <i
                 class="icon-chart"
@@ -323,7 +323,7 @@
               </p>
             </template>
           </el-table-column>
-          <el-table-column prop :label="$t('TKE.colony.jk')">
+          <el-table-column :label="$t('TKE.colony.jk')">
             <template slot-scope="scope">
               <i
                 class="icon-chart"
@@ -336,7 +336,7 @@
               <span class="tag-danger">未配告警</span>
             </template>
           </el-table-column>
-          <el-table-column prop="ClusterVersion" label="kubernetes版本">
+          <el-table-column label="kubernetes版本">
             <template slot-scope="scope">
               <span>v{{ scope.row.ClusterVersion }}</span>
             </template>
@@ -436,7 +436,7 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="address" :label="$t('TKE.colony.yfpzpz')">
+          <el-table-column :label="$t('TKE.colony.yfpzpz')">
             <template slot-scope="scope">
               <p>
                 CPU: {{ scope.row.yroot ? scope.row.yroot : "-" }}/{{
