@@ -77,10 +77,11 @@ export function toUTF8Array(str) {
 /**
  * 清除登录信息
  */
-export function clearLoginInfo() {
+export function clearLoginInfo () {
   Vue.cookie.delete('token')
   Vue.cookie.delete('userId')
   Vue.cookie.delete('uuid')
+  Vue.cookie.delete('appid')
   Vue.cookie.delete('userType')
   Vue.cookie.delete('JSESSIONID')
   Vue.cookie.delete('uin')
