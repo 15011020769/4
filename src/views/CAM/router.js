@@ -226,38 +226,38 @@ export default new Router({
       keepAlive: true
     }
   },
-  {
-    path: '/createProvider', // 新建身份提供商
-    name: 'createProvider',
-    component: () => import( /* webpackChunkName: "Role" */ './Role/createProvider.vue'),
-    meta: {
-      keepAlive: true
-    }
-  },
-  {
-    path: '/IdentityProvider', // 身份提供商
-    name: 'IdentityProvider',
-    component: () => import( /* webpackChunkName: "IdentityProvider" */ './IdentityProvider/IdentityProvider.vue'),
-    meta: {
-      keepAlive: true
-    }
-  },
-  {
-    path: '/IdentityProviderDetail/:name', // 身份提供商详情
-    name: 'IdentityProviderDetail',
-    component: () => import( /* webpackChunkName: "IdentityProvider" */ './IdentityProvider/ProviderDetail.vue'),
-    meta: {
-      keepAlive: true
-    }
-  },
-  {
-    path: '/NewIdentityProvider', //新建身份提供商
-    name: 'NewIdentityProvider',
-    component: () => import( /*webpackChunkName:"IdentityProvider"*/ './IdentityProvider/NewIdentityProvider.vue'),
-    meta: {
-      keepAlive: true
-    }
-  },
+  // {
+  //   path: '/createProvider', // 新建身份提供商
+  //   name: 'createProvider',
+  //   component: () => import( /* webpackChunkName: "Role" */ './Role/createProvider.vue'),
+  //   meta: {
+  //     keepAlive: true
+  //   }
+  // },
+  // {
+  //   path: '/IdentityProvider', // 身份提供商
+  //   name: 'IdentityProvider',
+  //   component: () => import( /* webpackChunkName: "IdentityProvider" */ './IdentityProvider/IdentityProvider.vue'),
+  //   meta: {
+  //     keepAlive: true
+  //   }
+  // },
+  // {
+  //   path: '/IdentityProviderDetail/:name', // 身份提供商详情
+  //   name: 'IdentityProviderDetail',
+  //   component: () => import( /* webpackChunkName: "IdentityProvider" */ './IdentityProvider/ProviderDetail.vue'),
+  //   meta: {
+  //     keepAlive: true
+  //   }
+  // },
+  // {
+  //   path: '/NewIdentityProvider', //新建身份提供商
+  //   name: 'NewIdentityProvider',
+  //   component: () => import( /*webpackChunkName:"IdentityProvider"*/ './IdentityProvider/NewIdentityProvider.vue'),
+  //   meta: {
+  //     keepAlive: true
+  //   }
+  // },
   {
     path: '/ApiKeyManager', // API密钥管理
     name: 'ApiKeyManager',
