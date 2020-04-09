@@ -2142,7 +2142,6 @@ export default {
   },
   methods: {
     passData(data) {
-      console.log(data);
       this.isShow = false;
       this.productListData = data;
       if (this.ViewName === "cvm_device") {
@@ -2161,7 +2160,6 @@ export default {
       } else {
         this.typeOpt = data.Metrics;
       }
-      console.log(data.EventMetrics);
       this.eventOpt = data.EventMetrics ? data.EventMetrics : [];
       setTimeout(() => {
         this.productListData = {};
@@ -2188,7 +2186,6 @@ export default {
     },
     //選擇右側表格數據
     selectDatas(val) {
-      console.log(val);
       this.multipleSelection = val;
     },
     async DetailsInit() {
@@ -2200,7 +2197,7 @@ export default {
       await this.axios.post(CM_ALARM_STRATEGY_DETAILS, params).then(res => {
         if (res.Response.Error === undefined) {
           this.basicNews = res.Response;
-          console.log(this.basicNews);
+          // console.log(this.basicNews);
           this.ViewName = this.basicNews.ViewName;
           this.GroupName = this.basicNews.GroupName;
           this.projectId = this.basicNews.ProjectId;
@@ -2256,10 +2253,6 @@ export default {
                     }
                   }
                   this.receivingObjectLoad = false;
-                  console.log(
-                    "this.receivingObjectData",
-                    this.receivingObjectData
-                  );
                 } else {
                   let ErrTips = {
                     FailedOperation: "操作失敗。",
@@ -2863,7 +2856,6 @@ export default {
           this.Conditions = this.triggerCondition[i];
         }
       }
-      console.log(this.Conditions);
       for (let j in this.Conditions.Conditions) {
         this.ContinueTime.push({
           value: this.Conditions.Conditions[j].ContinueTime,
@@ -4110,7 +4102,6 @@ export default {
     // 獲取cam元件的值
     camFun(val) {
       this.cam = val;
-      console.log(this.cam);
     },
     EditReceiveSave() {
       let param = {
@@ -4396,7 +4387,7 @@ export default {
     },
     chufaTemplate() {
       //觸發條件範本
-      console.log(this.Conditions.IsUnionRule);
+      // console.log(this.Conditions.IsUnionRule);
     },
     config() {
       //配置觸發條件
@@ -4455,12 +4446,6 @@ export default {
         }
       }
       let _arr = this.formWrite.arr;
-      console.log(
-        this.formWrite.arr[this.formWrite.index].typeVal,
-        this.formWrite.arr[this.formWrite.index].censusVal,
-        this.formWrite.arr[this.formWrite.index].calcTypeVal,
-        this.formWrite.arr[this.formWrite.index].number
-      );
       for (let i = 0; i < _arr.length - 1; i++) {
         if (
           _arr[i].typeVal == this.formWrite.arr[this.formWrite.index].typeVal &&

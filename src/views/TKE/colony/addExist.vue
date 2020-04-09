@@ -238,7 +238,7 @@
                   placement="right"
                   ><i class="el-icon-info"></i> </el-tooltip
               ></span>
-              <p style="color:#000;">{{ clusterOs }}</p>
+              <p style="color:#000;">{{ basicNews.ClusterOs }}</p>
             </el-form-item>
             <el-form-item :label="$t('TKE.colony.dlfs')">
               <div class="tke-second-radio-btn">

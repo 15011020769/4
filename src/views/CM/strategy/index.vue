@@ -1014,7 +1014,6 @@ export default {
   },
   methods: {
     passData(data) {
-      console.log("data", data);
       this.isShow = false;
       this.productListData = data;
       this.productValue = data.productValue;
@@ -1070,7 +1069,6 @@ export default {
                 }
               }
               this.tableData = _tableData;
-              console.log("tableData", this.tableData);
               this.loadShow = false;
             } else {
               this.loadShow = false;
@@ -1207,7 +1205,6 @@ export default {
     },
     // 告警啓停
     AlarmStart(row, index) {
-      console.log(row);
       this.startStop = true;
       this.GroupId = row.GroupId;
       this.GroupName = row.GroupName;
@@ -1264,7 +1261,6 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val;
       this.arr = [];
-      console.log(this.multipleSelection);
       for (let i in this.multipleSelection) {
         if (this.multipleSelection[i].IsDefault == 0) {
           this.arr.push(this.multipleSelection[i]);
@@ -1316,7 +1312,6 @@ export default {
       this.dialogVisible = false;
     },
     defaultClick(row) {
-      console.log(row);
       this.$router.push({
         name: "strategyCreateDetail",
         query: {
@@ -1501,7 +1496,6 @@ export default {
       };
       this.axios.post(CM_ALARM_SET_DEFAULT, param).then(res => {
         if (res.Response.Error === undefined) {
-          console.log(res);
           this.ListInit();
         } else {
           let ErrTips = {};
@@ -1534,11 +1528,6 @@ export default {
     // 修改告警管道
     ModifyAlarmBtn() {
       this.ModifyDialogVisible = true;
-      // console.log(this.arr[0].ReceiverInfos[0].NotifyWay);
-      // for (let i = 0; i < this.arr.length; i++) {
-      //   if (this.arr[i]) {
-      //   }
-      // }
       // 郵件
       this.emailOpt = [
         {
@@ -1582,8 +1571,6 @@ export default {
       for (let i in this.arr) {
         if (this.arr[i].ReceiverInfos[0].NotifyWay.length > 0) {
           for (let k in this.arr[i].ReceiverInfos[0].NotifyWay) {
-            console.log(this.arr[i].ReceiverInfos[0].NotifyWay);
-            // if(this.arr[i].ReceiverInfos[0].NotifyWay.toString())
             if (this.arr[i].ReceiverInfos[0].NotifyWay[k] === "EMAIL") {
               this.emailOpen++;
             }
@@ -1744,7 +1731,6 @@ export default {
           }
         }
       }
-      console.log(param);
       this.axios.post(CM_ALARM_MODIFY_NOTIFY, param).then(res => {
         if (res.Response.Error === undefined) {
           this.ModifyDialogVisible = false;
