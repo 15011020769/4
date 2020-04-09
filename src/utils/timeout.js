@@ -13,7 +13,7 @@ function checkTimeout() {
   currentTime = new Date().getTime(); //更新当前时间
   if (currentTime - lastTime > timeOut) { //判断是否超时
     clearLoginInfo()
-    window.location.href = 'http://60.199.168.20/WEB_TFC/SitePages/UserLogin.aspx'
+    window.location.href = 'http://60.199.168.20/WEB_TFC2/SitePages/UserLogin.aspx'
   }
 }
   

@@ -48,7 +48,7 @@ router.beforeEach((to, from, next) => {
   // 如果没有uuid说明用户没有登录 则需要跳转到登录界面
   if(VueCookie.get('uuid') === '' || VueCookie.get('uuid') === undefined || VueCookie.get('uuid') === null){
     clearLoginInfo()
-    window.location.href = 'http://60.199.168.20/WEB_TFC/SitePages/UserLogin.aspx'
+    window.location.href = 'http://60.199.168.20/WEB_TFC2/SitePages/UserLogin.aspx'
   }else{
     next()
   }
