@@ -698,7 +698,7 @@ export default {
       }
     },
     handleSelection(val) {
-      console.log('handleSelection', val)
+      // console.log('handleSelection', val)
       if (this.showSelectedList === true) {
         return;
       }
@@ -815,7 +815,7 @@ export default {
       this.$emit("multipleSelection", selectedItems);
     },
     handleSelectionChange(val) {
-      console.log('handleSelectionChange', val)
+      // console.log('handleSelectionChange', val)
       if (this.showSelectedList === false) {
         return;
       }
