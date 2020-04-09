@@ -228,7 +228,7 @@ export default {
             item.backendService = []
             if (http) {
               http.forEach(httpItem => {
-                let host = httpItem.host ? httpItem.host : item.status.loadBalancer.ingress[0].ip
+                let host = httpItem.host ? httpItem.host : item.status.loadBalancer.ingress&&item.status.loadBalancer.ingress[0].ip
                 item.backendService.push({
                   url: `http://${host}${httpItem.path}`,
                   other: `${httpItem.backend.serviceName}:${httpItem.backend.servicePort}`
@@ -237,7 +237,7 @@ export default {
             }
             if (https) {
               https.forEach(httpsItem => {
-                let host = httpsItem.host ? httpsItem.host : item.status.loadBalancer.ingress[0].ip
+                let host = httpsItem.host ? httpsItem.host : item.status.loadBalancer.ingress&&item.status.loadBalancer.ingress[0].ip
                 item.backendService.push({
                   url: `https://${host}${httpsItem.path}`,
                   other: `${httpsItem.backend.serviceName}:${httpsItem.backend.servicePort}`
@@ -247,10 +247,10 @@ export default {
             // console.log(item.metadata.annotations)
             return item
           })
-          console.log(this.list)
           this.total = items.length
           this.loadShow = false
         } else {
+          this.loadShow = false
           let ErrTips = {}
           let ErrOr = Object.assign(ErrorTips, ErrTips)
           this.$message({

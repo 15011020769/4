@@ -41,7 +41,7 @@
         </el-form-item>
         <el-form-item :label="$t('TKE.subList.fzjhip')">
           <!-- <div class="tke-form-item_text">{{detailData.status && detailData.status.loadBalancer.ingress && detailData.status.loadBalancer.ingress[0].ip}}</div> -->
-          <div class="tke-form-item_text">{{detailData.status && detailData.status.loadBalancer.ingress? detailData.status.loadBalancer.ingress[0].ip:'-'}}</div>
+          <div class="tke-form-item_text">{{detailData.status && detailData.status.loadBalancer.ingress? detailData.status.loadBalancer.ingress[0].ip+'(IPV4)':'-'}}</div>
         </el-form-item>
         <el-form-item label="端口映射">
           <div style="max-width:800px">

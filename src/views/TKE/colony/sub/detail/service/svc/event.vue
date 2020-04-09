@@ -34,7 +34,8 @@
           :label="$t('TKE.event.jb')"
           >
           <template slot-scope="scope">
-              <span class="text-red">{{scope.row.type}}</span>
+            <!--  class="text-red" -->
+              <span>{{scope.row.type}}</span>
           </template>
         </el-table-column>
         <el-table-column
