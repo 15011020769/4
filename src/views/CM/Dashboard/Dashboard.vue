@@ -18,10 +18,10 @@
       <RenameControlPanel ref="renameControlPanel" :name="this.renameControlName" />
     </Header>
     <div class="Dashboard-main" v-loading="mainLoading">
-      <div class="explain" v-show="this.ViewList.length">
+      <!-- <div class="explain" v-show="this.ViewList.length"> -->
         <!-- <p>{{ $t("CVM.Dashboard.jhtjsj") }}</p> -->
-        <p>{{ $t("CVM.Dashboard.zcbbdc") }}</p>
-      </div>
+        <!-- <p>{{ $t("CVM.Dashboard.zcbbdc") }}</p> -->
+      <!-- </div> -->
       <div class="headBtn">
         <el-button v-show="this.ViewList.length" type="primary" @click="openCreate()">
           {{ $t("CVM.Dashboard.tjjktb") }}
@@ -1041,7 +1041,8 @@
   .Dashboard-wrap>>>.headBtn {
     // display: flex;
     // justify-content: space-between;
-    margin: 20px 0;
+    // margin: 20px 0;
+    margin-bottom: 20px;
 
     >div {
       i {
