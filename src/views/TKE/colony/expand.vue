@@ -746,7 +746,7 @@ export default {
       },
       markNet:{
         3: '1Mbps',
-        100: '500Mbps'
+        500: '500Mbps'
       },
       markdata:{
         10: '10GB',

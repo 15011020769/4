@@ -242,7 +242,7 @@
      </el-dialog>
      <!--停用伸缩组-->
      <el-dialog :title="$t('TKE.subList.tyssz')" :visible.sync="showStopModal" width="35%">
-       <p>{{$t('TKE.subList.qdtyssz')}}{{groupId}}么？</p>
+       <p>{{$t('TKE.subList.qdtyssz')}}{{groupId}}麽？</p>
        <span slot="footer" class="dialog-footer">
          <el-button type="primary" @click="EnabledGroup()">{{$t('TKE.overview.qd')}}</el-button>
          <el-button @click="showStopModal = false">取 消</el-button>
@@ -250,7 +250,7 @@
      </el-dialog>
      <!--启用伸缩组-->
      <el-dialog :title="$t('TKE.subList.qyssz')" :visible.sync="showUseModal" width="35%">
-       <p>{{$t('TKE.subList.qdqyssz')}}{{groupId}}么？</p>
+       <p>{{$t('TKE.subList.qdqyssz')}}{{groupId}}麽？</p>
        <span slot="footer" class="dialog-footer">
          <el-button type="primary" @click="EnabledGroup()">{{$t('TKE.overview.qd')}}</el-button>
          <el-button @click="showUseModal = false">取 消</el-button>

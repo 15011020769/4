@@ -71,18 +71,18 @@
             <!-- <span>{{scope.row.metadata && scope.row.metadata.name}}</span> -->
           </template>
         </el-table-column>
-        <el-table-column prop label="Labels">
+        <el-table-column label="Labels">
           <template slot-scope="scope">
             <span>{{scope.row.metadata && scope.row.metadata.labels | changeLabel}}</span>
           </template>
         </el-table-column>
-        <el-table-column prop label="Selector">
+        <el-table-column label="Selector">
           <template slot-scope="scope">
             <span>{{scope.row.spec && scope.row.spec.selector && scope.row.spec.selector.matchLabels | changeSelector}}</span>
           </template>
         </el-table-column>
 
-        <el-table-column prop :label="$t('TKE.subList.yxqwsl')">
+        <el-table-column :label="$t('TKE.subList.yxqwsl')">
           <template slot-scope="scope">
             <span>{{scope.row.status && scope.row.status.readyReplicas || 0}}/{{scope.row.status && scope.row.status.replicas || 0}}</span>
           </template>
