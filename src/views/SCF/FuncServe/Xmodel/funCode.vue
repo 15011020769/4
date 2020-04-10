@@ -244,6 +244,7 @@
 </template>
 
 <script>
+
 import JsZip from 'jszip'
 import {
   SCF_DETAILS,
@@ -272,23 +273,6 @@ import {
   defaultTemplate
 } from './defaultTemplate'
 import openHint from './openHint'
-// import COS from 'cos-js-sdk-v5'
-
-// const cos = new COS({
-//   getAuthorization: async (_, callback) => {
-//     const res = await Vue.prototype.axios({
-//       url: 'bucket/uploadKey3',
-//       method: 'get'
-//     })
-//     console.log(res)
-//     callback({
-//       TmpSecretId: res.data.secretId,
-//       TmpSecretKey: res.data.secretKey,
-//       XCosSecurityToken: res.data.sessionToken,
-//       ExpiredTime: res.data.extra.expiredTime // SDK 在 ExpiredTime 时间前，不会再次调用 getAuthorization
-//     })
-//   }
-// })
 
 export default {
   props: ['FunctionVersion'],
@@ -502,14 +486,26 @@ export default {
       this.cslsSDK.addListener({
         onRead: () => {
           return new Promise(res => {
-            fetch(this.address, {
+            // fetch(this.address, {
+            //   headers: {
+            //     'content-type': 'application/zip'
+            //   },
+            //   method: 'GET'
+            // })
+            //   .then(res => res.blob())
+            //   .then(blob => {
+            //     res({
+            //       content: blob
+            //     })
+            //   })
+
+            this.axios.get(this.address, {
               headers: {
                 'content-type': 'application/zip'
-              },
-              method: 'GET'
-            })
-              .then(res => res.blob())
+              }
+            }).then(res => res.blob())
               .then(blob => {
+                this.cslsLoading = false     // 关闭加载动画
                 res({
                   content: blob
                 })
@@ -517,7 +513,6 @@ export default {
           })
         }
       })
-
     },
 
     //转base64
