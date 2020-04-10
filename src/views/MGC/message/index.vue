@@ -51,7 +51,7 @@
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column prop="title" label="訊息内容" width="650">
             <template slot-scope="scope">
-              <el-link @click="detailsMesg(scope.row)" :class="scope.row.status === '1' ? 'classGray' : 'classblue'"
+              <el-link @click="detailsMesg(scope.row)" :class="scope.row.portalStatus === '1' ? 'classGray' : 'classblue'"
                 type="primary">{{scope.row.title}}</el-link>
             </template>
           </el-table-column>
@@ -362,7 +362,7 @@
           this.delshow = false;
         }
         for (var i = 0; i < this.getDataAll.length; i++) {
-          if (this.getDataAll[i].status.includes("0")) {
+          if (this.getDataAll[i].portalStatus.includes("0")) {
             this.readshow = false;
             break;
           } else {
