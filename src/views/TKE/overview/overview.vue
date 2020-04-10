@@ -235,7 +235,7 @@ export default {
     HeadCom
   },
   created() {
-    this.resourceList();
+    // this.resourceList();
     this.resourceStatusData();
     this.getData();
   },
@@ -290,7 +290,7 @@ export default {
     async resourceList() {
       var params = {
         Version: "2018-05-25",
-        Region: this.$cookie.get("regionv2")
+        Region: "ap-taipei"
       };
       const res = await this.axios.post(TKE_COLONY_LIST, params);
 
@@ -325,12 +325,13 @@ export default {
     resourceStatusData() {
       var params = {
         Version: "2018-05-25",
-        Region: this.$cookie.get("regionv2"),
+        Region: "ap-taipei",
         "dimensions.0": "workload",
         "dimensions.1": "node"
       };
       this.axios.post(TKE_COLONY_STATUS_JZ, params).then(res => {
-        console.log(res);
+        debugger
+        console.log("resresresres",res);
         if (res.Error === undefined) {
           var sum = 0,
             absum = 0,
