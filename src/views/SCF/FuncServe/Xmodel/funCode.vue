@@ -504,7 +504,7 @@ export default {
       this.cslsSDK.addListener({
         onRead: () => {
           return new Promise(res => {
-            fetch('https://03-20-1300561189.cos.ap-taipei.myqcloud.com/dasd_LATEST.zip', {
+            fetch('https://scf-v2-tpe-1253665819.cos.ap-taipei.myqcloud.com/1300560919/lam-4lb090ze/%24LATEST/e70d7120-a890-4d4f-b90b-a352e1c5038a/ggscftest1_e70d7120-a890-4d4f-b90b-a352e1c5038a.zip?sign=q-sign-algorithm%3Dsha1%26q-ak%3DAKIDWvgIm5IE4jDbM4lxDHAsX6B5oOn3qi6M%26q-sign-time%3D1586497155%3B1586497515%26q-key-time%3D1586497155%3B1586497515%26q-header-list%3D%26q-url-param-list%3D%26q-signature%3Df7289a7a03473d5b606059f49fe9d57a6d5bc16b&response-content-type=application/octet-stream', {
               headers: {
                 'content-type': 'application/zip'
               },
