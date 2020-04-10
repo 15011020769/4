@@ -98,9 +98,6 @@
             <span style="margin:0 0 20px 30px;">
               <el-checkbox label="1">郵件</el-checkbox>
             </span>
-            <!-- <span style="margin-left:30px">
-              <el-checkbox label="2">簡訊</el-checkbox>
-            </span> -->
             <span style="margin-left:30px">
               <el-checkbox label="4">站内信</el-checkbox>
             </span>
@@ -122,29 +119,6 @@
           :default-sort="{ prop: 'changeData', order: 'descending' }">
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column prop="Name" label="用戶名"></el-table-column>
-          <!-- <el-table-column label="手機號">
-            <template slot-scope="scope">
-              <span v-if="scope.row.PhoneNum !== ''">
-                {{scope.row.PhoneNum}}
-                <el-tooltip placement="top" effect="light">
-                  <div slot="content">
-                    未驗證, 可在
-                    <a href>權限管理</a>頁面設置
-                  </div>
-                  <i class="el-icon-warning" style="color:#e54545;cursor: pointer;"></i>
-                </el-tooltip>
-              </span>
-              <span v-else>
-                <el-tooltip placement="top" effect="light">
-                  <div slot="content">
-                    未驗證, 可在
-                    <a href>權限管理</a>頁面設置
-                  </div>
-                  <i class="el-icon-warning" style="color:#e54545;cursor: pointer;"></i>
-                </el-tooltip>
-              </span>
-            </template>
-          </el-table-column> -->
           <el-table-column label="郵箱">
             <template slot-scope="scope">
               <span v-if="scope.row.Email !== ''">
@@ -195,19 +169,16 @@
     SUBSCRIPTION_LIST,
     SUBSCRIPTION_ADMINISTRATION,
     CANCEL_SUBSCRIPTION
-  } from "@/constants/CM-lxx.js"; /////////
+  } from "@/constants/CM-lxx.js";
   import {
     LIST_SUBACCOUNTS
   } from "@/constants";
-
   import Header from "@/components/public/Head";
-  // const cityOptions = ["簡訊", "邮件", "站内信"];
   export default {
     name: "subscription",
     data() {
       return {
         qudaoCheckList: ["1", "4"], //接收方式
-        // qudaoCheckList: ["郵件", "簡訊", "站內信"], //接收方式
         loadingShow1: false, // 加载是否显示
         loadShow: false, // 加载是否显示
         triggerInput: "", //选择触发条件名搜索
@@ -231,22 +202,7 @@
     },
     methods: {
       // 选中管道
-      selectChannel() {
-        // var data = this.$route.params;
-        // if (data.NotifyWay) {
-        //   data.NotifyWay.forEach((v, i) => {
-        //     if (v == "EMAIL") {
-        //       v = "郵件";
-        //     } else if (v == "SMS") {
-        //       v = "簡訊";
-        //     }
-        //     this.qudaoCheckList.push(v);
-        //   });
-        // }
-        // this.cam.channel = this.qudaoCheckList;
-        // console.log(this.cam.channel)
-        // this.$emit("camClick", this.cam);
-      },
+      selectChannel() {},
       // 搜索关键字
       searchKey() {
         if (this.triggerInput == "") {
@@ -258,8 +214,6 @@
       handleSelectionChange2(val) {
         this.selectUserList = val;
         this.num = this.selectUserList.length;
-
-        // this.$emit("camClick", this.cam);
       },
       // 查询接收人数据
       userList() {
@@ -385,8 +339,6 @@
         this.dialogSubscribe = true;
       },
       ok1() {
-
-        this.dialogSubscribe = false;
         var params = {
           Version: "2018-07-24",
           Module: "monitor",
@@ -396,26 +348,15 @@
         this.qudaoCheckList.forEach((item, index) => {
           params["NotifyWays." + index] = item;
         });
-
-        var test = []
+        var useroklist = []
         this.selectUserList.forEach((item, index) => {
           var data = {};
           data.username = item.Name;
           data.uid = item.Uid;
-          data = JSON.stringify(data)
-          test.push(data)
+          useroklist.push(data)
         });
-        params["Receivers"] = test;
-        //  var key, value;
-        //   key = item.Name;
-        //   value = item.Uid;
-        //   var data = {
-        //     key: value
-        //   };
-        //   params["Receivers." + index] = JSON.stringify(data);
-
+        params["Receivers"] = JSON.stringify(useroklist)
         this.axios.post(SUBSCRIPTION_ADMINISTRATION, params).then(res => {
-
           if (res.Response.Error === undefined) {
             this.$message({
               message: "訂閱成功",
@@ -458,7 +399,6 @@
           Language: "zh-CN"
         };
         this.axios.post(SUBSCRIPTION_LIST, params).then(res => {
-          console.log(res.Response, "数据");
           if (res.Response.Error === undefined) {
             this.tableData = res.Response.Events;
             this.loadShow = false; //取消加载

@@ -480,6 +480,7 @@
       reload() {
         this.isRouterAlive = false;
         this.$nextTick(() => {
+          this.tableData = []
           this.isRouterAlive = true;
           this.Loading();
         });

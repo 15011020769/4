@@ -458,11 +458,13 @@ export default {
       };
       this.axios.post(CLONE_SCF, param).then(res => {
         if (res.Response.Error === undefined) {
-          this.cslsLoading = false     // 关闭加载动画
+
           if (name === 'download') {
             window.open(res.Response.Url)
           } else if (name === 'address') {
             this.address = res.Response.Url
+            console.log(res.Response.Url)
+            console.log(this.address)
             this.getCsLite() // 渲染编辑器
           }
 
@@ -508,7 +510,10 @@ export default {
               },
               method: 'GET'
             })
-              .then(res => res.blob())
+              .then(res => {
+                res.blob()
+                this.cslsLoading = false     // 关闭加载动画
+              })
               .then(blob => {
                 res({
                   content: blob
@@ -707,24 +712,27 @@ export default {
           this.updateCsliteFun(param) // 更新函数代码
         }
       } else if (this.SubmissionValue === 'Inline') {   // 在线编辑
-        this.cslsSDK.getBlob().then(blob => {
-          const blobSize = blob.size / 1024 / 1024
-          console.log(blobSize)
-          if (blobSize > 20 || blobSize === 20) {
-            this.$message({
-              message: '在線編輯最大能上傳20M，您的代碼包已超過20M，請使用COS方式上傳',
-              type: "warning",
-              showClose: true,
-              duration: 0
-            });
-          } else {
-            this.blobToDataURI(blob, data => { //blob格式再转换为base64格式
-              const base64url = data.replace(/^data:application\/\w+;base64,/, "")
-              param.ZipFile = base64url;  
-              this.updateCsliteFun(param) // 更新函数代码
-            })
-          }
+        this.cslsSDK.flush().then(() => {
+          this.cslsSDK.getBlob().then(blob => {
+            const blobSize = blob.size / 1024 / 1024
+            console.log(blobSize)
+            if (blobSize > 20 || blobSize === 20) {
+              this.$message({
+                message: '在線編輯最大能上傳20M，您的代碼包已超過20M，請使用COS方式上傳',
+                type: "warning",
+                showClose: true,
+                duration: 0
+              });
+            } else {
+              this.blobToDataURI(blob, data => { //blob格式再转换为base64格式
+                const base64url = data.replace(/^data:application\/\w+;base64,/, "")
+                param.ZipFile = base64url;
+                this.updateCsliteFun(param) // 更新函数代码
+              })
+            }
+          })
         })
+
       } else if (this.SubmissionValue === 'Cos') {         // 上传的是COS
         if (this.cosName === '' || this.cosInput === '') {
           this.$message({

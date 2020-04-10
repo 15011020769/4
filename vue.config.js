@@ -124,7 +124,7 @@ module.exports = {
       .plugin('monaco-editor')
       .use(require('monaco-editor-webpack-plugin'))
     config.performance
-      .maxEntrypointSize(400000000)
-      .maxAssetSize(400000000)
+      .maxEntrypointSize(4000000000)
+      .maxAssetSize(4000000000)
   }
 }
