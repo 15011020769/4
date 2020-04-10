@@ -244,7 +244,7 @@
 </template>
 
 <script>
-
+const fetch = require('node-fetch');
 import JsZip from 'jszip'
 import {
   SCF_DETAILS,
@@ -482,34 +482,36 @@ export default {
         modeType: ModeTypeEnum.ZIP,
         i18nType: "zh-tw"
       });
+      console.log(fetch)
       // https://03-20-1300561189.cos.ap-taipei.myqcloud.com/dasd_LATEST.zip
       this.cslsSDK.addListener({
         onRead: () => {
           return new Promise(res => {
-            // fetch(this.address, {
-            //   headers: {
-            //     'content-type': 'application/zip'
-            //   },
-            //   method: 'GET'
-            // })
-            //   .then(res => res.blob())
-            //   .then(blob => {
-            //     res({
-            //       content: blob
-            //     })
-            //   })
-
-            this.axios.get(this.address, {
+            fetch(this.address, {
               headers: {
                 'content-type': 'application/zip'
-              }
-            }).then(res => res.blob())
+              },
+              method: 'GET'
+            })
+              .then(res => res.blob())
               .then(blob => {
                 this.cslsLoading = false     // 关闭加载动画
                 res({
                   content: blob
                 })
               })
+
+            // this.axios.get(this.address, {
+            //   headers: {
+            //     'content-type': 'application/zip'
+            //   }
+            // }).then(res => res.blob())
+            //   .then(blob => {
+            //     this.cslsLoading = false     // 关闭加载动画
+            //     res({
+            //       content: blob
+            //     })
+            //   })
           })
         }
       })

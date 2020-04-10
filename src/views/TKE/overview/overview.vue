@@ -330,7 +330,6 @@ export default {
         "dimensions.1": "node"
       };
       this.axios.post(TKE_COLONY_STATUS_JZ, params).then(res => {
-        debugger
         console.log("resresresres",res);
         if (res.Error === undefined) {
           var sum = 0,
