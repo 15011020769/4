@@ -11,6 +11,9 @@ import '@/assets/iconfont/iconfont.css'
 import '@/assets/iconfont2/iconfont.css'
 import CMfilters from '@/filters/CMfilters.js'
 
+import 'isomorphic-fetch'
+import 'es6-promise'
+
 import echarts from 'echarts'
 import i18n from './language/i18n.js' // 引入i18n包
 import { message } from '@/utils/resetMessage' // 重写element-ui的message方法
