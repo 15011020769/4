@@ -504,7 +504,7 @@ export default {
       this.cslsSDK.addListener({
         onRead: () => {
           return new Promise(res => {
-            fetch(this.address, {
+            fetch('https://03-20-1300561189.cos.ap-taipei.myqcloud.com/dasd_LATEST.zip', {
               headers: {
                 'content-type': 'application/zip'
               },
