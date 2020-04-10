@@ -244,7 +244,7 @@
 </template>
 
 <script>
-const fetch = require('node-fetch');
+
 import JsZip from 'jszip'
 import {
   SCF_DETAILS,
