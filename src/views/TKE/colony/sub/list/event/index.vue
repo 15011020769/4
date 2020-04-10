@@ -347,6 +347,9 @@ export default {
       params.ClusterName = this.$route.query.clusterId;
       params.Version = "2018-05-25";
 
+  console.log("this.typeValue.slice(1)",this.typeValue.slice(1))
+  console.log("this.typeValue",this.typeValue)
+      
       var params1 = {
         Path:
           "/api/v1/namespaces/" +
@@ -356,6 +359,15 @@ export default {
           this.typeValue.slice(1) +
           "&limit=20"
       };
+      if (this.typeValue == "pods") {
+        params1.Path = "/api/v1/namespaces/" +
+          this.nsValue +
+          "/events?&limit=20"
+      } else if (this.typeValue == "全部類型") {
+        params1.Path = "/api/v1/namespaces/" +
+          this.nsValue +
+          "/events?fieldSelector=involvedObject.kind=Pod&limit=20"
+      }
       params1.Method = "GET";
       params1.ClusterName = this.$route.query.clusterId;
       params1.Version = "2018-05-25";
