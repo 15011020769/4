@@ -458,11 +458,13 @@ export default {
       };
       this.axios.post(CLONE_SCF, param).then(res => {
         if (res.Response.Error === undefined) {
-          this.cslsLoading = false     // 关闭加载动画
+
           if (name === 'download') {
             window.open(res.Response.Url)
           } else if (name === 'address') {
             this.address = res.Response.Url
+            console.log(res.Response.Url)
+            console.log(this.address)
             this.getCsLite() // 渲染编辑器
           }
 
@@ -508,7 +510,10 @@ export default {
               },
               method: 'GET'
             })
-              .then(res => res.blob())
+              .then(res => {
+                res.blob()
+                this.cslsLoading = false     // 关闭加载动画
+              })
               .then(blob => {
                 res({
                   content: blob
