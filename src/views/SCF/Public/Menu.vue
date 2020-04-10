@@ -24,7 +24,7 @@ export default {
   mounted(){
     const routerPath = this.$route.path
     console.log(routerPath)
-    if(routerPath === '/overview') {
+    if(routerPath === '/overView') {
       localStorage.setItem('scfMenu', 'overView')
     }else {
       localStorage.setItem('scfMenu', 'FuncServe')
