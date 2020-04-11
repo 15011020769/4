@@ -372,7 +372,7 @@
       </el-dialog>
       <el-dialog
         :visible.sync="dialogVisiblePolicies"
-        width="70%"
+        width="1200px"
         :before-close="handleClosePolicy"
         destroy-on-close
       >
