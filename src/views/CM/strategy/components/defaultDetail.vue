@@ -2435,15 +2435,16 @@ export default {
           });
           this.codeSure = false;
         }
-      } else {
-        this.$message({
-          message: "請輸入正確的url",
-          type: "error",
-          showClose: true,
-          duration: 0
-        });
-        this.codeSure = false;
       }
+      //  else {
+      //   this.$message({
+      //     message: "請輸入正確的url",
+      //     type: "error",
+      //     showClose: true,
+      //     duration: 0
+      //   });
+      //   this.codeSure = false;
+      // }
     },
     // 編輯告警對象
     editObject() {
@@ -4772,7 +4773,9 @@ export default {
           this.callbackInterface = false;
           this.DetailsInit();
         } else {
-          let ErrTips = {};
+          let ErrTips = {
+            int64: "無效的回調url或內部ip,請輸入正確的url或ip"
+          };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
             message: ErrOr[res.Response.Error.Code],

@@ -76,14 +76,11 @@
                   v-model="inputRoleName"
                   :placeholder="$t('CAM.Role.inputRoleName')"
                   size="mini"
-                  @blur="jsname"
                 ></el-input>
-                <p
+               <p
                   v-if="have"
                   style="font-size:12px;color:#E1504A;padding-top:10px"
-                >
-                  {{ $t("CAM.Role.isNotNullRoleName") }}
-                </p>
+                >{{$t('CAM.Role.roleNameInvalid')}}</p>
               </div>
               <p class="jscontent">
                 <el-input
@@ -182,6 +179,9 @@ export default {
   watch: {
     input_num () {
       this.notExists = false
+    },
+    inputRoleName(n) {
+      this.have = !/^[0-9a-zA-Z+=,.@_-]{1,128}$/.test(n) 
     }
   },
   methods: {
@@ -222,16 +222,6 @@ export default {
         return
       }
       this.active = this.active - 1
-    },
-
-    leftCheck (val) {},
-    // 角色名称校验
-    jsname () {
-      if (!this.inputRoleName) {
-        this.have = true
-      } else {
-        this.have = false
-      }
     },
     // 切换腾讯雲主账号
     changeAccount () {

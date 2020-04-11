@@ -158,7 +158,14 @@ export default {
           return;
         }
         this.policiesSelectedData = this.$refs.tansferStep.selectedStrategies
-        console.log(this.policiesSelectedData);
+        if (this.policiesSelectedData.length === 0) {
+          return void this.$message({
+            message: '請選擇策略',
+            type: 'error',
+            showClose: true,
+            duration: 0
+          })
+        }
         this.active = this.active + 1;
       }
     },

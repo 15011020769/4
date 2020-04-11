@@ -19,7 +19,7 @@
           <el-table
             :data="strategies"
             max-height="520"
-            style="width: 100%"
+            style="width: 554px"
             @select="togglePolicy"
             @select-all="toggleAllPolicy"
             class="strategies-table"

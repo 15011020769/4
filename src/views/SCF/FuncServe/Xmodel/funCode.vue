@@ -497,24 +497,17 @@ export default {
             })
               .then(res => res.blob())
               .then(blob => {
-                this.cslsLoading = false     // 关闭加载动画
                 res({
                   content: blob
                 })
               })
-
-            // this.axios.get(this.address, {
-            //   headers: {
-            //     'content-type': 'application/zip'
-            //   }
-            // }).then(res => res.blob())
-            //   .then(blob => {
-            //     this.cslsLoading = false     // 关闭加载动画
-            //     res({
-            //       content: blob
-            //     })
-            //   })
           })
+        },
+        onWrite: (data) => {
+          console.log(data) // { content: Blob }
+          if(data !== '' || data !== undefined || data !== null){
+            this.cslsLoading = false     // 关闭加载动画
+          }
         }
       })
     },

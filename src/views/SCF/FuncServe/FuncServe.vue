@@ -38,7 +38,7 @@
         <el-table-column prop="FunctionName" :label="$t('SCF.total.hsm')">
           <template slot-scope="$scope">
             <!-- 点击函数名跳转页面 -->
-            <a @click="toDoDetail($scope.row,'second',SpaceValue)">{{$scope.row.FunctionName}}</a>
+            <a @click="toDoDetail($scope.row,'first',SpaceValue)">{{$scope.row.FunctionName}}</a>
           </template>
         </el-table-column>
         <el-table-column :label="$t('SCF.total.hszt')">
