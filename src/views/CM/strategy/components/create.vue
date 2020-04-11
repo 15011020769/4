@@ -1676,9 +1676,10 @@ export default {
       });
     },
     saveOther: async function() {
-      this.bandingPolicyObject();
-      this.updateAlarmReceivers();
-      if (this.formInline.callbackVerifyCode !== "") {
+      // this.bandingPolicyObject();
+      // this.updateAlarmReceivers();
+      console.log(this.httpInput);
+      if (this.httpInput !== "") {
         this.modifyAlarmCallback();
       }
     },
@@ -1857,13 +1858,23 @@ export default {
         Module: "monitor",
         GroupId: saveResponseGroupId,
         UserAction: "bind",
-        Url: callbackObj.Url,
-        VerifyCode: callbackVerifyCode
+        Url: this.httpVal + "://" + this.httpInput,
+        VerifyCode: this.httpCode
       };
       this.axios.post(CM_CALLBACK_SAVE, param).then(res => {
-        this.axiosUtils(res, () => {
-          console.log(res);
-        });
+        if (res.Response.Error === undefined) {
+        } else {
+          let ErrTips = {
+            int64: "無效的回調url或內部ip,請輸入正確的url或ip"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
       });
     },
     axiosUtils: function(res, func) {
