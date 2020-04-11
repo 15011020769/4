@@ -758,11 +758,7 @@
                   ></i>
                 </p>
                 <p style="margin: 10px 0;font-size: 16px;font-weight: 700;">
-                  {{
-                    formInline.callbackVerifyCode === ""
-                      ? httpCodes
-                      : formInline.callbackVerifyCode
-                  }}
+                  {{ httpCode }}
                 </p>
               </div>
             </div>
@@ -1955,6 +1951,244 @@ export default {
         this.$refs.cam.setNotifyWay(notifyWay);
       }
       this.receivingObjectLoad = false;
+    },
+    callbackEdit() {
+      // 回調接口配置
+      this.callbackInterface = true;
+      let param = {
+        Version: "2018-07-24",
+        Module: "monitor"
+      };
+      this.axios.post(CM_CALLBACK, param).then(res => {
+        if (res.Response.Error === undefined) {
+          this.httpCodes = res.Response.VerifyCode;
+          this.httpCode = this.httpCodes;
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+    // 回調接口
+    HttpHistroy() {
+      this.httpOption = [];
+      this.httpOption1 = [];
+      let param = {
+        Version: "2018-07-24",
+        Module: "monitor"
+      };
+      this.axios.post(CM_CALLBACK_HISTORY, param).then(res => {
+        if (res.Response.Error === undefined) {
+          var list = res.Response.List;
+
+          for (let i in list) {
+            if (
+              this.httpVal ===
+              list[i].Url.substring(0, list[i].Url.lastIndexOf(":"))
+            ) {
+              this.httpOption.push(list[i]);
+              this.httpOption1.push(list[i]);
+            }
+          }
+
+          this.httpShow = true;
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+    HttpHistroyBlur() {
+      this.isURL(this.httpVal + "://" + this.httpInput);
+    },
+    isURL(str) {
+      if (str.indexOf(".") != -1) {
+        let _str = str.split(".");
+        if (_str[1].length >= 1) {
+          this.codeSure = true;
+        } else {
+          this.$message({
+            message: "請輸入正確的url",
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+          this.codeSure = false;
+        }
+      }
+    },
+    leave() {
+      this.httpShow = false;
+    },
+    HttpHistruyInput() {
+      this.httpShow = true;
+      this.httpOption = [];
+      this.httpOption = this.httpOption1;
+      var _arr = [];
+      for (let i in this.httpOption) {
+        //如果字符串中不包含目標字符會返回-1
+        if (this.httpOption[i].Url.indexOf(this.httpInput) >= 0) {
+          _arr.push(this.httpOption[i]);
+        }
+      }
+      this.httpOption = _arr;
+      if (this.httpVal == "http") {
+        for (let i in this.httpOption2) {
+          if (
+            this.httpOption2[i].Url.substring(
+              this.httpOption2[i].Url.lastIndexOf("/") + 1,
+              this.httpOption2[i].Url.length
+            ) === this.httpInput
+          ) {
+            this.HttpSelect(this.httpOption2[i]);
+            return false;
+          } else {
+            this.httpCode = this.httpCodes;
+          }
+        }
+      } else {
+        for (let i in this.httpOption3) {
+          if (
+            this.httpOption3[i].Url.substring(
+              this.httpOption3[i].Url.lastIndexOf("/") + 1,
+              this.httpOption3[i].Url.length
+            ) === this.httpInput
+          ) {
+            this.HttpSelect(this.httpOption3[i]);
+            return false;
+          } else {
+            this.httpCode = this.httpCodes;
+          }
+        }
+      }
+    },
+    HttpInit() {
+      let param = {
+        Version: "2018-07-24",
+        Module: "monitor"
+      };
+      this.axios.post(CM_CALLBACK_HISTORY, param).then(res => {
+        if (res.Response.Error === undefined) {
+          let list = res.Response.List;
+
+          for (let i in list) {
+            if (
+              "http" === list[i].Url.substring(0, list[i].Url.lastIndexOf(":"))
+            ) {
+              this.httpOption2.push(list[i]);
+            }
+            if (
+              "https" === list[i].Url.substring(0, list[i].Url.lastIndexOf(":"))
+            ) {
+              this.httpOption3.push(list[i]);
+            }
+          }
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+    HttpTypeChange() {
+      this.httpShow = false;
+      if (this.httpVal == "http") {
+        for (let i in this.httpOption2) {
+          if (
+            this.httpOption2[i].Url.substring(
+              this.httpOption2[i].Url.lastIndexOf("/") + 1,
+              this.httpOption2[i].Url.length
+            ) === this.httpInput
+          ) {
+            this.HttpSelect(this.httpOption2[i]);
+            return false;
+          } else {
+            this.httpCode = this.httpCodes;
+          }
+        }
+      } else {
+        for (let i in this.httpOption3) {
+          if (
+            this.httpOption3[i].Url.substring(
+              this.httpOption3[i].Url.lastIndexOf("/") + 1,
+              this.httpOption3[i].Url.length
+            ) === this.httpInput
+          ) {
+            this.HttpSelect(this.httpOption3[i]);
+            return false;
+          } else {
+            this.httpCode = this.httpCodes;
+          }
+        }
+      }
+    },
+    HttpSelect(item) {
+      this.httpInput = item.Url.substring(
+        item.Url.lastIndexOf("/") + 1,
+        item.Url.length
+      );
+      this.httpCode = item.VerifyCode;
+      this.httpShow = false;
+    },
+    // 回調接口 保存
+    CallBackSave(val) {
+      if (val == 1) {
+        if (!this.codeSure) {
+          this.$message({
+            message: "請輸入正確的url",
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+          return false;
+        }
+      }
+      let param = {
+        Version: "2018-07-24",
+        Module: "monitor",
+        GroupId: this.$route.query.groupId
+      };
+      if (val == 1) {
+        param["UserAction"] = "bind";
+        param["Url"] = this.httpVal + "://" + this.httpInput;
+        param["VerifyCode"] = this.httpCode;
+      } else {
+        param["UserAction"] = "unbind";
+      }
+      this.axios.post(CM_CALLBACK_SAVE, param).then(res => {
+        if (res.Response.Error === undefined) {
+          this.callbackInterface = false;
+          this.DetailsInit();
+        } else {
+          let ErrTips = {
+            int64: "無效的回調url或內部ip,請輸入正確的url或ip"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
     }
   },
   created: function() {
@@ -1979,6 +2213,7 @@ export default {
     this.getProjectsList();
     this.callbackEdit();
     this.httpHistroy();
+    this.HttpInit();
   },
   mounted: function() {}
 };
