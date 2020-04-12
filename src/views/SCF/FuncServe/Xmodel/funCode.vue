@@ -501,7 +501,7 @@ export default {
                 console.log('打印此数据是否有留白')
               })
           })
-        },
+        }
         // onWrite: (data) => {
         //   console.log(data) // { content: Blob }
         //   if(data !== '' || data !== undefined || data !== null){
