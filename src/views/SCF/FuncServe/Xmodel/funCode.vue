@@ -442,7 +442,6 @@ export default {
       };
       this.axios.post(CLONE_SCF, param).then(res => {
         if (res.Response.Error === undefined) {
-          this.cslsLoading = false     // 关闭加载动画
           if (name === 'download') {
             window.open(res.Response.Url)
           } else if (name === 'address') {
@@ -495,6 +494,7 @@ export default {
             })
               .then(res => res.blob())
               .then(blob => {
+                // this.cslsLoading = false     // 关闭加载动画
                 res({
                   content: blob
                 })
