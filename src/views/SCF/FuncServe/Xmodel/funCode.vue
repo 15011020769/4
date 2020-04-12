@@ -494,19 +494,20 @@ export default {
             })
               .then(res => res.blob())
               .then(blob => {
-                // this.cslsLoading = false     // 关闭加载动画
                 res({
                   content: blob
                 })
+                this.cslsLoading = false     // 关闭加载动画
+                console.log('打印此数据是否有留白')
               })
           })
         },
-        onWrite: (data) => {
-          console.log(data) // { content: Blob }
-          if(data !== '' || data !== undefined || data !== null){
-            this.cslsLoading = false     // 关闭加载动画
-          }
-        }
+        // onWrite: (data) => {
+        //   console.log(data) // { content: Blob }
+        //   if(data !== '' || data !== undefined || data !== null){
+        //     this.cslsLoading = false     // 关闭加载动画
+        //   }
+        // }
       })
     },
 
