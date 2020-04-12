@@ -442,10 +442,6 @@ export default {
       };
       this.axios.post(CLONE_SCF, param).then(res => {
         if (res.Response.Error === undefined) {
-<<<<<<< HEAD
-
-=======
->>>>>>> release
           if (name === 'download') {
             window.open(res.Response.Url)
           } else if (name === 'address') {
