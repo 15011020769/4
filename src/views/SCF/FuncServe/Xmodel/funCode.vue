@@ -442,7 +442,10 @@ export default {
       };
       this.axios.post(CLONE_SCF, param).then(res => {
         if (res.Response.Error === undefined) {
+<<<<<<< HEAD
 
+=======
+>>>>>>> release
           if (name === 'download') {
             window.open(res.Response.Url)
           } else if (name === 'address') {
@@ -500,15 +503,17 @@ export default {
                 res({
                   content: blob
                 })
+                this.cslsLoading = false     // 关闭加载动画
+                console.log('打印此数据是否有留白')
               })
           })
-        },
-        onWrite: (data) => {
-          console.log(data) // { content: Blob }
-          if(data !== '' || data !== undefined || data !== null){
-            this.cslsLoading = false     // 关闭加载动画
-          }
         }
+        // onWrite: (data) => {
+        //   console.log(data) // { content: Blob }
+        //   if(data !== '' || data !== undefined || data !== null){
+        //     this.cslsLoading = false     // 关闭加载动画
+        //   }
+        // }
       })
     },
 
