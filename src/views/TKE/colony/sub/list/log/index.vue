@@ -335,6 +335,7 @@ export default {
      
     },
     getPodData() {
+      debugger
       if (v != "") {
         console.log(this.value3[0],'this.value3[0]')
         var v = this.value3.replace(
