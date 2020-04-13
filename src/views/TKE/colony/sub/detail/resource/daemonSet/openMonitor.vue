@@ -141,7 +141,7 @@ import {
   NODE_INFO
 } from "@/constants";
 import { ErrorTips } from "@/components/ErrorTips";
-import TimeDropDown from "@/components/public/TimeDropDown.vue";
+import TimeDropDown from "@/components/public/TimeDropDown7.vue";
 import moment from "moment";
 import EcharTKE from "@/components/public/EcharTKE";
 // const cityOptions = ["asdasd", "3dsda", "asdaqwe"];
@@ -386,7 +386,22 @@ export default {
       this.axios.post(TKE_GETTKEDATARESULT, param).then(res => {
         if (res.Response.Error === undefined) {
           let data = JSON.parse(res.Response.Data);
-          console.log(data);
+          this.podNumbers = [];
+          this.podStarts = [];
+          this.cpuUseds = [];
+          this.cpuUsedColonys = [];
+          this.cpuRequests = [];
+          this.cpuUsedmaxs = [];
+          this.memorys = [];
+          this.memusages = [];
+          this.memrequests = [];
+          this.menNocaches = [];
+          this.memUsageBytes = [];
+          this.memNoYsages = [];
+          this.GpuUseds = [];
+          this.GpuUsedSees = [];
+          this.GpuUsedColoys = [];
+          this.GpuUsedSeeColoys = [];
           let times = [],
             podIds = [],
             podNumbers = [],

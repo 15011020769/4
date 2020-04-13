@@ -82,7 +82,7 @@
             </el-form-item> -->
             <el-form-item label="环境变量" v-model="item.env">
               <div class="tke-form-item_text">{{item.env && item.env | environment}}</div>
-              <div class="tke-form-item_text">{{item.env && item.env | environment1}}</div>
+              <!-- <div class="tke-form-item_text">{{item.env && item.env | environment1}}</div> -->
             </el-form-item>
             <el-form-item label="挂载点" v-model="item.volumeMounts">
               <div class="tke-form-item_text">
@@ -117,7 +117,7 @@ export default {
   name: "deploymentDetailInfo",
   data() {
     return {
-      activeName: 'first',
+      activeName: '',
       clusterId:'',//集群id
       rowData: {},//传过来的数据
       spaceName: '',//路由传过来的命名空间名称
@@ -131,6 +131,7 @@ export default {
     this.clusterId=this.$route.query.clusterId;
     this.spaceName = this.$route.query.spaceName;
     this.rowData = this.$route.query.rowData;
+    this.activeName = this.$route.query.rowData.spec.template.spec.containers[0].name;
     console.log("rowData",this.rowData);
   },
   methods: {
@@ -169,6 +170,12 @@ export default {
         for(let i = 0; i < value.length; i++) {
           if(value[i].value) {
             res += value[i].name + '=' + value[i].value + ","
+          } else {
+            let name = Object.keys(value[i].valueFrom)[0];
+            res += value[i].name + '=' + name 
+              // + "   名称：" +value[i].valueFrom.name.name 
+                // + "   Key：" + value[i].valueFrom.name.key 
+                + ","
           }
         }
         return res.substring(0,res.length - 1);
