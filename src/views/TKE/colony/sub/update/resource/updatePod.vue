@@ -96,6 +96,10 @@
                    <el-input :class="{'pod-warn':rightFlag}"     @focus="matchThreeFocus(vRight)"  @blur="matchThreeBlur(vRight)" v-model.number="vRight" class="w100"></el-input>
                  </el-tooltip>
                </el-form-item>
+               <el-form-item label="">
+                 <p>在設定的實例範圍內自動調節，不會超出該設定範圍</p>
+                 <p>當前工作負載已關聯1條HPA，請注意關聯多個HPA可能會導致的實例數量波動</p>
+               </el-form-item>
              </div>
            </el-form-item>
          </el-form>

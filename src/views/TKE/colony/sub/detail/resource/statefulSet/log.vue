@@ -137,7 +137,7 @@ export default {
       await this.axios.post(POINT_REQUEST, param).then(res => {
         if(res.Response.Error === undefined) {
           this.loadShow = false;
-          this.logData = res.Response.ResponseBody;
+          this.logData = res.Response.ResponseBody?res.Response.ResponseBody:'暫無日誌';
         } else {
           this.loadShow = false;
           let ErrTips = {};

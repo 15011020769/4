@@ -46,7 +46,7 @@
           </template>
         </el-table-column>
         <el-table-column prop label="Labels">
-          <template slot-scope="scope">
+          <template>
             <!-- <p v-if="scope.row.metadata.labels">{{scope.row.metadata.labels}}</p> -->
             <p>-</p>
           </template>
@@ -144,7 +144,7 @@ export default {
 
       //搜索下拉框
       searchOptions: [],
-      searchType: "default", //下拉选中的值
+      searchType: "", //下拉选中的值
       searchInput: "" //输入的搜索关键字
     };
   },
@@ -152,11 +152,14 @@ export default {
   created() {
     // 从路由获取集群id
     this.clusterId = this.$route.query.clusterId;
-    this.nameSpaceList();
-    this.tableListData();
+    this.getData();
   },
   methods: {
-    tableListData() {
+    async getData () {
+      await this.nameSpaceList();
+      await this.tableListData();
+    },
+    async tableListData() {
       var params = {
         ClusterName: this.clusterId,
         Method: "GET",
@@ -168,7 +171,7 @@ export default {
         Version: "2018-05-25"
       };
       this.loadShow=true
-      this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+      await this.axios.post(TKE_COLONY_QUERY, params).then(res => {
         if (res.Response.Error == undefined) {
           var data = JSON.parse(res.Response.ResponseBody);
           console.log(data);
@@ -232,7 +235,7 @@ export default {
         .catch(_ => {});
     },
     //命名空间选项
-    nameSpaceList() {
+    async nameSpaceList() {
       if (this.clusterId) {
         var params = {
           ClusterName: this.clusterId,
@@ -240,7 +243,7 @@ export default {
           Path: "/api/v1/namespaces",
           Version: "2018-05-25"
         };
-        this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+        await this.axios.post(TKE_COLONY_QUERY, params).then(res => {
           if (res.Response.Error == undefined) {
             var data = JSON.parse(res.Response.ResponseBody);
             var nameList = [];

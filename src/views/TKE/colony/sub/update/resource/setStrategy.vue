@@ -92,8 +92,8 @@ export default {
       cl:{
         timeInterval:'',
         podNum:'',
-        maxPodOver:'',
-        maxPodNot:'',
+        maxPodOver:'25%',
+        maxPodNot:'25%',
       },
       updateWay:'1',
       updateTactics:'1',
