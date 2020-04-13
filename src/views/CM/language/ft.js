@@ -2,7 +2,7 @@ module.exports = {
   menu: {
     title1: '雲監控',
     title2: '雲伺服器',
-    title3: '塊儲存',
+    title3: '雲硬碟',
     title4: '負載均衡-CLB',
     title5: '雲資料庫',
     title6: 'MySQL',
@@ -113,7 +113,7 @@ module.exports = {
       ddwg: '對端閘道',
     },
     cloudDisk: {
-      yyp: '塊儲存',
+      yyp: '雲硬碟',
       mc: 'ID/名稱',
       dx: '大小(GB)',
       yplx: '硬碟類型',

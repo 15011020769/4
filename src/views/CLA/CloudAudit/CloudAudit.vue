@@ -27,8 +27,10 @@
 
         <div class="updates_download">
           <div class="updates">
-            <i class="el-icon-refresh" @click="reload()"></i>
-            <i @click="exportExcel" class="el-icon-download" style="margin-left:5px;"></i>
+            <!-- <i class="el-icon-refresh"></i> -->
+            <el-button icon="el-icon-refresh" @click="reload()" size="small" :disabled='btndisabled'></el-button>
+            <el-button icon="el-icon-download" @click="exportExcel" size="small"></el-button>
+            <!-- <i class="el-icon-download" style="margin-left:5px;"></i> -->
           </div>
         </div>
       </div>
@@ -214,6 +216,7 @@
   export default {
     data() {
       return {
+        btndisabled: true,
         WEiY: false,
         placeholder: "請輸入內容",
         value1: null, // 日历
@@ -338,6 +341,7 @@
       },
       //列表数据
       Loading() {
+        this.btndisabled = true
         this.vloading = true;
         const params = {
           Version: "2019-03-19",
@@ -376,6 +380,7 @@
             this.NextToken1 = res.Response.NextToken
             this.loading = false;
             this.vloading = false;
+            this.btndisabled = false
             if (res.Response.ListOver === true) {
               this.Show = false
             } else {
