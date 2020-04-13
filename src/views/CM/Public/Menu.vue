@@ -15,7 +15,6 @@
       <el-menu-item index="/History">
         <span slot="title">告警曆史</span>
       </el-menu-item>
-      -->
       <el-submenu index="4">
         <template slot="title">
           <span>告警配置</span>
@@ -48,7 +47,7 @@
           </el-menu-item>
         </el-menu-item-group>
       </el-submenu>
-      <el-submenu index="6">
+      <!-- <el-submenu index="6">
         <template slot="title">
           <span>自定義監控</span>
         </template>
@@ -60,11 +59,10 @@
             <span slot="title">監控視圖</span>
           </el-menu-item>
         </el-menu-item-group>
-      </el-submenu>
+      </el-submenu> -->
       <el-menu-item index="/flow">
         <span slot="title">流量監控</span>
       </el-menu-item>
-      -->
       <el-menu-item index="/CVM" @click="_class" :class="{ active: classValue == 'CVM' }">
         <span slot="title">{{ $t("menu.title2") }}</span>
       </el-menu-item>
