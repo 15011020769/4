@@ -19,6 +19,7 @@
           <el-table
             :data="users"
             max-height="520"
+            style="width: 554px"
             @select="toggleuser"
             @select-all="toggleAlluser"
             class="users-table"
