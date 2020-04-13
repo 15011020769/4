@@ -18,7 +18,7 @@
         </el-tab-pane>
         <el-tab-pane :label="$t('CSS.detailPlay.19')" name="third">
           <div class="wrapper">
-            <templateconfig />
+            <templateconfig :info="info" />
           </div>
         </el-tab-pane>
       </el-tabs>
@@ -77,9 +77,7 @@ export default {
   methods: {
     // 返回列表页
     returnBack () {
-      this.$router.push({
-        name: 'domainManagement'
-      })
+      this.$router.go(-1)
     }
   }
 }

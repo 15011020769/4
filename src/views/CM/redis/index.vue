@@ -217,7 +217,10 @@
           Region: this.selectedRegion,
           Version: "2018-04-12",
           Offset: this.currpage * this.pagesize - this.pagesize,
-          Limit: this.pagesize
+          Limit: this.pagesize,
+          'Status.0': 0,
+          'Status.1': 1,
+          'Status.2': 2
         };
         if (this.searchValue !== "" && this.searchInput !== "") {
           param[this.searchValue] = this.searchInput;
@@ -283,7 +286,7 @@
         this.GetTabularData();
       },
       //跳转
-      jump(id,appid) {
+      jump(id, appid) {
         this.$router.push({
           name: "Redisdetails",
           query: {

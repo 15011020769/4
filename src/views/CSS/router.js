@@ -208,6 +208,30 @@ const router = new Router({
       }
     },
     {
+      path: '/slow/domains', // 断流诊断
+      name: 'slow-domains',
+      component: () => import(/* webpackChunkName: "slow-domains" */ './slow/domains/index.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/slow/templates', // 断流诊断
+      name: 'slow-templates',
+      component: () => import(/* webpackChunkName: "slow-templates" */ './slow/templates/index.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/slow/stat', // 断流诊断
+      name: 'slow-stat',
+      component: () => import(/* webpackChunkName: "slow-stat" */ './slow/stat/index.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
       path: '/cutout', // 断流诊断
       name: 'cutout',
       component: () => import(/* webpackChunkName: "cutout" */ './cutout/index.vue'),

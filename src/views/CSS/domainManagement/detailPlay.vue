@@ -23,6 +23,7 @@
           :label="$t('CSS.detailPlay.templateConfiguration')"
           name="third"
           lazy
+          v-if="info.IsDelayLive === 0"
         >
           <div class="wrapper">
             <play-template />
@@ -41,6 +42,7 @@
           :label="$t('CSS.detailPlay.advancedConfiguration')"
           name="fifth"
           lazy
+          v-if="info.IsDelayLive === 0"
         >
           <div class="wrapper">
             <advance-config />

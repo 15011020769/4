@@ -136,7 +136,7 @@
     <el-dialog
       :title="$t('CAM.userGroup.createBtn')"
       :visible.sync="dialogVisible"
-      width="950px"
+      width="1200px"
       :before-close="handleClose"
       custom-class="dialogStyle"
       destroy-on-close

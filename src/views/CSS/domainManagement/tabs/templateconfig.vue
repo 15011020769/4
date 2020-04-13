@@ -24,7 +24,7 @@
             </el-table>
           </div>
         </div>
-        <div class="modileCon">
+        <div class="modileCon" v-if="info.IsDelayLive === 0">
           <h1>
             {{ $t("CSS.domainManagement.13") }}
             <a @click="ScreenshotEdit">{{ $t("CSS.domainManagement.10") }}</a>
@@ -82,7 +82,7 @@
             </el-table>
           </div>
         </div>
-        <div class="modileCon">
+        <div class="modileCon" v-if="info.IsDelayLive === 0">
           <h1>
             水印配置
             <a @click="waterEdit">{{ $t("CSS.domainManagement.10") }}</a>
@@ -173,6 +173,12 @@ const defaultParam = {
   Version: '2018-08-01'
 }
 export default {
+  props: {
+    info: {
+      required: false,
+      type: Object
+    }
+  },
   data () {
     return {
       callbackconfigData: [], // 回调配置table

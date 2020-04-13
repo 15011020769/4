@@ -10,7 +10,7 @@
       </el-switch>
       <el-button @click="reset" size="mini">重置</el-button>
     </el-row>
-    <div ref="line_dv" style="width: 100%;height: 400px;"></div>
+    <div class="canvas-wrap" ref="line_dv" style="width: 100%;height: 400px;"></div>
   </div>
 </template>
 
@@ -220,8 +220,11 @@ export default {
     color: #000;
   }
 }
-  .topSwitch {
-    margin-left:40px;
-    margin-right: 20px;
-  }
+.topSwitch {
+  margin-left:40px;
+  margin-right: 20px;
+}
+.canvas-wrap div {
+  width: 100%;
+}
 </style>
