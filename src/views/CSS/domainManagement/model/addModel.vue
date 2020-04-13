@@ -84,7 +84,12 @@ import { CSSErrorTips } from '../../components/CSSErrorTips'
 import { isOwnDomain } from '../utils/OwnDomain'
 export default {
   props: {
-    isShow: Boolean
+    isShow: Boolean,
+    isDelayLive: {
+      type: Number,
+      required: false,
+      default: 0,
+    }
   },
   computed: {
     addDominModel () {
@@ -173,7 +178,12 @@ export default {
       let params = {
         Version: '2018-08-01',
         DomainName: this.dominForm.DominName,
-        DomainType: this.dominForm.DomainType
+        DomainType: this.dominForm.DomainType,
+        IsDelayLive: this.isDelayLive,
+      }
+
+      if (this.dominForm.DomainType === 1) {
+        params.PlayType = this.PlayType
       }
       this.axios.post(ADD_DOMAIN, params).then(({ Response }) => {
         if (Response.Error) {

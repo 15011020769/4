@@ -1,14 +1,12 @@
-const ownDomain1 = "livepush.myqcloud.com";
-const ownDomain2 = "liveplay.myqcloud.com";
+const ownDomain1 = "myqcloud.com";
 
 // 判断是否是自有域名
 // 参数：域名
 let isOwnDomain = function(domain) {
-  if (domain.endsWith(ownDomain1) || domain.endsWith(ownDomain2)) {
+  if (domain.endsWith(ownDomain1)) {
     return true;
-  } else {
-    return false;
   }
+  return false;
 };
 
 export { isOwnDomain };

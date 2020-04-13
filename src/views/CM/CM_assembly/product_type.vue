@@ -74,6 +74,9 @@
             label: '物理專線',
             viewName: 'dcline',
           }, {
+            label: '專線通道',
+            viewName: 'dcchannel',
+          }, {
             label: '物件儲存',
             viewName: 'COS',
           }

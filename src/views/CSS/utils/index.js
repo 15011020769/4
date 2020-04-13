@@ -42,7 +42,7 @@ const calculatePlayUrlWithAuth = (a, b, c, d, e) => {
   k.push({
     name: '播放地址 (UDP)',
     tip: '快直播(UDP)流量/带宽费用与标准直播不同',
-    value: 'webrtc://' + a + '/' + b + '/' + c + '.m3u8' + g,
+    value: 'webrtc://' + a + '/' + b + '/' + c + g,
     qrcode: !0
   })
   return k

@@ -96,6 +96,22 @@
           </el-menu-item>
         </el-menu-item-group>
       </el-submenu> -->
+      <el-submenu index="4">
+        <template slot="title">
+          <span>慢直播</span>
+        </template>
+        <el-menu-item-group>
+          <el-menu-item index="/slow/domains">
+            <span slot="title">域名管理</span>
+          </el-menu-item>
+          <el-menu-item index="/slow/templates">
+            <span slot="title">範本配置</span>
+          </el-menu-item>
+          <el-menu-item index="/slow/stat">
+            <span slot="title">統計分析</span>
+          </el-menu-item>
+        </el-menu-item-group>
+      </el-submenu>
       <el-submenu index="5">
         <template slot="title">
           <span>{{$t('CSS.leftSide.22')}}</span>

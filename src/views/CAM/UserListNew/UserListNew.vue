@@ -191,7 +191,7 @@
     <el-dialog
       :title="title"
       :visible.sync="authorization"
-      width="60%"
+      width="1200px"
       :before-close="handleClose"
       destroy-on-close
       ref="tab1"

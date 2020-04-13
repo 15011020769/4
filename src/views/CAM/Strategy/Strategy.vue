@@ -131,7 +131,7 @@
       <el-dialog
         title="關聯用戶/用戶組"
         :visible.sync="dialogVisible"
-        width="72%"
+        width="1200px"
         :before-close="beforeClose"
       >
         <transfer

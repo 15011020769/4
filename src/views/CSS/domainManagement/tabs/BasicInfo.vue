@@ -15,11 +15,11 @@
           <p>{{ $t("CSS.domainManagement.3") }}</p>
           <p>{{ info.Type | typeCh }}</p>
         </div>
-        <div class="newClear newList" v-if="info.Type === 1">
+        <div class="newClear newList" v-if="info.Type === 1 && info.IsDelayLive === 0">
           <p>{{ $t("CSS.detailPlay.playArea") }}</p>
           <p>{{ info.PlayType | playType }}</p>
         </div>
-        <div class="newClear newList">
+        <div class="newClear newList" v-if="info.IsDelayLive === 0">
           <p>標籤</p>
           <p>
             <span class="tag" v-for="tag in tags" :key="tag.tagKeyMd5">{{tag.tagKey}}:{{tag.tagValue}}</span>
@@ -31,10 +31,6 @@
       <el-dialog title="編輯標籤" :visible.sync="modelEdit" width="45%" destroy-on-close>
         <editTagsModel :domains="[{Name: $route.query.Name}]" :visible.sync="modelEdit" @success="onSuccess" />
       </el-dialog>
-      <!-- <editTagsModel
-        :isShow="modelEdit"
-        @closeEditTagsModel="closeEditTagsModel"
-      /> -->
     </div>
   </div>
 </template>

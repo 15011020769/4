@@ -18,6 +18,7 @@
         <div class="border"  style="height: 522px;">
           <el-table
             :data="data"
+            style="width: 554px"
             max-height="520"
             class="data-table"
             ref="tableRef"
