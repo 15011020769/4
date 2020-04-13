@@ -33,6 +33,10 @@ export const CSS_SCREEN = 'live2/DescribeScreenShotSheetNumList'
 export const CSS_RECORDSTREAM = 'live2/DescribeConcurrentRecordStreamNum'
 // 直播计费带宽和流量数据查询
 export const CSS_MBPS = 'live2/DescribeBillBandwidthAndFluxList'
+// 慢直播带宽和流量数据查询
+export const CSS_SLOW_MBPS = 'live2/DescribeSlowLiveBandwidthAndFlux'
+// 查询并发录制路数
+export const CSS_CONCURRENT_RECORD_STREAM_NUM = 'live2/DescribeConcurrentRecordStreamNum'
 // 查询按省份和运营商分组的播放数据
 export const CSS_PLAY = 'live2/DescribeGroupProIspPlayInfoList'
 // 查询某条流上行推流质量数据

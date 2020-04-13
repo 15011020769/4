@@ -353,7 +353,9 @@ export default {
       if (this.domainCheckedList.length === 0) {
         this.$message({
           type: 'warning',
-          message: '請選擇域名'
+          message: '請選擇域名',
+          duration: 0,
+          showClose: true,
         })
       } else {
         this.$refs.doaminRef.visible = false

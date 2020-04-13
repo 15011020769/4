@@ -123,6 +123,12 @@ module.exports = {
     config
       .plugin('monaco-editor')
       .use(require('monaco-editor-webpack-plugin'))
+      // console.log('=========')
+      // if (process.env.NODE_ENV === 'production') {
+      //   config.optimization.minimizer[0].options.terserOptions.compress.drop_console = true
+      // }
+      // console.log('=========')
+    // config.optimization.minimizer[0].options.terserOptions.compress.drop_console = true
     config.performance
       .maxEntrypointSize(400000000)
       .maxAssetSize(400000000)

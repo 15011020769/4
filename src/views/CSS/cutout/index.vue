@@ -8,7 +8,7 @@
         <el-button size="small" :type="createTimeType === '0d' ? 'primary' : ''" @click="onTimeClick(0, 'd')">今天</el-button>
         <el-button size="small" :type="createTimeType === '1d' ? 'primary' : ''" @click="onTimeClick(1, 'd')">昨天</el-button>
         <el-button size="small" :type="createTimeType === '6d' ? 'primary' : ''" @click="onTimeClick(6, 'd')">近7天</el-button>
-        <el-button size="small" :type="createTimeType === '1month' ? 'primary' : ''" @click="onTimeClick(1, 'month')">近30天</el-button>
+        <el-button size="small" :type="createTimeType === '1month' ? 'primary' : ''" @click="onTimeClick(29, 'd')">近30天</el-button>
       </el-button-group>
       <el-date-picker
         size="small"
@@ -113,7 +113,6 @@ export default {
         }, disabledDate: (date) => {
           if (this.selectDate!== '') {
             const minTime = moment(this.selectDate).subtract(29, 'd')
-            // console.log(minTime.format())
             const maxTime = moment(this.selectDate).add(29, 'd')
             return moment(date).isBefore(minTime) || moment(date).isAfter(maxTime) || moment(date) < moment().subtract(59, 'd') || date.getTime() > Date.now()
           }
@@ -142,7 +141,7 @@ export default {
       if (t === 0) {
         end = moment()
       }
-      if (t == 1) {
+      if (t == 1 && u === 'd') {
         end = end.subtract(1, 'd')
       }
       this.timeValue = [start, end]
