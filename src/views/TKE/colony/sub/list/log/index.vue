@@ -69,7 +69,7 @@
             :placeholder="$t('TKE.overview.qxz')"
             size="mini"
             class="ml10"
-            @change="getPodData"
+            @change="getPodData1"
           >
             <!-- pod第一项 -->
             <el-option
@@ -197,7 +197,8 @@ export default {
       value5: "",
       value6: `${this.$t("TKE.event.xs")}100${this.$t("TKE.event.tsj")}`,
       autoRefresh: false, //自动重新整理
-      loadShow: true // 加载是否显示
+      loadShow: true, // 加载是否显示
+      podList: []
     };
   },
   components: {
@@ -207,12 +208,10 @@ export default {
   watch: {
     // autoRefresh(val) {
     //   if (this.autoRefresh === true) {
-    //     console.log("kq");
     //     var timeId = setInterval(() => {
     //       this.nameSpaceList();
     //     }, 40000);
     //   } else {
-    //     console.log("gb");
     //     this.nameSpaceList();
     //   }
     // }
@@ -242,6 +241,7 @@ export default {
     goBack() {
       this.$router.go(-1);
     },
+    //获取命名空间列表数据
     nameSpaceList1() {
       //第一项命名空间
       this.option3 = []; //工作负载实例
@@ -275,14 +275,14 @@ export default {
         }
       });
     },
-     async  nameSpaceList2() {
+    //获取工作负载列表数据
+    async  nameSpaceList2() {
       //第二项命名空间
       this.option3 = []; //工作负载实例
       this.option4 = [];
       this.option5 = [];
       var v = this.value2;
       v = v.replace(v, this.value2.toLowerCase()) + "s";
-      console.log(v,'vvvvvvvvvvvvvvvv')
       if (v === "jobs") {
         var params = {
           Method: "GET",
@@ -309,7 +309,7 @@ export default {
               });
             });
             this.value3=this.option3[0].value
-             this.getPodData();
+            this.getPodData();
           } else {
             this.option3 = []; //工作负载实例
             this.option4 = [];
@@ -334,10 +334,25 @@ export default {
       });
      
     },
+    getPodData1() {
+      let podList = this.podList || [];
+      if(podList.length > 0) {
+        this.option5 = [];
+        podList.forEach(item => {
+          if(item.metadata.name === this.value4) {
+            item.spec.containers.forEach(i => {
+              this.option5.push({
+                value: i.name,
+                label: i.name
+              });
+            });
+          }
+        })
+        this.value5 = this.option5[0].value;
+      }
+    },
     getPodData() {
-      debugger
       if (v != "") {
-        console.log(this.value3[0],'this.value3[0]')
         var v = this.value3.replace(
           this.value3[0],
           this.value3[0].toLowerCase()
@@ -368,12 +383,12 @@ export default {
           ClusterName: this.$route.query.clusterId
         };
       }
-      console.log(params,'poddataparam')
       this.axios.post(TKE_COLONY_QUERY, params).then(res => {
-        console.log(res,'respoddata')
         this.option5 = [];
         if (res.Response.Error === undefined) {
+          this.podList = [];
           var mes = JSON.parse(res.Response.ResponseBody);
+          this.podList = mes.items;
           if (mes.items.length > 0) {
             this.option4 = [];
             mes.items.forEach(item => {
@@ -382,7 +397,7 @@ export default {
                 label: item.metadata.name
               });
             });
-            this.value4 = mes.items[0].metadata.name;
+            this.value4 = this.option4[0].value;
           } else {
             this.option4 = [];
             this.value4 = "Pod" + this.$t("TKE.event.lbwk");
@@ -391,14 +406,16 @@ export default {
           if (mes.items.length > 0) {
             this.option5 = [];
             mes.items.forEach(item => {
-              item.spec.containers.forEach(i => {
-                this.option5.push({
-                  value: i.name,
-                  label: i.name
+              if(item.metadata.name === this.value4) {
+                item.spec.containers.forEach(i => {
+                  this.option5.push({
+                    value: i.name,
+                    label: i.name
+                  });
                 });
-              });
+              }
             });
-            this.value5 = mes.items[0].spec.containers[0].name;
+            this.value5 = this.option5[0].value;
             this.autoRefresh = true;
             // this.refresh();
             this.getLog();
@@ -423,6 +440,16 @@ export default {
         }
       });
     },
+
+    //获取容器列表数据
+    getContainers() {
+      param = {
+        Method: "GET",
+        Path: `/apis/apps/v1beta2/namespaces/${this.value1}/${this.value2}/${this.value3}/pods`,
+        Version: "2018-05-25",
+        ClusterName: this.$route.query.clusterId
+      }
+    },
     
     async getLog() {
       var params = {
@@ -441,9 +468,7 @@ export default {
         Version: "2018-05-25",
         ClusterName: this.$route.query.clusterId
       };
-      console.log(params,'params')
       await this.axios.post(TKE_COLONY_QUERY, params).then(res => {
-        console.log('reslog++++',res)
         if (res.Response.Error === undefined) {
           var mes = res.Response.ResponseBody;
           var newarrs = [];

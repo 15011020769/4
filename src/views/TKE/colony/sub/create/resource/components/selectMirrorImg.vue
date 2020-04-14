@@ -65,8 +65,8 @@
       </div>
     </div>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="cancle">取 消</el-button>
       <el-button type="primary" @click="sure">{{$t('TKE.overview.qd')}}</el-button>
+      <el-button @click="cancle">取 消</el-button>
     </span>
   </el-dialog>
 </template>
@@ -94,7 +94,7 @@ export default {
       tableData: [],
       tableData2: [],
       TotalCount: 0,
-      pagesize: 10,
+      pagesize: 20,
       currpage: 1
     }
   },
@@ -144,8 +144,8 @@ export default {
     },
     searchUserRepository: async function () {
       await this.axios.post(MIRROR_LIST, {
-        offset: 0,
-        limit: 20,
+        offset: this.currpage,
+        limit: this.pagesize,
         reponame: this.searchContent
       }).then(res => {
         let { data: { repoInfo } } = res
@@ -156,43 +156,43 @@ export default {
           item.publicText = item.public ? '公有' : '私有'
         })
         this.tableData = repoInfo
-        this.TotalCount = repoInfo.length
+        this.TotalCount = res.data.totalCount
 
         console.log('searchUserRepository', this.tableData)
       })
     },
     getFavor: async function () {
       await this.axios.post(GETFAVOR, {
-        offset: 0,
-        limit: 20,
+        offset: this.currpage,
+        limit: this.pagesize,
         reponame: this.searchContent
       }).then(res => {
         console.log(res)
         let { data: { repoInfo } } = res
         this.tableData2 = repoInfo
-        this.TotalCount = repoInfo.length
+        this.TotalCount = res.data.totalCount
       })
     },
     getRepositoryList: async function () {
       await this.axios.post(GET_REPOSITORY_LIST, {
-        offset: 0,
-        limit: 20,
+        offset: this.currpage,
+        limit: this.pagesize,
         reponame: this.searchContent
       }).then(res => {
         let { data: { repoInfo } } = res
         this.tableData2 = repoInfo
-        this.TotalCount = repoInfo.length
+        this.TotalCount = res.data.totalCount
       })
     },
     getDockerHubRepositoryList: async function () {
       await this.axios.post(TKE_DOCKERHUB_LIST, {
-        offset: 0,
-        limit: 20,
+        offset: this.currpage,
+        limit: this.pagesize,
         reponame: this.searchContent
       }).then(res => {
         let { data: { repoInfo } } = res
         this.tableData2 = repoInfo
-        this.TotalCount = repoInfo.length
+        this.TotalCount = res.data.totalCount
       })
     },
     handleClose (done) {

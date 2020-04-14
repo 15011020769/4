@@ -269,6 +269,7 @@ export default {
     },
     addUsersToGroup() {
       this.selectedGroupId = this.selectData.map(g => g.GroupId)
+      console.log(this.selectedGroupId)
       this.dialogVisible = true
     },
     // 打开添加用户页面
@@ -331,10 +332,12 @@ export default {
       const params = {
         Version: '2019-01-16'
       }
-      user.forEach((user, i) => {
-        this.selectedGroupId.forEach(group => {
+      let i = 0
+      this.selectedGroupId.forEach(group => {
+        user.forEach(user => {
           params[`Info.${i}.Uid`] = user.Uid
           params[`Info.${i}.GroupId`] = group
+          i++
         })
       })
       this.axios.post(ADD_USERTOGROUP, params)

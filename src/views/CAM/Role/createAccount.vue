@@ -250,6 +250,13 @@ export default {
         }
         if (res != '' && res.data.IsExist === false) {
           this.notExists = true
+        } else if (res.data.IsOwner === false) {
+          this.$message({
+            message: '您輸入的賬號非主賬號',
+            type: 'error',
+            showClose: true,
+            duration: 0
+          })
         } else {
           this.active += 1
           this.notExists = false

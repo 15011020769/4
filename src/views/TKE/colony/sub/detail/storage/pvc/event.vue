@@ -83,6 +83,7 @@
 <script>
 import Loading from "@/components/public/Loading";
 import FileSaver from "file-saver";
+import { ErrorTips } from "@/components/ErrorTips.js"; //公共错误码
 import XLSX from "xlsx";
 import { ALL_CITY ,POINT_REQUEST} from "@/constants";
 export default {
