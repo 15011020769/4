@@ -195,7 +195,7 @@
               <el-dialog
                 title="添加用戶"
                 :visible.sync="dialogUser"
-                width="950px"
+                width="1200px"
                 :before-close="handleCloseUser"
                 custom-class="dialogStyle"
               >
@@ -597,7 +597,7 @@ export default {
     },
     // 从用户组移除子用户信息，单条移除
     deleteRow(uid) {
-      this.$confirm("移出后，该用户将无法接收到该组的站內信通知", "移出用戶", {
+      this.$confirm("移出後，該用戶將無法接收到該組的站內信通知", "移出用戶", {
         confirmButtonText: "確定",
         cancelButtonText: "取消",
         type: "warning"
