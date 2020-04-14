@@ -83,6 +83,7 @@
 <script>
 import Loading from "@/components/public/Loading";
 import FileSaver from "file-saver";
+import { ErrorTips } from "@/components/ErrorTips.js"; //公共错误码
 import XLSX from "xlsx";
 import { ALL_CITY ,POINT_REQUEST} from "@/constants";
 export default {
@@ -100,32 +101,30 @@ export default {
   created() {
     this.SearchList()
   },
+  watch:{
+    autoRefresh(val){
+      if(val){
+          this.timeId = setInterval(()=>{
+          if(this.$route.name != "pvDetailEvent"){
+            clearInterval(this.timeId)
+            this.timeId =null
+          }
+          this.SearchList()
+        },4000)
+      } else {
+        window.clearInterval(this.timeId)
+        this.timeId=null
+      }
+    },
+    deep:true,
+    immediate :true
+  },
   methods: {
     //返回上一层
     goBack(){
           this.$router.go(-1);
     },
-    watch:{
-      autoRefresh(val){
-        console.log(this.$route)
-        console.log(val)
-        if(val){
-            this.timeId = setInterval(()=>{
-            if(this.$route.name != "pvDetailEvent"){
-                clearInterval(this.timeId)
-                this.timeId =null
-            }
-            this.SearchList()
-          },4000)
-        } else {
-            window.clearInterval(this.timeId)
-            this.timeId=null
-        }
-
-      },
-      deep:true,
-      immediate :true
-    },
+    
     // 获取列表
     SearchList() {
       var params = {

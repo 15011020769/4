@@ -158,7 +158,7 @@ export default {
     },
     // 查询
     getSearch () {
-      let version =  /^[a-z0-9_]+$/
+      let version =  /^[a-z0-9-_.]+$/
       if(version.test(this.input) || this.input == ""){
         this.currpage = 1
         this.loadShow = true

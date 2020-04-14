@@ -120,7 +120,7 @@ export default {
       console.log(this.multipleSelection)
     },
     getSearch () {
-      let version =  /^[a-z0-9_]+$/
+      let version =  /^[a-z0-9-_.]+$/
       if(version.test(this.input) || this.input == ""){
         this.currpage = 1
         this.loadShow = true
@@ -148,7 +148,7 @@ export default {
     GetFavor () {
       const param = {
         reponame: this.input,
-        offset: (this.currpage-1)*10,
+        offset: this.currpage-1,
         limit: this.pagesize
       }
       this.axios.post(TKE_GETFAVOR, param).then(res => {
