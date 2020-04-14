@@ -23,7 +23,7 @@
               <a href="../../index.html#/priceDocument/cssPrice">《{{$t('CSS.builder.27')}}》</a>
           </div>
           <div class="button">
-            <el-button type="primary" :disabled="!checked" style="border-radius: 0;width:150px;height:40px">
+            <el-button type="primary" @click="open" :disabled="!checked" style="border-radius: 0;width:150px;height:40px">
               {{$t('CSS.builder.28')}}
             </el-button>
           </div>
