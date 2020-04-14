@@ -795,6 +795,7 @@
       },
       //獲取專線通道列表
       _GetDcPri() {
+        this.Date = []
         let parms = {
           Region: this.selectedRegion,
           Version: '2018-04-10',
@@ -805,7 +806,12 @@
         }
         this.axios.post(Private_LIST, parms).then(data => {
           this.id = 'dcchannel'
-          this.Date = data.Response.DirectConnectTunnelSet
+          let dcdata = data.Response.DirectConnectTunnelSet
+          dcdata.forEach(item => {
+            if (item.State == 'AVAILABLE') {
+              this.Date.push(item)
+            }
+          });
           this.Namespace = 'qce/dcx'
           this.SearchConfig = [{
             value: "direct-connect-tunnel-id",
