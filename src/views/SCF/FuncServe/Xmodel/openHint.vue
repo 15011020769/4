@@ -19,27 +19,31 @@
 </template>
 
 <script>
-export default {
-  data() {
-    return {
+  export default {
+    data() {
+      return {
 
+      }
     }
   }
-}
+
 </script>
 
 <style lang="scss" scoped>
-.openHint{
-  border-top: 1px solid #e7e7e7;
-  padding: 20px 0;
-  font-size: 12px;
-  .p-1{
-    color: rgb(153, 153, 153);
-    font-weight: 600;
+  .openHint {
+    border-top: 1px solid #e7e7e7;
+    padding: 20px 0;
+    font-size: 12px;
+
+    .p-1 {
+      color: rgb(153, 153, 153);
+      font-weight: 600;
+    }
+
+    .p-2 {
+      margin-top: 7px;
+      color: rgb(153, 153, 153);
+    }
   }
-  .p-2{
-    margin-top: 7px;
-    color: rgb(153, 153, 153);
-  }
-}
+
 </style>
