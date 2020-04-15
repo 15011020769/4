@@ -229,7 +229,7 @@ export default {
       tableData: [], // 我的镜像数据
       TotalCount: 0, // 总条数
       pagesize: 20, // 分页条数
-      currpage: 1, // 当前页码
+      currpage: 0, // 当前页码
       tableServer: '',
       loadShow: true, // 加载是否显示
       dialogTableVisible: false,
@@ -309,8 +309,9 @@ export default {
     },
     // 分页
     handleCurrentChange (val) {
-      this.currpage = val
-      this.GetMyMirror()
+      this.currpage = val - 1;
+      this.GetMyMirror();
+      this.currpage+=1;
       this.loadShow = true
     },
     // 整选分页
@@ -318,7 +319,6 @@ export default {
        this.pagesize = val
        this.loadShow = true
        this.GetMyMirror()
-        console.log(val)
     },
     submitForm (formName) {
       // console.log(formName)
@@ -430,7 +430,7 @@ export default {
     GetMyMirror () {
       const param = {
         reponame: this.input,
-        offset: 20 * (this.currpage - 1),
+        offset: this.pagesize*this.currpage,
         limit: this.pagesize
       }
       this.axios.post(TKE_MIRROR_LIST, param).then(res => {

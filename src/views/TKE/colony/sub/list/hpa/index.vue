@@ -161,7 +161,7 @@ export default {
       
       //搜索下拉框
       searchOptions: [],
-      searchType: "default", //下拉选中的值
+      searchType: "", //下拉选中的值
       searchInput: "", //输入的搜索关键字
     };
   },
@@ -169,13 +169,37 @@ export default {
   created() {
     // 从路由获取集群id
     this.clusterId=this.$route.query.clusterId;
-    this.tableListData();
-    this.nameSpaceList();
+    this.getData();    
   },
   methods: {
+    async getData() {
+      await this.nameSpaceList();
+      await this.tableListData();
+    },
+    //命名空间选项 
+    async nameSpaceList() {
+      if (this.clusterId) {
+        var params = {
+          ClusterName: this.clusterId,
+          Method: "GET",
+          Path: "/api/v1/namespaces",
+          Version: "2018-05-25",
+        };
+        await this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+          if (res.Response.Error==undefined) {
+            var data = JSON.parse(res.Response.ResponseBody);
+            var nameList=[];
+            data.items.forEach(item => {
+              nameList.push({value:item.metadata.name,label:item.metadata.name})
+            })
+            this.searchOptions=nameList
+            this.searchType=nameList[0].value
+          }
+        })
+      }
+    },
     //列表数据展示
-    tableListData(){
-
+    async tableListData(){
       var params={
         ClusterName:this.clusterId,
         Method: "GET",
@@ -184,7 +208,7 @@ export default {
       }
       console.log(params)
       this.loadShow=true
-      this.axios.post(TKE_COLONY_QUERY,params).then(res=>{
+      await this.axios.post(TKE_COLONY_QUERY,params).then(res=>{
 
         if (res.Response.Error==undefined) {
               var data = JSON.parse(res.Response.ResponseBody);
@@ -206,36 +230,10 @@ export default {
         
       })
     },
-     //命名空间选项 
-      nameSpaceList() {
-        if (this.clusterId) {
-          var params = {
-            ClusterName: this.clusterId,
-            Method: "GET",
-            Path: "/api/v1/namespaces",
-            Version: "2018-05-25",
-          };
-          // console.log(params)
-          this.axios.post(TKE_COLONY_QUERY, params).then(res => {
-            if (res.Response.Error==undefined) {
-              var data = JSON.parse(res.Response.ResponseBody);
-              var nameList=[];
-              console.log(data.items)
-              data.items.forEach(item => {
-                nameList.push({value:item.metadata.name,label:item.metadata.name})
-              })
-              this.searchOptions=nameList
-              this.searchType=nameList[0].value
-              console.log(this.searchType)
-            }
-          })
-        }
-      },
-      delConfig(item){
+    delConfig(item){
       this.dialogVisible=true;
-      console.log(item);
       this.name=item.metadata.name;
-      // this.np=item.metadata.namespace;
+    // this.np=item.metadata.namespace;
     },
       delSure(){
           this.dialogVisible = false
