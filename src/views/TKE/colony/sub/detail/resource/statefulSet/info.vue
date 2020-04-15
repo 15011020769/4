@@ -14,7 +14,7 @@
           <div class="tke-form-item_text">{{rowData.metadata && rowData.metadata.annotations && rowData.metadata.annotations.description || '-'}}</div>
         </el-form-item>
         <el-form-item label="创建时间">
-          <div class="tke-form-item_text">{{rowData.addTime}}</div>
+          <div class="tke-form-item_text">{{rowData.metadata.creationTimestamp | creationTimestamp}}</div>
         </el-form-item>
         <el-form-item label="Labels">
           <div class="tke-form-item_text">{{changeLabel(rowData.metadata && rowData.metadata.labels)}}</div>
@@ -113,9 +113,8 @@
 </template>
 
 <script>
-import FileSaver from "file-saver";
-import XLSX from "xlsx";
 import { ALL_CITY } from "@/constants";
+import moment from 'moment';
 export default {
   name: "deploymentDetailInfo",
   data() {
@@ -252,6 +251,11 @@ export default {
         return res;
       } else {
         return res;
+      }
+    },
+    creationTimestamp(val) {
+      if(val) {
+        return moment(val).format("YYYY-MM-DD HH:mm:ss");
       }
     }
   }
