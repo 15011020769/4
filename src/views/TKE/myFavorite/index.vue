@@ -36,8 +36,8 @@
               </template>
             </el-table-column>
             <el-table-column prop="regionId" label="地域">
-              <template slot-scope="scope">
-                 {{scope.row.regionId | regionIds}}
+              <template>
+                港澳台地区(台灣台北)
               </template>
             </el-table-column>
             <el-table-column prop="favorCount" label="收藏量"></el-table-column>

@@ -68,7 +68,7 @@
           label="操作"
           >
           <template slot-scope="scope">
-            <el-button size="small" type="text" :disabled="scope.row.isDelete?true:false" @click="deleteNameSpace(scope.row)">{{$t('TKE.overview.sc')}}</el-button>
+            <el-button size="small" type="text" :disabled="(scope.row.metadata.name === 'default' || scope.row.metadata.name.indexOf('kube-') === 0)?true:false" @click="deleteNameSpace(scope.row)">{{$t('TKE.overview.sc')}}</el-button>
           </template>
         </el-table-column>
       </el-table>

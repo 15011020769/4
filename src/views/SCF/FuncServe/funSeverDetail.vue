@@ -7,6 +7,12 @@
           <i class="el-icon-back icon" @click="returnBack" style="cursor: pointer;"></i>
           {{functionName}}
         </span>
+        <el-tag type="success" size='mini' v-if="this.$route.query.Status=='Active'">
+          {{State[ this.$route.query.Status]}}</el-tag>
+        <el-tag type="danger" size='mini' v-else-if="this.$route.query.Status=='UpdateFailed'">
+          {{State[ this.$route.query.Status]}}</el-tag>
+        <el-tag type="danger" size='mini' v-else>
+          {{State[ this.$route.query.Status]}}</el-tag>
       </p>
       <p>
         <el-select v-model="FunctionVersion" :placeholder="$t('SCF.total.qsz')" @change="_Version">
@@ -88,6 +94,15 @@
   export default {
     data() {
       return {
+        State: {
+          Active: "正常",
+          Creating: "創建中...",
+          Updating: "更新中...",
+          Publishing: "發布中...",
+          UpdatingAndPublishing: "更新發布中...",
+          CreateFailed: "創建失敗",
+          UpdateFailed: "更新失敗"
+        },
         detailsshow: false, //控制详情加载
         check: true,
         dialogVisible: false,
