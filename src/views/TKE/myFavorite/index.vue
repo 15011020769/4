@@ -36,8 +36,8 @@
               </template>
             </el-table-column>
             <el-table-column prop="regionId" label="地域">
-              <template slot-scope="scope">
-                 {{scope.row.regionId | regionIds}}
+              <template>
+                港澳台地区(台灣台北)
               </template>
             </el-table-column>
             <el-table-column prop="favorCount" label="收藏量"></el-table-column>
@@ -81,7 +81,7 @@ export default {
       tableData: [],
       TotalCount: 0, // 总条数
       pagesize: 10, // 分页条数
-      currpage: 1, // 当前页码
+      currpage: 0, // 当前页码
       multipleSelection: [],
       loadShow: true,
     }
@@ -104,9 +104,10 @@ export default {
     },
     // 分页
     handleCurrentChange (val) {
-      this.currpage = val
+      this.currpage = val - 1;
       this.loadShow = true
-      this.GetFavor()
+      this.GetFavor();
+      this.currpage+=1
     },
     // 整体分页
     handleSizeChange(val){
@@ -148,7 +149,7 @@ export default {
     GetFavor () {
       const param = {
         reponame: this.input,
-        offset: this.currpage-1,
+        offset: this.pagesize * this.currpage,
         limit: this.pagesize
       }
       this.axios.post(TKE_GETFAVOR, param).then(res => {

@@ -31,11 +31,11 @@
           </div>
         </el-form-item>
         <el-form-item label="副本数">
-          <div class="tke-form-item_text">{{rowData.spec && rowData.spec.replicas || '-'}}</div>
+          <div class="tke-form-item_text">{{rowData.status && rowData.status.desiredNumberScheduled || '-'}}</div>
         </el-form-item>
         <el-form-item label="运行副本数">
           <div class="tke-form-item_text">
-            {{rowData.status && rowData.status.replicas || '-'}}
+            {{rowData.status && rowData.status.currentNumberScheduled || '-'}}
           </div>
         </el-form-item>
         

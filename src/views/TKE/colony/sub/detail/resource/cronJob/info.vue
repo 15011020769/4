@@ -14,7 +14,7 @@
           <div class="tke-form-item_text">{{rowData.metadata && rowData.metadata.annotations && rowData.metadata.annotations.description || '-'}}</div>
         </el-form-item>
         <el-form-item label="启动时间">
-          <div class="tke-form-item_text">{{rowData.status.startTime | startTime}}</div>
+          <div class="tke-form-item_text">{{rowData.metadata.creationTimestamp | startTime}}</div>
         </el-form-item>
         <el-form-item label="Labels">
           <div class="tke-form-item_text">{{changeLabel(rowData.metadata && rowData.metadata.labels)}}</div>
@@ -131,8 +131,9 @@ export default {
     this.clusterId=this.$route.query.clusterId;
     this.spaceName = this.$route.query.spaceName;
     this.rowData = this.$route.query.rowData;
-    this.activeName = this.$route.query.rowData.spec.template.spec.containers[0].name;
     console.log("rowData",this.rowData);
+    this.activeName = this.$route.query.rowData.spec.jobTemplate.spec.template.spec.containers[0].name;
+    // console.log("rowData",this.rowData);
   },
   methods: {
     handleClick(tab, event) {

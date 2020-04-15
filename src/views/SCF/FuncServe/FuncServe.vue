@@ -43,7 +43,8 @@
         </el-table-column>
         <el-table-column :label="$t('SCF.total.hszt')">
           <template slot-scope="$scope">
-            <p>{{State[$scope.row.Status]}}</p>
+            <p :class="$scope.row.Status==='Active'?'green':$scope.row.Status==='UpdateFailed'?'red':'orange'">
+              {{State[$scope.row.Status]}}</p>
           </template>
         </el-table-column>
         <el-table-column prop="monitor" :label="$t('SCF.total.jk')">
@@ -588,7 +589,8 @@
           query: {
             functionName: data.FunctionName,
             num: num,
-            SpaceValue: SpaceValue
+            SpaceValue: SpaceValue,
+            Status: data.Status
           }
         });
       },
@@ -610,6 +612,18 @@
       height: 15px;
       width: 16px;
       cursor: pointer;
+    }
+
+    .green {
+      color: green;
+    }
+
+    .red {
+      color: red;
+    }
+
+    .orange {
+      color: orange;
     }
 
     ::v-deep .el-input__inner {

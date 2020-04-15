@@ -97,7 +97,8 @@ export default {
   watch:{
     dynamicValidateForm:{
       handler(val){
-          let reg= /^[a-z]([a-z0-9]|-|_|.)*([a-z0-9])$/;
+          // let reg= /^[a-z]([a-z0-9]|-|_|.)*([a-z0-9])$/;
+          let reg = /^(?!-)(?!.*-$)[a-z0-9-]+$/;
           let arr=[];
           val.domains.forEach(v=>{
             arr.push(v.value)

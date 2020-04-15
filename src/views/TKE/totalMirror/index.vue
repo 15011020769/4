@@ -229,6 +229,12 @@ export default {
         if (res.code === 0 && res.Error == undefined) {
           this.loadShow = true
           this.GetRepositoryList()
+          this.$message({
+            message: '取消成功',
+            type: "success",
+            showClose: true,
+            duration: 0
+          })
         }
         // else {
         //   this.$message({
@@ -249,7 +255,13 @@ export default {
       this.axios.post(TKE_ADD_FAVOR, param).then(res => {
         if (res.code === 0 && res.Error == undefined) {
           this.loadShow = true
-          this.GetRepositoryList()
+          this.GetRepositoryList();
+          this.$message({
+            message: '收藏成功',
+            type: "success",
+            showClose: true,
+            duration: 0
+          })
         }
         // else {
         //   console.log(2)
