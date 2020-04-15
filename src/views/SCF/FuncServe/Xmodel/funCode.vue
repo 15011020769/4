@@ -1047,7 +1047,7 @@
           title: '執行方法說明',
           dangerouslyUseHTMLString: true,
           duration: 0,
-          message: < openHint > < /openHint>
+          // message: < openHint > < /openHint>
         });
       }
     }
