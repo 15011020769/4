@@ -404,6 +404,7 @@ export default {
               showClose: true,
               duration: 0
             });
+            this.cslsLoading = false     // 报错时 关闭编辑器加载动画
           }
         } else {
           let ErrTips = {
