@@ -104,7 +104,7 @@ export default {
       flag:false,// 提示判断
       TotalCount: 0, // 总条数
       pagesize: 20, // 分页条数
-      currpage: 1, // 当前页码
+      currpage: 0, // 当前页码
       multipleSelection: '',
       dialogVisible: false,
       rules: {
@@ -135,8 +135,9 @@ export default {
     },
     // 分页
     handleCurrentChange (val) {
-      this.currpage = val
-      this.GetSpaceName()
+      this.currpage = val - 1;
+      this.GetSpaceName();
+      this.currpage+=1;
       this.loadShow = true
     },
     // 整体分页
@@ -144,7 +145,6 @@ export default {
       this.pagesize = val
       this.loadShow = true
       this.GetSpaceName()
-      // console.log(val)
     },
     getClose () {
       this.dialogVisible = false
@@ -186,7 +186,7 @@ export default {
     GetSpaceName () { // 获取命名空间
       const param = {
         namespace: this.input,
-        offset: 20 * (this.currpage - 1),
+        offset: this.pagesize * this.currpage,
         limit: this.pagesize
       }
       this.axios.post(SPACENAME_LIST, param).then(res => {
