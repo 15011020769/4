@@ -111,10 +111,10 @@ export default {
     },
     // 整体分页
     handleSizeChange(val){
+      this.currpage = 0;
       this.pagesize = val
       this.loadShow = true
       this.GetFavor()
-      // console.log(val)
     },
     handleSelectionChange (val) {
       this.multipleSelection = val
@@ -153,7 +153,6 @@ export default {
         limit: this.pagesize
       }
       this.axios.post(TKE_GETFAVOR, param).then(res => {
-        console.log(res)
         if (res.code === 0 && res.Error == undefined){
           this.tableData = res.data.repoInfo
           this.TotalCount = res.data.totalCount

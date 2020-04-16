@@ -5,7 +5,7 @@
     <div class="tke-grid ">
       <!-- 右侧 -->
       <div class="grid-right">
-        <span>{{$t('TKE.colony.zdcxzl')}}</span><el-switch class="ml10" v-model="autoRefresh" @change="changeSwitch(e)"></el-switch>
+        <span>{{$t('TKE.colony.zdcxzl')}}</span><el-switch class="ml10" v-model="autoRefresh" @change="changeSwitch()"></el-switch>
       </div>
     </div>
 
@@ -91,12 +91,11 @@ export default {
   data() {
     return {
       loadShow: false, //加载是否显示
-      autoRefresh: true, //自动重新整理
+      autoRefresh: false, //自动重新整理
       list:[], //列表
       node: '',//节点
-      timer: null,//定时器
+      // timer: null,//定时器
       clusterId: '',//集群名称
-      timer: null,//定时器
     };
   },
   components: {
@@ -107,14 +106,20 @@ export default {
     this.clusterId = this.$route.query.clusterId;
     this.node = this.$route.query.node;
     this.getEventList();
-    let autoRefresh = this.autoRefresh;
-    if(autoRefresh) {
-      if(!this.timer) {
-        this.timer = setInterval(() => {
-          this.getEventList();
-        }, 1000 * 20);
+  },
+  watch:{
+    autoRefresh(val){
+      if(val){
+        this.timer = setInterval(()=>{
+          this.getEventList()
+        },1000 * 10)
+      } else {
+        window.clearInterval(this.timer)
+        this.timer=null
       }
-    }
+    },
+    deep:true,
+    immediate :true
   },
   methods: {
     async getEventList() {
@@ -124,6 +129,7 @@ export default {
         Version: "2018-05-25",
         ClusterName: this.clusterId
       }
+      this.loadShow = true;
       await this.axios.post(POINT_REQUEST, param).then(res => {
         if(res.Response.Error === undefined) {
           let response = JSON.parse(res.Response.ResponseBody);
@@ -134,6 +140,8 @@ export default {
             });
             this.list = response.items;
           }
+          this.loadShow = false;
+          this.autoRefresh = true;
         } else {
           this.loadShow = false;
           let ErrTips = {
@@ -162,19 +170,21 @@ export default {
       } else {
         if(this.timer) { //如果定时器在运行则关闭
           clearInterval(this.timer);
+          this.timer = null;
         }
       }
     },
     //返回上一层
     goBack(){
       this.$router.go(-1);
-    },
-    destroyed(){
-      if(this.timer) { //如果定时器在运行则关闭
-        clearInterval(this.timer);
-      }
+    }
+  },
+  beforeDestroy(){
+    if(this.timer) { //如果定时器在运行则关闭
+      clearInterval(this.timer); 
     }
   }
+
 };
 </script>
 

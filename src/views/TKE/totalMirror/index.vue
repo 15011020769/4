@@ -107,7 +107,7 @@ export default {
       tableData: [],
       TotalCount: 0, // 总条数
       pagesize: 10, // 分页条数
-      currpage: 1, // 当前页码
+      currpage: 0, // 当前页码
       loadShow: true,
       multipleSelection: '',
       favor: '',
@@ -142,12 +142,14 @@ export default {
     },
     // 分页
     handleCurrentChange (val) {
-      this.currpage = val
+      this.currpage = val - 1
       this.loadShow = true
       this.GetRepositoryList()
+      this.currpage+=1;
     },
     // 整体分页
     handleSizeChange(val){
+      this.currpage = 0;
       this.pagesize = val
       this.loadShow = true
       this.GetRepositoryList()
@@ -198,7 +200,7 @@ export default {
       const param = {
         reponame: this.input,
         order: 'asc',
-        offset: 10 * (this.currpage - 1),
+        offset: this.pagesize * this.currpage,
         limit: this.pagesize
       }
       this.axios.post(TKE_GET_REPOSITORY_LIST, param).then(res => {

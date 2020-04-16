@@ -5,7 +5,7 @@
     <div class="tke-grid ">
       <!-- 右侧 -->
       <div class="grid-right">
-        <span>自动重新整理</span><el-switch class="ml10" v-model="autoRefresh" @change="changeSwitch(e)" ></el-switch>
+        <span>自动重新整理</span><el-switch class="ml10" v-model="autoRefresh" @change="changeSwitch()" ></el-switch>
       </div>
     </div>
     
@@ -96,9 +96,9 @@ export default {
       clusterId:'',//集群id
       rowData: {},//传过来的数据
       spaceName: '',//路由传过来的命名空间名称
-      autoRefresh: true, //自动重新整理
+      autoRefresh: false, //自动重新整理
       list:[], //列表
-      timer: null,//定时器
+      // timer: null,//定时器
     };
   },
   components: {
@@ -110,14 +110,20 @@ export default {
     this.spaceName = this.$route.query.spaceName;
     this.rowData = this.$route.query.rowData;
     this.getEventList();
-    let autoRefresh = this.autoRefresh;
-    if(autoRefresh) {
-      if(this.timer) {
-        this.timer = setInterval(() => {
-          this.getEventList();
-        }, 1000 * 20);
+  },
+  watch:{
+    autoRefresh(val){
+      if(val){
+        this.timer = setInterval(()=>{
+          this.getEventList()
+        },1000 * 10)
+      } else {
+        window.clearInterval(this.timer)
+        this.timer=null
       }
-    }
+    },
+    deep:true,
+    immediate :true
   },
   methods: {
     //获取事件列表数据
@@ -141,6 +147,7 @@ export default {
             });
           }
           this.list = response.items;
+          this.autoRefresh = true;
         } else {
           this.loadShow = false;
           let ErrTips = {
@@ -174,12 +181,12 @@ export default {
     //返回上一层
     goBack(){
           this.$router.go(-1);
-    },
-    //销毁定时器
-    destroyed(){
-      if(this.timer) { //如果定时器在运行则关闭
-        clearInterval(this.timer); 
-      }
+    }
+  },
+  //销毁定时器
+  beforeDestroy(){
+    if(this.timer) { //如果定时器在运行则关闭
+      clearInterval(this.timer); 
     }
   }
 };
