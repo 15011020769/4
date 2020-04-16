@@ -236,6 +236,7 @@
               </el-dropdown-menu>
             </el-dropdown>
             <template slot-scope="scope">
+              {{scope.row.StatusBool}}
                 <!-- :disabled="abnormal.includes(scope.row.State)" -->
               <el-switch
                 v-model="scope.row.StatusBool"
@@ -450,8 +451,8 @@ export default {
       })
     },
     del () {
-      this.$confirm('确定删除当前所选域名？', '删除域名', {
-        confirmButtonText: '确定',
+      this.$confirm(this.t('确定删除当前所选域名？', 'WAF.qrscsxym'), '删除域名', {
+        confirmButtonText: this.t('确认', 'WAF.qr'),
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
@@ -459,6 +460,16 @@ export default {
       })
     },
     updateClsStatus (waf, status) {
+      if (!this.package.Cls || this.package.Cls.Count < 1) {
+        waf.ClsStatusBool = false
+        this.$message({
+          message: this.t('请先购买安全日志服务扩展包。', 'WAF.qxgmaqrz'),
+          type: 'error',
+          showClose: true,
+          duration: 0
+        })
+        return
+      }
       this.loading = true
       this.axios.post(MODIFY_HOST_ACCESS_LOG_STATUS, ({
         Version: '2018-01-25',
@@ -509,7 +520,6 @@ export default {
       })
     },
     handleSelectionChange (val) {
-      console.log(val)
       this.checkedWafs = val
     },
     // 获取数据
@@ -537,6 +547,8 @@ export default {
               // 不能直接设置allDomains，会丢失选中状态
               domains.forEach((domain, i) => {
                 this.allDomains[i].State = domain.State
+                this.allDomains[i].StatusBool = !!domain.Status
+                this.allDomains[i].ClsStatusBool = !!domain.ClsStatus
                 if (!refresh && this.abnormal.includes(domain.State)) {
                   refresh = true
                 }
