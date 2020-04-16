@@ -11,7 +11,7 @@
       :router="true"
     >
       <el-menu-item index="message" :class="{'menu-active': activeMenu === 'message'}">
-        <span slot="title">站内信</span>
+        <span slot="title">站內信</span>
       </el-menu-item>
       <el-menu-item index="newsFeeds" :class="{'menu-active': activeMenu === 'newsFeeds'}">
         <span slot="title">通知公告</span>

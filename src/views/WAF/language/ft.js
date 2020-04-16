@@ -447,6 +447,8 @@ module.exports = {
       dcqbsxjg: '導出全部篩選結果',
       gxsj: '更新時間',
       bz: '備註',
+      qrscsxym: '確定刪除當前所選域名？',
+      qxgmaqrz: '請先購買安全日誌服務擴展包。',
       qrscgjlm: '確認刪除該記錄？',
       qrscxz: '確定要刪除選中的IP么',
       zzlnkycx: '在這裡，你可以查詢某個IP的封堵狀態，是否在IP黑白名單中，是否觸發了CC，BOT，自定義人機識別等',

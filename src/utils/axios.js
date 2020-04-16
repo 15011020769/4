@@ -14,7 +14,7 @@ const conf = {
     uuid: VueCookie.get('uuid'),
     // uuid: 100011921910,
     // uuid: 100013247326,
-    // uuid: 100012962288,
+    // uuid: 100011922305,
     Pragma: 'no-cache',
     'Cache-Control': 'no-cache',
     'Content-Type': 'application/json; charset=utf-8'

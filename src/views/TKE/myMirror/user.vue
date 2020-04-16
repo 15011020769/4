@@ -316,9 +316,10 @@ export default {
     },
     // 整选分页
     handleSizeChange(val){
-       this.pagesize = val
-       this.loadShow = true
-       this.GetMyMirror()
+      this.currpage = 0;
+      this.pagesize = val
+      this.loadShow = true
+      this.GetMyMirror()
     },
     submitForm (formName) {
       // console.log(formName)

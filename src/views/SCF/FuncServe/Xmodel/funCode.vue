@@ -379,6 +379,7 @@
 
       //获取函数详情数据
       GetDate() {
+        this.cslsLoading = true // 打开编辑器加载动画
         let param = {
           Region: localStorage.getItem('regionv2'),
           Version: "2018-04-16",
@@ -427,7 +428,6 @@
 
       // 获取地址下载
       _Clone(name) {
-        this.cslsLoading = true // 打开加载动画
         let param = {
           Region: localStorage.getItem('regionv2'),
           Version: "2018-04-16",
