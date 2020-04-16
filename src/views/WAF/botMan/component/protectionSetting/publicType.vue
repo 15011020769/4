@@ -193,18 +193,20 @@ export default {
       this.axios.post(DESCRIBE_BOTTCB_RECORDS, parmas)
         .then(resp => {
           this.generalRespHandler(resp, ({ Data }) => {
-            const result = JSON.parse(Data.Res[0])
-            this.tabList = []
-            Object.keys(result).forEach(item => {
-              if (result[item].count) {
-                this.tabList.push({
-                  type: item,
-                  ...result[item],
-                  Name: item
-                })
-              }
-            })
-            localStorage.setItem('BotTCBRule', JSON.stringify(this.tabList))
+            if (Data) {
+              const result = JSON.parse(Data.Res[0])
+              this.tabList = []
+              Object.keys(result).forEach(item => {
+                if (result[item].count) {
+                  this.tabList.push({
+                    type: item,
+                    ...result[item],
+                    Name: item
+                  })
+                }
+              })
+              localStorage.setItem('BotTCBRule', JSON.stringify(this.tabList))
+            }
           })
         }).then(() => {
           this.loadShow = false

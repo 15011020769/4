@@ -96,7 +96,6 @@ export default {
       name:'',
       np:'',
       clusterId:'',
-      timer:'',
     };
   },
   components: {
@@ -160,6 +159,11 @@ export default {
 
         return n + '-' + y + '-' + r + ' ' + h + ':' + m + ':' + s
     },
+  },
+  beforeDestroy(){
+    if(this.timer) { //如果定时器在运行则关闭
+      clearInterval(this.timer); 
+    }
   }
 };
 </script>

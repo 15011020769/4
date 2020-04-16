@@ -95,7 +95,7 @@ export default {
       autoRefresh: true, //自动重新整理
       list:[], //列表
       node: '',
-      timer: null,
+      // timer: null,
       clusterId: ''
     };
   },
@@ -107,14 +107,20 @@ export default {
     this.clusterId = this.$route.query.clusterId;
     this.node = this.$route.query.node;
     this.getEventList();
-    let autoRefresh = this.autoRefresh;
-    if(autoRefresh) {
-      if(!this.timer) {
-        this.timer = setInterval(() => {
-          this.getEventList();
-        }, 1000 * 20);
+  },
+  watch:{
+    autoRefresh(val){
+      if(val){
+        this.timer = setInterval(()=>{
+          this.getEventList()
+        },1000 * 10)
+      } else {
+        window.clearInterval(this.timer)
+        this.timer=null
       }
-    }
+    },
+    deep:true,
+    immediate :true
   },
   methods: {
     async getEventList() {
@@ -162,17 +168,18 @@ export default {
       } else {
         if(this.timer) { //如果定时器在运行则关闭
           clearInterval(this.timer);
+          this.timer = null;
         }
       }
     },
     //返回上一层
     goBack(){
       this.$router.go(-1);
-    },
-    destroyed(){
-      if(this.timer) { //如果定时器在运行则关闭
-        clearInterval(this.timer);
-      }
+    }
+  },
+  beforeDestroy(){
+    if(this.timer) { //如果定时器在运行则关闭
+      clearInterval(this.timer); 
     }
   }
 };

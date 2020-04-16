@@ -142,6 +142,7 @@ export default {
     },
     // 整体分页
     handleSizeChange(val){
+      this.currpage = 0;
       this.pagesize = val
       this.loadShow = true
       this.GetSpaceName()
