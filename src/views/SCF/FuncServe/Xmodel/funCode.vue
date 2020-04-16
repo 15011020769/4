@@ -609,7 +609,7 @@
           Version: "2018-04-16",
           FunctionName: this.functionName,
           TestModelName: this.ruleForm.name,
-          TestModelValue: this.templateDetail.TestModelValue,
+          TestModelValue: this.codemirrorValue,
         };
         this.axios.post(TEST_MODEL, param).then(res => {
           if (res.Response.Error === undefined) {
