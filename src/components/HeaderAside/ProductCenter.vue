@@ -40,7 +40,7 @@
             </ul>
             <ul>
               <li class="li-title">{{ $t("COM.tool") }}</li>
-              <li class="li-sub" @click="go('../CM/index.html#/CVM')">
+              <li class="li-sub" @click="go('../CM/index.html#/overview')">
                 {{ $t("COM.cm") }}
               </li>
               <li class="li-sub" @click="go('../CLA/index.html#/CloudAudit')">
@@ -198,7 +198,7 @@ export default {
           url: '../SCF/index.html#/overView'
         }, {
           name: '雲監控 CM',
-          url: '../CM/index.html#/CVM'
+          url: '../CM/index.html#/overview'
         }, {
           name: '雲審計 CloudAudit',
           url: '../CLA/index.html#/CloudAudit'
