@@ -909,7 +909,9 @@ export default {
           console.log(res);
           this.tableError = JSON.parse(res.Response.ResponseBody).message;
         } else {
-          let ErrTips = {};
+          let ErrTips = {
+            "InternalError": "內部服務錯誤，請稍後重試。"
+          };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
             message: ErrOr[res.Response.Error.Code],

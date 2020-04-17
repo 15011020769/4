@@ -162,7 +162,7 @@ export default {
     getSearch () {
       let version =  /^[a-z0-9-_.]+$/
       if(version.test(this.input) || this.input == ""){
-        this.currpage = 1
+        this.currpage = 0
         this.loadShow = true
         this.GetRepositoryList()
       } else {
@@ -204,14 +204,12 @@ export default {
         limit: this.pagesize
       }
       this.axios.post(TKE_GET_REPOSITORY_LIST, param).then(res => {
-        console.log(res)
         if (res.code === 0 && res.Error == undefined) {
           this.tableData = res.data.repoInfo
           this.TotalCount = res.data.totalCount
           this.favor = res.data.repoInfo.isUserFavor
           this.loadShow = false
         } else {
-          console.log(1)
           this.$message({
               message: ErrorTips[res.codeDesc],
               type: "error",
