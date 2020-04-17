@@ -188,7 +188,7 @@ const router = new Router({
         keepAlive: true,
         leftNav: true
       },
-      beforeEnter: botIntercept
+      beforeEnter: (t, f, n) => botIntercept(t, f, n)
     },
     {
       path: "/botSetting", // bot设置
@@ -199,7 +199,7 @@ const router = new Router({
         keepAlive: true,
         leftNav: true
       },
-      beforeEnter: botIntercept
+      beforeEnter: (t, f, n) => botIntercept(t, f, n)
     },
     {
       path: "/botSetting/public/:id",
@@ -236,7 +236,7 @@ const router = new Router({
         keepAlive: true,
         leftNav: true
       },
-      beforeEnter: botIntercept
+      beforeEnter: (t, f, n) => botIntercept(t, f, n)
     },
     {
       path: "/botDetail/ucb", // bot详情
@@ -312,7 +312,7 @@ const accessLogIntercept = (to, from, next) => {
 };
 const botIntercept = (to, from, next) => {
   if (pack) {
-    if (pack.Level === CLB_PACKAGE_CFG_TYPES[2]) {
+    if (pack.Level === 2) {
       next("/botIntercept");
     } else {
       next();
@@ -325,7 +325,7 @@ const botIntercept = (to, from, next) => {
       .then(resp => {
         Vue.prototype.generalRespHandler(resp, ({ Data }) => {
           pack = Data;
-          if (pack.Level === CLB_PACKAGE_CFG_TYPES[2]) {
+          if (pack.Level === 2) {
             next("/botIntercept");
           } else {
             next();
