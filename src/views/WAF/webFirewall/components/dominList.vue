@@ -236,7 +236,6 @@
               </el-dropdown-menu>
             </el-dropdown>
             <template slot-scope="scope">
-              {{scope.row.StatusBool}}
                 <!-- :disabled="abnormal.includes(scope.row.State)" -->
               <el-switch
                 v-model="scope.row.StatusBool"
