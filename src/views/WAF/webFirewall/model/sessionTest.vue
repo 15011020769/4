@@ -1,16 +1,12 @@
 <template>
-  <el-row >
+  <el-row>
     <el-col>
       <el-row type="flex" :gutter="20">
         <el-col :span="6">
           待提取文本
         </el-col>
         <el-col>
-          <el-input
-            type="textarea"
-            :autosize="{ minRows: 4, maxRows: 8}"
-            :placeholder="session.Source === 'COOKIE' ? `请将${session.Source}会话内容复制后粘贴在这里` : '请输入COOKIE文本内容，格式：a=1;b=2;c=3'"
-            v-model="content">
+          <el-input type="textarea" :autosize="{ minRows: 4, maxRows: 8}" :placeholder="getPlaceholder(session.Source)" v-model="content">
           </el-input>
           <div class="tip">
             <p>当前匹配位置：{{session.Source}}；</p>
@@ -34,11 +30,11 @@
           测试结果
         </el-col>
         <el-col class="result">
-          <p class="un-match" v-if="matchedStr === false">请输入待提取文本</p>
-          <p class="not-match" v-else-if="matchedStr === ''">未匹配到字符串</p>
-          <p class="matched" v-else>{{matchedStr}}</p>
+          <!-- <p class="un-match" v-if="matchedStr === false">请输入待提取文本</p>
+          <p class="not-match" v-else-if="matchedStr === ''">未匹配到字符串</p> -->
+          <p :class="code === 0 ? 'matched' : 'not-match'">{{matchedStr}}</p>
         </el-col>
-       </el-row>
+      </el-row>
     </el-col>
 
     <el-col style="margin-top: 20px;">
@@ -62,7 +58,8 @@ export default {
   data() {
     return {
       content: '',
-      matchedStr: false,
+      code: 0,
+      matchedStr: '',
       disableTest: true
     }
   },
@@ -72,6 +69,16 @@ export default {
     },
   },
   methods: {
+    getPlaceholder(source) {
+      console.log(source)
+      if (source === 'cookie') {
+        return '請輸入COOKIE文本內容，格式：a=1;b=2;c=3'
+      }
+      if (source === 'get') {
+        return '請輸入GET參數文本內容，格式：a=1&b=2&c=2'
+      }
+      return '請將POST會話內容複製後粘貼在這裡'
+    },
     close() {
       this.$emit('update:visible', false)
     },
@@ -87,12 +94,80 @@ export default {
         }
       } else {
         // 位置匹配
-        const index = content.indexOf(KeyOrStartMat)
-        if (index > -1) {
-          const start = index + KeyOrStartMat.length + StartOffset + 1
-          this.matchedStr = this.content.substring(start, start + EndOffset + 1)
-        } else {
-          this.matchedStr = ''
+        const rest = this.locationTest(content, session.Source, KeyOrStartMat, Number(StartOffset), Number(EndOffset))
+        this.matchedStr = rest.msg
+        this.code = rest.code
+      }
+    },
+    locationTest(...args) {
+      var e = args.length > 0 && args[0] !== undefined ? args[0] : "";
+      var t = args[1];
+      var a = args[2];
+      var r = args.length > 3 && args[3] !== undefined ? args[3] : -1;
+      var n = args.length > 4 && args[4] !== undefined ? args[4] : -1;
+      var i = {
+        get: "&",
+        post: "&",
+        cookie: ";"
+      };
+      if ("" === e) {
+        return {
+          code: -1,
+          msg: "提取文本輸入有誤"
+        }
+      }
+      var o = e.split(i[t]);
+      var c = false;
+      for (var s = 0, l = o.length; s < l; s++) {
+        var u = o[s];
+        var d = u.startsWith(a + "=");
+        if (d) {
+          c = true;
+          var f = u.split("=");
+          if (2 === f.length) {
+            var p = f[1];
+            var m = r
+              , v = n;
+            if (-1 === m) {
+              m = 0
+            }
+            if (-1 === v) {
+              v = p.length
+            }
+            if (p.length < m) {
+              return {
+                code: -1,
+                msg: "開始位置大於字元串長度"
+              }
+            }
+            if (v < m) {
+              return {
+                code: -1,
+                msg: "開始位置>結束位置"
+              }
+            }
+            if (-1 === v || v > p.length) {
+              v = p.length
+            }
+            if (v - m + 1 > 128) {
+              v = m + 128 - 1
+            }
+            return {
+              code: 0,
+              msg: p.substring(m, v + 1)
+            }
+          } else {
+            return {
+              code: -1,
+              msg: "val為空，或者val包含了="
+            }
+          }
+        }
+      }
+      if (!c) {
+        return {
+          code: -1,
+          msg: "未找到匹配的key"
         }
       }
     }
@@ -117,7 +192,7 @@ export default {
     color: #e1504a;
   }
   .matched {
-    color: #0ABF5B;
+    color: #0abf5b;
   }
 }
 </style>
