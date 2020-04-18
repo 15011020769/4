@@ -87,7 +87,6 @@ import { TKE_GET_REPOSITORY_LIST, TKE_DELETE_FAVOR, TKE_ADD_FAVOR,ALL_CITY } fro
 // 防抖
 // function debounce(fn,wait){
 //     var timer = null;
-//     // console.log("防抖")
 //     return function(){
 //         if(timer !== null){
 //             clearTimeout(timer);
@@ -131,7 +130,6 @@ export default {
   methods: {
     handleClick (row) {
       if (row.isUserFavor) {
-        // console.log(2)
         // debounce(this.DeleteFavor(row),2000)
         this.DeleteFavor(row)
       } else {
@@ -156,7 +154,6 @@ export default {
     },
     handleSelectionChange (val) {
       this.multipleSelection = val
-      console.log(this.multipleSelection)
     },
     // 查询
     getSearch () {
@@ -176,7 +173,6 @@ export default {
     },
     GetCity () {
       this.axios.get(ALL_CITY).then(data => {
-        console.log(data.data)
         this.cities = data.data
         this.selectedRegion = data.data[0].Region
         this.selectedCity = data.data[0]
@@ -264,7 +260,6 @@ export default {
           })
         }
         // else {
-        //   console.log(2)
         //   this.$message({
         //       message: ErrorTips[res.codeDesc],
         //       type: "error",

@@ -663,7 +663,6 @@ export default {
       await this.axios.post(CLUSTER_OS).then(res => {
         if(res && res.code === 0 && res.data) {
           if(res.data.images.length > 0) {
-            console.log(res.data.images);
             for(let i = 0; i<res.data.images.length; i++) {
               let currOs = res.data.images[i].OsName;
               if(currOs === osString) {
@@ -711,7 +710,6 @@ export default {
             }
           }
           this.osList.push(osList);
-          console.log(this.osList);
         } else {
           this.loadShow = false;
           let ErrTips = {};

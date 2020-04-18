@@ -1162,14 +1162,12 @@ export default {
       let taRate = localStorage.getItem('taRate');  // 税率
       await this.axios.post(DESCRIBE_ZONE_INFO, param).then(res => {
         if(res.Response.Error === undefined) {
-          console.log(res.Response.InstanceTypeQuotaSet);
           if(res.Response.InstanceTypeQuotaSet.length > 0) {
             for(let i = 0; i < res.Response.InstanceTypeQuotaSet.length; i++) {
               res.Response.InstanceTypeQuotaSet[i].cost = (res.Response.InstanceTypeQuotaSet[i].Price.UnitPrice * usdRate * tpdRate * taRate).toFixed(8);
             }
           }
           this.nodeForm.zoneInfoList = res.Response.InstanceTypeQuotaSet;
-          console.log(this.nodeForm.zoneInfoList)
           this.nodeForm.modelType = res.Response.InstanceTypeQuotaSet[0];
         } else {
           this.loadShow = false;
@@ -1412,7 +1410,6 @@ export default {
             }
           }
         }
-        console.log(this.nodeForm.buyDataDiskArr)
     },
     isFomatMount() {
       this.getInput()
@@ -1661,7 +1658,6 @@ export default {
           }
         }
       }
-      console.log(safeArr);
       this.nodeForm.safeArr = safeArr;
     },
     //选择带宽

@@ -162,9 +162,7 @@ export default {
       EncodedBody: true,
        Version: "2018-05-25",
       }
-      // console.log(obj,'obj')
       if(!this.errorShow&&this.nFlag){
-          console.log(params,'params')
         this.axios.post(TKE_COLONY_QUERY, params).then(res=>{
           if (res.Response.Error == undefined){
               this.$router.go(-1);
@@ -227,12 +225,10 @@ export default {
       if (index !== -1) {
         this.dynamicValidateForm.domains.splice(index, 1)
       }
-      console.log(item,'item')
       item.valueKey=null;
       if(item.reflow){
         this.delArr.push(item)
       }
-      console.log(this.delArr,'this.delArr')
     },
     addDomain () {
       this.dynamicValidateForm.domains.push({

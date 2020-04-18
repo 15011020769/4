@@ -250,7 +250,6 @@ export default {
       ],
       verifyPort2: [{// 主机端口的验证
         validator: (rule, value, callback) => {
-          // console.log(rule.field.split('.')[1])
           let ind = Number(rule.field.split('.')[1])
           let ls = this.svc.list
           let flog = false

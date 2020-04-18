@@ -41,16 +41,13 @@ export default {
     },
     methods:{
         changeMd(value, render) {
-            // console.log(render)
             this.contentHtml = render;
-        // console.log(this.contentHtml)
         },
         getInfo () {
             const param = {
                 reponame: this.$route.query.id,
             }
             this.axios.post(TKE_DOCKERHUB_INFO, param).then(res => {
-                // console.log(res)
                 if (res.code === 0 && res.Error == undefined){
                     this.detailDesc = res.data.detailDesc
                 } else {
@@ -73,7 +70,6 @@ export default {
                         this.tagList = this.tagList+res.data.tagList[i]
                     }
                     // this.List = this.tagList.split('-')
-                    // console.log(this.List)
                 } else {
                     this.$message({
                         message: ErrorTips[res.codeDesc],

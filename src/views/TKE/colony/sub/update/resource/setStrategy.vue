@@ -158,9 +158,7 @@ export default {
           Version: "2018-05-25",
         }
       }
-      console.log(params)
       this.axios.post(TKE_COLONY_QUERY,params).then(res=>{
-            console.log(res)
             if(res.Response.Error === undefined){
               this.$router.go(-1);
               this.$message({
@@ -193,9 +191,7 @@ export default {
         }
         this.axios.post(TKE_COLONY_QUERY,params).then(res=>{
            let response = JSON.parse(res.Response.ResponseBody);
-           console.log(response)
            let obj=response.items[0];
-          console.log(obj)
           this.type=obj.spec.strategy.type;
 
          if(this.type=='RollingUpdate'){

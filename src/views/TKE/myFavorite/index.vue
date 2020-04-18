@@ -99,7 +99,6 @@ export default {
 
   methods: {
     handleClick (row) {
-      console.log(row)
       this.DeleteFavor(row)
     },
     // 分页
@@ -118,12 +117,11 @@ export default {
     },
     handleSelectionChange (val) {
       this.multipleSelection = val
-      console.log(this.multipleSelection)
     },
     getSearch () {
       let version =  /^[a-z0-9-_.]+$/
       if(version.test(this.input) || this.input == ""){
-        this.currpage = 1
+        this.currpage = 0
         this.loadShow = true
         this.GetFavor()
       } else {
@@ -142,7 +140,6 @@ export default {
         obj['favors.' + i + '.repotype'] = this.multipleSelection[i].repotype
         obj['favors.' + i + '.regionId'] = this.multipleSelection[i].regionId
       }
-      console.log(obj)
       this.BatchDeleteFavor(obj)
     },
     // 获取我的收藏列表
@@ -174,7 +171,7 @@ export default {
       const param = obj
       this.axios.post(TKE_DELETE_BATCHDELETEFAVOR, param).then(res => {
         if (res.code == 0 && res.Error == undefined) {
-          this.currpage = 1
+          this.currpage = 0
           this.loadShow = true
           this.GetFavor()
           this.$message({
@@ -200,9 +197,8 @@ export default {
         repotype: row.repotype
       }
       this.axios.post(TKE_DELETE_FAVOR, param).then(res => {
-        console.log(res)
         if (res.code === 0 && res.Error == undefined) {
-          this.currpage = 1
+          this.currpage = 0
           this.loadShow = true
           this.GetFavor()
           this.$message({
@@ -225,7 +221,6 @@ export default {
     exportExcel() {
       /* generate workbook object from table */
       var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
-      console.log(wb)
       /* get binary string as output */
       var wbout = XLSX.write(wb, {
         bookType: "xlsx",
@@ -246,7 +241,6 @@ export default {
     },
     // 路由跳转
      jump (row) {
-      console.log(row)
       if(row.public){
         this.$router.push({
           name: 'DockerHubDetailDetail',

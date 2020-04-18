@@ -900,7 +900,6 @@ export default {
     } else if (this.ClusterOs.substring(0, 6) == "ubuntu") {
       this.caozuo = "ubuntu";
     }
-    console.log(this.ClusterOs);
   },
   methods: {
     AddAdvancedSetting() {
@@ -913,7 +912,6 @@ export default {
       this.advancedSettingArr.splice(index, 1);
     },
     changeValue(val) {
-      console.log(this.inputRoom);
     },
     a1(w, e) {},
     //提交添加伸缩组
@@ -985,7 +983,6 @@ export default {
         LaunchConfigurePara: JSON.stringify(LaunchConfigurePara), //启动配置
       };
       let buyDataDiskArr = this.buyDataDiskArr;
-      // debugger
       if(buyDataDiskArr.length > 0) {
         for(let i = 0; i < buyDataDiskArr.length; i++) {
           params["InstanceAdvancedSettings.DataDisks." + i + ".DiskSize"] = Number(buyDataDiskArr[i].dataDiskNum);
@@ -1177,7 +1174,6 @@ export default {
       param["Filters.0.Name"] = "instance-charge-type";
       param["Filters.0.Values.0"] = "POSTPAID_BY_HOUR";
       await this.axios.post(DESCRIBE_ZONE_INFO, param).then(res => {
-        console.log(res);
 
         if (res.Response.Error === undefined) {
           var dataList = res.Response.InstanceTypeQuotaSet;
@@ -1324,7 +1320,6 @@ export default {
       params["Filters.0.Name"] = "project-id";
       params["Filters.0.Values.0"] = 0;
       await this.axios.post(TKE_MISG, params).then(res => {
-        console.log(res);
         if (res.Response.Error === undefined) {
           this.securityGroups = res.Response.SecurityGroupSet;
           this.asg.security =
@@ -1351,7 +1346,6 @@ export default {
         Limit: 100
       };
       await this.axios.post(TKE_SSH, params).then(res => {
-        console.log(res);
         if (res.Response.Error === undefined) {
           this.secretList = res.Response.KeyPairSet;
           this.loadShow = false;
@@ -1388,7 +1382,6 @@ export default {
         Limit: 100
       };
       await this.axios.post(TKE_VPC_METWORK, params).then(async res => {
-        console.log(res);
 
         if (res.Response.Error === undefined) {
           this.describeVpcs = res.Response.VpcSet;
@@ -1444,9 +1437,6 @@ export default {
         "Filters.0.Values.0": this.asg.groupVps
       };
       await this.axios.post(TKE_WORKER_METWORK, param).then(res => {
-        console.log(res);
-
-        // debugger;
         if (res.Response.Error === undefined) {
           this.subNetList = res.Response.SubnetSet;
           this.loadShow = false;
@@ -1474,7 +1464,6 @@ export default {
   },
   filters: {
     Zone(val) {
-      console.log(val.substring(3, val.length - 2));
       if (val.substring(3, val.length - 2) === "taipei") {
         return "台北" + val.substring(val.length - 1, val.length) + "區";
       }

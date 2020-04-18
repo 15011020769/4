@@ -244,7 +244,6 @@ export default {
                 })
               })
             }
-            // console.log(item.metadata.annotations)
             return item
           })
           this.total = items.length
@@ -282,22 +281,18 @@ export default {
     // 监听搜索框的值
     changeSearchInput (val) {
       this.searchInput = val
-      console.log(this.searchInput)
     },
     // 点击搜索
     clickSearch (val) {
       this.searchInput = val
-      console.log(this.searchInput)
       this.getIngressList()
     },
     // 重新整理数据
     refreshList () {
-      console.log('refreshList....')
       this.getIngressList()
     },
     // 导出表格
     exportExcel () {
-      console.log('exportExcel...')
       /* generate workbook object from table */
       var wb = XLSX.utils.table_to_book(document.querySelector('#exportTable'))
       /* get binary string as output */
@@ -326,7 +321,6 @@ export default {
       this.pageIndex += 1
     },
     handleSizeChange (val) {
-      // console.log(`每页 ${val} 条`);
       this.pageSize = val
       // this.getColonyList();
     },

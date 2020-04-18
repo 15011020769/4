@@ -115,7 +115,6 @@ import {
       }
     },
     created(){
-      console.log(this.$route.query.type)
         if(this.$route.query.clusterId&&this.$route.query.stashName&&this.$route.query.namespace){
           this.findData()
         }
@@ -162,15 +161,12 @@ import {
           this.axios.post(TKE_COLONY_QUERY, params).then(res => {
               if (res.Response.Error == undefined) {
                   var data = JSON.parse(res.Response.ResponseBody);
-                  console.log(data)
                   this.createTime=data.metadata.creationTimestamp;
                   this.type=data.spec.output.type;
                   if(data.spec.input.container_log_input){//标准容器输出
                     let namespaces=data.spec.input.container_log_input.namespaces;
                     let flag=data.spec.input.container_log_input.all_namespaces
                       this.all_namespaces=flag;
-                      console.log(namespaces,'namespaces')
-                      console.log(this.all_namespaces,'this.all_namespaces')
                       this.logInfo=namespaces
 
                   }

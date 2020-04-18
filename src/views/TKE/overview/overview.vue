@@ -297,7 +297,6 @@ export default {
       if (res.Response.Error === undefined) {
         this.TotalCount = res.Response.TotalCount;
 
-        console.log(this.clusters);
       } else {
         let ErrTips = {
           InternalError: "內部錯誤",
@@ -330,7 +329,6 @@ export default {
         "dimensions.1": "node"
       };
       this.axios.post(TKE_COLONY_STATUS_JZ, params).then(res => {
-        console.log("resresresres",res);
         if (res.Error === undefined) {
           var sum = 0,
             absum = 0,
@@ -367,7 +365,6 @@ export default {
         Version: "2018-05-25",
       }
       await this.axios.post(TKE_COLONY_STATUS_JZ2, params).then(res=>{
-          console.log(res)   
           if (res.Response.Error === undefined){
            let  d1=res.Response.ResourceStatusSet
            var arr=[];
@@ -392,8 +389,6 @@ export default {
           this.clustersIdArr=arr.map(v=>{
             return v.name
           })
-           console.log(arr,'arr')
-           console.log( this.clustersIdArr,' this.clustersIdArr')
           } 
       })
     },
@@ -418,18 +413,15 @@ export default {
           order:'desc',
           limit:65535
       };
-      console.log('requestBody',requestBody)
         var params={
          Method: "POST",
          Path: "/front/v1/get/query",
          RequestBody: btoa(JSON.stringify( requestBody) ),
          Version: "2018-07-24",
         }
-        console.log(params,'paramsbtoa')
         this.axios.post(TKE_GETCPUUSE, params).then(res=>{
           if (res.Response.Error === undefined){
             let response = JSON.parse(res.Response.ResponseBody);
-          console.log('rresponse',response)
             this.clusters.forEach(val=>{
 
               response.data.forEach(item=>{

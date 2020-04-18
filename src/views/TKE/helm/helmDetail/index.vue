@@ -65,7 +65,6 @@ export default {
     },
     GetCity () {
       this.axios.get(ALL_CITY).then(data => {
-        console.log(data.data)
         this.cities = data.data
         this.selectedRegion = data.data[0].Region
         this.selectedCity = data.data[0]

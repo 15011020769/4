@@ -162,7 +162,6 @@ export default {
       this.searchType = val;
       this.loadShow = true;
       this.getList();
-      console.log(this.searchType);
     },
     //监听搜索框的值
     changeSearchInput(val) {
@@ -178,7 +177,6 @@ export default {
     refreshList() {
       this.loadShow = true;
       this.getList();
-      console.log("refreshList....");
     },
     // 跳转Yaml
     editYaml(row) {
@@ -193,7 +191,6 @@ export default {
     },
     // 导出表格
     exportExcel() {
-      console.log("exportExcel...");
       var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
 
       var wbout = XLSX.write(wb, {
@@ -220,7 +217,6 @@ export default {
       this.pageIndex += 1;
     },
     handleSizeChange(val) {
-      //  console.log(`每页 ${val} 条`);
       this.pageSize = val;
       this.loadShow = true;
       this.getList();
@@ -244,7 +240,6 @@ export default {
         if (res.Response.Error === undefined) {
           var mes = JSON.parse(res.Response.ResponseBody);
           this.loadShow = true;
-          console.log(mes);
           this.searchType = mes.items[0].metadata.name;
           //  this.list = mes.items;
           this.flag = false;
@@ -282,7 +277,6 @@ export default {
       this.axios.post(POINT_REQUEST, params).then(res => {
         if (res.Response.Error === undefined) {
           var mes = JSON.parse(res.Response.ResponseBody);
-          console.log(mes);
           this.list = mes.items;
           this.total = mes.items.length;
           this.loadShow = false;
@@ -313,7 +307,6 @@ export default {
       this.axios.post(POINT_REQUEST, params).then(res => {
         if (res.Response.Error === undefined) {
           var mes = JSON.parse(res.Response.ResponseBody);
-          //  console.log(mes);
           this.list = mes.items;
           this.loadShow = false;
         } else {
@@ -368,7 +361,6 @@ export default {
   },
   filters: {
     capacitys: function(value) {
-      console.log(value.capacity);
       if (value.capacity) {
         return value.capacity.storage;
       } else {

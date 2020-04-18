@@ -149,12 +149,10 @@ export default {
     //选择搜索条件
     changeSearchType(val) {
       this.searchType = val;
-      console.log(this.searchType);
     },
     //监听搜索框的值
     changeSearchInput(val) {
       this.searchInput = val;
-      console.log(this.searchInput);
     },
     // 点击搜索
     clickSearch(val) {
@@ -170,7 +168,6 @@ export default {
     },
     // 导出表格
     exportExcel() {
-      console.log("exportExcel...");
       var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
       var wbout = XLSX.write(wb, {
         bookType: "xlsx",
@@ -197,7 +194,6 @@ export default {
       this.pageIndex += 1;
     },
     handleSizeChange(val) {
-      // console.log(`每页 ${val} 条`);
       this.pageSize = val;
       this.loadShow = true;
       this.GetList();
@@ -228,7 +224,6 @@ export default {
       this.axios.post(POINT_REQUEST, params).then(res => {
         if (res.Response.Error === undefined) {
           var mes = JSON.parse(res.Response.ResponseBody);
-          console.log(mes);
           this.list = mes.items;
           this.total = mes.items.length;
           this.loadShow = false;
@@ -257,7 +252,6 @@ export default {
       this.axios.post(POINT_REQUEST, params).then(res => {
         if (res.Response.Error === undefined) {
           var mes = JSON.parse(res.Response.ResponseBody);
-          console.log(mes);
           this.list = mes.items;
           this.loadShow = false;
         } else {
@@ -285,7 +279,6 @@ export default {
       this.axios.post(POINT_REQUEST, params).then(res => {
         if (res.Response.Error === undefined) {
           var mes = JSON.parse(res.Response.ResponseBody);
-          //  console.log(mes);
           //  this.list = mes.items;
           this.loadShow = true;
           this.GetList();

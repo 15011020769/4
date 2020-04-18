@@ -341,7 +341,6 @@ export default {
             });
             this.list = response.items;
             this.total = response.items.length;
-            console.log(this.list);
           }
         } else {
           this.loadShow = false;
@@ -388,7 +387,6 @@ export default {
       this.pageIndex+=1;
     },
     handleSizeChange(val) {
-      // console.log(`每页 ${val} 条`);
       this.pageSize=val;
       this.getPodList();
     },

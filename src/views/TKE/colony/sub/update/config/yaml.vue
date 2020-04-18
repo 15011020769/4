@@ -137,7 +137,6 @@ export default {
             Version: "2018-05-25",
           }
           this.axios.post(TKE_COLONY_QUERY, params).then(res=>{
-            console.log(res)
              if (res.Response.Error == undefined){
               var response = res.Response.ResponseBody;
                this.yamlInfo = res.Response.ResponseBody; 

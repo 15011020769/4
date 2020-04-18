@@ -94,7 +94,6 @@
     },
     created() {},
     mounted() {
-      console.log(this.ClusterIds);
     },
     methods: {
       //返回上一层

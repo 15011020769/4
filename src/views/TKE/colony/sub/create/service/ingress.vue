@@ -270,7 +270,6 @@ export default {
           let itemObject = this.ing.backendService.find(item => {
             return item.metadata.name === value
           })
-          console.log('itemObject.spec.type', itemObject.spec.type)
           if (value === '請選擇後端服務') {
             callback(new Error('請選擇後端服務'))
           } else if (itemObject.spec.type === 'ClusterIP') {
@@ -353,7 +352,6 @@ export default {
       }
     },
     describeLoadBalancersChange: function (val) {
-      console.log(val)
     },
     // 命名空间改变时触发
     ingNamespaceValueChange: function (val) {
@@ -555,7 +553,6 @@ export default {
         LoadBalancerId: 'lb-304y2b8e'
       }
       this.axios.post(TKE_DESCRIBELISTENERS, param).then(res => {
-        console.log('getDescribeListeners', res)
       })
     },
     // 查询价格

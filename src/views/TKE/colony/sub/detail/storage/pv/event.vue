@@ -136,11 +136,8 @@ export default {
       this.axios.post(POINT_REQUEST, params).then(res => {
         if (res.Response.Error === undefined) {
           var mes = JSON.parse(res.Response.ResponseBody);
-         console.log(mes);
           this.list = mes.items;
-          console.log(this.list)
           this.autoRefresh=true
-          // this.loadShow = false
         } else {
           let ErrTips = {};
           let ErrOr = Object.assign(ErrorTips, ErrTips);

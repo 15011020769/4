@@ -946,10 +946,8 @@ export default {
       let {dataJuan}=this.wl;
       let volumesArr=[];
       dataJuan.forEach(item=>{
-        console.log(item)
         let sendObj=new Object();
         sendObj.name=item.name2;
-        console.log(item.name1)
         if(item.name1=='useMenu'){
           sendObj.emptyDir={}
         }else if(item.name1=='usePath'){
@@ -1038,7 +1036,6 @@ export default {
         // containerList
       }
       this.axios.post(TKE_COLONY_QUERY,params).then(res=>{
-        console.log(res)
         if (res.Response.Error === undefined) {
           this.$router.back()
           this.$message({
@@ -1090,7 +1087,6 @@ export default {
       })
     },
     querySearch: function (index, queryStr) {
-      console.log(index, queryStr)
       let mirrorImgTagArr = this.wl.instanceContent[index].mirrorImgTagArr.map(item => ({ value: item }))
       // let queryArr = mirrorImgTagArr.filter(item => item.value.includes(queryStr))
       // return queryArr
@@ -1104,7 +1100,6 @@ export default {
         RepoName: mirrorImgName
       }).then(res => {
         let { TagCount, Server, TagInfo, RepoName } = res.Response.Data
-        console.log(Server, RepoName)
         if (TagCount > 0) {
           let tagArr = TagInfo.map(item => item.TagName)
           this.wl.instanceContent[index].mirrorImgTagArr = tagArr
@@ -1192,7 +1187,6 @@ export default {
       this.axios.post(POINT_REQUEST, param).then(res => {
         this.axiosUtils(res, () => {
           let ResponseBody =JSON.parse(res.Response.ResponseBody);
-           console.log('pvcdata',ResponseBody)
             this.pvcOption=ResponseBody.items;
         })
       })
@@ -1218,12 +1212,10 @@ export default {
        this.axios.post(TKE_COLONY_QUERY,params).then(res=>{
          if(res.Response.Error === undefined){
            let response = JSON.parse(res.Response.ResponseBody);
-           console.log(response)
           var {items:[{spec:{jobTemplate:{spec:{template:{spec:{containers:arr,volumes:volumesData}}}}}}]}=response;
 
           if(volumesData){//数据卷存在
             volumesData.forEach(item=>{
-              console.log(item)
               if(item.configMap){
                 this.wl.dataJuan.push({name1:'useConfig',name2:item.name,name3:item.configMap.name,name4:item.configMap.items})
               }else if(item.hostPath){
@@ -1271,7 +1263,6 @@ export default {
               unhealthyThreshold: '1' // 不健康阀值
           }
           for(let v of arr){
-            console.log(v)
             if(v.env){
               if(v.env.length){
                  v.env.forEach(item=>{
@@ -1360,11 +1351,9 @@ export default {
   },
   // 点击确定绑定镜像
   confirmMirrorImg: function (val, index) {
-    console.log(val, index)
     this.wl.instanceContent[index].mirrorImg = val
   },
   initReelData(val,index){
-    console.log(val,index)
     this.wl.dataJuan[index].name3=''
     this.wl.dataJuan[index].name4=''
 
@@ -1389,13 +1378,11 @@ export default {
     this.dialogIndex=index;
   },
   yunHardDiskId(val){//radio选中
-    console.log(val)
     this.dataReelDialog.yunDisks.diskId=val;
   },
   selectYunHardDisk(){//关闭框，赋值
     this.dialogVisibleYun = false;
      this.wl.dataJuan[this.dialogIndex].name3=this.dataReelDialog.yunDisks.diskId;
-     console.log(this.wl.dataJuan[this.dialogIndex])
   },
   selectConfig(index) {//弹出框
     this.dialogVisibleConfig = true;
@@ -1404,7 +1391,6 @@ export default {
   selectConfigSure(){//关闭框，赋值
      this.dialogVisibleConfig = false;
      this.wl.dataJuan[this.dialogIndex].name3=this.dataReelDialog.configMap.name;
-     console.log(this.dataReelDialog.configMap.items)
 
      if(this.dataReelDialog.configMap.items.length==0){
        this.wl.dataJuan[this.dialogIndex].name4='all';
@@ -1434,7 +1420,6 @@ export default {
     readyDatefilter.forEach(item=>{
       readyArr=Object.keys(item.data)
     })
-    console.log(readyArr)
    this.dataReelDialog.Secret.partKeyOption=readyArr
    this.dataReelDialog.Secret.items.forEach(item=>{
       item.name=readyArr[0]
@@ -1455,7 +1440,6 @@ export default {
   },
   //改变每页显示数量
   handleSizeChange(val) {
-    console.log(`每頁 ${val} 條`);
   },
   // 改变页数
   handleCurrentChange(val) {
@@ -1503,7 +1487,6 @@ watch: {
           let { name, mirrorImg, environmentVar, citeCs, disAdvancedSetting, surviveExamine, readyToCheck, surviveExamineContent ,mountPoint} = item
            this.firstPointInfoData=[];
           mountPoint.forEach(v=>{
-            console.log(v)
             if(v.name!=''){
              this.firstPointInfoData.push(v.name)
             }
@@ -1557,7 +1540,6 @@ watch: {
           }
           item.completed = completed
         })
-        console.log(this.isAddContainer)
         this.isAddContainer = isAddContainer
       },
       deep: true

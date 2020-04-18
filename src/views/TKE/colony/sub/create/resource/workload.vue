@@ -1487,7 +1487,6 @@ export default {
           item.completed = completed
         })
         this.useDataVolumes = useDataVolumes
-        console.log('useDataVolumes', useDataVolumes)
         this.isAddContainer = isAddContainer
       },
       deep: true
@@ -1517,7 +1516,6 @@ export default {
     },
     'wl.mustCondition': {
       handler: function (val) {
-        console.log(val)
       },
       deep: true
     },
@@ -1583,7 +1581,6 @@ export default {
   created () {
     // 从路由获取类型
     let { type, clusterId, spaceName } = this.$route.query
-    console.log(this.$route.query)
     this.wl.type = type
     this.clusterId = clusterId
     this.wl.namespace = spaceName
@@ -1614,7 +1611,6 @@ export default {
     getZoneCvmList: async function () {
       await this.axios.post(ZONE_CVM2_LIST, { Version: '2017-03-12' }).then(res => {
         this.axiosUtils(res, () => {
-          console.log('cvm2/DescribeZones', JSON.stringify(res))
         })
       })
     },
@@ -1640,7 +1636,6 @@ export default {
       await this.axios.post(POINT_REQUEST, param).then(res => {
         this.axiosUtils(res, () => {
           let ResponseBody = res.Response.ResponseBody
-          console.log('getStorageClasses', JSON.parse(ResponseBody))
         })
       })
     },
@@ -1803,7 +1798,6 @@ export default {
       await this.axios.post(POINT_REQUEST, param).then(res => {
         this.axiosUtils(res, () => {
           let ResponseBody = res.Response.ResponseBody
-          console.log('/api/v1/nodes', JSON.parse(ResponseBody))
         })
       })
     },
@@ -1857,7 +1851,6 @@ export default {
       }
       await this.axios.post(TKE_GETTKEDATARESULT, param).then(res => {
         this.axiosUtils(res, () => {
-          console.log('tsm2/GetTkeDataResult', res)
         })
       })
     },
@@ -1908,7 +1901,6 @@ export default {
       })
     },
     handleSizeChange (val) {
-      console.log(`每頁 ${val} 條`)
     },
     // 改变页数
     handleCurrentChange (val) {
@@ -1920,7 +1912,6 @@ export default {
       this.wl.instanceContent[index].versions = ''
     },
     querySearch: function (index, queryStr) {
-      console.log(index, queryStr)
       let mirrorImgTagArr = this.wl.instanceContent[index].mirrorImgTagArr.map(item => ({ value: item }))
       // let queryArr = mirrorImgTagArr.filter(item => item.value.includes(queryStr))
       // return queryArr
@@ -1934,7 +1925,6 @@ export default {
         RepoName: mirrorImgName
       }).then(res => {
         let { TagCount, Server, TagInfo, RepoName } = res.Response.Data
-        console.log(Server, RepoName)
         if (TagCount > 0) {
           let tagArr = TagInfo.map(item => item.TagName)
           this.wl.instanceContent[index].mirrorImgTagArr = tagArr
@@ -1982,7 +1972,6 @@ export default {
         if (valid) {
           this.submit()
         } else {
-          console.error('有些驗證失敗')
           return false
         }
       })
@@ -2260,7 +2249,6 @@ export default {
             }
           }
         }
-        console.log(affinity)
         template.spec.affinity = affinity
       } else if (nodeTactics === 3) {
         let affinity = { nodeAffinity: {} }
@@ -2342,7 +2330,6 @@ export default {
               }
             }
           }
-          console.log('hpaRequestBody', JSON.stringify(hpaRequestBody))
           queryBodyJson += JSON.stringify(hpaRequestBody)
         }
         if (serviceEnbel) {
@@ -2400,7 +2387,6 @@ export default {
               }
             }
           }
-          console.log('serviceRequestBody', JSON.stringify(serviceRequestBody))
           queryBodyJson += JSON.stringify(serviceRequestBody)
         }
       }
@@ -2483,7 +2469,6 @@ export default {
         requestBody.apiVersion = 'apps/v1beta2'
         params.Path = `/apis/platform.tke/v1/clusters/${this.clusterId}/apply?notUpdate=true`
       }
-      console.log('requestBody', JSON.stringify(requestBody))
       queryBodyJson += JSON.stringify(requestBody)
       params.RequestBody = queryBodyJson
       await this.axios.post(POINT_REQUEST, params).then(res => {

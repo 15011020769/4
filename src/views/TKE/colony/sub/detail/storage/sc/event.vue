@@ -107,8 +107,6 @@ export default {
     },
     watch:{
       autoRefresh(val){
-        console.log(this.$route)
-        console.log(val)
         if(val){
             this.timeId = setInterval(()=>{
             if(this.$route.name != "scDetailEvent"){
@@ -137,9 +135,7 @@ export default {
       this.axios.post(POINT_REQUEST, params).then(res => {
         if (res.Response.Error === undefined) {
           var mes = JSON.parse(res.Response.ResponseBody);
-         console.log(mes);
           this.list = mes.items;
-          console.log(this.list)
           // this.loadShow = false
           this.autoRefresh =true
         } else {

@@ -81,7 +81,6 @@ export default {
         namespace: this.ruleForm.name
       }
       this.axios.post(SPACENAME_PRESENCE, param).then(res => {
-        console.log(res)
         if (res.code === 0 && res.data.isExist) {
           callback(new Error(this.$t('TKE.myMirror.mmkjycz')))
         } else if(!regex.test(value)){
@@ -160,7 +159,6 @@ export default {
           this.loadShow = true
           this.GetSpaceName()
         } else {
-          console.log('error submit!!')
           return false
         }
       })
@@ -175,6 +173,7 @@ export default {
     getSearch () {
       var regex = /^[a-z0-9\.\-_]+$/g
       if (regex.test(this.input) || this.input === '') {
+        this.currpage = 0;
         this.loadShow = true
         this.GetSpaceName()
       } else {
@@ -210,7 +209,6 @@ export default {
         namespace: this.namespace
       }
       this.axios.post(SPACENAME_DELETE, param).then(res => {
-        console.log(res)
         if (res.code === 0 && res.Error == undefined) {
           this.loadShow = true
           this.GetSpaceName()
@@ -235,7 +233,6 @@ export default {
         namespace: this.ruleForm.name
       }
       this.axios.post(CREATE_SPACENAME, param).then(res => {
-        console.log(res)
         if(res.code == 0 && res.Error == undefined){
            this.GetSpaceName()
            this.$message({

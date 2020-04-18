@@ -104,7 +104,6 @@ export default {
     },
     handleSelectionChange (val) {
       this.multipleSelection = val
-      console.log(this.multipleSelection)
     },
     searchName(){
       this.loadShow = true
@@ -118,7 +117,6 @@ export default {
         limit: 10
       }
       this.axios.post(TKE_DOCKERHUB_LIST, param).then(res => {
-        console.log(res)
         if (res.code === 0 && res.Error == undefined){
           this.tableData = res.data.repoInfo
           this.TotalCount = res.data.totalCount
@@ -140,7 +138,6 @@ export default {
         repotype: row.repotype
       }
       this.axios.post(TKE_DELETE_FAVOR, param).then(res => {
-        // console.log(res)
         if (res.code === 0) {
           this.loadShow = true
           this.GetDockerHub()

@@ -114,7 +114,6 @@ export default {
           this.loadShow = false;
           let response = JSON.parse(res.Response.ResponseBody);
           this.detail = response;
-          console.log(this.detail,'this.detail')
         } else {
           this.loadShow = false;
           let ErrTips = {
@@ -144,10 +143,8 @@ export default {
         if(res.Response.Error === undefined) {
           this.loadShow = false;
           let response = JSON.parse(res.Response.ResponseBody);
-          console.log("list",response.items);
           this.secretsList = response.items;
           // this.detail = response;
-          console.log(response,"response");
         } else {
           this.loadShow = false;
           let ErrTips = {

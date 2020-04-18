@@ -157,7 +157,6 @@ export default {
     },
     //是否重新整理
     changeSwitch() {
-      console.log(this.autoRefresh,"val")
       let autoRefresh = this.autoRefresh;
       if(autoRefresh) {
         if(!this.timer) {

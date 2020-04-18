@@ -88,7 +88,6 @@
     },
     methods:{
         setChange(e){
-            console.log(e)
         },
         removeDomain (item) {
             var index = this.form.domains.indexOf(item)

@@ -146,7 +146,6 @@ export default {
   name: "secretCreate",
   data() {
     var validateName = (rule, value, callback) => {
-      console.log(value);
       if (value === "") {
         this.fontColor = true;
         callback();
@@ -498,7 +497,6 @@ export default {
       this.loadShow = true;
       if (!this.errorShow) {
         this.axios.post(TKE_COLONY_QUERY, params).then(res => {
-          console.log(res.Response);
           if (res.Response.Error == undefined) {
             this.goBack();
             this.$message({

@@ -110,7 +110,6 @@
      created() {
        // 从路由获取类型
        this.detail = this.$route.query.detail;
-       console.log("detail", this.detail);
      },
      methods: {
 

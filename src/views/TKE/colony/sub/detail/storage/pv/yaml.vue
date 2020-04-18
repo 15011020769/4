@@ -77,9 +77,6 @@ export default {
           if (res.Response.Error == undefined) {
             // let yaml = require("js-yaml");
             // let result = yaml.load(res.Response.ResponseBody);
-            // console.log(result.reg.test("test"));
-            // console.log(yaml)
-            console.log(res.Response.ResponseBody)
             this.yaml = res.Response.ResponseBody
           } else {
             this.$message({

@@ -233,7 +233,6 @@ export default {
     var validatePass = (rule, value, callback) => {
       const version = /^(?!-)(?!.*-$)[a-z0-9-]+$/;
       if (value === "") {
-        // console.log(222)
         callback(new Error("請輸入用戶名"));
       } else if (!version.test(value)) {
         callback(new Error("格式不正確"));
@@ -278,7 +277,6 @@ export default {
   },
   // watch:{
   //   radio(value){
-  //     console.log(value)
   //   }
   // },
   created() {
@@ -328,7 +326,6 @@ export default {
       this.DiskSize = allData.DiskSize + "Gi";
       this.DiskId = allData.DiskId;
       this.dialogFormVisible = false;
-      console.log(this.radioName);
     },
     // 提交
     submitForm(formName) {
@@ -337,7 +334,6 @@ export default {
           // alert('submit!');
           this.setValue();
         } else {
-          console.log("error submit!!");
           return false;
         }
       });
@@ -367,9 +363,7 @@ export default {
         Version: "2017-03-12"
       };
       this.axios.post(TKE_DESCRIBEDISKS, param).then(res => {
-        console.log(res);
         if (res.Response.Error == undefined) {
-          console.log(res.Response.DiskSet);
           this.tableData = res.Response.DiskSet;
           this.TotalCount = res.Response.TotalCount;
           this.loadShow = false;
@@ -403,9 +397,7 @@ export default {
         Version: "2017-03-12"
       };
       this.axios.post(TKE_DESCRIBEDISKS, param).then(res => {
-        console.log(res);
         if (res.Response.Error == undefined) {
-          console.log(res.Response.DiskSet);
           this.tableData = res.Response.DiskSet;
           this.TotalCount = res.Response.TotalCount;
           this.loadShow = false
@@ -428,9 +420,7 @@ export default {
         Version: "2017-03-12"
       };
       this.axios.post(TKE_DESCRIBEZONES, param).then(res => {
-        console.log(res);
         if (res.Response.Error == undefined) {
-          // console.log(res.Response.DiskSet)
           this.LoginOptions = res.Response.ZoneSet;
           this.form.login = res.Response.ZoneSet[0].Zone;
         } else {
@@ -456,7 +446,6 @@ export default {
       this.axios.post(POINT_REQUEST, params).then(res => {
         if (res.Response.Error === undefined) {
           var mes = JSON.parse(res.Response.ResponseBody);
-          console.log(mes);
           this.pv.storageValue = mes.items[0].metadata.name;
           this.StorageClass = mes.items;
         } else {
@@ -511,7 +500,6 @@ export default {
         } else {
           let ErrTips = {};
           let ErrOr = Object.assign(ErrorTips, ErrTips);
-          // console.log(res.Response,res.message)
           if (
             res.Response.Error.Code == "InternalError" &&
             JSON.parse(res.Response.Error.Message).reason == "AlreadyExists"

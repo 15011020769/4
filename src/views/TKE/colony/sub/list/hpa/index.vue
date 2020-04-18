@@ -155,7 +155,7 @@ export default {
       loadShow: false, //加载是否显示
       list:[], //列表
       total:0,
-      pageSize:10,
+      pageSize:20,
       pageIndex:1,
       multipleSelection: [],
       
@@ -206,13 +206,11 @@ export default {
         Path: "/apis/autoscaling/v2beta1/namespaces/"+this.searchType+"/horizontalpodautoscalers?fieldSelector=metadata.name="+this.searchInput,
         Version: "2018-05-25",
       }
-      console.log(params)
       this.loadShow=true
       await this.axios.post(TKE_COLONY_QUERY,params).then(res=>{
 
         if (res.Response.Error==undefined) {
               var data = JSON.parse(res.Response.ResponseBody);
-             console.log(data)
              this.list = data.items;
              this.total=data.items.length
               this.loadShow=false
@@ -288,7 +286,6 @@ export default {
     },
     //编辑配置
     goUpdatepz(item){
-      console.log(item)
        this.$router.push({
           name: "updateHpa",
           query: {
@@ -314,29 +311,27 @@ export default {
     //选择搜索条件
     changeSearchType(val) {
       this.searchType = val;
-      console.log(this.searchType)
+      this.pageIndex = 1;
       this.tableListData();
     },
     //监听搜索框的值
     changeSearchInput(val) {
       this.searchInput = val;
+      this.pageIndex = 1;
       this.tableListData();
-      console.log(this.searchInput)
     },
     // 点击搜索
     clickSearch(val){
       this.searchInput = val;
+      this.pageIndex = 1;
       this.tableListData();
-      console.log(this.searchInput)
     },
     //重新整理数据
     refreshList(){
-      console.log('refreshList....')
        this.tableListData();
     },
     // 导出表格
     exportExcel() {
-      console.log('exportExcel...')
       /* generate workbook object from table */
       var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
       /* get binary string as output */
@@ -365,7 +360,6 @@ export default {
       this.pageIndex+=1;
     },
     handleSizeChange(val) {
-      // console.log(`每页 ${val} 条`);
       this.pageSize=val;
       // this.getColonyList();
     },

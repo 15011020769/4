@@ -204,7 +204,6 @@ let needRule = {
     })
   },
   delNeedRule: function (cIndex, rIndex) {
-    console.log(this.wl.needCondition[cIndex].arr)
     this.wl.needCondition[cIndex].arr.splice(rIndex, 1)
   }
 }
@@ -294,7 +293,6 @@ let change = {
     this.getPersistentvolumeclaims()
     await this.getSecrets()
     await this.getConfigmaps()
-    console.log(this.wl.instanceContent)
     this.wl.instanceContent.forEach(item1 => {
       item1.citeCs.forEach(item2 => {
         this.citeCsValue1Change(item2.value1, item2)
