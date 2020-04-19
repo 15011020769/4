@@ -95,7 +95,6 @@ export default {
      this.spaceName=this.$route.query.spaceName;
      this.rowData=this.$route.query.rowData;
      this.workload=this.$route.query.workload
-     console.log(this.rowData)
      this.baseYamlData()
   },
   methods: {
@@ -128,7 +127,6 @@ export default {
         }
       }
       this.axios.post(TKE_COLONY_QUERY,params).then(res=>{
-        console.log(res)
         if(res.Response.Error === undefined){
           this.$message({
                 message: '更新成功',
@@ -211,11 +209,9 @@ export default {
         }
       }
       this.axios.post(TKE_COLONY_QUERY,params).then(res=>{
-        console.log(res) 
         if(res.Response.Error === undefined){
             // let response = JSON.parse(res.Response.ResponseBody);
             let response = res.Response.ResponseBody;
-            console.log(response)
             this.yamlInfo=response
           }else{
              let ErrTips = {};

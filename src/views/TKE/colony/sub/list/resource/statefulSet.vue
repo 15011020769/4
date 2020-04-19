@@ -379,7 +379,6 @@ export default {
     },
     //更新pod
     goPodUpdate(rowData) {
-      console.log(rowData)
       this.$router.push({
         name: "podUpdate",
         query: {

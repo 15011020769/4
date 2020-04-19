@@ -533,8 +533,6 @@
       formFour: {
         handler(val){
           val.forEach((item,index )=> {
-            // console.log('this.namespaceOptions.length',this.namespaceOptions.length)
-            // console.log('formFour.length',val.length)
             if (val.length == this.namespaceOptions.length) {
               this.newroomFlag = true
               return false
@@ -654,7 +652,6 @@
 
             var arr1=[],arr2=[] ;
             var map = {}, result = [];
-            console.log(this.formFour,'this.formFour')
             this.formFour.forEach(item => {
               var obj = new Object();
               obj['namespace'] = item.value1;
@@ -666,7 +663,6 @@
                 // let
                for(let i in  item.checkObj){
                   if(item.checkObj[i].val&&item.checkObj[i].val.length){
-                        console.log(item.checkObj[i],'zhi')
                       let obj2={};
                       obj2.namespace=item.checkObj[i].acname;
                       obj2.all_containers= false;
@@ -697,7 +693,6 @@
                       }
                   }
             }
-              console.log(result,'result')
             params.RequestBody.spec.input = {
               container_log_input: {
                 all_namespaces: false,
@@ -778,7 +773,6 @@
             type: "host-log"
           };
         }
-        // console.log(params)
           this.axios.post(TKE_COLONY_QUERY, params).then(res => {
             if (res.Response.Error === undefined) {
                this.$message({
@@ -867,7 +861,6 @@
 
               }
               let namespace=data.spec.input.container_log_input.namespaces,arr=[];
-              console.log(namespace,'namespace++++++++++++')
               namespace.forEach(item=>{
                 if(item.all_containers){
                   let obj={}
@@ -954,7 +947,6 @@
                         }
                     }
                   })
-                  console.log(obj2,'obj2')
                    arr.push(obj2)
                 }
               })
@@ -1183,7 +1175,6 @@
             type: "host-log"
           };
         }
-        console.log('qrbjallcanshu',params)
         if(!this.pathFlag ){
           this.axios.post(TKE_COLONY_QUERY, params).then(res => {
             if (res.Response.Error === undefined) {
@@ -1276,9 +1267,7 @@
             Path: "/apis/apps/v1beta2/namespaces/" + namespace + "/" + workLoad.toLocaleLowerCase() + 's',
             Version: "2018-05-25"
           };
-          console.log(params,'paramsworkload')
           this.axios.post(TKE_COLONY_QUERY, params).then(res => {
-            console.log(JSON.parse(res.Response.ResponseBody),'JSON.parse(res.Response.ResponseBody)')
             if (res.Response.Error === undefined) {
               var data = JSON.parse(res.Response.ResponseBody);
               if( data.items){
@@ -1287,7 +1276,6 @@
             }else{
               this.workload1 = []
             }
-            console.log(this.workload1,'worklods1++++++++++++++++++++++++++++++++')
           });
         }
       },
@@ -1299,7 +1287,6 @@
         };
           this.axios.post(TKE_KAFKA_LIST, params).then(res => {
           if (res.codeDesc === "Success") {
-              // console.log(res)
             res.data.instanceList.forEach((item, index) => {
               this.Ckafka.options.push(
                 item.instanceId + "(" + item.instanceName + ")"
@@ -1332,7 +1319,6 @@
                 this.namespaceOptions.push(item.metadata.name);
                 this.namespaceOptions1.push(item.metadata.name);
               });
-              console.log(this.namespaceOptions,'命名空間選項')
               this.formFour[0].value1 = this.namespaceOptions[0];
             }
           });
@@ -1361,7 +1347,6 @@
               this.formTwo.option3 = ['請選擇workload'];
               var data = JSON.parse(res.Response.ResponseBody);
               if (data.items) {
-                console.log(data.items,'data.items')
                 this.filterData=data.items;
                 data.items.forEach(item => {
                   //workload选项

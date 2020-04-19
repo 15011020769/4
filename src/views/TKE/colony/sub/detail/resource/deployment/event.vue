@@ -139,7 +139,6 @@ export default {
         if(res.Response.Error === undefined) {
           this.loadShow = false;
           let response = JSON.parse(res.Response.ResponseBody);
-          console.log(response);
           if(response.items && response.items.length > 0) {
             response.items.map(event => {
               event.firstTime = moment(event.firstTimestamp).format("YYYY-MM-DD HH:mm:ss");

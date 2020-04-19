@@ -214,7 +214,6 @@ export default {
         if(res.Response.Error === undefined) {
           this.loadShow = false;
           let response = JSON.parse(res.Response.ResponseBody);
-          console.log(response);
           if(response.items.length > 0) {
             response.items.map(pod => {
               pod.addTime = moment(pod.metadata.creationTimestamp).format("YYYY-MM-DD HH:mm:ss");

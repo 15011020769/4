@@ -156,7 +156,6 @@ export default {
   },
   methods: {
     getYaml(row) {
-      console.log(row);
       this.centerDialogVisible = true;
       this.yamlInfo = row;
     },
@@ -182,13 +181,11 @@ export default {
         Version: "2018-05-25"
       };
       this.axios.post(POINT_REQUEST, param).then(res => {
-        // console.log(res)
         if (res.Response.Error == undefined) {
           this.info = JSON.parse(res.Response.ResponseBody);
           this.resources = JSON.parse(
             res.Response.ResponseBody
           ).info.status.resources;
-          console.log(this.info);
         } else {
           let ErrTips = {};
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -215,7 +212,6 @@ export default {
         Version: "2018-05-25"
       };
       this.axios.post(POINT_REQUEST, param).then(res => {
-        // console.log(res)
         if (res.Response.Error == undefined) {
           this.resources = JSON.parse(
             res.Response.ResponseBody
@@ -246,7 +242,6 @@ export default {
         Version: "2018-05-25"
       };
       this.axios.post(POINT_REQUEST, param).then(res => {
-        // console.log(res)
         if (res.Response.Error == undefined) {
           this.Data = JSON.parse(res.Response.ResponseBody).release;
           var conYaml = this.Data.manifest.split("#");
@@ -273,22 +268,18 @@ export default {
             }
           );
           this.raw = JSON.parse(res.Response.ResponseBody).release.config.raw;
-          console.log(this.raw);
           // 判断自定义参数列表是否存在
           if (this.raw == undefined || this.raw == "") {
             this.see = false;
           } else {
             this.see = true;
             let rawDetail = JSON.parse(this.raw);
-            console.log(rawDetail);
             for (let key in rawDetail) {
               this.count.push(
                 "'" + key + "'" + ":" + "'" + rawDetail[key] + "'"
               );
             }
           }
-          console.log(this.tableDate);
-          // console.log(this.count)
         } else {
           let ErrTips = {};
           let ErrOr = Object.assign(ErrorTips, ErrTips);

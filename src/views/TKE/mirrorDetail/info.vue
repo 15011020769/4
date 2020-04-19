@@ -293,7 +293,6 @@ export default {
     this.GetLink();
     this.GetImage();
     this.getList();
-    console.log(this.$route.query.id, "this.$route.query.id,");
   },
   methods: {
     // 分页
@@ -301,7 +300,6 @@ export default {
       this.currpage = val;
     },
     handleSizeChange(val) {
-      console.log(`每頁 ${val} 條`);
     },
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
@@ -312,7 +310,6 @@ export default {
             this.GetMirrorVersion();
             // alert('submit!');
           } else {
-            console.log("error submit!!");
             return false;
           }
         }
@@ -374,7 +371,6 @@ export default {
       });
     },
     // submitForm (formName) {
-    //   // console.log(formName)
     //   if (formName.input1 !== '' || formName.input2 !== '') {
     //     this.dialogVisible = false
     //     this.GetMirrorVersion()
@@ -391,7 +387,6 @@ export default {
       oInput.value = url;
       document.body.appendChild(oInput);
       oInput.select(); // 选择对象;
-      console.log(oInput.value);
       document.execCommand("Copy"); // 执行浏览器复制命令
       this.$message({
         message: this.$t("TKE.mirrorDetail.fzcg"),
@@ -406,7 +401,6 @@ export default {
       };
       this.axios.post(TKE_MIRROR_ROAD, param).then(res => {
         if (res.code === 0 && res.Error == undefined) {
-          console.log(res);
           this.server = res.data.server;
           this.reponame = res.data.reponame;
         } else {
@@ -426,7 +420,6 @@ export default {
       };
       this.axios.post(TKE_AUTOSTRATEGY, param).then(res => {
         if (res.code === 0 && res.Error == undefined) {
-          console.log(res);
           let strategyInfo = res.data.strategyInfo;
           for (let i in strategyInfo) {
             if (
@@ -436,7 +429,6 @@ export default {
               this.rag1 = true;
               this.rag2 = false;
               this.input1 = strategyInfo[i].value;
-              console.log(this.input1);
             } else if (
               strategyInfo[i].type == "keep_last_days" &&
               strategyInfo[i].valid
@@ -444,7 +436,6 @@ export default {
               this.rag2 = true;
               this.rag1 = false;
               this.input2 = strategyInfo[i].value;
-              console.log(this.input2);
             }
           }
           // this.server = res.data.server
@@ -465,9 +456,7 @@ export default {
         reponame: this.name
       };
       this.axios.post(TKE_MIRROR_AUTODELELTE, param).then(res => {
-        console.log(res);
         if (res.code === 0 && res.Error == undefined) {
-          // console.log(res.data)
           this.input1 = "";
           this.input2 = "";
           this.rag1 = "";
@@ -502,7 +491,6 @@ export default {
       };
       if (this.ruleForm.input1 !== "") {
         this.axios.post(TKE_MIRROR_STRATEGY, param).then(res => {
-          console.log(res);
           if (res.code === 0 && res.Error == undefined) {
             this.input1 = this.ruleForm.input1;
           } else {
@@ -517,7 +505,6 @@ export default {
       }
       if (this.ruleForm.input2 !== "") {
         this.axios.post(TKE_MIRROR_STRATEGY, param2).then(res => {
-          console.log(res);
           if (res.code === 0 && res.Error == undefined) {
             this.input2 = this.ruleForm.input2;
           } else {
@@ -542,12 +529,10 @@ export default {
         Version: "2019-09-24"
       };
       this.axios.post(TKE_IMAGEVERSIONLIST, param).then(res => {
-        console.log(res, "res");
         if (res.Response.Error == undefined) {
           let {
             Data: { TagInfo }
           } = res.Response;
-          console.log(TagInfo, "TagInfo");
           this.tableData = TagInfo;
           this.TotalCount = TagInfo.length;
         } else {

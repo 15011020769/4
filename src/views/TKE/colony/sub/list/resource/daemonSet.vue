@@ -376,7 +376,6 @@ export default {
     },
     //更新pod
     goPodUpdate(rowData) {
-      console.log(rowData)
       this.$router.push({
         name: "podUpdate",
         query: {
@@ -529,7 +528,6 @@ export default {
       this.pageIndex += 1;
     },
     handleSizeChange(val) {
-      // console.log(`每页 ${val} 条`);
       this.pageSize = val;
       // this.getDaemonSetList();
     },

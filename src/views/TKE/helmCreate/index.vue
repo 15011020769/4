@@ -244,7 +244,6 @@ export default {
       });
     },
     setPrivate(formName) {
-      console.log(this.isCollapse);
       if (this.isCollapse) {
         this.rulePass.nameTwo = "";
         this.rulePass.pass = "";
@@ -255,7 +254,6 @@ export default {
     submitForm(formName, formPass) {
       this.$refs[formName].validate(valid => {
         if (valid && this.isCollapse) {
-          console.log(this.rulePass, 1);
           this.setHelm();
           this.$router.push({
             name: "helm",
@@ -266,9 +264,6 @@ export default {
           this.$store.commit("getFlag", true);
         } else if (valid && !this.isCollapse) {
           this.$refs[formPass].validate(validTwo => {
-            console.log(this.rulePass, 2);
-            // console.log(this.rulePass.)
-            console.log(validTwo);
             if (validTwo) {
               this.setHelm();
               this.$router.push({
@@ -279,12 +274,10 @@ export default {
               });
               this.$store.commit("getFlag", true);
             } else {
-              console.log("error submit!!");
               return false;
             }
           });
         } else {
-          console.log("error submit!!");
           return false;
         }
       });
@@ -307,7 +300,6 @@ export default {
           // this.Data=JSON.parse(res.Response.ResponseBody).release
           // this.raw =JSON.parse(res.Response.ResponseBody).release.config.raw
           // let rawDetail = JSON.parse(this.raw)
-          console.log(res);
           // 筛选集群
           for (let i in res.Response.Clusters) {
             if (
@@ -316,7 +308,6 @@ export default {
               this.ruleForm.colony = res.Response.Clusters[i].ClusterName;
             }
           }
-          console.log(this.ruleForm.colony);
         } else {
           let ErrTips = {};
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -390,7 +381,6 @@ export default {
           // this.Data=JSON.parse(res.Response.ResponseBody).release
           // this.raw =JSON.parse(res.Response.ResponseBody).release.config.raw
           // let rawDetail = JSON.parse(this.raw)
-          console.log(res);
         } else {
           let ErrTips = {};
           let ErrOr = Object.assign(ErrorTips, ErrTips);

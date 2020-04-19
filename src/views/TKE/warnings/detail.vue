@@ -56,7 +56,6 @@ import {
     },
     created(){
         this.getWarningListItem()
-        console.log(this.$route.query.clusterId)
     },
     methods: {
       // 告警配置列表
@@ -67,7 +66,6 @@ import {
         }
         this.axios.post(TKE_WARNING_GETCOLONY, param).then(res => {
           if (res.Error == undefined) {
-            console.log(res)
             this.tableData = res.Response.AlarmPolicySet
             // this.TotalCount = res.Response.TotalCount
             // this.delete = []

@@ -112,7 +112,6 @@
                 this.dialogFormVisible = true
             },
             addInput(){
-                console.log(1)
                 this.form.total.push({
                     values:''
                 })

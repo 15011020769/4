@@ -59,7 +59,6 @@ export default {
     this.clusterId=this.$route.query.clusterId;
     this.node = this.$route.query.node;
     this.detail = this.$route.query.detail;
-    console.log("aaassss",this.detail);
   },
   methods: {
     //返回上一层

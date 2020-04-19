@@ -71,11 +71,9 @@ export default {
            Path: "/apis/autoscaling/v2beta1/namespaces/"+this.np+"/horizontalpodautoscalers?fieldSelector=metadata.name="+this.name,
           Version: "2018-05-25",
       }
-      console.log(params)
       this.axios.post(TKE_COLONY_QUERY, params).then(res=>{
         if (res.Response.Error == undefined) {
                var data = JSON.parse(res.Response.ResponseBody);
-               console.log(data)
                if(data.items){
                  this.Info.dp=data.items[0].spec.scaleTargetRef.name
                  this.Info.hpa=data.items[0].spec.metrics;
@@ -89,7 +87,6 @@ export default {
   },
     filters:{
     dataShow(val){
-      console.log(val)
 
       if(val.resource){
          if(val.resource.name=='cpu'){

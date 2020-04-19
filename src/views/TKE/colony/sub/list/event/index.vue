@@ -346,9 +346,6 @@ export default {
       params.Method = "GET";
       params.ClusterName = this.$route.query.clusterId;
       params.Version = "2018-05-25";
-
-  console.log("this.typeValue.slice(1)",this.typeValue.slice(1))
-  console.log("this.typeValue",this.typeValue)
       
       var params1 = {
         Path:

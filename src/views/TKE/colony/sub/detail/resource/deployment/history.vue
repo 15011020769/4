@@ -133,7 +133,6 @@ export default {
       for(let i in selector) {
         param += i + '=' + selector[i] + ','
       }
-      console.log(param);
       let params = {
         Method: "GET",
         Path: "/apis/apps/v1beta2/namespaces/"+this.rowData.metadata.namespace+"/replicasets?labelSelector=" + param.substring(0,param.length - 1),

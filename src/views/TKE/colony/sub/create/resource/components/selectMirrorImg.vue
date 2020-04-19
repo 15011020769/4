@@ -127,7 +127,6 @@ export default {
       this.searchUserRepository()
     },
     searchByContent (str) {
-      console.log(str)
       this.mirrorImageRadio = ''
       let arr = {
         first: this.searchUserRepository,
@@ -139,7 +138,6 @@ export default {
     },
     getNamespaceInfo: async function () {
       await this.axios.post(SPACENAME_LIST, { limit: 100 }).then(res => {
-        console.log(res)
       })
     },
     searchUserRepository: async function () {
@@ -158,7 +156,6 @@ export default {
         this.tableData = repoInfo
         this.TotalCount = res.data.totalCount
 
-        console.log('searchUserRepository', this.tableData)
       })
     },
     getFavor: async function () {
@@ -167,7 +164,6 @@ export default {
         limit: this.pagesize,
         reponame: this.searchContent
       }).then(res => {
-        console.log(res)
         let { data: { repoInfo } } = res
         this.tableData2 = repoInfo
         this.TotalCount = res.data.totalCount
@@ -227,7 +223,6 @@ export default {
       this.currpage = val
     },
     handleSizeChange (val) {
-      console.log(`每頁 ${val} 條`)
     }
   }
 }

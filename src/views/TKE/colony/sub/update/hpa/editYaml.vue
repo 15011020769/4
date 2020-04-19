@@ -112,7 +112,6 @@ export default {
         RequestBody:this.yamlInfo
       }
       this.axios.post(TKE_COLONY_QUERY,params).then(res=>{
-        console.log(res)
         if(res.Response.Error === undefined){
           this.$message({
                 message: '更新成功',
@@ -150,7 +149,6 @@ export default {
     //       ClusterName: this.clusterId
     //   }
     //   this.axios.post(TKE_COLONY_QUERY,params).then(res=>{
-    //     console.log(res)
     //   })
     // },
     baseYamlData(){
@@ -161,13 +159,10 @@ export default {
         Path: "/apis/autoscaling/v2beta1/namespaces/"+this.spaceName+"/horizontalpodautoscalers/"+this.name,
         Version: "2018-05-25",
       }
-      console.log(params)
       this.axios.post(TKE_COLONY_QUERY,params).then(res=>{
-        console.log(res) 
         if(res.Response.Error === undefined){
             // let response = JSON.parse(res.Response.ResponseBody);
             let response = res.Response.ResponseBody;
-            console.log(response)
             this.yamlInfo=response
           }else{
              let ErrTips = {};

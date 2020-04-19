@@ -220,7 +220,6 @@ export default {
           msg.forEach(ele=>{
             this.svc.vpcId = ele.ClusterNetworkSettings.VpcId
           })
-          // console.log(res)
           this.svc.loadShow = false
         } else {
           this.svc.loadShow = false
@@ -315,7 +314,6 @@ export default {
           let msg = res.Response.VpcSet
           this.vpcNameAry = msg
           this.svc.LBvalue1 = msg[0].VpcId
-          // console.log(res.Response.VpcSet)
           this.svc.loadShow = false
         } else {
           this.svc.loadShow = false
@@ -346,7 +344,6 @@ export default {
           var searchOpt = JSON.parse(res.Response.ResponseBody).items// 得到数组
           this.svc.options = searchOpt// 赋值命名空间数据
           // this.svc.value = searchOpt[0].metadata.name
-          // console.log(searchOpt)
           this.svc.loadShow = false
         } else {
           this.svc.loadShow = false
@@ -502,7 +499,6 @@ export default {
       await this.axios.post(POINT_REQUEST, param).then(res => {
         if (res.Response.Error === undefined) {
           this.loadShow = false
-          // console.log(res)
           this.$router.push({
             path: '/colony/sub/detail/service/svc/event',
             query: {
@@ -554,7 +550,6 @@ export default {
         obj[key] = value
         this.svc.workloadObj = Object.assign(this.svc.workloadObj, obj)
       })
-      // console.log(this.svc.workloadObj)
     },
     handleClose (done) {
       this.$confirm('確認關閉？')

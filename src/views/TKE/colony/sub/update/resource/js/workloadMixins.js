@@ -233,7 +233,6 @@ let caseMountPoint={
     deleteMountPoint(i,i2,name){
       this.wl.instanceContent[i].mountPoint.splice(i2,1);
       if(name!=''){
-        console.log(this.firstPointInfoData)
         let index=this.firstPointInfoData.findIndex(item=>{
           return item==name
         })
@@ -295,7 +294,6 @@ let needRule = {
     })
   },
   delNeedRule: function (cIndex, rIndex) {
-    console.log(this.wl.needCondition[cIndex].arr)
     this.wl.needCondition[cIndex].arr.splice(rIndex, 1)
   }
 }

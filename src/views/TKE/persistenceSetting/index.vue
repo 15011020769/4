@@ -148,7 +148,6 @@ export default {
       this.elasticVal = "";
       this.indexesVal = "";
       this.loadShow = true;
-      console.log(this.dataList);
       const params1 = {
         Method: "DELETE",
         Path:
@@ -186,11 +185,9 @@ export default {
       }else{
         this.placement="輸入正確"
       }
-      // console.log(this.elasticVal);
     },
     //索引
     indexes() {
-      // console.log(this.indexesVal);
     },
     status() {
       if (this.value == false) {
@@ -246,10 +243,8 @@ export default {
             '"}}}}',
           ClusterName: this.$route.query.ClusterId
         };
-        console.log(params);
         this.axios.post(TKE_COLONY_QUERY, params).then(res => {
           if (res.Response.Error === undefined) {
-            console.log(res);
             this.loadShow = false;
           } else {
             let ErrTips = {};
@@ -280,7 +275,6 @@ export default {
     },
     getColonyList() {
       //数据持久化集群列表
-      console.log(this.$route.name); //persistence
       let params = {
         Method: "GET",
         Path: "/apis/platform.tke/v1/persistentevents/",
@@ -295,7 +289,6 @@ export default {
               this.dataList = item;
             }
           });
-          console.log(this.dataList);
           this.loadShow = false;
         } else {
           let ErrTips = {};

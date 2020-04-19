@@ -65,7 +65,6 @@ export default {
       this.axios.post(POINT_REQUEST, param).then(res => {
         if (res.Response.Error == undefined) {
           let data = JSON.parse(res.Response.ResponseBody);
-          console.log(data);
           this.list = data;
         } else {
           this.$message({

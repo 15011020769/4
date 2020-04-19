@@ -152,7 +152,6 @@ export default {
           this.list = [];
           this.loadShow = false;
           let response = JSON.parse(res.Response.ResponseBody);
-          // console.log("sss",response.items,"items");
           if(response.items.length > 0) {
             response.items.map(o => {
               o.addTime = moment(o.metadata.creationTimestamp).format("YYYY-MM-DD HH:mm:ss");
@@ -165,7 +164,6 @@ export default {
             this.list = response.items;
             // this.total = response.items.length;
           }
-          console.log("list",this.list);
         } else {
           this.list = [];
           this.loadShow = false;
@@ -342,7 +340,6 @@ export default {
       //     this.list = [];
       //     this.loadShow = false;
       //     let response = JSON.parse(res.Response.ResponseBody);
-      //     console.log("sss",response.items,"items");
       //     if(response.items.length > 0) {
       //       response.items.map(o => {
       //         o.addTime = moment(o.metadata.creationTimestamp).format("YYYY-MM-DD HH:mm:ss");
@@ -373,7 +370,6 @@ export default {
       this.pageIndex = pageIndex;
     },
     handleSizeChange(val) {
-      // console.log(`每页 ${val} 条`);
       this.pageSize=val;
       this.getNameSpaceTotal();
       // this.getNameSpaceList();

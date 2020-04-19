@@ -218,28 +218,22 @@ export default {
       this.$emit("changeFlag", false);
     },
     handleCheckAllChange(val) {
-      console.log(val)
       this.checkedInstances = val ? this.InstancesAll : [];
-      console.log(this.checkedInstances)
       this.isIndeterminate = false;
     },
     handleCheckedCitiesChange(value) {
-      console.log(value)
       let checkedInstances = value.length;
       this.checkAll = checkedInstances === this.instances.length;
       this.isIndeterminate =
         checkedInstances > 0 && checkedInstances < this.instances.length;
     },
     handleClick(tab, event) {
-      console.log(tab, event);
     },
     setTime() {
       this.$emit("setTime", this.value2);
     },
     getChange(val){
-      console.log(val)
       this.valueLast = val.split("|")
-      console.log(this.valueLast)
       this.getPodList()
     },
 
@@ -312,7 +306,6 @@ export default {
       param["Fields.4"] = "max(k8s_cluster_rate_gpu_memory_request_cluster)";
       this.axios.post(TKE_GETTKEDATAJOB, param).then(res => {
         if(res.Response.Error === undefined) {
-            console.log(res.Response.JobId)
             this.JobId = res.Response.JobId
             this.getGpuResult();
         } else {

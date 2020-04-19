@@ -502,7 +502,6 @@
                     dataResult[key] = value;
                   }
                 }
-                console.log(dataResult);
               } else {
                 this.loadShow = false;
                 let ErrTips = {};
@@ -579,7 +578,6 @@
                   return node;
                 });
                 this.list = nodeRes.Response.InstanceSet;
-                console.log(this.list);
               }
               this.total = nodeRes.Response.TotalCount;
               this.clusterIds = [];
@@ -622,11 +620,9 @@
       },
 
       setFlag(data) {
-        console.log(data);
         this.flag = data;
       },
       setTime(data) {
-        console.log(data);
       },
 
       //打开封锁弹窗
@@ -868,7 +864,6 @@
 
       // 导出表格
       exportExcel() {
-        console.log("exportExcel...");
         var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
         var wbout = XLSX.write(wb, {
           bookType: "xlsx",
@@ -1002,7 +997,6 @@
 
       // 全选
       handleSelectionChange(val) {
-        // debugger
         this.multipleSelection = val;
         if (val.length > 0) {
           for (let i = 0; i < val.length; i++) {
@@ -1042,7 +1036,6 @@
           ClusterName: "cls-n1xokuh6"
         };
         this.axios.post(POINT_REQUEST, param).then(res => {
-          // console.log(JSON.parse(res.Response.ResponseBody))
           // if (res.code === 0) {
           //   this.loadShow = true
           // }

@@ -41,7 +41,6 @@ export default {
   created() {
     // 从路由获取集群id
     this.clusterId = this.$route.query.clusterId;
-    console.log(this.$route.query);
     if (this.$route.query.name && this.$route.query.np) {
       this.Info.name = this.$route.query.name;
       this.Info.np = this.$route.query.np;
@@ -68,7 +67,6 @@ export default {
         this.axios.post(TKE_COLONY_QUERY, params).then(res => {
           if (res.Response.Error == undefined) {
             var data = JSON.parse(res.Response.ResponseBody);
-            console.log(data);
             this.Info.time = this.timeFormat(data.metadata.creationTimestamp);
           }
         });

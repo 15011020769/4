@@ -747,7 +747,7 @@
 
                       <span
                         @click="DeleteWorker(index, 2)"
-                        v-if="colonySecond.masterOneList.length > 0"
+                        v-if="colonySecond.masterOneList.length > 1"
                         >{{ $t("TKE.overview.sc") }}</span
                       >
 
@@ -4278,7 +4278,6 @@ export default {
       this.axios.post(TKE_EXIST, params).then(res => {
         if (res.Response.Error === undefined) {
           this.leftList = res.Response.ExistedInstanceSet;
-          // console.log(res.Response.ExistedInstanceSet);
           this.leftListVal = " 共 " + this.leftList.length + " 雲伺服器";
         } else {
           this.leftList = [];
@@ -4348,7 +4347,6 @@ export default {
       this.axios.post(TKE_EXIST, params).then(res => {
         if (res.Response.Error === undefined) {
           this.leftListMaster = res.Response.ExistedInstanceSet;
-          // console.log(res.Response.ExistedInstanceSet);
           this.leftListMasterVal =
             " 共 " + this.leftListMaster.length + " 雲伺服器";
         } else {
@@ -4402,7 +4400,6 @@ export default {
       this.axios.post(TKE_WORKER_METWORK, param).then(res => {
         if (res.Response.Error === undefined) {
           this.colonySecond.workerNodeNetOpt = res.Response.SubnetSet;
-          // console.log(res.Response.SubnetSet)
           for (var i in this.colonySecond.workerOneList) {
             this.colonySecond.workerOneList[
               i
@@ -4455,7 +4452,6 @@ export default {
     },
     // Master 节点
     SecondMaster(val) {
-      // console.log(val)
       this.rightList = [];
       this.rightListMaster = [];
       this.colonySecond.workerTips = false;
@@ -4508,7 +4504,6 @@ export default {
     },
     // 计费模式
     SecondCharging(val) {
-      // console.log(val);
       if (val === "2") {
         this.colonySecond.chargingShow = true;
       } else {
@@ -4531,12 +4526,10 @@ export default {
       this.axios.post(DESCRIBE_ZONE_INFO, param).then(res => {
         if (res.Response.Error === undefined) {
           this.colonySecond.tableList = res.Response.InstanceTypeQuotaSet;
-          console.log(this.colonySecond.tableList);
           for (let i in this.colonySecond.tableList) {
             this.colonySecond.tableList[i]["tableDisShow"] = false;
             this.colonySecond.tableList[i]["index"] = Number(i);
           }
-          // console.log(this.colonySecond.tableList);
           for (var i in this.colonySecond.workerOneList) {
             this.colonySecond.workerOneList[
               i
@@ -4924,7 +4917,6 @@ export default {
     },
     //改变数量
     changeCount() {
-      debugger;
       this.TotalCost();
       let count = 0;
       let masterList = this.colonySecond.masterOneList;
@@ -5007,7 +4999,6 @@ export default {
     },
     // 添加机型
     OneAddModel() {
-      console.log(this.colonySecond.index);
       this.colonySecond.index++;
       this.colonySecond.workerOneList.push({
         showText: false,
@@ -5152,7 +5143,6 @@ export default {
       };
       this.axios.post(TKE_CREATW_Quota, param).then(res => {
         if (res.Response.Error === undefined) {
-          console.log(res);
         } else {
           let ErrTips = {};
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -5171,7 +5161,6 @@ export default {
       };
       this.axios.post(TKE_CREATW_InstanceQuota, param).then(res => {
         if (res.Response.Error === undefined) {
-          console.log(res.Response.UserInstanceQuotaSet);
           let UserInstanceQuotaSet = res.Response.UserInstanceQuotaSet;
           for (let i in UserInstanceQuotaSet) {
             if (
@@ -5532,7 +5521,6 @@ export default {
 
       this.axios.post(TKE_CREATW_CLUSTERS, param).then(res => {
         if (res.Response.Error === undefined) {
-          console.log(res.Response);
           this.$router.go(-1);
         } else {
           let ErrTips = {
@@ -5635,7 +5623,6 @@ export default {
           }
         }
       }
-      console.log(safeArr);
       this.colonyThird.safeArr = safeArr;
     },
     //删除一项
@@ -5670,7 +5657,6 @@ export default {
       this.axios.post(TKE_SSH, param).then(res => {
         if (res.Response.Error === undefined) {
           this.colonyThird.sshKey = res.Response.KeyPairSet;
-          // console.log(res.Response.KeyPairSet);
           this.colonyThird.sshKeySel = this.colonyThird.sshKey[0].KeyId;
         } else {
           let ErrTips = {};
@@ -6074,7 +6060,6 @@ export default {
             this.dataShow.push(this.colonySecond.workerOneList[i]);
           }
         }
-        console.log(this.dataShow);
         // InstanceDataDiskMountSettings
         if (this.dataShow.length !== 0) {
           for (let i in this.dataShow) {
@@ -7171,10 +7156,8 @@ export default {
         }
       }
 
-      console.log(param);
       this.axios.post(TKE_CREATW_CLUSTERS, param).then(res => {
         if (res.Response.Error === undefined) {
-          console.log(res.Response);
           this.$router.go(-1);
         } else {
           let ErrTips = {

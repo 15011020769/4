@@ -24,14 +24,14 @@
            </el-form-item>
 
            <el-form-item label="命名空间">
-             <el-select v-model="hpa.value1" placeholder="请选择" size="mini">
+             <el-select v-model="hpa.value1" placeholder="请选择" size="mini" @change="changenp">
                <el-option v-for="item in hpa.option1" :key="item" :label="item" :value="item">
                </el-option>
              </el-select>
            </el-form-item>
 
            <el-form-item label="工作负载类型">
-             <el-select v-model="hpa.value2" placeholder="请选择" size="mini">
+             <el-select v-model="hpa.value2" placeholder="请选择" size="mini" @change="changeWork">
                <el-option v-for="item in hpa.option2" :key="item" :label="item" :value="item">
                </el-option>
              </el-select>
@@ -121,7 +121,6 @@
      data() {
         //验证名称
       var validateName = (rule, value, callback) => {
-        console.log(value);
         if (value === "") {
           this.fontColor = true;
           callback();
@@ -253,45 +252,74 @@
        };
      },
      watch: {
-       hpa: {
-         handler(hpa) {
-           if (hpa.value1 && hpa.value2 && this.clusterId) {
-             var params = {
-               ClusterName: this.clusterId,
-               Method: "GET",
-               Path: "/apis/apps/v1beta2/namespaces/" + hpa.value1 + "/" + hpa.value2 + 's',
-               Version: "2018-05-25",
-             }
-             this.axios.post(TKE_COLONY_QUERY, params).then(res => {
-               if (res.Response.Error == undefined) {
-                 var data = JSON.parse(res.Response.ResponseBody);
-                 if (data.items) {
-                   let arr = []
-                   data.items.forEach(v => {
-                     arr.push(v.metadata.name)
-                   })
-                   hpa.option3 = arr;
-                   hpa.value3 = arr[0]
-                 }
+      //  hpa: {
+      //    handler(hpa) {
+      //      if (hpa.value1 && hpa.value2 && this.clusterId) {
+      //        var params = {
+      //          ClusterName: this.clusterId,
+      //          Method: "GET",
+      //          Path: "/apis/apps/v1beta2/namespaces/" + hpa.value1 + "/" + hpa.value2 + 's',
+      //          Version: "2018-05-25",
+      //        }
+      //        this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+      //          if (res.Response.Error == undefined) {
+      //            var data = JSON.parse(res.Response.ResponseBody);
+      //            if (data.items) {
+      //              let arr = []
+      //              data.items.forEach(v => {
+      //                arr.push(v.metadata.name)
+      //              })
+      //              hpa.option3 = arr;
+      //              hpa.value3 = arr[0]
+      //            }
 
-               }
-             })
+      //          }
+      //        })
 
 
-           }
+      //      }
 
-         },
-         deep: true
-       }
+      //    },
+      //    deep: true
+      //  }
      },
      created() {
        // 从路由获取类型
        this.clusterId = this.$route.query.clusterId
-
-       this.nameSpaceList();
+       this.getdatas();
      },
-     methods: {
-
+    methods: {
+      async getdatas() {
+        await this.nameSpaceList();
+        await this.getWorkDat();
+      },
+      changeWork() {
+        this.getWorkDat();
+      },
+      changenp() {
+        this.getWorkDat();
+      },
+      async getWorkDat() {
+        var params = {
+          ClusterName: this.clusterId,
+          Method: "GET",
+          Path: "/apis/apps/v1beta2/namespaces/" + this.hpa.value1 + "/" + this.hpa.value2 + 's',
+          Version: "2018-05-25",
+        }
+        await this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+          if (res.Response.Error == undefined) {
+            var data = JSON.parse(res.Response.ResponseBody);
+            if (data.items) {
+              let arr = []
+              data.items.forEach(v => {
+                arr.push(v.metadata.name)
+              })
+              this.hpa.option3 = arr;
+              this.hpa.value3 = arr[0]
+            }
+          }
+        })
+      },
        createHpa() {
 
          if (this.hpa.name == "") {
@@ -590,7 +618,6 @@
             Version: "2018-05-25",
          }
          this.axios.post(TKE_COLONY_QUERY, params2).then(res=>{
-            console.log(res)
              if (res.Response.Error == undefined) {
                 this.$message({
                 type: "success",
@@ -628,14 +655,13 @@
          this.$router.go(-1);
        },
        removeDomain(domain, index) {
-         // console.log(domain,index)
          //  var index = this.form.domains.indexOf(item)
          if (domain.length !== 1) {
            this.hpa.domains.splice(index, 1)
          }
        },
        //命名空间选项 
-       nameSpaceList() {
+       async nameSpaceList() {
          if (this.clusterId) {
            var params = {
              ClusterName: this.clusterId,
@@ -643,7 +669,7 @@
              Path: "/api/v1/namespaces",
              Version: "2018-05-25",
            };
-           this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+           await this.axios.post(TKE_COLONY_QUERY, params).then(res => {
              if (res.Response.Error == undefined) {
                var data = JSON.parse(res.Response.ResponseBody);
                data.items.forEach(item => {

@@ -188,7 +188,6 @@ export default {
       this.axios.post(TKE_COLONY_QUERY, params).then(res => {
         if (res.Response.Error === undefined) {
           var mes = JSON.parse(res.Response.ResponseBody);
-          console.log(mes);
           this.total = mes.items.length;
           mes.items.forEach(item => {
             this.searchOptions.push({
@@ -262,7 +261,6 @@ export default {
     },
     // 导出表格
     exportExcel() {
-      // console.log("exportExcel...");
       /* generate workbook object from table */
       var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
       /* get binary string as output */
@@ -291,20 +289,17 @@ export default {
       this.pageIndex += 1;
     },
     handleSizeChange(val) {
-      // console.log(`每页 ${val} 条`);
       this.pageSize = val;
       this.getData();
     },
     //打开删除
     deleteNameSpace(row) {
-      console.log(row.metadata.name);
       this.useName=row.metadata.name
       this.showNameSpaceModal = true;
       this.nameSpaceName = row.metadata.name;
     },
     //删除
     async submitDelete() {
-      // console.log("正在开发");
       this.loadShow = true;
       const param = {
         Method: "DELETE",

@@ -67,7 +67,6 @@ export default {
   },
   created () {
     // 从路由获取类型
-    console.log(this.$route.query)
     let { clusterId, ingressName, namespace } = this.$route.query
     this.clusterId = clusterId
     this.namespace = namespace
@@ -95,7 +94,6 @@ export default {
             tempArr.listenPort = listenPort
             tempArr.backend = item.backend.serviceName
             tempArr.servicePort = item.backend.servicePort
-            console.log(item, protocol, listenPort)
             if (item.host) {
               tempArr.domainName = item.host
             } else {

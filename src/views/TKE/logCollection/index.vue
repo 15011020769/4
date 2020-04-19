@@ -162,7 +162,6 @@
         this.Name.options = ['請選擇Namespace'];
         this.nameSpaceList();
         const res = this.axios.post(WARNING_GetCOLONY, params).then(res => {
-          // console.log(res)
           if(res){
             if (res.Response.AlarmPolicySet) {
               let resData = res.Response.AlarmPolicySet;
@@ -222,7 +221,6 @@
       oInput.value = url
       document.body.appendChild(oInput)
       oInput.select() // 选择对象;
-      console.log(oInput.value)
       document.execCommand('Copy') // 执行浏览器复制命令
       this.$message({
         message: this.$t('TKE.mirrorDetail.fzcg'),
@@ -329,9 +327,7 @@
               "spec":{"clusterName":this.value2}},
           Version: "2018-05-25",
         }
-        console.log(params)
          this.axios.post(TKE_COLONY_QUERY, params).then(res=>{
-           console.log(res)
             if (res.Response.Error === undefined){
                 this.$router.push({
                 path: '/logCreate',
@@ -361,7 +357,6 @@
       },
       //编辑
       editLogCollection(row){
-        // console.log(row)
         var stashName=row.metadata.name;
         var namespace=row.metadata.namespace;
         var type=row.spec.input.type
@@ -386,7 +381,6 @@
             Version: "2018-05-25",
           };
           this.axios.post(TKE_COLONY_QUERY, params).then(res => {
-            // console.log(res)
             if (res.Response.Error==undefined) {
               var data = JSON.parse(res.Response.ResponseBody);
               data.items.forEach(item => {
@@ -423,7 +417,6 @@
       },
       //删除日志
       delLog(item) {
-        // console.log(item)
         this.delLogFlag = true;
         this.delLogName = item.metadata.name;
         this.delLogNameSpace = item.metadata.namespace
@@ -441,7 +434,6 @@
         }
         this.axios.post(TKE_COLONY_QUERY, params).then(res => {
 
-          // console.log(res)
           if (res.Response.Error === undefined) {
             this.xjF=false;
             this.$message({
@@ -458,7 +450,6 @@
     exportExcel() {
       /* generate workbook object from table */
       var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
-      console.log(wb)
       /* get binary string as output */
       var wbout = XLSX.write(wb, {
         bookType: "xlsx",
@@ -494,9 +485,7 @@
         let params={
           clusterId: this.value2
         }
-        // console.log(params)
         this.axios.post(TKE_OPENLOGJUDGE, params).then(res=>{
-          console.log(res)
           if(res.codeDesc=='Success'){
             if(res.data.enabled){
               this.xjF=false

@@ -245,7 +245,7 @@ export default {
         params["Filters.0.Name"] = "ClusterName";
         params["Filters.0.Values.0"] = this.searchInput;
       }
-      const res = await this.axios.post(TKE_COLONY_LIST, params); //  console.log(res);
+      const res = await this.axios.post(TKE_COLONY_LIST, params);
       if (res.Response.Error === undefined) {
         let paramsD = {
           Method: "GET",
@@ -314,7 +314,6 @@ export default {
                 }
               }
             });
-            // console.log(cluster);
             return cluster;
           });
         }

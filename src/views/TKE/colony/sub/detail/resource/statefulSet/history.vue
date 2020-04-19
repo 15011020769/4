@@ -88,9 +88,6 @@ export default {
       // let param = '';
       // if(selectorList.length > 0) {
       //   for(var i = 0; i < selectorList.length; i++) {
-      //     debugger
-      //     console.log("selectorList[i]",selectorList[i]);
-      //     console.log("selector.selectorList[i]",selector.selectorList[i])
       //     let key = selectorList[i];
       //     param += key + "=" + selector.key +",";
       //   }
@@ -105,7 +102,6 @@ export default {
         if(res.Response.Error === undefined) {
           this.loadShow = false;
           let response = JSON.parse(res.Response.ResponseBody);
-          console.log(response);
           if(response.items.length > 0) {
             response.items.map(pod => {
               pod.addTime = moment(pod.metadata.creationTimestamp).format("YYYY-MM-DD HH:mm:ss");
