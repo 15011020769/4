@@ -1073,7 +1073,6 @@ export default {
   },
   watch: {
     value() {
-      console.log(this.value)
     }
   },
   methods: {

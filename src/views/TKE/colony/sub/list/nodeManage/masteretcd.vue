@@ -281,7 +281,6 @@ export default {
                   dataResult[key] = value;
                 }
               }
-              console.log(dataResult);
             } else {
               this.loadShow = false;
               let ErrTips = {};
@@ -398,11 +397,9 @@ export default {
       this.getNodeList();
     },
     setFlag (data) {
-      console.log(data)
       this.flag = data
     },
     setTime (data) {
-      console.log(data)
     }
   },
   filters: {

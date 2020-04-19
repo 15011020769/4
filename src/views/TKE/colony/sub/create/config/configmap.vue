@@ -110,7 +110,6 @@ export default {
   data() {
     //验证名称
     var validateName = (rule, value, callback) => {
-      console.log(value);
       if (value === "") {
         this.fontColor = true;
         callback();

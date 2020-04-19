@@ -131,13 +131,10 @@ export default {
     this.clusterId=this.$route.query.clusterId;
     this.spaceName = this.$route.query.spaceName;
     this.rowData = this.$route.query.rowData;
-    console.log("rowData",this.rowData);
     this.activeName = this.$route.query.rowData.spec.jobTemplate.spec.template.spec.containers[0].name;
-    // console.log("rowData",this.rowData);
   },
   methods: {
     handleClick(tab, event) {
-      console.log(tab, event);
     },
     //转换label
     changeLabel(value){

@@ -149,7 +149,6 @@ export default {
     var validatePass = (rule, value, callback) => {
       const version = /^(?!-)(?!.*-$)[a-z0-9-]+$/;
       if (value === "") {
-        // console.log(222)
         callback(new Error("請輸入用戶名"));
       } else if (!version.test(value)) {
         callback(new Error("格式不正確"));
@@ -187,7 +186,6 @@ export default {
          this.toolData = this.info.filter(item=>{
             return item.AutoSnapshotPolicyId == val
          })
-         console.log(this.toolData)
       }
     }
   },
@@ -201,7 +199,6 @@ export default {
       this.$router.go(-1);
     },
     dataFilter(val) {
-      console.log(val);
     },
     getfilterWeek(val) {
       if (val == 1) {
@@ -231,7 +228,6 @@ export default {
       }
     },
     getChange(val) {
-      console.log(val);
       if (val == "PREPAID") {
         this.flag = true;
         this.pv.del = "Retain";
@@ -255,7 +251,6 @@ export default {
           // alert('submit!');
           this.setValue();
         } else {
-          console.log("error submit!!");
           return false;
         }
       });
@@ -268,13 +263,10 @@ export default {
         Version: "2017-03-12"
       };
       this.axios.post(TKE_CBS_POLICIES, param).then(res => {
-        // console.log(res)
         if (res.Response.Error == undefined) {
-          // console.log(res);
           this.info = res.Response.AutoSnapshotPolicySet;
           this.pv.backup =
             res.Response.AutoSnapshotPolicySet[0].AutoSnapshotPolicyId;
-          console.log(this.info);
           // this.loadShow = false
         } else {
           let ErrTips = {};
@@ -321,9 +313,7 @@ export default {
         Version: "2018-05-25"
       };
       this.axios.post(POINT_REQUEST, param).then(res => {
-        console.log(res);
         if (res.Response.Error == undefined) {
-          console.log(res);
           this.$message({
             message: "新建成功",
             type: "success",

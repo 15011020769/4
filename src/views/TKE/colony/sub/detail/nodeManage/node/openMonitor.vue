@@ -427,8 +427,6 @@ export default {
       this.grain = val[0]
       this.StartTime = new Date(val[1].StartTIme).getTime();
       this.EndTIme = new Date(val[1].EndTIme).getTime();
-      console.log(val)
-      console.log(this.StartTime,this.EndTIme)
       if(this.activeName == "k8s_pod"){
         this.getPodList()
       } else {
@@ -444,10 +442,7 @@ export default {
     },
     // tab切换事件
     handleClick(tab, event) {
-      console.log(this.activeName)
-      console.log(tab, event);
       if(this.activeName == "k8s_pod"){
-        // console.log(2233)
         this.getPodList()
       } else {
         this.getNodeList()
@@ -461,7 +456,6 @@ export default {
     getChange(val){
       this.value = val
       this.valueLast = val.split("|")
-      // console.log(this.valueLast)
       this.NodeTitle = this.valueLast[1]
       this.getNodeList()
     },
@@ -469,14 +463,12 @@ export default {
     getChange2(val){
       this.value2 = val
       this.valueLast2 = val.split("|")
-      console.log(this.valueLast)
       this.NodeTitle2 = this.valueLast[1]
       this.podValue =""
       this.getPodList()
     },
     getPodChange(val){
       this.podValue = val
-      // console.log(val)
       this.getPodList()
     },
         //获取节点列表
@@ -497,7 +489,6 @@ export default {
           ids.push(obj.InstanceId);
         });
       }
-      console.log(ids)
       // 节点下拉数据
       this.Nodelist = ids
       let param = {
@@ -530,7 +521,6 @@ export default {
                       }
                   })
               })
-            console.log( this.podData)
             if(!this.value){
               this.value = this.podData[0].PrivateIpAddresses+"|"+this.podData[0].InstanceId
               this.value2 = this.podData[0].PrivateIpAddresses+"|"+this.podData[0].InstanceId
@@ -540,7 +530,6 @@ export default {
             this.NodeTitle = this.valueLast[1]
             this.NodeTitle2 = this.valueLast2[1]
             // this.getPodJob()
-            console.log(this.podData)
             this.getNodeJob()
           }
         } else {
@@ -560,7 +549,6 @@ export default {
     },
     getPodList() {
     //   this.list = [];
-    console.log(this.valueLast2)
       const param = {
         Method: 'GET',
         Path: '/api/v1/pods?fieldSelector=spec.nodeName='+this.valueLast2[0]+'&limit=50',
@@ -569,7 +557,6 @@ export default {
       }
       this.axios.post(POINT_REQUEST, param).then(res => {
         if(res.Response.Error === undefined) {
-          console.log(JSON.parse(res.Response.ResponseBody))
           // JSON.parse(res.Response.ResponseBody)
           let dataPod = []
           dataPod = JSON.parse(res.Response.ResponseBody).items.map((item,index)=>{
@@ -630,9 +617,7 @@ export default {
       param["GroupBys.0"] = "timestamp("+this.grain+"s)";
       param["GroupBys.1"] = "pod_name";
       this.axios.post(TKE_GETTKEDATAJOB, param).then(res => {
-        //   console.log(res)
         if(res.Response.Error === undefined) {
-            // console.log(res.Response.JobId)
             this.JobId = res.Response.JobId
             this.getResult()
         }
@@ -667,10 +652,7 @@ export default {
       param["GroupBys.0"] = "timestamp("+this.grain+"s)";
       param["GroupBys.1"] = "unInstanceId";
       this.axios.post(TKE_GETTKEDATAJOB, param).then(res => {
-          // console.log()
-          console.log(res)
         if(res.Response.Error === undefined) {
-            console.log(res.Response.JobId)
             this.JobId = res.Response.JobId
             this.getResult()
         }
@@ -685,11 +667,8 @@ export default {
         Version: "2019-06-06"
       }
       this.axios.post(TKE_GETTKEDATARESULT, param).then(res => {
-        // console.log(this.NodeTitle)
         if(res.Response.Error === undefined) {
-          // console.log(JSON.parse(res.Response.Data))
           data = JSON.parse(res.Response.Data)
-          // console.log(JSON.parse(res.Response.Data))
           if(this.activeName == "k8s_node"){
              this.NodesDataId=[]
             let times = [], podIds = [], pods = [], statuErrs = [], cpus = [], cpuUseds = [],
@@ -776,9 +755,7 @@ export default {
               for(let i = 0; i < data.length; i++) {
                   let items = data[i];
                   let podsId  = items[1];//节点ID
-                  // console.log()
                   if(this.podValue == podsId){
-                    // console.log(this.podValue)
                     let podTime = moment(items[0]).format("YYYY-MM-DD HH:mm:ss");//时间
                     let podStatuErr = items[2];//异常
                     let podCpuUsed = items[3];//CPU使用量

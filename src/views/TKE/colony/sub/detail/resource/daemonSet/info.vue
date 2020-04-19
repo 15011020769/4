@@ -139,11 +139,9 @@ export default {
     this.spaceName = this.$route.query.spaceName;
     this.rowData = this.$route.query.rowData;
     this.activeName = this.$route.query.rowData.spec.template.spec.containers[0].name;
-    console.log("rowData",this.rowData);
   },
   methods: {
     handleClick(tab, event) {
-      console.log(tab, event);
     },
     //转换label
     changeLabel(value){

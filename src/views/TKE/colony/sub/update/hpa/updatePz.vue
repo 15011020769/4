@@ -27,7 +27,7 @@
            </el-form-item>
 
            <el-form-item label="工作负载类型">
-             <el-select v-model="hpa.type" placeholder="请选择" size="mini">
+             <el-select v-model="hpa.type" placeholder="请选择" size="mini" @change="changeWork">
                <el-option v-for="item in hpa.option2" :key="item" :label="item" :value="item">
                </el-option>
              </el-select>
@@ -134,53 +134,45 @@
          clusterId: '',
        };
      },
-     watch: {
-       hpa: {
-         handler(hpa) {
-           if (hpa.value1 && hpa.type && this.clusterId) {
-             var params = {
-               ClusterName: this.clusterId,
-               Method: "GET",
-               Path: "/apis/apps/v1beta2/namespaces/" + hpa.value1 + "/" + hpa.type + 's',
-               Version: "2018-05-25",
-             }
-             this.axios.post(TKE_COLONY_QUERY, params).then(res => {
-               if (res.Response.Error == undefined) {
-                 var data = JSON.parse(res.Response.ResponseBody);
-                 if (data.items) {
-                   let arr = []
-                   data.items.forEach(v => {
-                     arr.push(v.metadata.name)
-                   })
-                   hpa.option3 = arr;
-                   hpa.workload = arr[0]
-                 }
-
-               }
-             })
-
-
-           }
-
-         },
-         deep: true
-       }
-     },
      created() {
        // 从路由获取类型
        this.clusterId = this.$route.query.clusterId
        this.hpa.name=this.$route.query.name;
        this.hpa.np=this.$route.query.np;
-
-      if(this.hpa.name&&this.hpa.np){
-        this.findData()
-      }
        this.nameSpaceList();
+       this.getdatas();
      },
-     methods: {
-    
-    startUpdate(){
+    methods: {
+      async getdatas() {
+        await this.findData();
+        await this.getWorkDat();
+      },
+      changeWork() {
+        this.getWorkDat();
+      },
+      async getWorkDat() {
+        var params = {
+          ClusterName: this.clusterId,
+          Method: "GET",
+          Path: "/apis/apps/v1beta2/namespaces/" + this.hpa.np + "/" + this.hpa.type + 's',
+          Version: "2018-05-25",
+        }
+        await this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+          if (res.Response.Error == undefined) {
+            var data = JSON.parse(res.Response.ResponseBody);
+            if (data.items) {
+              let arr = []
+              data.items.forEach(v => {
+                arr.push(v.metadata.name)
+              })
+              this.hpa.option3 = arr;
+              // this.hpa.workload = arr[0]
+            }
 
+          }
+        })
+      },
+      startUpdate(){
          var kind;
          if(this.hpa.type=='statefulset'){
             kind='StatefulSet'
@@ -431,7 +423,6 @@
              this.$message("最小副本数不能大于等于最大副本数");
             return
          }
-         console.log(arr)
          var params={
             ClusterName:this.clusterId,
             ContentType: "application/strategic-merge-patch+json",
@@ -447,9 +438,7 @@
              },   
             Version: "2018-05-25",
          }
-         console.log(params)
          this.axios.post(TKE_COLONY_QUERY, params).then(res=>{
-             console.log(res)
               if (res.Response.Error == undefined){
                   this.$router.go(-1)
                    this.$message({
@@ -461,25 +450,23 @@
               }
          })
     },
-    findData(){
+    async findData(){
       var params={
           ClusterName: this.clusterId,
           Method: "GET",
            Path: "/apis/autoscaling/v2beta1/namespaces/"+this.hpa.np+"/horizontalpodautoscalers?fieldSelector=metadata.name="+this.hpa.name,
           Version: "2018-05-25",
       }
-      this.axios.post(TKE_COLONY_QUERY, params).then(res=>{
+      await this.axios.post(TKE_COLONY_QUERY, params).then(res=>{
         if (res.Response.Error == undefined) {
-               var data = JSON.parse(res.Response.ResponseBody);
-               if(data.items){
-               console.log(data.items)
-                   this.hpa.type=(data.items[0].spec.scaleTargetRef.kind).toLowerCase()
-                   this.hpa.workload=data.items[0].spec.scaleTargetRef.name
-                   let wd=data.items[0].spec.metrics;
-                   this.dataFilter(wd)
-              
-               }
+          var data = JSON.parse(res.Response.ResponseBody);
+          if(data.items){
+            this.hpa.type=(data.items[0].spec.scaleTargetRef.kind).toLowerCase()
+            this.hpa.workload=data.items[0].spec.scaleTargetRef.name
+            let wd=data.items[0].spec.metrics;
+            this.dataFilter(wd)
           }
+        }
       })
 
     }, 

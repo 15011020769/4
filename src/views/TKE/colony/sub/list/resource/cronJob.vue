@@ -271,27 +271,22 @@ export default {
     changeSearchType(val) {
       this.searchType = val;
       this.listData();
-      console.log(this.searchType);
     },
     //监听搜索框的值
     changeSearchInput(val) {
       this.searchInput = val;
-      console.log(this.searchInput);
     },
     // 点击搜索
     clickSearch(val) {
       this.searchInput = val;
       this.listData();
-      console.log(this.searchInput);
     },
     //重新整理数据
     refreshList() {
-      console.log("refreshList....");
       this.listData();
     },
     // 导出表格
     exportExcel() {
-      console.log("exportExcel...");
       /* generate workbook object from table */
       var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
       /* get binary string as output */
@@ -332,7 +327,6 @@ export default {
       this.pageIndex += 1;
     },
     handleSizeChange(val) {
-      // console.log(`每页 ${val} 条`);
       this.pageSize = val;
       // this.getColonyList();
     },
@@ -345,7 +339,6 @@ export default {
           Path: "/api/v1/namespaces",
           Version: "2018-05-25"
         };
-        // console.log(params)
         await this.axios.post(TKE_COLONY_QUERY, params).then(res => {
           if (res.Response.Error == undefined) {
             var data = JSON.parse(res.Response.ResponseBody);
@@ -402,7 +395,6 @@ export default {
         if (res.Response.Error == undefined) {
           var data = JSON.parse(res.Response.ResponseBody);
           this.loadShow=false
-          console.log(data);
           this.list = data.items;
           this.total = data.items.length;
         }else{

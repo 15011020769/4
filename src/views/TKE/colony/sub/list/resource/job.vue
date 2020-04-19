@@ -388,7 +388,6 @@ export default {
     //监听搜索框的值
     changeSearchInput(val) {
       this.searchInput = val;
-      console.log(this.searchInput);
     },
     // 点击搜索
     clickSearch(val) {
@@ -427,7 +426,6 @@ export default {
       this.pageIndex += 1;
     },
     handleSizeChange(val) {
-      // console.log(`每页 ${val} 条`);
       this.pageSize = val;
       // this.getJobList();
     }

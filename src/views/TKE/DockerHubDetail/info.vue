@@ -46,7 +46,6 @@ export default {
           reponame: this.$route.query.id,
         }
         this.axios.post(TKE_DOCKERHUB_INFO, param).then(res => {
-          console.log(res)
           if (res.code === 0 && res.Error == undefined){
               this.reponame = res.data.reponame
               this.repotype = res.data.repotype

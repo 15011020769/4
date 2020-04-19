@@ -390,7 +390,6 @@ export default {
                   return;
                 }
                 this.getCreate();
-                console.log(data[key]);
                 this.number++;
                  if(!this.newData.length){
                   this.getflags = false;
@@ -399,12 +398,10 @@ export default {
                   this.getHelmList()
                   return
                 }
-              }, 2000);
+              }, 4000);
             } else if (data[key] == 1) {
               this.number = 1;
               // let news = JSON.parse(JSON.stringify(this.newData))
-              console.log(arr);
-              console.log(this.newData.length);
               if (arr.length != this.newData.length) {
                 this.newData.push({
                   name: key,
@@ -443,9 +440,7 @@ export default {
       immediate: true
     },
     newData(value) {
-      console.log(value);
       if (value.length == 0) {
-        console.log(value, 3234);
         this.getflags = false;
         this.$store.commit("getFlag", this.getflags);
       }
@@ -462,7 +457,6 @@ export default {
       this.ruleForm.name = row.name;
     },
     selected(selection, row) {
-      console.log(selection[0].name);
       if (selection.length > 1) {
         let del_row = selection.shift();
         this.$refs.newData.toggleRowSelection(del_row, false); // 用于多选表格，切换某一行的选中状态，如果使用
@@ -470,7 +464,6 @@ export default {
       this.getError(selection[0].name);
     },
     selectAll(selection) {
-      // console.log('当用户手动勾选全选 Checkbox 时触发的事件', selection)
       // 选择项大于2时
       if (selection.length > 1) {
         selection.length = 1;
@@ -514,7 +507,6 @@ export default {
           clusterId: this.value
         }
       });
-      console.log(this.value);
     },
     closeUpdate(){
       this.centerDialogVisible = false
@@ -526,7 +518,6 @@ export default {
     },
     // 申请开通
     ApplyOpen() {
-      console.log(2);
       this.centerDialogVisible3 = false;
       this.flagAgin = 3;
       this.getPost();
@@ -543,7 +534,6 @@ export default {
     },
     // 重新开通
     openContect() {
-      console.log(3);
       this.centerDialogVisible3 = false;
       var time = 0;
       this.flagAgin = 3;
@@ -569,9 +559,7 @@ export default {
       };
       this.axios.post(TKE_COLONY_LIST, param).then(res => {
         if (res.Error == undefined) {
-          // console.log(res)
           this.options = res.Response.Clusters;
-          console.log(this.$route.query.clusterId);
           if (
             this.$route.query.clusterId ||
             this.$route.query.clusterId != undefined
@@ -606,17 +594,16 @@ export default {
         Version: "2018-05-25"
       };
       this.axios.post(POINT_REQUEST, param).then(res => {
-        // console.log(res)
         if (res.Response.Error == undefined) {
           this.tableData = JSON.parse(res.Response.ResponseBody).releases;
-          console.log(this.tableData)
           this.loadShow = false;
           this.flagSE = false;
           // clearInterval(timeId)
           // this.flag = false
-          console.log(this.tableData, 999);
         } else {
-          let ErrTips = {};
+          let ErrTips = {
+            "InternalError": "內部服務錯誤，請稍後重試。"
+          };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
             message: ErrOr[res.Response.Error.Code],
@@ -642,9 +629,7 @@ export default {
         RequestBody: 'null'
       };
       this.axios.post(POINT_REQUEST, param).then(res => {
-        console.log(res)
         if (res.Response.Error == undefined) {
-          // console.log(JSON.parse(res.Response.ResponseBody));
           if (JSON.parse(res.Response.ResponseBody).items.length) {
             this.status = JSON.parse(
               res.Response.ResponseBody
@@ -655,9 +640,7 @@ export default {
             } else if (this.status == "checking") {
               this.flagAgin = 3;
               this.getFlag()
-              console.log('check')
             } else if(this.status == "failed"){
-              console.log('fail')
               this.flagAgin = 2;
               clearInterval(timeId);
                this.loadShow = false;
@@ -675,7 +658,7 @@ export default {
             clearInterval(timeId);
           }
         } else {
-          let ErrTips = {};
+          let ErrTips = {"InternalError": "內部服務錯誤，請稍後重試。"};
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
             message: ErrOr[res.Response.Error.Code],
@@ -748,9 +731,8 @@ export default {
            this.domains.splice(0, this.domains.length);
            this.isCollapse = true
           // this.$refs['ruleForm'].resetFields();
-          console.log(res);
         } else {
-          let ErrTips = {};
+          let ErrTips = {"InternalError": "內部服務錯誤，請稍後重試。"};
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
             message: ErrOr[res.Response.Error.Code],
@@ -778,7 +760,6 @@ export default {
       };
       this.axios.post(POINT_REQUEST, param).then(res => {
         if (res.Response.Error == undefined) {
-          console.log(JSON.parse(res.Response.ResponseBody));
           this.flagAgin = 3;
           this.tableData = [];
         } else {
@@ -810,7 +791,6 @@ export default {
       };
       this.axios.post(POINT_REQUEST, param).then(res => {
         if (res.Response.Error == undefined) {
-          // console.log(JSON.parse(res.Response.ResponseBody))
           this.loadShow = true;
           this.getFlag();
         } else {
@@ -847,9 +827,8 @@ export default {
             this.getflags = false;
             this.$store.commit("getFlag", this.getflags);
           }
-          console.log(this.newData.length);
         } else {
-          let ErrTips = {};
+          let ErrTips = {"InternalError": "內部服務錯誤，請稍後重試。"};
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
             message: ErrOr[res.Response.Error.Code],
@@ -875,15 +854,12 @@ export default {
       this.axios.post(POINT_REQUEST, param).then(res => {
         if (res.Response.Error == undefined) {
           this.openData = JSON.parse(res.Response.ResponseBody);
-          console.log(this.openData);
           this.getflags = this.$store.state.flag;
           // var arr = Object.keys(openData)
           if (this.newData.length == 0) {
             this.getflags = false;
             this.$store.commit("getFlag", this.getflags);
           }
-          console.log(this.$store.state.flag, 45);
-          console.log(JSON.parse(res.Response.ResponseBody), 99999);
         } else {
           this.loadShow = false;
           this.getflags = false;
@@ -906,10 +882,11 @@ export default {
       };
       this.axios.post(POINT_REQUEST, param).then(res => {
         if (res.Response.Error == undefined) {
-          console.log(res);
           this.tableError = JSON.parse(res.Response.ResponseBody).message;
         } else {
-          let ErrTips = {};
+          let ErrTips = {
+            "InternalError": "內部服務錯誤，請稍後重試。"
+          };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
             message: ErrOr[res.Response.Error.Code],
@@ -922,7 +899,6 @@ export default {
     },
     GetCity() {
       this.axios.get(ALL_CITY).then(data => {
-        console.log(data.data);
         this.cities = data.data;
         this.selectedRegion = data.data[0].Region;
         this.selectedCity = data.data[0];

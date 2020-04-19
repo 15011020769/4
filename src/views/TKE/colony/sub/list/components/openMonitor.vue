@@ -167,27 +167,22 @@ export default {
       this.$emit("changeFlag", false);
     },
     handleCheckAllChange(val) {
-      debugger
       this.checkedInstances = val ? this.InstancesAll : [];
       this.isIndeterminate = false;
     },
     handleCheckedCitiesChange(value) {
-      console.log(value)
       let checkedInstances = value.length;
       this.checkAll = checkedInstances === this.list.length;
       this.isIndeterminate =
         checkedInstances > 0 && checkedInstances < this.instances.length;
     },
     handleClick(tab, event) {
-      console.log(tab, event);
     },
     setTime() {
       this.$emit("setTime", this.value2);
     },
     getChange(val){
-      console.log(val)
       this.valueLast = val.split("|")
-      console.log(this.valueLast)
       this.getPodList()
     },
 
@@ -258,7 +253,6 @@ export default {
       this.axios.post(TKE_GETTKEDATARESULT, param).then(res => {
         if(res.Response.Error === undefined) {
           let data = JSON.parse(res.Response.Data)
-          console.log(data);
           // let times = [], podIds = [], pods = [], statuErrs = [], cpus = [], cpuUseds = [],
           // cpuRequests = [], cpuUsedmaxs = [], memorys= [], memusages = [], memrequests = [], menNocaches = [],
           // memUsageBytes = [], memNoYsages = [], receives = [], transmits = [];

@@ -234,8 +234,9 @@ export default {
       clusterId: "",
       node: '',
       list:[], //列表
+      dataList: [],
       total:0,
-      pageSize:10,
+      pageSize:20,
       pageIndex:0,
       multipleSelection: [],
       showReconstModal: false,//是否打开销毁重建modal
@@ -281,7 +282,8 @@ export default {
       this.list = [];
       const param = {
         Method: 'GET',
-        Path: '/api/v1/pods?fieldSelector=spec.nodeName='+this.node+'&limit='+this.pageSize,
+        // Path: '/api/v1/pods?fieldSelector=spec.nodeName='+this.node+'&limit='+this.pageSize,
+        Path: '/api/v1/pods?fieldSelector=spec.nodeName='+this.node,
         Version: '2018-05-25',
         ClusterName: this.clusterId
       }
@@ -289,11 +291,11 @@ export default {
         let ChoiceValue = this.ChoiceValue;
         let searchValue = this.searchValue;
         if(ChoiceValue === 'status') {
-          param.Path = '/api/v1/pods?fieldSelector=spec.nodeName='+this.node+',status.phase='+searchValue+'&limit='+this.pageSize
+          param.Path = '/api/v1/pods?fieldSelector=spec.nodeName='+this.node+',status.phase='+searchValue
         } else if(ChoiceValue === 'podname') {
-          param.Path = '/api/v1/pods?fieldSelector=spec.nodeName='+this.node+',metadata.name='+searchValue+'&limit='+this.pageSize
+          param.Path = '/api/v1/pods?fieldSelector=spec.nodeName='+this.node+',metadata.name='+searchValue
         } else if(ChoiceValue === 'namespace') {
-          param.Path = '/api/v1/pods?fieldSelector=spec.nodeName='+this.node+',metadata.namespace='+searchValue+'&limit='+this.pageSize
+          param.Path = '/api/v1/pods?fieldSelector=spec.nodeName='+this.node+',metadata.namespace='+searchValue
         }
       }
       await this.axios.post(POINT_REQUEST, param).then(res => {
@@ -340,9 +342,9 @@ export default {
               }
               o.restart = restart;
             });
-            this.list = response.items;
+            this.dataList = response.items;
+            this.list = response.items.slice(this.pageIndex, this.pageSize);
             this.total = response.items.length;
-            console.log(this.list);
           }
         } else {
           this.loadShow = false;
@@ -384,12 +386,13 @@ export default {
     },
     // 分页
     handleCurrentChange(val) {
-      this.pageIndex = val-1;
-      this.getPodList();
-      this.pageIndex+=1;
+      let pageIndex = val - 1;
+      let list = this.dataList;
+      this.list = list.slice(pageIndex * this.pageSize, (pageIndex + 1) * this.pageSize);
+      pageIndex+=1;
+      this.pageIndex = pageIndex;
     },
     handleSizeChange(val) {
-      // console.log(`每页 ${val} 条`);
       this.pageSize=val;
       this.getPodList();
     },

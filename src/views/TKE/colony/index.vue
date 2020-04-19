@@ -768,7 +768,6 @@ export default {
               0,
               this.list1.length
             );
-            console.log(_Data);
             for (let j in this.list1) {
               for (let k in _Data) {
                 if (this.list1[j].ClusterId === _Data[k][1]) {
@@ -806,7 +805,6 @@ export default {
             }
           }
           this.list = this.list1;
-          console.log("list", this.list);
         });
         this.loadShow = false;
       } else {
@@ -875,7 +873,6 @@ export default {
       this.pageIndex += 1;
     },
     handleSizeChange(val) {
-      // console.log(`每页 ${val} 条`);
       this.pageSize = val;
       this.getColonyList();
     },
@@ -939,7 +936,6 @@ export default {
     },
     // 编辑集群弹窗相关
     showEditNameDlg(row) {
-      console.log(row);
       this.oldnName = row.ClusterName;
       this.editNameDialogVisible = true;
       this.editClusterId = row.ClusterId;
@@ -955,7 +951,6 @@ export default {
     },
     // 删除
     Delete(row) {
-      console.log(row);
       this.deleteDialogVisible = true;
       this.deleteID = row.ClusterId;
       this.deleteName = row.ClusterName;
@@ -1049,10 +1044,6 @@ export default {
                 }
               }
               this.detaleTableData_ETCD = _detaleTableData_ETCD.reverse();
-              console.log(
-                "this.detaleTableData_ETCD",
-                this.detaleTableData_ETCD
-              );
               this.deleteLoadShow = false;
             } else {
               this.deleteLoadShow = false;
@@ -1157,7 +1148,6 @@ export default {
     // 监听搜索条件的值
     changeType(val) {
       this.searchSelect = val;
-      console.log(this.searchSelect);
     },
     // 监听搜索框的值
     changeSearchInput(val) {
@@ -1173,7 +1163,6 @@ export default {
     },
     // 导出表格
     exportExcel() {
-      console.log("exportExcel...");
       /* generate workbook object from table */
       var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
       /* get binary string as output */
@@ -1182,7 +1171,6 @@ export default {
         bookSST: true,
         type: "array"
       });
-      console.log(wbout);
       try {
         FileSaver.saveAs(
           new Blob([wbout], {

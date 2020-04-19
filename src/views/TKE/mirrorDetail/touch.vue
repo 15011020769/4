@@ -95,7 +95,6 @@
         },
         methods:{
             getRadio(e){
-               console.log(e)
             },
             setAddBox(){
                 this.formLabelAlign.push({
@@ -119,7 +118,6 @@
                 this.formLabelAlign.splice(index, 1)
             },
             handleClick(tab, event) {
-                console.log(tab, event);
             }
         }
     }

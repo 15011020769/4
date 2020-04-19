@@ -179,7 +179,6 @@ export default {
     };
     var validatePass2 = (rule, value, callback) => {
       //  const version = /^(?!_)(?!.*-$)[a-z0-9_]+$/
-      // console.log(value)
       if (this.pv.input % 10 !== 0) {
         callback(new Error("硬碟大小需為10的倍數"));
       } else if (this.pv.input >= 16000) {
@@ -247,7 +246,6 @@ export default {
           }
           // alert('submit!');
         } else {
-          console.log("error submit!!");
           return false;
         }
       });
@@ -272,7 +270,6 @@ export default {
           }
         }
       });
-      console.log(this.type);
     },
     // 取消跳转
     jump() {
@@ -294,11 +291,9 @@ export default {
       this.axios.post(POINT_REQUEST, params).then(res => {
         if (res.Response.Error === undefined) {
           var mes = JSON.parse(res.Response.ResponseBody);
-          console.log(mes);
           this.pv.storageValue = mes.items[0].metadata.name;
           this.StorageClass = mes.items;
           this.getType(mes.items[0].metadata.name);
-          console.log(this.StorageClass);
           // this.filterType(this.StorageClass)
         } else {
           let ErrTips = {};
@@ -323,11 +318,8 @@ export default {
       this.axios.post(POINT_REQUEST, params).then(res => {
         if (res.Response.Error === undefined) {
           var mes = JSON.parse(res.Response.ResponseBody);
-          console.log(mes);
           // this.pv.nameValue = mes.items[0].metadata.name
           this.Namespace = mes.items;
-          // console.log(this.Namespace)
-          // console.log(this.list)
           // this.loadShow = false
         } else {
           let ErrTips = {};
@@ -410,7 +402,6 @@ export default {
           this.axios.post(TKE_PAY_MONEY, params).then(res => {
             if (res.Response.Error === undefined) {
               this.monney = res.Response.DiskPrice.UnitPriceDiscount
-              console.log(res.Response.DiskPrice.UnitPriceDiscount);
             } else {
               let ErrTips = {};
               let ErrOr = Object.assign(ErrorTips, ErrTips);

@@ -403,7 +403,6 @@ export default {
         this.TotalCount = res.Response.TotalCount;
 
         // this.clusters = res.Response.Clusters;
-        console.log(this.clusters);
       } else {
         let ErrTips = {
           InternalError: "内部錯誤",
@@ -436,7 +435,6 @@ export default {
         "dimensions.1": "node"
       };
       this.axios.post(TKE_COLONY_STATUS_JZ, params).then(res => {
-        console.log(res);
         if (res.Error === undefined) {
           var sum = 0,
             absum = 0,
@@ -474,7 +472,6 @@ export default {
         Version: "2018-05-25",
       }
       this.axios.post('tke2/DescribeClustersResourceStatus', params).then(res=>{
-          console.log(res)
           if (res.Response.Error === undefined){
            let  d1=res.Response.ResourceStatusSet
            var arr=[];
@@ -496,10 +493,6 @@ export default {
              arr.push(obj)
            })
            this.clusters = arr;
-           console.log(arr)
-
-
-            console.log(d1)
           }
       })
     },

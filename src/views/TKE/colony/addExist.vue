@@ -547,7 +547,6 @@ export default {
     SEARCH
   },
   created() {
-    console.log(this.projectId);
   },
   mounted() {
     this.getColonyList();
@@ -568,7 +567,6 @@ export default {
       params["ClusterIds.0"] = this.$route.query.clusterId;
       const res = await this.axios.post(TKE_COLONY_LIST, params);
       if (res.Response.Error === undefined) {
-        console.log(res.Response);
         this.basicNews = res.Response.Clusters[0];
         this.VpcId = this.basicNews.ClusterNetworkSettings.VpcId;
         this.DataList();
@@ -625,7 +623,6 @@ export default {
       this.axios.post(TKE_EXIST, params).then(res => {
         if (res.Response.Error === undefined) {
           this.leftList = res.Response.ExistedInstanceSet;
-          console.log(res.Response.ExistedInstanceSet);
         } else {
           this.leftList = [];
           let ErrTips = {
@@ -702,7 +699,6 @@ export default {
       };
       this.axios.post(TKE_OPERAT_SYSTEM, param).then(res => {
         if (res.Response.Error === undefined) {
-          console.log(res.Response.ImageInstanceSet);
           let _arr = res.Response.ImageInstanceSet;
           for (let i in _arr) {
             if (this.basicNews.ClusterOs === _arr[i].OsName) {
@@ -729,7 +725,6 @@ export default {
       this.axios.post(TKE_SSH, param).then(res => {
         if (res.Response.Error === undefined) {
           this.sshKey = res.Response.KeyPairSet;
-          // console.log(res.Response);
           this.sshKeySel = this.sshKey[0].KeyName;
         } else {
           let ErrTips = {};

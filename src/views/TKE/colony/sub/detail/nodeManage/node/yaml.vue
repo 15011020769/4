@@ -84,7 +84,6 @@ export default {
           // let response = JSON.parse(res.Response.ResponseBody);
           this.yamlInfo = res.Response.ResponseBody;
           this.loadShow = false;
-          console.log(this.yamlInfo, "response");
         } else {
           this.loadShow = false;
           let ErrTips = {};

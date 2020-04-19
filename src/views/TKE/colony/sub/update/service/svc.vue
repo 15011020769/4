@@ -327,7 +327,6 @@ export default {
       verifyPort1: [// 容器端口的验证
         { validator: (rule, value, callback) => {
           let ind = Number(rule.field.split('.')[1])
-          console.log(ind)
           let ls = this.svc.list
           let flog = false
           for (let i = 0; i < ls.length; i++) {
@@ -566,7 +565,6 @@ export default {
               this.svc.LBvalue1 = ele.VpcName
             }
           })
-          // console.log(msg)
           this.loadShow = false
         } else {
           this.loadShow = false
@@ -593,11 +591,9 @@ export default {
       params['Filters.0.Values.0'] = this.svc.vpcIds
 
       await this.axios.post(TKE_WORKER_METWORK, params).then(res => {
-        // console.log(1111111, res)
         if (res.Response.Error === undefined) {
           let msg = res.Response.SubnetSet
           this.LBsubnet = msg
-          // console.log(msg)
           // if (this.svc.radio !== '3') {
           //   this.svc.LBvalue2 = res.Response.SubnetSet[0].SubnetId
           // }
@@ -709,7 +705,6 @@ export default {
       }
       await this.axios.post(POINT_REQUEST, param).then(res => {
         if (res.Response.Error === undefined) {
-          // console.log(res, 13213)
           // let response = JSON.parse(res.Response.ResponseBody)
           this.$router.push({
             path: '/colony/sub/list/service/svc',
@@ -746,7 +741,6 @@ export default {
       }
       await this.axios.post(POINT_REQUEST, params).then(res => {
         if (res.Response.Error === undefined) {
-          // console.log(JSON.parse(res.Response.ResponseBody))
           let msg = JSON.parse(res.Response.ResponseBody)
           this.serviceInfo = msg
           this.svc.list = msg.spec.ports
@@ -793,7 +787,6 @@ export default {
           } else {
             this.svc.ETP = '2'
           }
-          // console.log(msg.spec.sessionAffinityConfig.clientIP.timeoutSeconds)
           if (msg.spec.sessionAffinity === 'ClientIP') { // 高级选项Session Affinity判断
             this.svc.SA = '1'
             this.svc.time = msg.spec.sessionAffinityConfig.clientIP.timeoutSeconds

@@ -203,10 +203,8 @@ export default {
     //           }
     //         });
     //       });
-    //       console.log(this.BaseListK.length, val.length)
     //       if (this.BaseListK.length == val.length) {
     //         this.tableData = this.BaseListK
-    //         console.log(this.tableData)
     //       }
     //     }
     //   }
@@ -253,7 +251,6 @@ export default {
         "dimensions.1": "node"
       };
       this.axios.post(TKE_COLONY_STATUS_JZ, params).then(res => {
-        console.log(res);
         if (res.Error === undefined) {
           var sum = 0,
             absum = 0,

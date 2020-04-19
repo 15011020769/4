@@ -185,7 +185,6 @@
         }
         await this.axios.post(POINT_REQUEST, param).then(res => {
           if (res.Response.Error === undefined) {
-            // console.log(res)
             this.loadShow = false
             let data = JSON.parse(res.Response.ResponseBody).items
             if (data.length > 0) { // 处理selector字段中的数据
@@ -317,17 +316,14 @@
       // 选择搜索条件
       changeSearchType(val) {
         this.searchType = val
-        // console.log(this.searchType)
       },
       // 监听搜索框的值
       changeSearchInput(val) {
         this.searchInput = val
-        // console.log(this.searchInput)
       },
       // 点击搜索
       clickSearch(val) {
         this.searchInput = val
-        // console.log(this.searchInput)
         this.getList()
       },
       // 重新整理数据
@@ -365,7 +361,6 @@
       },
       // pageSize 改变时会触发
       handleSizeChange(val) {
-        // console.log(`每页 ${val} 条`);
         this.pageSize = val
         this.getList()
       }

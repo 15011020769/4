@@ -146,7 +146,6 @@ export default {
       resourceIns: '',
       pathValidator: [{
         validator: (rule, value, callback) => {
-          console.log(value)
           if (value === '') {
             callback(new Error('路徑不能為空'))
           } else if (value.substr(0, 1) !== '/') {
@@ -472,8 +471,6 @@ export default {
           this.submitErrorMessage = JSON.parse(res.Response.Error.Message).message
         }
       })
-      console.log('this.ing', this.ing)
-      console.log('param', param)
     },
     removeprot (item) {
       var index = this.ing.list.indexOf(item)

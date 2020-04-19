@@ -65,9 +65,7 @@ export default {
         Version: "2018-05-25"
       };
       this.axios.post(POINT_REQUEST, param).then(res => {
-        // console.log(res)
         if (res.Response.Error == undefined) {
-          console.log(JSON.parse(res.Response.ResponseBody));
           this.version = JSON.parse(res.Response.ResponseBody).release.version;
           this.tableData = [];
           for (let i = this.version; i > 0; i--) {
@@ -78,7 +76,6 @@ export default {
             });
           }
           // this.tableData = JSON.parse(res.Response.ResponseBody)
-          console.log(this.tableData);
           this.loadShow = false;
         } else {
           let ErrTips = {};
@@ -109,10 +106,8 @@ export default {
         Version: "2018-05-25"
       };
       this.axios.post(POINT_REQUEST, param).then(res => {
-        // console.log(res)
         if (res.Response.Error == undefined) {
           this.getHelmList();
-          console.log(JSON.parse(res.Response.ResponseBody));
           this.loadShow = false;
         } else {
           let ErrTips = {};
@@ -125,7 +120,6 @@ export default {
           });
         }
       });
-      // console.log(val)
     }
   },
   filters: {

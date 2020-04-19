@@ -129,7 +129,6 @@ export default {
     this.clusterId = clusterId
     this.spaceName = spaceName
     this.serviceName = serviceName
-    // console.log(this.spaceName, this.serviceName)
     this.getServiceNameInfo()
   },
   methods: {
@@ -150,8 +149,6 @@ export default {
           // this.detailData.k8sApp = this.detailData.spec.selector && this.detailData.spec.selector['k8s-app']
           // this.detailData.qcloudApp = this.detailData.spec.selector && this.detailData.spec.selector['qcloud-app']
           this.list = response.spec.ports
-          // console.log(this.detailData, 'detail')
-          // console.log(response)
         } else {
           this.loadShow = false
           let ErrTips = {}

@@ -185,7 +185,6 @@ export default {
   methods:{
     handleSelectionChange(val) {
         this.multipleSelection = val;
-        // console.log(this.multipleSelection)
     },
     handleCurrentChange(val){
         this.currpage = val
@@ -212,7 +211,6 @@ export default {
       }
       this.axios.post(TKE_COLONY_LIST, param).then(res => {
         if (res.Error == undefined) {
-          // console.log(res)
           this.options = res.Response.Clusters
           this.value = res.Response.Clusters[0].ClusterId
           // this.loadShow = false
@@ -238,7 +236,6 @@ export default {
       }
       this.axios.post(TKE_WARNING_GETCOLONY, param).then(res => {
         if (res.Error == undefined) {
-          console.log(res)
           this.tableData = res.Response.AlarmPolicySet
           this.TotalCount = res.Response.TotalCount
           this.delete=[]
@@ -255,11 +252,9 @@ export default {
     },
     // 点击删除
     deleteRow(e,count){
-      // console.log(count[e].AlarmPolicySettings.AlarmPolicyName)
       this.name.push(count[e].AlarmPolicySettings.AlarmPolicyName)
       this.delete.push(count[e].AlarmPolicyId)
       this.dialogVisibleO = true
-      // console.log(this.delete)
     },
     // 点击弹窗确定
     deleteOne(){
@@ -273,7 +268,6 @@ export default {
       this.delete = this.multipleSelection.map(item=>{
         return item.AlarmPolicyId
       })
-      // console.log(this.delete)
       this.DeleteWarning()
       this.dialogVisibleO = false
     },
@@ -291,9 +285,7 @@ export default {
         Version: "2018-05-25"
       }
       this.axios.post(TKE_DELETE_POLICIES, param).then(res => {
-        console.log(res)
         if (res.Error == undefined) {
-          // console.log(res)
           this.getWarningListItem()
           // this.tableData = res.Response.AlarmPolicySet
         } else {
@@ -308,7 +300,6 @@ export default {
     },
     GetCity () {
       this.axios.get(ALL_CITY).then(data => {
-        console.log(data.data)
         this.cities = data.data
         this.selectedRegion = data.data[0].Region
         this.selectedCity = data.data[0]
@@ -321,7 +312,6 @@ export default {
     },
     // 路由跳转
     jump (row) {
-      // console.log(row)
       this.$router.push({
         name: 'warningDetail',
         query: {
@@ -347,7 +337,6 @@ export default {
       }
     },
     EvaluatorValues:function(value){
-      // console.log(value)
       if(value.Value == '1'){
         return 'False'
       } else if(value.Value == '0') {

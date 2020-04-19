@@ -187,7 +187,6 @@ export default {
         if (this.rulePass.checkPass !== '') {
           this.$refs.rulePass.validateField('checkPass')
         }
-        // console.log(value.length)
         callback()
       }
     }
@@ -322,7 +321,6 @@ export default {
       this.GetMyMirror()
     },
     submitForm (formName) {
-      // console.log(formName)
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.dialogFormVisible = !valid
@@ -334,7 +332,6 @@ export default {
           this.ruleForm.name = ''
           this.loadShow = true
         } else {
-          console.log('error submit!!')
           return false
         }
       })
@@ -376,7 +373,6 @@ export default {
     },
     // 路由跳转
     jump (row) {
-      // console.log(row)
       this.$router.push({
         name: 'mirrorDetailInfo',
         query: {
@@ -388,6 +384,7 @@ export default {
     getSearch () {
       var regex = /^[a-z0-9\.\-_]+$/g
       if (regex.test(this.input) || this.input === '') {
+        this.currpage = 0;
         this.loadShow = true
         this.GetMyMirror()
       } else {
@@ -409,7 +406,6 @@ export default {
     deleteOpen () {
       this.dialogTableVisible = true
       this.deleteData = this.multipleSelection
-      // console.log(this.deleteData)
     },
     // 全选删除
     deleteAll () {
@@ -458,7 +454,7 @@ export default {
       const param = this.deleteSpace
       this.axios.post(TKE_MIRROR_DELETE, param).then(res => {
         if (res.code === 0 && res.Error == undefined) {
-          this.currpage = 1
+          this.currpage = 0
           this.GetMyMirror()
           this.loadShow = true
           this.deleteSpace = ''
@@ -487,7 +483,6 @@ export default {
       this.axios.post(TKE_SPACENAME_LIST, param).then(res => {
         if (res.code === 0 && res.Error == undefined) {
           this.spaceName = res.data.namespaceInfo
-          console.log(this.spaceName)
         } else {
           if(ErrorTips[res.codeDesc]){
             this.$message({
@@ -512,7 +507,6 @@ export default {
         if (res.code === 0 && res.Error == undefined) {
           this.GetMyMirror()
           this.loadShow = false
-          console.log(res)
           this.$message({
               message: "新建成功",
               type: "success",
@@ -538,7 +532,6 @@ export default {
         RequestOperator:this.$cookie.get('uin')
       }
       this.axios.post(TKE_CHANGEPASSWORD, param).then(res => {
-        // console.log(res)
         if (res.code == 0 && res.Error == undefined) {
           this.loadShow = false
            this.$message({
@@ -547,8 +540,6 @@ export default {
               showClose: true,
               duration: 0
           })
-          // console.log(res)
-          // console.log(ErrorTips)
         } else {
           this.$message({
               message: ErrorTips[res.codeDesc],

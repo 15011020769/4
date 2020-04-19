@@ -160,19 +160,16 @@ export default {
     //选择搜索条件
     changeSearchType(val) {
       this.searchType = val;
-      console.log(this.searchType);
     },
     //监听搜索框的值
     changeSearchInput(val) {
       this.searchInput = val;
-      console.log(this.searchInput);
     },
     // 点击搜索
     clickSearch(val) {
       this.searchInput = val;
       this.loadShow = true;
       this.SearchPersistentVolume();
-      // console.log(this.searchInput)
     },
     //重新整理数据
     refreshList() {
@@ -202,7 +199,6 @@ export default {
     },
     // 导出表格
     exportExcel() {
-      console.log("exportExcel...");
       var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
       var wbout = XLSX.write(wb, {
         bookType: "xlsx",
@@ -243,9 +239,7 @@ export default {
       this.axios.post(POINT_REQUEST, param).then(res => {
         if (res.Response.Error == undefined) {
           let data = JSON.parse(res.Response.ResponseBody);
-          console.log(data);
           this.list = data.items;
-          console.log(this.list);
           this.total = data.items.length;
           // this.delete = []
           this.loadShow = false;
@@ -273,7 +267,6 @@ export default {
       this.axios.post(POINT_REQUEST, param).then(res => {
         if (res.Response.Error == undefined) {
           let data = JSON.parse(res.Response.ResponseBody);
-          console.log(data);
           this.list = data.items;
           this.loadShow = false;
         } else {
@@ -326,7 +319,6 @@ export default {
       }
     },
     claimRefs: function(value) {
-      console.log(value.claimRef);
       if (value.claimRef == "" || value.claimRef == undefined) {
         return "-";
       } else if (value) {

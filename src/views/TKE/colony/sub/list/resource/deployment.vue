@@ -295,8 +295,6 @@ export default {
               this.loadShow = false;
               let response = JSON.parse(res.Response.ResponseBody);
               this.list = response.items;
-              console.log(response.items)
-                console.log( response.items.length)
               this.total = response.items.length;
             } else {
               this.loadShow = false;
@@ -355,7 +353,6 @@ export default {
         if (res.Response.Error === undefined) {
           this.loadShow = false;
           let response = JSON.parse(res.Response.ResponseBody);
-          console.log(response)
           if (response.items.length > 0) {
             response.items.map(deployment => {
               (deployment.k8sApp =
@@ -366,8 +363,6 @@ export default {
             });
           }
           this.list = response.items;
-          console.log(this.list)
-          console.log( response.items.length)
           this.total = response.items.length;
         } else {
           this.loadShow = false;
@@ -403,7 +398,6 @@ export default {
     },
      // 详情.
     goDeploymentDetail(rowData) {
-      console.log(rowData)
       this.$router.push({
         name: "deploymentDetail",
         query: {
@@ -418,7 +412,6 @@ export default {
 
     //更新pod
     goPodUpdate(rowData) {
-      console.log(rowData)
       this.$router.push({
         name: "podUpdate",
         query: {

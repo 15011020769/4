@@ -174,7 +174,6 @@ export default {
       await this.axios.post(TKE_COLONY_QUERY, params).then(res => {
         if (res.Response.Error == undefined) {
           var data = JSON.parse(res.Response.ResponseBody);
-          console.log(data);
           this.list = data.items;
           this.total = data.items.length;
           this.loadShow=false
@@ -206,7 +205,6 @@ export default {
         Version: "2018-05-25"
       };
       this.axios.post(TKE_COLONY_QUERY, params).then(res => {
-        console.log(res)
         if (res.Response.Error == undefined) {
            this.$message({
                 type: "success",
@@ -271,8 +269,6 @@ export default {
 
     // 详情
     goConfigmapDetail(item) {
-      console.log(item);
-
       this.$router.push({
         name: "configmapDetail",
         query: {
@@ -319,28 +315,23 @@ export default {
     changeSearchType(val) {
       this.searchType = val;
       this.tableListData();
-      console.log(this.searchType);
     },
     //监听搜索框的值
     changeSearchInput(val) {
       this.searchInput = val;
       //  this.tableListData();
-      console.log(this.searchInput);
     },
     // 点击搜索
     clickSearch(val) {
       this.searchInput = val;
       this.tableListData();
-      console.log(this.searchInput);
     },
     //重新整理数据
     refreshList() {
-      console.log("refreshList....");
       this.tableListData();
     },
     // 导出表格
     exportExcel() {
-      console.log("exportExcel...");
       /* generate workbook object from table */
       var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
       /* get binary string as output */
@@ -369,7 +360,6 @@ export default {
       this.pageIndex += 1;
     },
     handleSizeChange(val) {
-      // console.log(`每页 ${val} 条`);
       this.pageSize = val;
       //  this.tableListData();
       // this.getColonyList();

@@ -79,7 +79,6 @@ export default {
       await this.axios.post(POINT_REQUEST, param).then(res => {
         if (res.Response.Error === undefined) {
           let response = res.Response.ResponseBody
-          // console.log(response)
           this.YAMLData = response
         } else {
           let ErrTips = {}

@@ -56,9 +56,7 @@ export default {
       this.axios.post(POINT_REQUEST, params).then(res => {
         if (res.Response.Error === undefined) {
           var mes = JSON.parse(res.Response.ResponseBody);
-         console.log(mes);
           this.list = mes;
-          console.log(this.list)
           // this.loadShow = false
         } else {
           let ErrTips = {};
@@ -85,7 +83,6 @@ export default {
         }
     },
     annotationses:function(value){
-      // console.log(typeof(value))
         if(typeof(value) == "object"){
           return "true"
         }

@@ -96,7 +96,6 @@ export default {
   },
   // watch:{
   //   'form.region'(val){
-  //     console.log(val)
   //   }
   // },
   methods: {
@@ -112,15 +111,12 @@ export default {
       this.dialogFormVisible = false
     },
     submitForm (formName) {
-      console.log(formName)
       this.$refs[formName].validate((valid) => {
         if (valid && this.forminput.textarea) {
           this.dialogFormVisible2 = !valid
           // this.description = this.forminput.textarea
-          // console.log(this.description)
           this.SetMyMirrorDesc()
         } else {
-          console.log('error submit!!')
           return false
         }
       })
@@ -142,7 +138,6 @@ export default {
       oInput.value = url
       document.body.appendChild(oInput)
       oInput.select() // 选择对象;
-      console.log(oInput.value)
       document.execCommand('Copy') // 执行浏览器复制命令
       this.$message({
         message: this.$t('TKE.mirrorDetail.fzcg'),

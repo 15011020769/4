@@ -432,19 +432,16 @@
        },
 
        setRadio(e) {
-         console.log(e)
        },
        //监听搜索框的值
        changeSearchInput(val) {
          this.searchInput = val;
-         console.log(this.searchInput)
        },
 
        // 点击搜索
        clickSearch(val) {
          this.searchInput = val;
          this.GetGroupsList();
-         console.log(this.searchInput)
        },
 
        //打开批量删除弹窗
@@ -496,7 +493,6 @@
          }
          const res = await this.axios.post(CLUSTERS_GROUPSOPTION, param);
          if (res.Error === undefined) {
-           console.log(res)
            this.global.IsScaleDownEnabled = res.Response.ClusterAsGroupOption.IsScaleDownEnabled
            if (res.Response.ClusterAsGroupOption.IsScaleDownEnabled) {
              this.control = true
@@ -584,7 +580,6 @@
          }
          const res = await this.axios.post(CLUSTERS_GROUPS, param);
          if (res.Error === undefined) {
-           // console.log(res,222)
            if (res.Response.ClusterAsGroupSet.length > 0) {
              this.saw = true
              let ids = [];
@@ -635,7 +630,6 @@
          }
          const res = await this.axios.post(CLUSTERS_GROUPS, param);
          if (res.Error === undefined) {
-           // console.log(res,222)
            if (res.Response.ClusterAsGroupSet.length > 0) {
              this.saw = true
              res.Response.ClusterAsGroupSet = res.Response.ClusterAsGroupSet.map(item => {
@@ -691,7 +685,6 @@
                this.total = res.Response.TotalCount;
              }
              this.list = res.Response.AutoScalingGroupSet;
-             console.log("list", this.list);
              this.loadShow = false;
            } else {
              this.loadShow = false;

@@ -794,7 +794,6 @@ export default {
     this.workload=workload;
     this.wl.namespace = spaceName
     this.initData()
-    console.log(this.jizhe)
   },
   methods: {
     async  initData(){
@@ -806,7 +805,6 @@ export default {
     },
     submit(){
       let container = this.wl.instanceContent
-      console.log(container)
       let containerObj = {}
       let containerList = []
       //  存活检查，就绪检查 共用赋值函数
@@ -953,10 +951,8 @@ export default {
       let {dataJuan}=this.wl;
       let volumesArr=[];
       dataJuan.forEach(item=>{
-        console.log(item)
         let sendObj=new Object();
         sendObj.name=item.name2;
-        console.log(item.name1)
         if(item.name1=='useMenu'){
           sendObj.emptyDir={}
         }else if(item.name1=='usePath'){
@@ -1019,7 +1015,6 @@ export default {
         }
         volumesArr.push(sendObj)
       })
-      console.log(volumesArr)
       var params={
         ClusterName: this.clusterId,
         ContentType: "application/merge-patch+json",
@@ -1036,7 +1031,6 @@ export default {
         Version: "2018-05-25",
       }
       this.axios.post(TKE_COLONY_QUERY,params).then(res=>{
-        console.log(res)
         if (res.Response.Error === undefined) {
           this.$router.back()
           this.$message({
@@ -1085,12 +1079,10 @@ export default {
         this.axiosUtils(res, () => {
           let ResponseBody = res.Response.ResponseBody
           this.secrets = JSON.parse(ResponseBody)
-          console.log(this.secrets.items,'this.secrets')
         })
       })
     },
     querySearch: function (index, queryStr) {
-      console.log(index, queryStr)
       let mirrorImgTagArr = this.wl.instanceContent[index].mirrorImgTagArr.map(item => ({ value: item }))
       // let queryArr = mirrorImgTagArr.filter(item => item.value.includes(queryStr))
       // return queryArr
@@ -1104,7 +1096,6 @@ export default {
         RepoName: mirrorImgName
       }).then(res => {
         let { TagCount, Server, TagInfo, RepoName } = res.Response.Data
-        console.log(Server, RepoName)
         if (TagCount > 0) {
           let tagArr = TagInfo.map(item => item.TagName)
           this.wl.instanceContent[index].mirrorImgTagArr = tagArr
@@ -1192,7 +1183,6 @@ export default {
       this.axios.post(POINT_REQUEST, param).then(res => {
         this.axiosUtils(res, () => {
           let ResponseBody =JSON.parse(res.Response.ResponseBody); 
-           console.log('pvcdata',ResponseBody)
             this.pvcOption=ResponseBody.items;
         })
       })
@@ -1210,13 +1200,11 @@ export default {
        this.axios.post(TKE_COLONY_QUERY,params).then(res=>{
          if(res.Response.Error === undefined){
            let response = JSON.parse(res.Response.ResponseBody);
-           console.log('basedataresponse',response)
            //获得实例内容器以及数据卷数据
           var {items:[{spec:{template:{spec:{containers:arr,volumes:volumesData}}}}]}=response;
 
           if(volumesData){//数据卷存在
             volumesData.forEach(item=>{
-              console.log(item)
               if(item.configMap){
                 this.wl.dataJuan.push({name1:'useConfig',name2:item.name,name3:item.configMap.name,name4:item.configMap.items})
               }else if(item.hostPath){
@@ -1287,7 +1275,6 @@ export default {
                  })
               }
             }
-            console.log(v,'vvvvvvvvvvvvvvvvvvvvvvvvv')
             if(v.volumeMounts&&v.volumeMounts.length!=0){//挂载点数据处理
               var  volumeArr=[];
               v.volumeMounts.forEach(v=>{
@@ -1349,7 +1336,6 @@ export default {
       return num
   },
   close(val){
-    console.log(val)
   },
   //返回上一层
   goBack() {
@@ -1357,11 +1343,9 @@ export default {
   },
   // 点击确定绑定镜像
   confirmMirrorImg: function (val, index) {
-    console.log(val, index)
     this.wl.instanceContent[index].mirrorImg = val
   },
   initReelData(val,index){
-    console.log(val,index)
     this.wl.dataJuan[index].name3=''
     this.wl.dataJuan[index].name4=''
 
@@ -1376,7 +1360,6 @@ export default {
     //       if (valid) {
     //         alert('submit!');
     //       } else {
-    //         console.log('error submit!!');
     //         return false;
     //       }
     //  });
@@ -1395,7 +1378,6 @@ export default {
     this.dialogIndex=index;
   },
   yunHardDiskId(val){//radio选中
-    console.log(val)
     this.dataReelDialog.yunDisks.diskId=val;
   },
   selectYunHardDisk(){//关闭框，赋值
@@ -1409,7 +1391,6 @@ export default {
   selectConfigSure(){//关闭框，赋值
      this.dialogVisibleConfig = false;
      this.wl.dataJuan[this.dialogIndex].name3=this.dataReelDialog.configMap.name;
-     console.log(this.dataReelDialog.configMap.items)
 
      if(this.dataReelDialog.configMap.items.length==0){
        this.wl.dataJuan[this.dialogIndex].name4='all';
@@ -1439,7 +1420,6 @@ export default {
     readyDatefilter.forEach(item=>{
       readyArr=Object.keys(item.data)
     })
-    console.log(readyArr)
    this.dataReelDialog.Secret.partKeyOption=readyArr
    this.dataReelDialog.Secret.items.forEach(item=>{
       item.name=readyArr[0]
@@ -1460,7 +1440,6 @@ export default {
   },
   //改变每页显示数量
   handleSizeChange(val) {
-    console.log(`每頁 ${val} 條`);
   },
   // 改变页数
   handleCurrentChange(val) {
@@ -1509,13 +1488,10 @@ watch: {
           let { name, mirrorImg, environmentVar, citeCs, disAdvancedSetting, surviveExamine, readyToCheck, surviveExamineContent,mountPoint,requestCpu,limitCpu} = item
           this.firstPointInfoData=[];
           mountPoint.forEach(v=>{
-            console.log(v)
             if(v.name!=''){
              this.firstPointInfoData.push(v.name) 
             }
           })
-          console.log(this.firstPointInfoData)
-
           if (name === '' || mirrorImg === '') {
             completed = false
           }
@@ -1565,7 +1541,6 @@ watch: {
           }
           item.completed = completed
         })
-        console.log(this.isAddContainer)
         this.isAddContainer = isAddContainer
       },
       deep: true

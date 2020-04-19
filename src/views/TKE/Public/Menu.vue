@@ -69,10 +69,8 @@ export default {
   },
   methods: {
     handleOpen(key, keyPath) {
-      // console.log(key, keyPath)
     },
     handleClose(key, keyPath) {
-      // console.log(key, keyPath)
     },
     _class(key) {
       this.classValue = key.index;

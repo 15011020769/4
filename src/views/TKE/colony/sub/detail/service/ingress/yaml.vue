@@ -49,7 +49,6 @@ export default {
         ClusterName: this.clusterId
       }
       await this.axios.post(POINT_REQUEST, param).then(res => {
-        console.log(res.Response.ResponseBody)
         if (res.Response.Error === undefined) {
           this.yamlDetail = res.Response.ResponseBody
         } else {

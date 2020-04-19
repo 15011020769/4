@@ -275,9 +275,7 @@ export default {
             }
          }
       }
-      console.log(params)
       this.axios.post(TKE_COLONY_QUERY,params).then(res=>{
-        console.log(res)
          if(res.Response.Error === undefined){
            this.$router.go(-1)
             this.$message({
@@ -300,8 +298,6 @@ export default {
     },
 
     selectNode(val){
-      console.log(val)
-      console.log(this.appointNode)
     },
     findNodeData(){
       var params={
@@ -309,12 +305,9 @@ export default {
         InstanceRole: "WORKER",
         Version: "2018-05-25"
       }
-      console.log(params)
       this.axios.post(TKE_COLONY_INSTANCES,params).then(res=>{
-        console.log(res)
           if(res.Response.Error === undefined){
               // this.content=res.Response.InstanceSet
-              // console.log( this.content)
             }else{
               let ErrTips = {};
               let ErrOr = Object.assign(this.$ErrorTips, ErrTips);
@@ -335,10 +328,8 @@ export default {
        Version: "2018-05-25",
       }
       this.axios.post(TKE_COLONY_QUERY,params).then(res=>{
-        console.log(res)
           if(res.Response.Error === undefined){
             let response = JSON.parse(res.Response.ResponseBody);
-            console.log(response.items)
               this.content=response.items
           }else{
               let ErrTips = {};
@@ -363,12 +354,10 @@ export default {
           Version: "2018-05-25"
          }
        }
-  console.log(params)
         this.axios.post(TKE_COLONY_QUERY,params).then(res=>{
           if(res.Response.Error === undefined){
             let response = JSON.parse(res.Response.ResponseBody);
                 let obj=response.items[0];
-              console.log(obj)
                 if(obj.spec.jobTemplate!=undefined){
 
                    if(obj.spec.jobTemplate.spec.template.spec['affinity']==undefined){
@@ -519,7 +508,6 @@ export default {
             values: ''
           }]
         };
-        console.log(this.mustCondition)
         this.mustCondition.push(obj)
     },
     addCondition2() {// 添加尽可能满足条件

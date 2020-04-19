@@ -258,7 +258,6 @@
         this.axios.post(POINT_REQUEST, params).then(res=>{
            if(res.Response.Error === undefined){
               let response = JSON.parse(res.Response.ResponseBody);
-                console.log(response,"response");
               this.caseNum=response.items[0].spec.replicas
               this.upn.num=response.items[0].spec.replicas
            }
@@ -274,17 +273,14 @@
         this.axios.post(POINT_REQUEST, params).then(res=>{
            if(res.Response.Error === undefined){
               let response = JSON.parse(res.Response.ResponseBody);
-                console.log(response,"responsepanduan");
                 if(response.items.length!=0){//自动调节
                   this.adjustType=1;
                   this.upn.type=2;
                   let arr=JSON.parse(response.items[0].metadata.annotations['autoscaling.alpha.kubernetes.io/metrics']);
-                  console.log(arr)
                   this.dataFilter(arr)
                   this.vLeft=response.items[0].spec.minReplicas;
                   this.vRight=response.items[0].spec.maxReplicas;
                   this.name2=response.items[0].metadata.name
-                  console.log(this.optionsData)
                 }else{//手动调节
                    this.upn.type=1;
                    this.adjustType='';
@@ -482,7 +478,6 @@
                  this.pushData(4,22,parseFloat(num))
             }
         })
-        console.log(this.optionsDataCopy)
         this.optionsData=this.optionsDataCopy;
 
     }, 
@@ -930,7 +925,6 @@
        matchOneFocus(v,i){
          if(v==''||!this.reg.test(v)){
            this.matchIndex=i
-           console.log(this.matchIndex)
          }else{
            this.matchIndex=''
          }
@@ -957,7 +951,6 @@
          }
        },
        matchThreeFocus(v){
-         console.log(v)
           if(v==''||!this.reg.test(v)){
            this.rightFlag=true
          }else{
@@ -965,8 +958,6 @@
          }
        },
        matchThreeBlur(v){
-         console.log('shijiao',v)
-
           if(v==''||!this.reg.test(v)){
            this.rightFlag=true
          }else{
@@ -978,9 +969,7 @@
      watch:{
        optionsData:{
          handler(arr){
-           console.log(arr)
            let dat=arr.map((item)=>{return item.value2})
-           console.log(dat)
            if(dat.length!=Array.from(new Set(dat)).length){
              this.colorFlag=true;
             //   this.$message({

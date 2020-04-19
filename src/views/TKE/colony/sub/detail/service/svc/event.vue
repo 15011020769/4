@@ -152,7 +152,6 @@ export default {
         if (res.Response.Error === undefined) {
           this.loadShow = false
           this.list = JSON.parse(res.Response.ResponseBody).items
-          // console.log(this.list, 123)
         } else {
           this.loadShow = false
           let ErrTips = {
@@ -170,7 +169,6 @@ export default {
     },
     // 是否重新整理
     changeSwitch () {
-      // console.log(this.autoRefresh, 'val')
       let autoRefresh = this.autoRefresh
       if (autoRefresh) {
         if (!this.timer) {
