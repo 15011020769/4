@@ -323,56 +323,12 @@ export default {
       let list = this.dataList;
       this.list = list.slice(pageIndex * this.pageSize, (pageIndex + 1) * this.pageSize);
       pageIndex += 1;
-      // this.pageIndex = val-1;
-      // this.loadShow = true;
-      // const param = {
-      //   Method: "GET",
-      //   Path: "/api/v1/namespaces?limit="+this.pageSize+"&continue=" + 
-      //     Base64.encode(JSON.stringify({v:"meta.k8s.io/v1",rv:90778097,start: this.list[this.list.length - 1].metadata.name+"\u0000"})),
-      //   Version: "2018-05-25",
-      //   ClusterName: this.clusterId
-      // }
-      // if(this.searchInput !== '') {
-      //   param.Path = '/api/v1/namespaces?fieldSelector=metadata.name='+ this.searchInput;
-      // }
-      // this.axios.post(POINT_REQUEST, param).then(res => {
-      //   if (res.Response.Error === undefined) {
-      //     this.list = [];
-      //     this.loadShow = false;
-      //     let response = JSON.parse(res.Response.ResponseBody);
-      //     if(response.items.length > 0) {
-      //       response.items.map(o => {
-      //         o.addTime = moment(o.metadata.creationTimestamp).format("YYYY-MM-DD HH:mm:ss");
-      //         if(o.metadata.name === 'default' || o.metadata.name.indexOf('kube-') === 0) {
-      //           o.isDelete = true
-      //         } else {
-      //           o.isDelete = false
-      //         }
-      //       });
-      //       this.list = response.items;
-      //     }
-      //   } else {
-      //     this.list = [];
-      //     this.loadShow = false;
-      //     let ErrTips = {
-            
-      //     };
-      //     let ErrOr = Object.assign(ErrorTips, ErrTips);
-      //     this.$message({
-      //       message: ErrOr[res.Response.Error.Code],
-      //       type: "error",
-      //       showClose: true,
-      //       duration: 0
-      //     });
-      //   }
-      // });
-      // this.getNameSpaceList();
       this.pageIndex = pageIndex;
     },
     handleSizeChange(val) {
+      this.pageIndex = 0;
       this.pageSize=val;
       this.getNameSpaceTotal();
-      // this.getNameSpaceList();
     },
 
   },

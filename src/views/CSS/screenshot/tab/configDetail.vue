@@ -9,7 +9,7 @@
 <template>
   <div class="detail-wrap">
     <el-row type="flex" justify="space-between" align="middle">
-      <h3>截圖鑑黃配置</h3>
+      <h3>截圖配置</h3>
       <el-button type="text" @click="onEdit">編輯</el-button>
     </el-row>
     <ul class="content-box">
@@ -31,12 +31,12 @@
           <el-col class="text-black">{{ `${selectItem.SnapshotInterval} s` }}</el-col>
         </el-row>
       </li>
-      <li>
+      <!-- <li>
         <el-row type="flex">
           <el-col :span="7">啟用智慧鑒黃</el-col>
           <el-col class="text-black">{{ selectItem.PornFlag ? '已啟用' : '未啟用' }}</el-col>
         </el-row>
-      </li>
+      </li> -->
       <li>
         <el-row type="flex">
           <el-col :span="7">儲存位置CosAppid</el-col>

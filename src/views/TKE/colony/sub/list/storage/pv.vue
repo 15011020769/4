@@ -113,8 +113,9 @@ export default {
     return {
       loadShow: true, //加载是否显示
       list: [], //列表
+      datalist: [],//所有数据列表
       total: 0,
-      pageSize: 10,
+      pageSize: 20,
       pageIndex: 0,
       multipleSelection: [],
       searchInput: "", //输入的搜索关键字
@@ -168,6 +169,7 @@ export default {
     // 点击搜索
     clickSearch(val) {
       this.searchInput = val;
+      this.pageIndex = 0;
       this.loadShow = true;
       this.SearchPersistentVolume();
     },
@@ -219,10 +221,14 @@ export default {
     },
     // 分页
     handleCurrentChange(val) {
-      this.pageIndex = val - 1;
-      this.pageIndex += 1;
+      let pageIndex = val - 1;
+      let list = this.datalist;
+      this.list = list.slice(pageIndex * this.pageSize, (pageIndex + 1) * this.pageSize);
+      pageIndex += 1;
+      this.pageIndex = pageIndex;
     },
     handleSizeChange(val) {
+      this.pageIndex = 0;
       this.pageSize = val;
       this.loadShow = true;
       this.GetPersistentVolume();
@@ -233,13 +239,16 @@ export default {
       const param = {
         ClusterName: this.$route.query.clusterId,
         Method: "GET",
-        Path: "/api/v1/persistentvolumes?limit=" + this.pageSize,
+        Path: "/api/v1/persistentvolumes",
+        // ?limit=" + this.pageSize,
         Version: "2018-05-25"
       };
       this.axios.post(POINT_REQUEST, param).then(res => {
         if (res.Response.Error == undefined) {
+          this.list = [];
           let data = JSON.parse(res.Response.ResponseBody);
-          this.list = data.items;
+          this.datalist = data.items;
+          this.list = data.items.slice(this.pageIndex, this.pageSize);
           this.total = data.items.length;
           // this.delete = []
           this.loadShow = false;
@@ -266,8 +275,10 @@ export default {
       };
       this.axios.post(POINT_REQUEST, param).then(res => {
         if (res.Response.Error == undefined) {
+          this.list = [];
           let data = JSON.parse(res.Response.ResponseBody);
-          this.list = data.items;
+          this.list = data.items.slice(this.pageIndex, this.pageSize);
+          this.total = data.items.length;
           this.loadShow = false;
         } else {
           this.$message({

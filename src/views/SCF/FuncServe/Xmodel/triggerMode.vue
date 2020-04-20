@@ -234,7 +234,8 @@
               TriggerDesc: this.desc,
               CustomArgument: this.formTriggerForm.CustomArgument,
               Enable: this.formTriggerForm.nowStart == true ? "OPEN" : "CLOSE",
-              Qualifier: this.FunctionVersion
+              Qualifier: this.FunctionVersion,
+              Namespace: this.$route.query.SpaceValue
             };
             let functionName = this.$route.query.functionName;
             if (this.triggerShow === true) {

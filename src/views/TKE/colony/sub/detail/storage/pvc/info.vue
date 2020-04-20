@@ -8,7 +8,7 @@
           <div class="tke-form-item_text">{{this.$route.query.resourceIns}}</div>
         </el-form-item>
         <el-form-item label="Namespace">
-          <div class="tke-form-item_text">{{list.metadata.namespace}}</div>
+          <div class="tke-form-item_text">{{np}}</div>
         </el-form-item>
         <!-- <el-form-item label="Labels">
           <div class="tke-form-item_text">-</div>
@@ -41,13 +41,15 @@ export default {
   name: "pvcDetailInfo",
   data() {
     return {
-      list: ""
+      list: "",
+      np: ""
     };
   },
   components: {},
   created() {
     // 从路由获取类型
     this.GetList();
+    this.np = this.$route.query.np;
   },
   methods: {
     // 获取列表

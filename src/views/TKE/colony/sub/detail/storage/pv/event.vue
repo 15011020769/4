@@ -110,7 +110,7 @@ export default {
             this.timeId =null
           }
           this.SearchList()
-        },4000)
+        },1000 * 10)
       } else {
         window.clearInterval(this.timeId)
         this.timeId=null
@@ -153,18 +153,24 @@ export default {
   },
   filters:{
     creationTimestamps:function(value){
-              var d = new Date(value);
-              var n = d.getFullYear();
-              var y = d.getMonth() + 1;
-              var r = d.getDate();
-              var h = d.getHours(); //12
-              var m = d.getMinutes(); //12
-              var s = d.getSeconds();
-              h < 10 ? h = "0" + h : h;
-              m < 10 ? m = "0" + m : m
-              return n + '-' + y + '-' + r + ' ' + h + ':' + m + ':' + s
-      }
+      var d = new Date(value);
+      var n = d.getFullYear();
+      var y = d.getMonth() + 1;
+      var r = d.getDate();
+      var h = d.getHours(); //12
+      var m = d.getMinutes(); //12
+      var s = d.getSeconds();
+      h < 10 ? h = "0" + h : h;
+      m < 10 ? m = "0" + m : m
+      return n + '-' + y + '-' + r + ' ' + h + ':' + m + ':' + s
     }
+  },
+  //销毁定时器
+  beforeDestroy(){
+    if(this.timeId) { //如果定时器在运行则关闭
+      clearInterval(this.timeId); 
+    }
+  }
 };
 </script>
 
