@@ -208,9 +208,18 @@ const router = new Router({
       }
     },
     {
+      path: '/slow/open', // 断流诊断
+      name: 'slow-open',
+      component: () => import(/* webpackChunkName: "slow-domains" */ './slow/open.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
       path: '/slow/domains', // 断流诊断
       name: 'slow-domains',
       component: () => import(/* webpackChunkName: "slow-domains" */ './slow/domains/index.vue'),
+      beforeEnter: (t, f, n) => slowIntercept(t, f, n),
       meta: {
         keepAlive: true
       }
@@ -219,6 +228,7 @@ const router = new Router({
       path: '/slow/templates', // 断流诊断
       name: 'slow-templates',
       component: () => import(/* webpackChunkName: "slow-templates" */ './slow/templates/index.vue'),
+      beforeEnter: (t, f, n) => slowIntercept(t, f, n),
       meta: {
         keepAlive: true
       }
@@ -227,6 +237,7 @@ const router = new Router({
       path: '/slow/stat', // 断流诊断
       name: 'slow-stat',
       component: () => import(/* webpackChunkName: "slow-stat" */ './slow/stat/index.vue'),
+      beforeEnter: (t, f, n) => slowIntercept(t, f, n),
       meta: {
         keepAlive: true
       }
@@ -250,31 +261,56 @@ const router = new Router({
   ]
 })
 
-let open = -1; // 0 未开通 1 已开通
-router.beforeEach((to, from, next) => {
-  if (to.meta.interceptBuy === false) {
-    next();
-    return;
+let openslow = -1; // 0 未开通 1 已开通
+const slowIntercept = (to, from, next) => {
+  if (openslow === 1) {
+    next()
   }
-  if (open === -1) {
+  if (openslow === -1) {
     Vue.prototype.axios
-      .post('live2/CheckLiveUser', {
+      .post('live2/DescribeDelayLiveStatus', {
         Version: "2018-08-01"
       })
       .then(res => {
-        if (!res || res.Response.IsLiveUser !== 1) {
-          next("/live")
+        if (!res || res.Response.Status !== 1) {
+          openslow = 0
+          next("/slow/open")
         } else {
-          open = 1;
+          openslow = 1;
           next();
         }
       });
-  } else if (open === 0 && to.params.intercept !== false) {
-    next("/live");
-  } else {
-    open = 1;
+  } else if (openslow === 0 && to.params.open === true) { // 开通
+    openslow = 1;
     next();
   }
-});
+}
+
+// let open = -1; // 0 未开通 1 已开通
+// router.beforeEach((to, from, next) => {
+//   if (to.meta.interceptBuy === false) {
+//     next();
+//     return;
+//   }
+//   if (open === -1) {
+//     Vue.prototype.axios
+//       .post('live2/CheckLiveUser', {
+//         Version: "2018-08-01"
+//       })
+//       .then(res => {
+//         if (!res || res.Response.IsLiveUser !== 1) {
+//           next("/live")
+//         } else {
+//           open = 1;
+//           next();
+//         }
+//       });
+//   } else if (open === 0 && to.params.intercept !== false) {
+//     next("/live");
+//   } else {
+//     open = 1;
+//     next();
+//   }
+// });
 
 export default router

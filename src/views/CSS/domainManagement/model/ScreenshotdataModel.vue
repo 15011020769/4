@@ -2,7 +2,7 @@
   <div>
     <div>
       <el-dialog
-        title="截圖&鑒黃配置"
+        title="截圖配置"
         :visible.sync="isShow"
         :before-close="handleClose"
       >
@@ -32,11 +32,11 @@
                 prop="SnapshotInterval"
                 label="截圖間隔(秒)"
               ></el-table-column>
-              <el-table-column prop="selec" :label="$t('CSS.domainManagement.16')">
+              <!-- <el-table-column prop="selec" :label="$t('CSS.domainManagement.16')">
                 <template slot-scope="scope">{{
                   scope.row.PornFlag === 0 ? "不開啟" : "開啟"
                 }}</template>
-              </el-table-column>
+              </el-table-column> -->
             </el-table>
           </div>
         </div>

@@ -19,12 +19,12 @@
         <el-input-number v-model="ruleForm.SnapshotInterval" :step="5" step-strictly />
         <span class="sub-text">默認為10秒，取值範圍為5秒-300秒，必須為5的倍數</span>
       </el-form-item>
-      <el-form-item :label="$t('CSS.domainManagement.7')+$t('CSS.domainManagement.16')" prop="PornFlag">
+      <!-- <el-form-item :label="$t('CSS.domainManagement.7')+$t('CSS.domainManagement.16')" prop="PornFlag">
         <el-switch v-model="ruleForm.PornFlag" />
         <div class="explain" v-if="ruleForm.PornFlag">
           <p>{{$t('CSS.domainManagement.50')}}</p>
         </div>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="儲存位置">
         <div class="explain">
           <p>{{$t('CSS.domainManagement.51')}}</p>

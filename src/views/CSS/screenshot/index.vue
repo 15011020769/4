@@ -1,6 +1,6 @@
 <template>
   <div class="transcribe-wrap">
-    <HeaderCom title="截圖&鑒黃" />
+    <HeaderCom title="截圖配置" />
     <div class="transcribe-main">
       <!-- <div class="explain">
         <p>

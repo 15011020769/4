@@ -184,6 +184,9 @@ export default {
   mounted () {
     // this.getData();
     this.describeLiveDomains()
+    this.axios.post('live2/DescribeDelayLiveStatus', {
+      Version: '2018-08-01'
+    })
   },
   methods: {
     onSuccess() {
