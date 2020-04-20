@@ -524,11 +524,13 @@ export default {
       var timeId = setInterval(() => {
         if (this.status != "running") {
           this.getFlag(timeId);
+          // console.log(timeId)
+          // clearInterval(timeId);
           // || this.status == "failed"
-          if (this.status == "running" ) {
+        }
+        if (this.status == "running" ) {
             this.getHelmList();
             clearInterval(timeId);
-          }
         }
       }, 4000);
     },
@@ -598,6 +600,7 @@ export default {
           this.tableData = JSON.parse(res.Response.ResponseBody).releases;
           this.loadShow = false;
           this.flagSE = false;
+          console.log(this.$route)
           // clearInterval(timeId)
           // this.flag = false
         } else {
@@ -639,7 +642,16 @@ export default {
               this.getHelmList();
             } else if (this.status == "checking") {
               this.flagAgin = 3;
-              this.getFlag()
+              clearInterval(timeId);
+              clearInterval(timeSet);
+              // helm开通每四秒获取一次数据
+              var timeSet = setTimeout(()=>{
+                if(this.$route.name=='helm'){
+                  this.getFlag()
+                } else {
+                  clearInterval(timeSet);
+                }
+              },4000)
             } else if(this.status == "failed"){
               this.flagAgin = 2;
               clearInterval(timeId);
@@ -648,7 +660,7 @@ export default {
               this.flagAgin = 2;
               this.loadShow = false;
               clearInterval(timeId);
-               this.loadShow = false;
+              this.loadShow = false;
             }
           } else {
             this.flagAgin = 1;
