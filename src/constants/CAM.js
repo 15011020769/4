@@ -73,3 +73,4 @@ export const LOGOUT_ROLE_SESSIONS = 'cam/LogoutRoleSessions'
 export const LIST_GROUPS_V2 = 'cam/ListGroups'
 export const UPDATE_ROLE_CONSOLE_LOGIN = 'cam/UpdateRoleConsoleLogin'
 
+export const APIKEY = 'taifucloud/account-sub/manage/info/'

@@ -206,15 +206,15 @@ export default {
     SEARCH
   },
   watch: {
-    // autoRefresh(val) {
-    //   if (this.autoRefresh === true) {
-    //     var timeId = setInterval(() => {
-    //       this.nameSpaceList();
-    //     }, 40000);
-    //   } else {
-    //     this.nameSpaceList();
-    //   }
-    // }
+    autoRefresh(val) {
+      if (this.autoRefresh === true) {
+        var timeId = setInterval(() => {
+          this.getLog();
+        }, 1000 * 10);
+      } else {
+        this.getLog();
+      }
+    }
   },
   created() {
     this.nameSpaceList1();
@@ -231,7 +231,7 @@ export default {
           if (this.option3.length == 0) {
             this.nameSpaceList2();
           } 
-        }, 1000*20);
+        }, 100000*20);
       } else {
         window.clearInterval(this.timeId);
         // this.nameSpaceList2();
@@ -495,8 +495,11 @@ export default {
       });
     }
   },
-  destroyed() {
-    window.clearInterval(this.timeId);
+  //销毁定时器
+  beforeDestroy(){
+    if(this.timeId) { //如果定时器在运行则关闭
+      clearInterval(this.timeId); 
+    }
   }
 };
 </script>

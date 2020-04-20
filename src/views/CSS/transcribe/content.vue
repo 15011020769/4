@@ -1,5 +1,6 @@
 <template>
   <div class="main-box" v-loading="loading">
+    isDelayLive={{isDelayLive}}
     <div class="left">
       <i class="el-icon-plus" @click="_add" />
       <i class="el-icon-delete" @click="handleDelete" />
@@ -13,7 +14,7 @@
       </ul>
     </div>
     <div class="right" v-show="showRight">
-      <OptionForm :formShow.sync="formShow" :selectItem="selectItem" v-if="formShow" />
+      <OptionForm :formShow.sync="formShow" :selectItem="selectItem" v-if="formShow" :isDelayLive="isDelayLive" />
       <ConfigDetail v-if="!formShow" :selectItem="selectItem" :formShow.sync="formShow" />
     </div>
     <DeleteModal :modalVisible.sync="modalVisible" :domainName="selectItem.TemplateName" />

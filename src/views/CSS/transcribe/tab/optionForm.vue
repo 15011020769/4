@@ -130,6 +130,11 @@ export default {
   props: {
     selectItem: {
       type: Object
+    },
+    isDelayLive: {
+      type: Number,
+      required: false,
+      default: 0,
     }
   },
 
@@ -206,7 +211,7 @@ export default {
           const params = Object.assign(sortParams, {
             Version: '2018-08-01',
             TemplateName: this.ruleForm.TemplateName,
-            Description: this.ruleForm.Description
+            Description: this.ruleForm.Description,
           })
 
           // 如果有selectItem则为修改
@@ -217,7 +222,7 @@ export default {
             this.handleUpdate(params)
             return
           }
-
+          params.IsDelayLive = this.isDelayLive
           this.handleAdd(params)
         }
       })

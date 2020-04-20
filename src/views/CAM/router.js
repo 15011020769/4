@@ -22,6 +22,14 @@ export default new Router({
     }
   },
   {
+    path: '/apisecretkey', // API密钥管理
+    name: 'apisecretkey',
+    component: () => import( /* webpackChunkName: "UserGroup" */ './apisecretkey/apisecretkey.vue'),
+    meta: {
+      keepAlive: true
+    }
+  },
+  {
     path: '/UserGroup', // 用户组
     name: 'UserGroup',
     component: () => import( /* webpackChunkName: "UserGroup" */ './UserGroup/UserGroup.vue'),

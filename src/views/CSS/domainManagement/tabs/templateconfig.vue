@@ -26,7 +26,7 @@
         </div>
         <div class="modileCon" v-if="info.IsDelayLive === 0">
           <h1>
-            {{ $t("CSS.domainManagement.13") }}
+            截圖配置
             <a @click="ScreenshotEdit">{{ $t("CSS.domainManagement.10") }}</a>
           </h1>
           <div>
@@ -43,7 +43,7 @@
                 prop="SnapshotInterval"
                 :label="$t('CSS.domainManagement.17')"
               ></el-table-column>
-              <el-table-column
+              <!-- <el-table-column
                 prop="PornFlag"
                 :label="$t('CSS.domainManagement.16')"
               >
@@ -52,7 +52,7 @@
                     ? $t("CSS.domainManagement.19")
                     : $t("CSS.domainManagement.20")
                 }}</template>
-              </el-table-column>
+              </el-table-column> -->
             </el-table>
           </div>
         </div>

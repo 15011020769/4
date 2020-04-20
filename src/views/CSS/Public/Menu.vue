@@ -32,7 +32,7 @@
             <span slot="title">{{$t('CSS.leftSide.5')}}</span>
           </el-menu-item>
           <el-menu-item index="/screenshot">
-            <span slot="title">{{$t('CSS.leftSide.6')}}</span>
+            <span slot="title">截圖配置</span>
           </el-menu-item>
           <el-menu-item index="/watermark">
             <span slot="title">{{$t('CSS.leftSide.7')}}</span>

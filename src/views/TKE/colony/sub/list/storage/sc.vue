@@ -102,8 +102,9 @@ export default {
     return {
       loadShow: true, //加载是否显示
       list: [], //列表
+      datalist:[],
       total: 0,
-      pageSize: 10,
+      pageSize: 20,
       pageIndex: 0,
       multipleSelection: [],
       centerDialogVisible: false,
@@ -148,10 +149,12 @@ export default {
     },
     //选择搜索条件
     changeSearchType(val) {
+      this.pageIndex  = 0;
       this.searchType = val;
     },
     //监听搜索框的值
     changeSearchInput(val) {
+      this.pageIndex  = 0;
       this.searchInput = val;
     },
     // 点击搜索
@@ -189,12 +192,15 @@ export default {
 
     // 分页
     handleCurrentChange(val) {
-      this.pageIndex = val - 1;
-      // this.getColonyList();
-      this.pageIndex += 1;
+      let pageIndex = val - 1;
+      let list = this.datalist;
+      this.list = list.slice(pageIndex * this.pageSize, (pageIndex + 1) * this.pageSize);
+      pageIndex += 1;
+      this.pageIndex = pageIndex;
     },
     handleSizeChange(val) {
       this.pageSize = val;
+      this.pageIndex = 0;
       this.loadShow = true;
       this.GetList();
       // this.getColonyList();
@@ -218,13 +224,16 @@ export default {
       var params = {
         ClusterName: this.$route.query.clusterId,
         Method: "GET",
-        Path: "/apis/storage.k8s.io/v1/storageclasses?limit=" + this.pageSize,
+        Path: "/apis/storage.k8s.io/v1/storageclasses",
+        // ?limit=" + this.pageSize,
         Version: "2018-05-25"
       };
       this.axios.post(POINT_REQUEST, params).then(res => {
+        this.list = [];
         if (res.Response.Error === undefined) {
           var mes = JSON.parse(res.Response.ResponseBody);
-          this.list = mes.items;
+          this.list = mes.items.slice(this.pageIndex, this.pageSize);
+          this.datalist = mes.items;
           this.total = mes.items.length;
           this.loadShow = false;
         } else {
@@ -250,9 +259,11 @@ export default {
         Version: "2018-05-25"
       };
       this.axios.post(POINT_REQUEST, params).then(res => {
+        this.list = [];
         if (res.Response.Error === undefined) {
           var mes = JSON.parse(res.Response.ResponseBody);
-          this.list = mes.items;
+          this.list = mes.items.slice(this.pageIndex, this.pageSize);
+          this.total = mes.items.length;
           this.loadShow = false;
         } else {
           let ErrTips = {};

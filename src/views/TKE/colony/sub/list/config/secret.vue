@@ -111,8 +111,9 @@ export default {
     return {
       loadShow: false, //加载是否显示
       list: [], //列表
+      dataList: [],//所有数据列表
       total: 0,
-      pageSize: 10,
+      pageSize: 20,
       pageIndex: 0,
       multipleSelection: [],
       showNameSpaceModal: false, //是否显示删除框
@@ -140,9 +141,8 @@ export default {
           Method: "GET",
           Path:
             "/api/v1/namespaces/" +
-            this.searchType +
-            "/secrets?&limit=" +
-            this.pageSize,
+            this.searchType + "/secrets",
+            // ?&limit=" + this.pageSize,
           Version: "2018-05-25",
           ClusterName: this.clusterId
         };
@@ -161,8 +161,11 @@ export default {
 
       this.axios.post(TKE_COLONY_QUERY, params).then(res => {
         if (res.Response.Error === undefined) {
+          this.list = [];
           var mes = JSON.parse(res.Response.ResponseBody);
-          this.list = mes.items;
+          // this.list = mes.items;
+          this.list = mes.items.slice(this.pageIndex, this.pageSize);
+          this.dataList = mes.items || [];
           this.total = mes.items.length;
           this.loadShow = false;
         } else {
@@ -284,11 +287,14 @@ export default {
 
     // 分页
     handleCurrentChange(val) {
-      this.pageIndex = val - 1;
-      this.getData();
-      this.pageIndex += 1;
+      let pageIndex = val - 1;
+      let list = this.dataList;
+      this.list = list.slice(pageIndex * this.pageSize, (pageIndex + 1) * this.pageSize);
+      pageIndex += 1;
+      this.pageIndex = pageIndex;
     },
     handleSizeChange(val) {
+      this.pageIndex = 0;
       this.pageSize = val;
       this.getData();
     },

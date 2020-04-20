@@ -1,7 +1,8 @@
 <template>
   <div class="Monitor">
     <div class="Tips">
-      <p>{{$t('SCF.total.hswpzgj')}}<a href="../CM/index.html#/strategy/create"> [前往新增告警]</a>{{$t('SCF.total.whstjcl')}}</p>
+      <p>{{$t('SCF.total.hswpzgj')}}<a href="../CM/index.html#/strategy/create"> [前往新增告警]</a>{{$t('SCF.total.whstjcl')}}
+      </p>
     </div>
     <div class="Monitortip">
       <TimeDropDown :TimeArr='TimeArr' :Datecontrol='true' :Graincontrol='true' :Difference="'H'"
@@ -37,17 +38,17 @@
           <template slot-scope="scope">
             <p v-if="scope.row.DataPoints[0].Values.length==0">{{$t('SCF.total.zwsj')}}</p>
             <div v-if="scope.row.DataPoints[0].Timestamps.length!=0">
-              <echart-line  v-if="!openFlags"    :id="scope.row.MetricName + 1" :time="scope.row.DataPoints[0].Timestamps | UpTime"
-                :opData="scope.row.DataPoints[0].Values" :scale="3" :period="Period" :xdata="false"
-                :MetricName='disName[scope.row.MetricName]' :Company='Company[scope.row.MetricName]'></echart-line>
-              <echartsLineComparsion v-if="openFlags" 
-              :id="scope.row.MetricName + 1" :time="scope.row.DataPoints?UpTime2(scope.row.DataPoints[0].Timestamps):[]"
+              <echart-line v-if="!openFlags" :id="scope.row.MetricName + 1"
+                :time="scope.row.DataPoints[0].Timestamps | UpTime" :opData="scope.row.DataPoints[0].Values" :scale="3"
+                :period="Period" :xdata="false" :MetricName='disName[scope.row.MetricName]'
+                :Company='Company[scope.row.MetricName]'></echart-line>
+              <echartsLineComparsion v-if="openFlags" :id="scope.row.MetricName + 1"
+                :time="scope.row.DataPoints?UpTime2(scope.row.DataPoints[0].Timestamps):[]"
                 :time2="scope.row.DataPoints2?UpTime2(scope.row.DataPoints2[0].Timestamps):[]"
-              :opData="scope.row.DataPoints?(scope.row.DataPoints[0].Values):[]" 
-              :opData2="scope.row.DataPoints2?(scope.row.DataPoints2[0].Values):[]"
-              :scale="3" :period="Period" :xdata="false"
-              :MetricName='disName[scope.row.MetricName]' :Company='Company[scope.row.MetricName]'
-              ></echartsLineComparsion>
+                :opData="scope.row.DataPoints?(scope.row.DataPoints[0].Values):[]"
+                :opData2="scope.row.DataPoints2?(scope.row.DataPoints2[0].Values):[]" :scale="3" :period="Period"
+                :xdata="false" :MetricName='disName[scope.row.MetricName]' :Company='Company[scope.row.MetricName]'>
+              </echartsLineComparsion>
             </div>
           </template>
         </el-table-column>
@@ -246,14 +247,14 @@
           }
         ],
         functionName: this.$route.query.functionName,
-        comparseFlag:false,
-        openFlags:false,
+        comparseFlag: false,
+        openFlags: false,
         BaseList: [], //全部指标列表
         BaseListK: [], //用到的指标列表
         TableLoad: true,
         Period: '', //粒度
         Time: {}, //监控传递时间
-        Time2:{},//数据对比监控传递时间
+        Time2: {}, //数据对比监控传递时间
         MonitorData: [], //监控数据
         tableData: [], // 组合数据
         disName: {
@@ -326,26 +327,26 @@
       echartsLineComparsion
     },
     watch: {
-      MonitorData:{
-        handler(val){
+      MonitorData: {
+        handler(val) {
           if (this.MonitorData) {
-           this.MonitorData.forEach(element => {
+            this.MonitorData.forEach(element => {
               this.BaseListK.forEach(item => {
-             if(item.MetricName === element.MetricName) {
+                if (item.MetricName === element.MetricName) {
                   item.DataPoints = element.DataPoints
-                  if(element.DataPoints2){
+                  if (element.DataPoints2) {
                     item.DataPoints2 = element.DataPoints2
                   }
                 }
               });
             });
-            if(this.BaseListK.length == val.length){
+            if (this.BaseListK.length == val.length) {
               this.tableData = this.BaseListK
               this.TableLoad = false
             }
-         } 
+          }
         },
-        deep:true
+        deep: true
       }
 
     },
@@ -373,20 +374,18 @@
         return wbout;
       },
       GetDat(data) {
-        // console.log(data,'data++++++++++++++++=time')
         this.Period = data[0]
-        this.Time =data[1]
-        // this.Time ={...data[1]} 
+        this.Time = data[1]
         this._GetBase()
       },
-      GetDat2(data){
-        this.Time2=data[1]
+      GetDat2(data) {
+        this.Time2 = data[1]
       },
       //数据对比开关状态
-      openFlag(val){
-          this.openFlags=val
+      openFlag(val) {
+        this.openFlags = val
       },
-     
+
       //获取基础指标详情
       _GetBase() {
         this.TableLoad = true
@@ -400,18 +399,23 @@
             this.BaseList = res.Response.MetricSet
             this.MonitorData = []
             this.BaseListK = []
-            // console.log(this.Time,'time1')
-            // console.log(this.Time2,'time2')
-            // console.log(this.openFlags,'this.openFlags')
             this.BaseList.forEach(item => {
               if (item.Period.indexOf(Number(this.Period)) !== -1) {
                 this.BaseListK.push(item)
-                this._GetMonitorData(item.MetricName)
-                if(this.openFlags){
-                 this._GetMonitorData2(item.MetricName)
-                }
               }
             });
+            for (let
+                k = 0; k < this.BaseListK.length; k++) {
+              let _this = this;
+              (function (o) {
+                setTimeout(() => {
+                  _this._GetMonitorData(_this.BaseListK[o].MetricName)
+                  if (_this.openFlags) {
+                    _this._GetMonitorData2(_this.BaseListK[o].MetricName)
+                  }
+                }, o * 1000);
+              })(k)
+            }
           } else {
             this.$message({
               message: ErrorTips[res.Response.Error.Code],
@@ -466,11 +470,11 @@
           'Instances.0.Dimensions.1.Value': this.FunctionVersion
         }
         this.axios.post(All_MONITOR, parms).then(data => {
-          let arr=[];
+          let arr = [];
           if (data.Response.Error == undefined) {
-            this.MonitorData.forEach(item=>{
-              if(item.MetricName==data.Response.MetricName){
-                 item.DataPoints2 = data.Response.DataPoints
+            this.MonitorData.forEach(item => {
+              if (item.MetricName == data.Response.MetricName) {
+                item.DataPoints2 = data.Response.DataPoints
               }
             })
             // return  this.MonitorData
@@ -511,8 +515,8 @@
           });
         }
       },
-      UpTime2(value){
-          let timeArr = [];
+      UpTime2(value) {
+        let timeArr = [];
         for (let i = 0; i < value.length; i++) {
           let uptime = moment(value[i] * 1000).format("YYYY-MM-DD HH:mm:ss");
           timeArr.push(uptime);

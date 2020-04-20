@@ -610,6 +610,7 @@
           FunctionName: this.functionName,
           TestModelName: this.ruleForm.name,
           TestModelValue: this.codemirrorValue,
+          Namespace: this.$route.query.SpaceValue
         };
         this.axios.post(TEST_MODEL, param).then(res => {
           if (res.Response.Error === undefined) {
