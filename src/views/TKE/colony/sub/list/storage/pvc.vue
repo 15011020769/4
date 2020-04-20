@@ -108,8 +108,9 @@ export default {
     return {
       loadShow: false, //加载是否显示
       list: [], //列表
+      datalist: [],//所有列表数据
       total: 0,
-      pageSize: 10,
+      pageSize: 20,
       pageIndex: 0,
       multipleSelection: [],
       //搜索下拉框
@@ -212,12 +213,15 @@ export default {
     },
     // 分页
     handleCurrentChange(val) {
-      this.pageIndex = val - 1;
-      // this.getColonyList();
-      this.pageIndex += 1;
+      let pageIndex = val - 1;
+      let list = this.datalist;
+      this.list = list.slice(pageIndex * this.pageSize, (pageIndex + 1) * this.pageSize);
+      pageIndex += 1;
+      this.pageIndex = pageIndex;
     },
     handleSizeChange(val) {
       this.pageSize = val;
+      this.pageIndex = 0;
       this.loadShow = true;
       this.getList();
       // this.getColonyList();
@@ -269,15 +273,17 @@ export default {
         Path:
           "/api/v1/namespaces/" +
           this.searchType +
-          "/persistentvolumeclaims?limit=" +
-          this.pageSize,
+          "/persistentvolumeclaims",
+          // ?limit=" + this.pageSize,
         Version: "2018-05-25",
         ClusterName: this.$route.query.clusterId
       };
       this.axios.post(POINT_REQUEST, params).then(res => {
         if (res.Response.Error === undefined) {
+          this.list = [];
           var mes = JSON.parse(res.Response.ResponseBody);
-          this.list = mes.items;
+          this.list = mes.items.slice(this.pageIndex, this.pageSize);
+          this.datalist = mes.items;
           this.total = mes.items.length;
           this.loadShow = false;
         } else {
@@ -306,8 +312,10 @@ export default {
       };
       this.axios.post(POINT_REQUEST, params).then(res => {
         if (res.Response.Error === undefined) {
+          this.list = [];
           var mes = JSON.parse(res.Response.ResponseBody);
-          this.list = mes.items;
+          this.list = mes.items;//.slice(this.pageIndex, this.pageSize);
+          this.total = mes.items.length;
           this.loadShow = false;
         } else {
           let ErrTips = {};
