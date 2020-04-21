@@ -202,7 +202,8 @@
           Action: "DeleteTrigger",
           TriggerName: this.childData.TriggerName,
           Type: this.childData.Type,
-          Qualifier: this.FunctionVersion
+          Qualifier: this.FunctionVersion,
+          Namespace: this.$route.query.SpaceValue
         };
         let functionName = this.$route.query.functionName;
         if (functionName != "" && functionName != null) {
@@ -284,7 +285,8 @@
             Action: "CreateTrigger",
             Enable: state,
             TriggerName: val.TriggerName,
-            Type: val.Type
+            Type: val.Type,
+            Namespace: this.$route.query.SpaceValue
           };
           if (functionName != "" && functionName != null) {
             params["FunctionName"] = functionName;
