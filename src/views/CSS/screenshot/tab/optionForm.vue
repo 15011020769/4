@@ -1,6 +1,6 @@
 <template>
   <div class="form-wrap">
-    <h4>截圖鑒黃配置</h4>
+    <h4>截圖配置</h4>
     <el-form
       :model="ruleForm"
       :rules="rules"
