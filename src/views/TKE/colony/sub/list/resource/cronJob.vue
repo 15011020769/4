@@ -278,6 +278,7 @@ export default {
     },
     // 点击搜索
     clickSearch(val) {
+      this.pageIndex = 1;
       this.searchInput = val;
       this.listData();
     },
@@ -392,6 +393,7 @@ export default {
         };
       }
       await this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+        this.list = [];
         if (res.Response.Error == undefined) {
           var data = JSON.parse(res.Response.ResponseBody);
           this.loadShow=false

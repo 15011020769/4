@@ -50,6 +50,7 @@
             :placeholder="$t('TKE.event.qxzwork')"
             size="mini"
             class="ml10"
+            @change="changepod"
           >
             <!-- 工作负载实例 -->
             <el-option
@@ -240,6 +241,9 @@ export default {
     //返回上一层
     goBack() {
       this.$router.go(-1);
+    },
+    changepod() {
+      this.getPodData();
     },
     //获取命名空间列表数据
     nameSpaceList1() {

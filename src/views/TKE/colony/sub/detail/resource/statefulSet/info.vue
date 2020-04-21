@@ -59,19 +59,19 @@
             <el-form-item label="镜像">
               <div class="tke-form-item_text">{{item.image}}</div>
             </el-form-item>
-            <el-form-item label="运行命令" v-model="item.command">
+            <el-form-item label="运行命令" v-if="item.command">
               <div class="tke-form-item_text">{{item.command && item.command | command}}</div>
             </el-form-item>
-            <el-form-item label="CPU Requested" v-show="item.resources.requests">
+            <el-form-item label="CPU Requested" v-if="item.resources.requests">
               <div class="tke-form-item_text">{{item.resources && item.resources.requests && item.resources.requests.cpu || '-'}}</div>
             </el-form-item>
-            <el-form-item label="CPU Limited" v-show="item.resources.limits">
+            <el-form-item label="CPU Limited" v-if="item.resources.limits">
               <div class="tke-form-item_text">{{item.resources && item.resources.limits && item.resources.limits.cpu || '-'}}</div>
             </el-form-item>
-            <el-form-item label="内存 Requested" v-show="item.resources.requests">
+            <el-form-item label="内存 Requested" v-if="item.resources.requests">
               <div class="tke-form-item_text">{{item.resources && item.resources.requests && item.resources.requests.memory || '-'}}</div>
             </el-form-item>
-            <el-form-item label="内存 Limited" v-show="item.resources.limits">
+            <el-form-item label="内存 Limited" v-if="item.resources.limits">
               <div class="tke-form-item_text">{{item.resources && item.resources.limits && item.resources.limits.memory || '-'}}</div>
             </el-form-item>
             <!-- <el-form-item label="运行参数">
@@ -82,19 +82,19 @@
                 --v=2
               </div>
             </el-form-item> -->
-            <el-form-item label="环境变量" v-model="item.env">
+            <el-form-item label="环境变量" v-if="item.env">
               <div class="tke-form-item_text">{{item.env && item.env | environment}}</div>
               <!-- <div class="tke-form-item_text">{{item.env && item.env | environment1}}</div> -->
             </el-form-item>
-            <el-form-item label="挂载点" v-model="item.volumeMounts">
+            <el-form-item label="挂载点" v-if="item.volumeMounts">
               <div class="tke-form-item_text">
                 {{item.volumeMounts && item.volumeMounts | volumeMount}}
               </div>
             </el-form-item>
-            <el-form-item label="存活检查" v-model="item.livenessProbe">
+            <el-form-item label="存活检查" v-if="item.livenessProbe">
               <div class="tke-form-item_text">{{item.livenessProbe && item.livenessProbe | livenessProbe}}</div>
             </el-form-item>
-            <el-form-item label="就绪检查" v-model="item.readinessProbe">
+            <el-form-item label="就绪检查" v-if="item.readinessProbe">
               <div class="tke-form-item_text">{{item.readinessProbe && item.readinessProbe | readinessProbe}}</div>
             </el-form-item>
 
@@ -218,15 +218,17 @@ export default {
       let res = '';
       if(value) {
         for(let i = 0; i < value.length; i++) {
-          res += value[i] + '   ,'
+          res += value[i] + '   ,           '
         }
         return res.substring(0,res.length - 1);
       } else {
-        return res;
+        return "-";
       }
     },
     livenessProbe(value) {
-
+      if(value) {
+        console.log(value);
+      }
     },
     readinessProbe(value) {
 

@@ -20,7 +20,7 @@
             v-model="typeValue"
             filterable
             :placeholder="$t('TKE.event.qxzlx')"
-            @change="getEventList"
+            @change="changetype"
           >
             <el-option
               v-for="item in typeOptions"
@@ -35,7 +35,7 @@
             v-model="nameValue"
             :placeholder="$t('TKE.event.qxzmc')"
             :disabled="nameFlag"
-            @change="getNameList"
+            @change="getEventList"
           >
             <el-option
               v-for="item in nameOptions"
@@ -206,15 +206,15 @@ export default {
   },
   methods: {
     refresh() {
-      this.nsOptions = [];
+      // this.nsOptions = [];
       if (this.autoRefresh == true) {
         this.timeId = setInterval(() => {
-          this.nameSpaceList();
+          // this.nameSpaceList();
           this.getEventList();
         }, 20000);
       } else {
         clearInterval(this.timeId);
-        this.nameSpaceList();
+        // this.nameSpaceList();
         this.getEventList();
       }
     },
@@ -267,6 +267,7 @@ export default {
         ClusterName: this.$route.query.clusterId
       };
       this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+        this.nameValue = "";
         this.list = [];
         if (res.Response.Error === undefined) {
           var mes = JSON.parse(res.Response.ResponseBody);
@@ -415,6 +416,10 @@ export default {
           });
         }
       });
+    },
+    changetype() {
+      this.nameValue = "";
+      this.getNameList();
     },
     getNameList() {
       // /api/v1/namespaces/default/events?fieldSelector=involvedObject.kind=DaemonSet,involvedObject.name=workload57&limit=20
