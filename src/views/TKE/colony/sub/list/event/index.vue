@@ -20,7 +20,7 @@
             v-model="typeValue"
             filterable
             :placeholder="$t('TKE.event.qxzlx')"
-            @change="getEventList"
+            @change="changetype"
           >
             <el-option
               v-for="item in typeOptions"
@@ -35,7 +35,7 @@
             v-model="nameValue"
             :placeholder="$t('TKE.event.qxzmc')"
             :disabled="nameFlag"
-            @change="getNameList"
+            @change="getEventList"
           >
             <el-option
               v-for="item in nameOptions"
@@ -101,7 +101,7 @@
         </el-table-column>
       </el-table>
 
-      <div class="tke-page">
+      <!-- <div class="tke-page">
         <div class="block">
           <el-pagination
             @size-change="handleSizeChange"
@@ -114,7 +114,7 @@
             :total="total"
           ></el-pagination>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -206,16 +206,16 @@ export default {
   },
   methods: {
     refresh() {
-      this.nsOptions = [];
+      // this.nsOptions = [];
       if (this.autoRefresh == true) {
         this.timeId = setInterval(() => {
-          this.nameSpaceList();
-          this.getEventList();
+          this.getNameList();
+          // this.getEventList();
         }, 20000);
       } else {
         clearInterval(this.timeId);
-        this.nameSpaceList();
-        this.getEventList();
+        this.getNameList();
+        // this.getEventList();
       }
     },
     // 初始化命名空间获取的列表事件
@@ -258,34 +258,36 @@ export default {
       });
     },
     getKind() {
+      this.getNameList();
       //改变命名空间获取的数据
-      this.loadShow = true;
-      var params = {
-        Method: "GET",
-        Path: "/api/v1/namespaces/" + this.nsValue + "/events?&limit=20",
-        Version: "2018-05-25",
-        ClusterName: this.$route.query.clusterId
-      };
-      this.axios.post(TKE_COLONY_QUERY, params).then(res => {
-        this.list = [];
-        if (res.Response.Error === undefined) {
-          var mes = JSON.parse(res.Response.ResponseBody);
-          this.list = mes.items;
-          this.total = mes.items.length;
-          this.loadShow = false;
-        } else {
-          let ErrTips = {};
-          this.list = [];
-          this.loadShow = false;
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-      });
+      // this.loadShow = true;
+      // var params = {
+      //   Method: "GET",
+      //   Path: "/api/v1/namespaces/" + this.nsValue + "/events?&limit=20",
+      //   Version: "2018-05-25",
+      //   ClusterName: this.$route.query.clusterId
+      // };
+      // this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+      //   this.nameValue = "";
+      //   this.list = [];
+      //   if (res.Response.Error === undefined) {
+      //     var mes = JSON.parse(res.Response.ResponseBody);
+      //     this.list = mes.items;
+      //     this.total = mes.items.length;
+      //     this.loadShow = false;
+      //   } else {
+      //     let ErrTips = {};
+      //     this.list = [];
+      //     this.loadShow = false;
+      //     let ErrOr = Object.assign(ErrorTips, ErrTips);
+      //     this.$message({
+      //       message: ErrOr[res.Response.Error.Code],
+      //       type: "error",
+      //       showClose: true,
+      //       duration: 0
+      //     });
+      //   }
+      // });
     },
     getEventList() {
       //事件列表
@@ -396,39 +398,52 @@ export default {
           });
         }
       });
-
-      this.axios.post(TKE_COLONY_QUERY, params1).then(res => {
-        if (res.Response.Error === undefined) {
-          var mes = JSON.parse(res.Response.ResponseBody);
-          this.list = mes.items;
-          this.total = mes.items.length;
-          this.loadShow = false;
-        } else {
-          let ErrTips = {};
-          this.loadShow = false;
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-      });
+      this.getNameList();
+      // this.axios.post(TKE_COLONY_QUERY, params1).then(res => {
+      //   if (res.Response.Error === undefined) {
+      //     var mes = JSON.parse(res.Response.ResponseBody);
+      //     this.list = mes.items;
+      //     this.total = mes.items.length;
+      //     this.loadShow = false;
+      //   } else {
+      //     let ErrTips = {};
+      //     this.loadShow = false;
+      //     let ErrOr = Object.assign(ErrorTips, ErrTips);
+      //     this.$message({
+      //       message: ErrOr[res.Response.Error.Code],
+      //       type: "error",
+      //       showClose: true,
+      //       duration: 0
+      //     });
+      //   }
+      // });
+    },
+    changetype() {
+      this.nameValue = "";
+      this.getEventList();
     },
     getNameList() {
       // /api/v1/namespaces/default/events?fieldSelector=involvedObject.kind=DaemonSet,involvedObject.name=workload57&limit=20
       var params1 = {
         Path:
-          "/api/v1/namespaces/" +
-          this.nsValue +
-          "/events?fieldSelector=involvedObject.kind=" +
+          ""
+      };
+      if(this.typeValue !== '全部類型') {
+        if(this.nameValue) {
+          params1.Path = "/api/v1/namespaces/" + this.nsValue + "/events?fieldSelector=involvedObject.kind=" +
           this.typeValue.charAt(0).toUpperCase() +
           this.typeValue.slice(1) +
           ",involvedObject.name=" +
           this.nameValue +
           "&limit=20"
-      };
+        } else {
+          params1.Path = "/api/v1/namespaces/" + this.nsValue + "/events?fieldSelector=involvedObject.kind=" +
+          this.typeValue.charAt(0).toUpperCase() +
+          this.typeValue.slice(1) + "&limit=20"
+        }
+      } else {
+        params1.Path = "/api/v1/namespaces/" + this.nsValue + "/events?&limit=20"
+      }
       params1.Method = "GET";
       params1.ClusterName = this.$route.query.clusterId;
       params1.Version = "2018-05-25";

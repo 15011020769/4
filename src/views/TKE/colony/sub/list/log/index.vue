@@ -50,6 +50,7 @@
             :placeholder="$t('TKE.event.qxzwork')"
             size="mini"
             class="ml10"
+            @change="changepod"
           >
             <!-- 工作负载实例 -->
             <el-option
@@ -207,14 +208,16 @@ export default {
   },
   watch: {
     autoRefresh(val) {
-      if (this.autoRefresh === true) {
-        var timeId = setInterval(() => {
+      if (val) {
+        this.timeId = setInterval(() => {
           this.getLog();
         }, 1000 * 10);
       } else {
-        this.getLog();
+        clearInterval(this.timeId); 
       }
-    }
+    },
+    deep:true,
+    immediate :true
   },
   created() {
     this.nameSpaceList1();
@@ -222,24 +225,26 @@ export default {
     
   },
   mounted() {
-    this.refresh();
+    // this.refresh();
   },
   methods: {
     refresh() {
-      if (this.autoRefresh === true) {
+      if (this.autoRefresh) {
         this.timeId = setInterval(() => {
           if (this.option3.length == 0) {
-            this.nameSpaceList2();
+            this.getLog();
           } 
         }, 100000*20);
       } else {
-        window.clearInterval(this.timeId);
-        // this.nameSpaceList2();
+        clearInterval(this.timeId);
       }
     },
     //返回上一层
     goBack() {
       this.$router.go(-1);
+    },
+    changepod() {
+      this.getPodData();
     },
     //获取命名空间列表数据
     nameSpaceList1() {
@@ -255,6 +260,7 @@ export default {
       };
       this.axios.post(TKE_COLONY_QUERY, params).then(res => {
         if (res.Response.Error === undefined) {
+          this.autoRefresh = true;
           var mes = JSON.parse(res.Response.ResponseBody);
           // this.option1 = []; //命名空间选项
           mes.items.forEach(item => {
@@ -416,7 +422,7 @@ export default {
               }
             });
             this.value5 = this.option5[0].value;
-            this.autoRefresh = true;
+            // this.autoRefresh = true;
             // this.refresh();
             this.getLog();
           } else {
@@ -461,8 +467,7 @@ export default {
           this.value4 +
           "/log?container=" +
           this.value5 +
-          "&timestamps=" +
-          this.autoRefresh +
+          "&timestamps=true" +
           "&tailLines=" +
           this.value6.replace(/[^\d]/g, ""),
         Version: "2018-05-25",
