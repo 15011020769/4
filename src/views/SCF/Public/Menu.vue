@@ -26,8 +26,10 @@ export default {
     console.log(routerPath)
     if(routerPath === '/overView') {
       localStorage.setItem('scfMenu', 'overView')
+      this.scfMenu = localStorage.getItem('scfMenu')
     }else {
       localStorage.setItem('scfMenu', 'FuncServe')
+      this.scfMenu = localStorage.getItem('scfMenu')
     }
   },
   methods: {
@@ -39,8 +41,8 @@ export default {
     },
     // 选中菜单点击事件
     handleSelect(key, keyPath) {
-      this.scfMenu = key
       localStorage.setItem('scfMenu', key)
+      this.scfMenu = localStorage.getItem('scfMenu')
     }
   },
 };
