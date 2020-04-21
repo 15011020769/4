@@ -392,7 +392,6 @@
             this.implementInput = res.Response.Handler
             this.functionversion = res.Response.FunctionVersion
             this.ScienceValue = res.Response.Runtime
-            this._Clone('address') // 获取地址
             if (res.Response.Status !== 'Active') {
               this.$message({
                 message: '執行方法handler上傳錯誤，請查看執行方法handler說明，重新上傳',
@@ -401,6 +400,9 @@
                 duration: 0
               });
               this.cslsLoading = false // 报错时 关闭编辑器加载动画
+              this.getCsLite()         // 函数更新失败 渲染空白编辑器
+            }else{
+              this._Clone('address')   // 获取地址 渲染编辑器
             }
           } else {
             let ErrTips = {
@@ -495,12 +497,6 @@
                 })
             })
           }
-          // onWrite: (data) => {
-          //   console.log(data) // { content: Blob }
-          //   if(data !== '' || data !== undefined || data !== null){
-          //     this.cslsLoading = false     // 关闭加载动画
-          //   }
-          // }
         })
       },
 
