@@ -208,14 +208,16 @@ export default {
   },
   watch: {
     autoRefresh(val) {
-      if (this.autoRefresh === true) {
-        var timeId = setInterval(() => {
+      if (val) {
+        this.timeId = setInterval(() => {
           this.getLog();
         }, 1000 * 10);
       } else {
         clearInterval(this.timeId); 
       }
-    }
+    },
+    deep:true,
+    immediate :true
   },
   created() {
     this.nameSpaceList1();
@@ -227,15 +229,14 @@ export default {
   },
   methods: {
     refresh() {
-      if (this.autoRefresh === true) {
+      if (this.autoRefresh) {
         this.timeId = setInterval(() => {
           if (this.option3.length == 0) {
-            this.nameSpaceList2();
+            this.getLog();
           } 
         }, 100000*20);
       } else {
         clearInterval(this.timeId);
-        // this.nameSpaceList2();
       }
     },
     //返回上一层
@@ -259,6 +260,7 @@ export default {
       };
       this.axios.post(TKE_COLONY_QUERY, params).then(res => {
         if (res.Response.Error === undefined) {
+          this.autoRefresh = true;
           var mes = JSON.parse(res.Response.ResponseBody);
           // this.option1 = []; //命名空间选项
           mes.items.forEach(item => {
@@ -420,7 +422,7 @@ export default {
               }
             });
             this.value5 = this.option5[0].value;
-            this.autoRefresh = true;
+            // this.autoRefresh = true;
             // this.refresh();
             this.getLog();
           } else {
@@ -465,8 +467,7 @@ export default {
           this.value4 +
           "/log?container=" +
           this.value5 +
-          "&timestamps=" +
-          this.autoRefresh +
+          "&timestamps=true" +
           "&tailLines=" +
           this.value6.replace(/[^\d]/g, ""),
         Version: "2018-05-25",
