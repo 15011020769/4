@@ -213,7 +213,7 @@ export default {
           this.getLog();
         }, 1000 * 10);
       } else {
-        this.getLog();
+        clearInterval(this.timeId); 
       }
     }
   },
@@ -223,7 +223,7 @@ export default {
     
   },
   mounted() {
-    this.refresh();
+    // this.refresh();
   },
   methods: {
     refresh() {
@@ -234,7 +234,7 @@ export default {
           } 
         }, 100000*20);
       } else {
-        window.clearInterval(this.timeId);
+        clearInterval(this.timeId);
         // this.nameSpaceList2();
       }
     },
