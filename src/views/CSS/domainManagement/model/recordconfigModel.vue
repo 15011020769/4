@@ -90,7 +90,8 @@ export default {
   },
   mounted () {
     this.axios.post(RECORDING_DELTILS, {
-      Version: '2018-08-01'
+      Version: '2018-08-01',
+      IsDelayLive: this.$route.query.IsDelayLive
     }).then(({ Response }) => {
       this.recordData = Response.Templates
     })
