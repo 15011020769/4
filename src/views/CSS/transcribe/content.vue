@@ -1,6 +1,5 @@
 <template>
   <div class="main-box" v-loading="loading">
-    isDelayLive={{isDelayLive}}
     <div class="left">
       <i class="el-icon-plus" @click="_add" />
       <i class="el-icon-delete" @click="handleDelete" />

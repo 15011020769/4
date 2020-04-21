@@ -333,6 +333,7 @@ export default {
         };
       }
       await this.axios.post(POINT_REQUEST, params).then(res1 => {
+        this.list = [];
         if (res1.Response.Error === undefined) {
           this.loadShow = false;
           let response = JSON.parse(res1.Response.ResponseBody);
@@ -489,6 +490,7 @@ export default {
     },
     // 点击搜索
     clickSearch(val) {
+      this.pageIndex = 1;
       this.searchInput = val;
       this.getDaemonSetList();
     },

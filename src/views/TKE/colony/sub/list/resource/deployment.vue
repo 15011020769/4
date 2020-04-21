@@ -351,6 +351,7 @@ export default {
 
       await this.axios.post(POINT_REQUEST, params).then(res => {
         if (res.Response.Error === undefined) {
+          this.list = [];
           this.loadShow = false;
           let response = JSON.parse(res.Response.ResponseBody);
           if (response.items.length > 0) {
@@ -365,6 +366,7 @@ export default {
           this.list = response.items;
           this.total = response.items.length;
         } else {
+          this.list = [];
           this.loadShow = false;
           let ErrTips = {};
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -498,6 +500,7 @@ export default {
     },
     // 点击搜索
     clickSearch(val) {
+      this.pageIndex = 1;
       this.searchInput = val;
       this.getDeploymentList();
     },
