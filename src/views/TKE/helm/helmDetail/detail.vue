@@ -160,8 +160,34 @@ export default {
       this.yamlInfo = row;
     },
     getJump(row) {
+      let name = "";
+      if(row.type === 'Service') {
+        name = "colonyServiceSvc"
+      } else if (row.type === 'Deployment') {
+        name = "colonyResourceDeployment";
+      } else if (row.type === 'StatefulSet') {
+        name = "colonyResourceStatefulSet";
+      } else if (row.type === 'DaemonSet') {
+        name = "colonyResourceDaemonSet";
+      } else if (row.type === 'Job') {
+        name = "colonyResourceJob";
+      } else if (row.type === 'CronJob') {
+        name = "colonyResourceCronJob";
+      } else if (row.type === 'Ingress') {
+        name = "colonyServiceIngress";
+      } else if (row.type === 'ConfigMap') {
+        name = "colonyConfigConfigmap";
+      } else if (row.type === 'Secret') {
+        name = "colonyConfigSecret";
+      } else if (row.type === 'PersistentVolume') {
+        name = "colonyStoragePv";
+      } else if (row.type === 'PersistentVolumeClaim') {
+        name = "colonyStoragePvc";
+      } else if (row.type === 'StorageClass') {
+        name = "colonyStorageSc";
+      }
       this.$router.push({
-        name: "colonyServiceSvc",
+        name: name,
         query: {
           clusterId: this.$route.query.clusterId
         }
@@ -186,6 +212,9 @@ export default {
           this.resources = JSON.parse(
             res.Response.ResponseBody
           ).info.status.resources;
+          // console.log("resources1111",JSON.parse(
+          //   res.Response.ResponseBody
+          // ).info.status.resources);
         } else {
           let ErrTips = {};
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -216,6 +245,9 @@ export default {
           this.resources = JSON.parse(
             res.Response.ResponseBody
           ).info.status.resources;
+          // console.log("resources222222222",JSON.parse(
+          //   res.Response.ResponseBody
+          // ).info.status.resources);
         } else {
           let ErrTips = {};
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -244,7 +276,9 @@ export default {
       this.axios.post(POINT_REQUEST, param).then(res => {
         if (res.Response.Error == undefined) {
           this.Data = JSON.parse(res.Response.ResponseBody).release;
+          console.log("this.Data", this.Data);
           var conYaml = this.Data.manifest.split("#");
+          console.log("conYaml",conYaml);
           this.tableDate.push(
             {
               resource: this.Data.name + "-zookeeper-headless",

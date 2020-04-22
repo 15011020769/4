@@ -11,7 +11,7 @@
         <el-tab-pane :label="$t('TKE.myMirror.wdjx')" name="first"></el-tab-pane>
         <el-tab-pane label="我的收藏" name="second"></el-tab-pane>
         <el-tab-pane :label="$t('TKE.totalMirror.gyjx')" name="third"></el-tab-pane>
-        <el-tab-pane :label="$t('TKE.subList.dhjx')" name="fourth"></el-tab-pane>
+        <!-- <el-tab-pane :label="$t('TKE.subList.dhjx')" name="fourth"></el-tab-pane> -->
       </el-tabs>
       <el-input  v-model="searchContent" :placeholder="$t('TKE.myMirror.qsrjxmc')" class="input-set">
         <i slot="suffix" @click="searchByContent(activeName)" class="el-input__icon el-icon-search"></i>
