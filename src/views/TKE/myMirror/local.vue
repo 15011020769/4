@@ -184,10 +184,18 @@ export default {
       }
     },
     GetSpaceName () { // 获取命名空间
-      const param = {
-        namespace: this.input,
-        offset: this.pagesize * this.currpage,
-        limit: this.pagesize
+      let param = {};
+      if(this.input) {
+        param = {
+          namespace: this.input,
+          offset: this.pagesize * this.currpage,
+          limit: this.pagesize
+        }
+      } else {
+        param = {
+          offset: this.pagesize * this.currpage,
+          limit: this.pagesize
+        }
       }
       this.axios.post(SPACENAME_LIST, param).then(res => {
         if (res.code === 0 && res.Error == undefined) {
@@ -195,12 +203,16 @@ export default {
           this.TotalCount = res.data.namespaceCount
           this.loadShow = false
         } else {
+          let ErrTips = {
+            "UserNotExist":"(101)用戶不存在"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
-              message: ErrorTips[res.codeDesc],
-              type: "error",
-              showClose: true,
-              duration: 0
-          })
+            message: ErrOr[res.codeDesc],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
         }
       })
     },

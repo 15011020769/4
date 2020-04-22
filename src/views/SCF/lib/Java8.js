@@ -10,7 +10,7 @@ const Java8 = {
       inParams: '{}',   // 入参
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
-      certificate: '公开',                           // 证书
+      certificate: '公開',                           // 证书
       url: 'Java8-1.zip'                                  // cos的url
     },
   ]
