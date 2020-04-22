@@ -101,9 +101,9 @@
         </el-table-column>
       </el-table>
 
-      <!-- <div class="tke-page">
+      <div class="tke-page">
         <div class="block">
-          <el-pagination
+          <!-- <el-pagination
             @size-change="handleSizeChange"
             :pager-count="7"
             @current-change="handleCurrentChange"
@@ -112,9 +112,9 @@
             :page-size="pageSize"
             layout="total, sizes, prev, pager, next"
             :total="total"
-          ></el-pagination>
+          ></el-pagination> -->
         </div>
-      </div> -->
+      </div>
     </div>
   </div>
 </template>
@@ -430,16 +430,45 @@ export default {
       };
       if(this.typeValue !== '全部類型') {
         if(this.nameValue) {
-          params1.Path = "/api/v1/namespaces/" + this.nsValue + "/events?fieldSelector=involvedObject.kind=" +
-          this.typeValue.charAt(0).toUpperCase() +
-          this.typeValue.slice(1) +
-          ",involvedObject.name=" +
-          this.nameValue +
-          "&limit=20"
+          if(this.typeValue == "pods") {
+            params1.Path = "/api/v1/namespaces/" + this.nsValue + "/events?fieldSelector=involvedObject.kind=Pod,involvedObject.name=" +
+              this.nameValue + "&limit=20"
+          } else if(this.typeValue == "pv") {
+            params1.Path = "/api/v1/namespaces/" + this.nsValue + "/events?fieldSelector=involvedObject.kind=PersistentVolume,involvedObject.name=" +
+              this.nameValue + "&limit=20"
+          } else if(this.typeValue == "pvc") {
+            params1.Path = "/api/v1/namespaces/" + this.nsValue + "/events?fieldSelector=involvedObject.kind=PersistentVolumeClaim,involvedObject.name=" +
+              this.nameValue + "&limit=20"
+          } else if(this.typeValue == "sc") {
+            params1.Path = "/api/v1/namespaces/" + this.nsValue + "/events?fieldSelector=involvedObject.kind=StorageClass,involvedObject.name=" +
+              this.nameValue + "&limit=20"
+          } else if(this.typeValue == "svc") {
+            params1.Path = "/api/v1/namespaces/" + this.nsValue + "/events?fieldSelector=involvedObject.kind=Service,involvedObject.name=" +
+              this.nameValue + "&limit=20"
+          } else {
+            params1.Path = "/api/v1/namespaces/" + this.nsValue + "/events?fieldSelector=involvedObject.kind=" +
+              this.typeValue.charAt(0).toUpperCase() +
+              this.typeValue.slice(1) +
+              ",involvedObject.name=" +
+              this.nameValue +
+              "&limit=20"
+          }
         } else {
-          params1.Path = "/api/v1/namespaces/" + this.nsValue + "/events?fieldSelector=involvedObject.kind=" +
-          this.typeValue.charAt(0).toUpperCase() +
-          this.typeValue.slice(1) + "&limit=20"
+          if(this.typeValue == "pods") {
+            params1.Path = "/api/v1/namespaces/" + this.nsValue + "/events?fieldSelector=involvedObject.kind=Pod&limit=20"
+          } else if(this.typeValue == "pv") {
+            params1.Path = "/api/v1/namespaces/" + this.nsValue + "/events?fieldSelector=involvedObject.kind=PersistentVolume&limit=20"
+          } else if(this.typeValue == "pvc") {
+            params1.Path = "/api/v1/namespaces/" + this.nsValue + "/events?fieldSelector=involvedObject.kind=PersistentVolumeClaim&limit=20"
+          } else if(this.typeValue == "sc") {
+            params1.Path = "/api/v1/namespaces/" + this.nsValue + "/events?fieldSelector=involvedObject.kind=StorageClass&limit=20"
+          } else if(this.typeValue == "svc") {
+            params1.Path = "/api/v1/namespaces/" + this.nsValue + "/events?fieldSelector=involvedObject.kind=Service&limit=20"
+          } else {
+            params1.Path = "/api/v1/namespaces/" + this.nsValue + "/events?fieldSelector=involvedObject.kind=" +
+              this.typeValue.charAt(0).toUpperCase() +
+              this.typeValue.slice(1) + "&limit=20"
+          }
         }
       } else {
         params1.Path = "/api/v1/namespaces/" + this.nsValue + "/events?&limit=20"
