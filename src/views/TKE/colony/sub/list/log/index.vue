@@ -89,7 +89,7 @@
           >
             <!-- pod第二项 -->
             <el-option
-              v-for="(item,index) in  Array.from(new Set(option5))"
+              v-for="(item,index) in  option5"
               :key="index"
               :label="item.label"
               :value="item.value"
