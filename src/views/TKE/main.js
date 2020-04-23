@@ -21,6 +21,7 @@ import {
   ErrorTips
 } from "@/components/ErrorTips";
 import locale from 'element-ui/lib/locale/lang/zh-TW'
+import '@/utils/timeout' //超时退出登录
 // 引入基本模板
 const echarts = require('echarts/lib/echarts')
 // 引入折线图组件

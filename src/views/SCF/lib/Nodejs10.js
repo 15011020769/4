@@ -4,7 +4,7 @@ const Nodejs10 = {
     {
       name: 'helloworld',                           // 名称
       language: 'Nodejs10.15',                       // 语言
-      desc: 'helloworld 空白模板函数',                // 描述
+      desc: 'helloworld 空白模板函數',                // 描述
       label: ['Nodejs10.15', 'helloworld'],           // 标签
       author: '台富雲無伺服器雲函数团队',               // 作者
       inParams: '{}',   // 入参

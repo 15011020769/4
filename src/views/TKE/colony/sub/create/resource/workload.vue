@@ -1056,11 +1056,13 @@
                           <el-input v-model="val.servicePort"
                                     :placeholder="$t('TKE.subList.jyydkyz')"></el-input>
                         </el-form-item>
-                        <el-tooltip class="item" effect="dark" :content="$t('TKE.subList.bnsc')" placement="right"
+                        <i v-if="wl.portMapping.length>1" style="font-size:18px;padding-left:20px;" class="el-icon-close"
+                             @click="removeProtMapping(val)"></i>
+                        <!-- <el-tooltip class="item" effect="dark" :content="$t('TKE.subList.bnsc')" placement="right"
                                     :disabled="wl.portMapping!==1">
                           <i style="font-size:18px;padding-left:20px;" class="el-icon-close"
                              @click="wl.portMapping.length>1?removeProtMapping(it): ''"></i>
-                        </el-tooltip>
+                        </el-tooltip> -->
                       </div>
                     </div>
                   </div>
@@ -1651,7 +1653,7 @@ export default {
           let ResponseBody = res.Response.ResponseBody
           let result = JSON.parse(ResponseBody)
           let option = result.items.map(item => {
-            return { name: item.metadata.name, option: Object.keys(item.data) }
+            return { name: item.metadata.name, option: Object.keys(item.data)[0] }
           })
           this.configMap = JSON.parse(ResponseBody)
           this.configMap.option = option

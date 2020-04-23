@@ -13,6 +13,7 @@ import i18n from './language/i18n.js' // 引入i18n包
 import { message } from '@/utils/resetMessage' // 重写element-ui的message方法
 import CMfilters from '@/filters/CMfilters.js'
 import echarts from 'echarts'
+import '@/utils/timeout' //超时退出登录
 Vue.prototype.$echarts = echarts
 for (let key in filters) {
   Vue.filter(key, filters[key])

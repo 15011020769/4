@@ -4,7 +4,7 @@ const Go1 = {
     {
       name: 'helloworld',                           // 名称
       language: 'Go1',                       // 语言
-      desc: 'helloworld 空白模板函数',                // 描述
+      desc: 'helloworld 空白模板函數',                // 描述
       label: ['Go1', 'helloworld'],           // 标签
       author: '台富雲無伺服器雲函数团队',               // 作者
       inParams: '{}',   // 入参
