@@ -12,6 +12,7 @@ import '@/assets/iconfont/iconfont.css'
 import filters from '@/filters/filters.js'
 import i18n from './language/i18n.js' // 引入i18n包
 import { message } from '@/utils/resetMessage' // 重写element-ui的message方法
+import '@/utils/timeout' //超时退出登录
 // 引入基本模板
 const echarts = require('echarts/lib/echarts')
     // 引入折线图组件

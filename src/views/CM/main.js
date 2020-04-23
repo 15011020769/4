@@ -18,6 +18,7 @@ import locale from 'element-ui/lib/locale/lang/zh-TW'
 import '@/assets/iconfont2/iconfont.css'
 import GetX from './plugin' // 引入
 import Getdata from './DataPoints' // 引入
+import '@/utils/timeout' //超时退出登录
 Vue.prototype.$echarts = echarts
 
 for (let key in CMfilters) {

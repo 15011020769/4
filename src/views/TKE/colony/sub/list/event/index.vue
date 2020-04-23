@@ -258,7 +258,8 @@ export default {
       });
     },
     getKind() {
-      this.getNameList();
+      this.nameValue = "";
+      this.getEventList();
       //改变命名空间获取的数据
       // this.loadShow = true;
       // var params = {

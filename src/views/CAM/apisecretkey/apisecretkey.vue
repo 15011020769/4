@@ -29,8 +29,11 @@
       this.getdata()
     },
     methods: {
+      // this.$cookie.get('uin')
+      // this.$cookie.get('subAccountName')
       getdata() {
-        this.axios.get(`${process.env.VUE_APP_adminUrl + APIKEY}` + this.$cookie.get('uin')).then(
+        this.axios.get(`${process.env.VUE_APP_adminUrl +
+        APIKEY}?uin=${this.$cookie.get('uin')}&subAccountName=${this.$cookie.get('subAccountName')}`).then(
           res => {
             this.tableData.push(res.tAccountSub)
           });

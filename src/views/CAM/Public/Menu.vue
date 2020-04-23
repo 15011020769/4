@@ -22,7 +22,7 @@
         </el-menu-item>
 
         <el-menu-item index="/apisecretkey" :class="{'menu-active': activeMenu === '/apisecretkey'}"
-          v-if="this.$cookie.get('SubAccountname')">
+          v-if="this.$cookie.get('subAccountName')">
           <i class="iconfont"></i>
           <span slot="title">API密鑰管理</span>
         </el-menu-item>

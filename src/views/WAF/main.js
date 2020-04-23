@@ -17,7 +17,7 @@ import s2t from '@/utils/s2t'
 import { ErrorTips } from "@/components/ErrorTips"
 import VueClipboard from 'vue-clipboard2'
 import { COMMON_ERROR } from './constants'
-
+import '@/utils/timeout' //超时退出登录
 Vue.use(ElementUI, {
   i18n: (key, value) => i18n.t(key, value)
 })
@@ -109,7 +109,7 @@ if (!Array.prototype.includes) {
       while (k < len) {
         if (sameValueZero(o[k], valueToFind)) {
           return true;
-        } 
+        }
         k++;
       }
       return false;

@@ -223,6 +223,7 @@ export default {
       this.axios.post(SPACENAME_DELETE, param).then(res => {
         if (res.code === 0 && res.Error == undefined) {
           this.loadShow = true
+          this.currpage = 0;
           this.GetSpaceName()
           this.$message({
             message: this.$t('TKE.myMirror.sccg'),
@@ -246,6 +247,7 @@ export default {
       }
       this.axios.post(CREATE_SPACENAME, param).then(res => {
         if(res.code == 0 && res.Error == undefined){
+          this.currpage = 0;
            this.GetSpaceName()
            this.$message({
               message: "新建成功",
