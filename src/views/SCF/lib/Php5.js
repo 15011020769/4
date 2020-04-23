@@ -1,5 +1,5 @@
 const Php5 = {
-  type: 'Php 5.6',
+  type: 'PHP5.6',
   detail: [
     {
       name: 'helloworld',                           // 名称

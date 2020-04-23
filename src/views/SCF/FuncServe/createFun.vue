@@ -47,18 +47,18 @@
             </el-form-item>
             <div class="allFunList" v-loading="loading" v-if='totalItems!==0'>
               <el-row>
-                <el-col :span="8" v-for="(item,index) in tableDataBegin" :key="index">
+                <el-col :span="8" v-for="(item,index) in tableDataBegin1" :key="index">
                   <div class="allFunListBoxCon" :class="isactive==index ?'addBorderCla':''"
                     @click="mouseHandel(index,item.DemoId)" style="display:flex;flex-direction:column;">
                     <div class="funListBoxConTit newClear">
-                      <span class="titNew">{{item.Name}}</span>
-                      <a class="lookDetail" @click="lookFunDetails(item.DemoId)">{{ $t('SCF.total.ckxq') }}</a>
+                      <span class="titNew">{{item.name}}</span>
+                      <a class="lookDetail" @click="lookFunDetails(item)">{{ $t('SCF.total.ckxq') }}</a>
                       <el-dialog :title="$t('SCF.total.mbxq')" :visible.sync="dialogVisible" width="30%"
                         :before-close="handleClose" v-if="dialogVisible">
                         <div class="detailBoxCon">
                           <div class="detailBoxConOne detailBoxC">
                             <h2>{{ $t('SCF.total.jcxx') }}</h2>
-                            <div class="detailBoxCen">
+                            <!--<div class="detailBoxCen">
                               <p>
                                 <span class="leftWidth">{{ $t('SCF.total.mc') }}</span>
                                 <span>{{DataBeginDetail.application.Chinese.name}}</span>
@@ -75,6 +75,46 @@
                                 <span class="leftWidth">{{ $t('SCF.total.zz') }}</span>
                                 <span>{{DataBeginDetail.application.Chinese.author.name}}</span>
                               </p>
+                            </div>-->
+                           <!-- <div class="detailBoxConTwo detailBoxC">
+                              <h2>
+                                {{ $t('SCF.total.srcs') }}
+                                <i class="el-icon-document-copy"></i>
+                              </h2>
+                              <p>{{DataBeginDetail.application.input_parameters}}</p>
+                            </div>
+                            <div class="detailBoxConThree detailBoxC">
+                              <h2>
+                                {{ $t('SCF.total.sccs') }}
+                                <i class="el-icon-document-copy"></i>
+                              </h2>
+                              <p>{{DataBeginDetail.application.output_parameters}}</p>
+                            </div>
+                            <div class="detailBoxConFour detailBoxC">
+                              <h2>{{ $t('SCF.total.zysx') }}</h2>
+                              <p>{{ $t('SCF.total.wu') }}</p>
+                            </div>
+                            <div class="detailBoxConFour detailBoxC">
+                              <h2>{{ $t('SCF.total.zshu') }}</h2>
+                              <p>{{DataBeginDetail.application.Chinese.license.content}}</p>
+                            </div>-->
+                            <div class="detailBoxCen">
+                              <p>
+                                <span class="leftWidth">{{ $t('SCF.total.mc') }}</span>
+                                <span>{{DataBeginDetail.name}}</span>
+                              </p>
+                              <p>
+                                <span class="leftWidth">{{ $t('SCF.total.yy') }}</span>
+                                <span>{{DataBeginDetail.language}}</span>
+                              </p>
+                              <p>
+                                <span class="leftWidth">{{ $t('SCF.total.ms') }}</span>
+                                <span>{{DataBeginDetail.desc}}</span>
+                              </p>
+                              <p>
+                                <span class="leftWidth">{{ $t('SCF.total.zz') }}</span>
+                                <span>{{DataBeginDetail.author}}</span>
+                              </p>
                             </div>
                           </div>
                           <div class="detailBoxConTwo detailBoxC">
@@ -82,14 +122,14 @@
                               {{ $t('SCF.total.srcs') }}
                               <i class="el-icon-document-copy"></i>
                             </h2>
-                            <p>{{DataBeginDetail.application.input_parameters}}</p>
+                            <p>{{DataBeginDetail.inParams}}</p>
                           </div>
                           <div class="detailBoxConThree detailBoxC">
                             <h2>
                               {{ $t('SCF.total.sccs') }}
                               <i class="el-icon-document-copy"></i>
                             </h2>
-                            <p>{{DataBeginDetail.application.output_parameters}}</p>
+                            <p>{{DataBeginDetail.outParams}}</p>
                           </div>
                           <div class="detailBoxConFour detailBoxC">
                             <h2>{{ $t('SCF.total.zysx') }}</h2>
@@ -97,7 +137,7 @@
                           </div>
                           <div class="detailBoxConFour detailBoxC">
                             <h2>{{ $t('SCF.total.zshu') }}</h2>
-                            <p>{{DataBeginDetail.application.Chinese.license.content}}</p>
+                            <p>{{DataBeginDetail.certificatet}}</p>
                           </div>
                           <div class="detailBoxConFive detailBoxC">
                             <!-- <h2>模板函数下载地址</h2>
@@ -113,22 +153,22 @@
                     <div class="funListBoxConP" style="flex:1;">
                       <p class="funListLangu">
                         <span>{{ $t('SCF.total.yy') }}</span>
-                        <span>{{item.Runtime}}</span>
+                        <span>{{item.language}}</span>
                       </p>
                       <p class="funListDesc">
                         <span style="width:40px;">{{ $t('SCF.total.ms') }}</span>
-                        <span class="funListDescspan">{{item.Describe}}</span>
+                        <span class="funListDescspan">{{item.desc}}</span>
                       </p>
                       <p class="funListTags">
                         <span>{{ $t('SCF.total.bq') }}</span>
-                        <span v-for="(i, index) in UpTags(item.Tags)" :key="index">
+                        <span v-for="(i, index) in item.label" :key="index">
                           <el-tag type="info" size="mini">{{i}}</el-tag>
                         </span>
                       </p>
-                      <p class="funListpublish">
-                        <span>{{ $t('SCF.total.bs') }}</span>
-                        <span>{{item.Stars}}次</span>
-                      </p>
+                      <!--<p class="funListpublish">-->
+                        <!--<span>{{ $t('SCF.total.bs') }}</span>-->
+                        <!--<span>{{0}}次</span>-->
+                      <!--</p>-->
                     </div>
                   </div>
                 </el-col>
@@ -156,6 +196,7 @@
     TEMPLATE_LIST,
     TEMPLATE_DETAIL
   } from "@/constants";
+  import template from '../lib/template';
   export default {
     data() {
       var validatefunName = (rule, value, callback) => {
@@ -208,7 +249,9 @@
         tableDataEnd: [],
         filterTableDataEnd: [],
         flag: false,
-        dialogVisible: false
+        dialogVisible: false,
+        fileArr: [],
+        details:{}
       };
     },
     computed: {
@@ -250,40 +293,52 @@
           // param["SearchKey.0.Key"] = "Runtime";
           param["SearchKey.1.Value"] = this.searchName;
         }
-        this.axios.post(TEMPLATE_LIST, param).then(data => {
-          if (data.Response.Demos.length !== 0) {
-            this.tableDataBegin = data.Response.Demos;
-            this.DemoId = this.tableDataBegin[0].DemoId;
+        // 列表请求数据
+        // this.axios.post(TEMPLATE_LIST, param).then(data => {
+        //   if (data.Response.Demos.length !== 0) {
+        //     this.tableDataBegin = data.Response.Demos;
+        //     this.DemoId = this.tableDataBegin[0].DemoId;
+        //     this.isactive = 0;
+        //     this.totalItems = data.Response.TotalCount;
+        //     this.loading = false;
+        //   } else {
+        //     this.tableDataBegin = data.Response.Demos;
+        //     this.totalItems = data.Response.TotalCount;
+        //     this.loading = false;
+        //   }
+        // });
+        // 列表本地数据
+        template.forEach((li) => {
+          if(li.type === this.createFunTable.runMoment) {
+            this.tableDataBegin = li.detail;
+            this.tableDataBegin1 = li.detail.slice(0, 6);
             this.isactive = 0;
-            this.totalItems = data.Response.TotalCount;
-            this.loading = false;
-          } else {
-            this.tableDataBegin = data.Response.Demos;
-            this.totalItems = data.Response.TotalCount;
+            this.totalItems = li.detail.length;
             this.loading = false;
           }
-        });
+        })
+        // console.log(this.tableDataBegin,this.totalItems,'tableDataBegin')
       },
 
       GetTemplateDetail() {
-        //获取函数模板详情
-        let param = {
-          Region: localStorage.getItem('regionv2'),
-          Version: "2018-04-16",
-          DemoId: this.DemoId
-        };
-        this.axios
-          .post(TEMPLATE_DETAIL, param)
-          .then(data => {
-            this.Detaildata = data.Response;
-            let DataBeginDetail = JSON.parse(data.Response.DemoConfig);
-
-            this.DataBeginDetail =
-              DataBeginDetail["serverless-cloud-function-application"];
-          })
-          .then(() => {
+        //接口获取函数模板详情
+        // let param = {
+        //   Region: localStorage.getItem('regionv2'),
+        //   Version: "2018-04-16",
+        //   DemoId: this.DemoId
+        // };
+        // this.axios
+        //   .post(TEMPLATE_DETAIL, param)
+        //   .then(data => {
+        //     this.Detaildata = data.Response;
+        //     let DataBeginDetail = JSON.parse(data.Response.DemoConfig);
+        //
+        //     this.DataBeginDetail =
+        //       DataBeginDetail["serverless-cloud-function-application"];
+        //   })
+        //   .then(() => {
             this.dialogVisible = true;
-          });
+        // });
       },
       mouseHandel(index, DemoId) {
         this.isactive = index;
@@ -307,8 +362,23 @@
       },
       //分页
       handleCurrentChange(val) {
-        this.currentPage = val;
-        this.GetTemplateList();
+        // this.currentPage = val;
+        // this.GetTemplateList();
+        // console.log(val);
+
+        if (val != 1){
+          val =(val-1) * this.pageSize //比如点击是2，并且pageSize是6的时候 那么数据下标是 6开始就是6
+        } else {
+          val = 0 // 点击1是返回初始数据
+        }
+        let number = this.tableDataBegin.length;
+        // 当点击2的时候如果第二页是最后一页进入else全部展示
+        if (number > val + this.pageSize) {
+          this.tableDataBegin1 = this.tableDataBegin.slice(val, val + this.pageSize);
+        } else {
+          this.tableDataBegin1 = this.tableDataBegin.slice(val, this.tableDataBegin.length);
+        }
+        console.log(this.tableDataBegin1,'tableDataBegin1')
       },
       //组件自带监控当前页码
       currentChangePage(list) {},
@@ -337,12 +407,21 @@
             }
           });
         }
-
-
-
       },
-      lookFunDetails(DemoId) {
-        this.DemoId = DemoId;
+      lookFunDetails(item) {
+        //本地获取函数模板详情开始
+        template.forEach((li,index) => {
+          if(li.type === item.language) {
+            this.fileArr = li.detail
+          }
+        })
+        this.fileArr.forEach((li,index) => {
+          if(li.name === item.name) {
+            this.DataBeginDetail = li
+          }
+        })
+        //本地获取函数模板详情结束
+        // this.DemoId = DemoId;
         this.GetTemplateDetail();
       },
       handleClose(done) {

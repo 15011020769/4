@@ -1,5 +1,5 @@
 const Nodejs8 = {
-  type: 'Nodejs 8.9',
+  type: 'Nodejs8.9',
   detail: [
     {
       name: 'ES寫入函數',                           // 名称

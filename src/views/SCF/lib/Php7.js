@@ -1,9 +1,9 @@
 const Php7 = {
-  type: 'Php 7.2',
+  type: 'PHP7.2',
   detail: [
     {
       name: 'helloworld',                           // 名称
-      language: 'Php7',                       // 语言
+      language: 'Php7.2',                       // 语言
       desc: 'helloworld 空白模板函數',                // 描述
       label: ['Php7', 'helloworld'],           // 标签
       author: '台富雲無伺服器雲函数团队',               // 作者
@@ -15,7 +15,7 @@ const Php7 = {
     },
     {
       name: 'API 網關返回自定義html頁面',                           // 名称
-      language: 'Php7',                       // 语言
+      language: 'Php7.2',                       // 语言
       desc: '本示例主要演示如何配置 API 網關觸發器返回自定義的html頁面',                // 描述
       label: ['Php7', 'API GW', 'Custom Html'],           // 标签
       author: '台富雲無伺服器雲函数团队',               // 作者
@@ -27,7 +27,7 @@ const Php7 = {
     },
     {
       name: 'API 網關基礎示例',                           // 名称
-      language: 'Php7',                       // 语言
+      language: 'Php7.2',                       // 语言
       desc: '本示例演示 API 網關使用的基礎方法，主要展示在集成響應下（通過雲函數控制台創建的API網關觸發器預設啟用集成響應），怎樣構造返回值',                // 描述
       label: ['Php7', 'API GW', 'API'],           // 标签
       author: '台富雲無伺服器雲函数团队',               // 作者
@@ -39,7 +39,7 @@ const Php7 = {
     },
     {
       name: 'API 網關返回 Web 頁面',                           // 名称
-      language: 'Php7',                       // 语言
+      language: 'Php7.2',                       // 语言
       desc: '本示例主要通過 SCF 結合 API 網關，快速實現一個對公網服務的 Web 頁面。',                // 描述
       label: ['Php7', 'API GW', 'Web Page'],           // 标签
       author: '台富雲無伺服器雲函数团队',               // 作者
@@ -51,7 +51,7 @@ const Php7 = {
     },
     {
       name: '獲取數據生成二維碼並結合API網關示例',                           // 名称
-      language: 'Php7',                       // 语言
+      language: 'Php7.2',                       // 语言
       desc: '本示例主要展示在SCF中對各種資源的引用方法，包括include php文件、調用上傳到SCF中的非php文件、使用/tmp臨時目錄，同時展示了SCF中3種獲取用戶提交數據的方法，最後演示如何返回一個網頁或文件',                // 描述
       label: ['Php7', 'API GW', 'API', '$_POST', '$_GET', 'path', 'QRcode'],           // 标签
       author: '台富雲無伺服器雲函数团队',               // 作者
@@ -63,7 +63,7 @@ const Php7 = {
     },
     {
       name: 'API 網關返回 Web 頁面',                           // 名称
-      language: 'Php7',                       // 语言
+      language: 'Php7.2',                       // 语言
       desc: '本示例主要通過 SCF 結合 API 網關，快速實現一個對公網服務的 Web 頁面。',                // 描述
       label: ['Php7.2', 'API GW', 'Web Page'],           // 标签
       author: '台富雲無伺服器雲函数团队',               // 作者
@@ -75,7 +75,7 @@ const Php7 = {
     },
     {
       name: '定時撥測函數',                           // 名称
-      language: 'Php7',                       // 语言
+      language: 'Php7.2',                       // 语言
       desc: '本示例主要演示定時撥測 URL 清單中的地址，當撥測失敗時，通過郵件發送告警',                // 描述
       label: ['Php7', 'url', 'Timer'],           // 标签
       author: '台富雲無伺服器雲函数团队',               // 作者

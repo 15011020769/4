@@ -1,5 +1,5 @@
 const Nodejs6 = {
-  type: 'Nodejs 6.10',
+  type: 'Nodejs6.10',
   detail: [
     {
       name: 'helloworld',                           // 名称

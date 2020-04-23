@@ -1,5 +1,5 @@
 const Python3 = {
-  type: 'Python 3.6',                               // 类型
+  type: 'Python3.6',                               // 类型
   detail: [
     {
       name: 'helloworld',                           // 名称
