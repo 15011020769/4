@@ -517,6 +517,7 @@ export default {
       }
       this.axios.post(TKE_MIRROR_CREATE, param).then(res => {
         if (res.code === 0 && res.Error == undefined) {
+          this.currpage = 0;
           this.GetMyMirror()
           this.loadShow = false
           this.$message({
