@@ -272,12 +272,13 @@
       },
       //选择环境重新获取模板
       changerunMoment() {
+        this.currentPage = 1;
         this.GetTemplateList();
       },
       GetTemplateList() {
         this.loading = true;
         //获取函数模板列表
-        let param = {
+        /*let param = {
           Region: localStorage.getItem('regionv2'),
           Version: "2018-04-16",
           Offset: this.currentPage - 1,
@@ -292,7 +293,7 @@
           param["SearchKey.1.Key"] = "All";
           // param["SearchKey.0.Key"] = "Runtime";
           param["SearchKey.1.Value"] = this.searchName;
-        }
+        }*/
         // 列表请求数据
         // this.axios.post(TEMPLATE_LIST, param).then(data => {
         //   if (data.Response.Demos.length !== 0) {
@@ -347,10 +348,15 @@
       //搜索
       doFilter() {
         // if (this.searchName !== "") {
-          this.GetTemplateList();
+        //   this.GetTemplateList();
         // } else {
         //   this.$message("請輸入相關語言搜索");
         // }
+        this.tableDataBegin1 = this.tableDataBegin.filter(item => {
+            return item.name.indexOf(this.searchName) !== -1
+          }
+        )
+        this.totalItems = this.tableDataBegin1.length;
       },
       // 分页开始
       getData() {},
@@ -378,7 +384,6 @@
         } else {
           this.tableDataBegin1 = this.tableDataBegin.slice(val, this.tableDataBegin.length);
         }
-        console.log(this.tableDataBegin1,'tableDataBegin1')
       },
       //组件自带监控当前页码
       currentChangePage(list) {},
