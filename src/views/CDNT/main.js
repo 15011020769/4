@@ -13,7 +13,7 @@ import filters from '@/filters/filters.js'
 import echarts from 'echarts'
 import i18n from './language/i18n.js' // 引入i18n包
 import { message } from '@/utils/resetMessage' // 重写element-ui的message方法
-
+import '@/utils/timeout' //超时退出登录
 Vue.use(ElementUI, {
   i18n: (key, value) => i18n.t(key, value)
 })
@@ -69,7 +69,7 @@ if (!Array.prototype.includes) {
       while (k < len) {
         if (sameValueZero(o[k], valueToFind)) {
           return true;
-        } 
+        }
         k++;
       }
       return false;

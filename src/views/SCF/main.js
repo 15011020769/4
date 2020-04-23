@@ -20,6 +20,7 @@ import { message } from '@/utils/resetMessage' // 重写element-ui的message方�
 
 import { codemirror } from 'vue-codemirror'
 import 'codemirror/lib/codemirror.css'
+import '@/utils/timeout' //超时退出登录
 Vue.use(codemirror)
 
 // 引入折线图组件
