@@ -1,18 +1,18 @@
 <template>
   <div class="CLA">
     <div class="big-title">{{ $t("menu.title1") }} CM</div>
-    <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose"
+    <el-menu default-active="2" @select="handleSelect" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose"
       background-color="#292b36" text-color="#fff" active-text-color="#fff" :router="true">
-      <el-menu-item index="/overview">
+      <el-menu-item index="/overview" :class="{ 'menu-active': classValue === '/overview' }">
         <span slot="title">監控概覽</span>
       </el-menu-item>
-      <el-menu-item index="/Dashboard">
+      <el-menu-item index="/Dashboard" :class="{ 'menu-active': classValue === '/Dashboard' }">
         <span slot="title">Dashboard</span>
       </el-menu-item>
-      <el-menu-item index="/Casegrouping">
+      <el-menu-item index="/Casegrouping" :class="{ 'menu-active': classValue === '/Casegrouping' }">
         <span slot="title">實例分組</span>
       </el-menu-item>
-      <el-menu-item index="/History">
+      <el-menu-item index="/History" :class="{ 'menu-active': classValue === '/History'}">
         <span slot="title">告警曆史</span>
       </el-menu-item>
       <el-submenu index="4">
@@ -20,18 +20,18 @@
           <span>告警配置</span>
         </template>
         <el-menu-item-group>
-          <el-menu-item index="/strategy">
+          <el-menu-item index="/strategy" :class="{ 'menu-active': classValue === '/strategy' }">
             <span slot="title">告警策略</span>
           </el-menu-item>
-          <el-menu-item index="/subscription">
+          <el-menu-item index="/subscription" :class="{ 'menu-active': classValue === '/subscription' }">
             <span slot="title">平台事件訂閱</span>
           </el-menu-item>
-          <el-menu-item index="/message">
+          <el-menu-item index="/message" :class="{ 'menu-active': classValue === '/message' }">
             <span slot="title">自定義訊息</span>
           </el-menu-item>
         </el-menu-item-group>
       </el-submenu>
-      <el-menu-item index="/Template">
+      <el-menu-item index="/Template" :class="{ 'menu-active': classValue === '/Template' }">
         <span slot="title">觸發條件範本</span>
       </el-menu-item>
       <el-submenu index="5">
@@ -39,10 +39,10 @@
           <span>事件中心</span>
         </template>
         <el-menu-item-group>
-          <el-menu-item index="/product">
+          <el-menu-item index="/product" :class="{ 'menu-active': classValue === '/product' }">
             <span slot="title">産品事件</span>
           </el-menu-item>
-          <el-menu-item index="/platform">
+          <el-menu-item index="/platform" :class="{ 'menu-active': classValue === '/platform' }">
             <span slot="title">平台事件</span>
           </el-menu-item>
         </el-menu-item-group>
@@ -60,16 +60,16 @@
           </el-menu-item>
         </el-menu-item-group>
       </el-submenu> -->
-      <el-menu-item index="/flow">
+      <el-menu-item index="/flow" :class="{ 'menu-active': classValue === '/flow' }">
         <span slot="title">流量監控</span>
       </el-menu-item>
-      <el-menu-item index="/CVM" @click="_class" :class="{ active: classValue == 'CVM' }">
+      <el-menu-item index="/CVM"  :class="{ 'menu-active': classValue === '/CVM' }">
         <span slot="title">{{ $t("menu.title2") }}</span>
       </el-menu-item>
-      <el-menu-item index="/cloudDisk" @click="_class" :class="{ active: classValue == 'cloudDisk' }">
+      <el-menu-item index="/cloudDisk"  :class="{ 'menu-active': classValue === '/cloudDisk' }">
         <span slot="title">{{ $t("menu.title3") }}</span>
       </el-menu-item>
-      <el-menu-item index="/CLBload" @click="_class" :class="{ active: classValue == 'CLBload' }">
+      <el-menu-item index="/CLBload"  :class="{ 'menu-active': classValue === '/CLBload' }">
         <span slot="title">{{ $t("menu.title4") }}</span>
       </el-menu-item>
 
@@ -78,10 +78,10 @@
           <span>{{ $t("menu.title5") }}</span>
         </template>
         <el-menu-item-group>
-          <el-menu-item index="/cloudMysql" @click="_class" :class="{ active: classValue == 'cloudMysql' }">
+          <el-menu-item index="/cloudMysql"  :class="{ 'menu-active': classValue === '/cloudMysql' }">
             <span slot="title">{{ $t("menu.title6") }}</span>
           </el-menu-item>
-          <el-menu-item index="/Redis" @click="_class" :class="{ active: classValue == 'Redis' }">
+          <el-menu-item index="/Redis"  :class="{ 'menu-active': classValue === '/Redis' }">
             <span slot="title">{{ $t("menu.title7") }}</span>
           </el-menu-item>
         </el-menu-item-group>
@@ -92,19 +92,19 @@
           <span>{{ $t("menu.title8") }}</span>
         </template>
         <el-menu-item-group>
-          <el-menu-item index="/NATgateway" @click="_class" :class="{ active: classValue == 'NATgateway' }">
+          <el-menu-item index="/NATgateway"  :class="{ 'menu-active': classValue === '/NATgateway' }">
             <span slot="title">{{ $t("menu.title9") }}</span>
           </el-menu-item>
-          <el-menu-item index="/VPNgateway" @click="_class" :class="{ active: classValue == 'VPNgateway' }">
+          <el-menu-item index="/VPNgateway"  :class="{ 'menu-active': classValue === '/VPNgateway' }">
             <span slot="title">{{ $t("menu.title10") }}</span>
           </el-menu-item>
-          <el-menu-item index="/VPNchannel" @click="_class" :class="{ active: classValue == 'VPNchannel' }">
+          <el-menu-item index="/VPNchannel"  :class="{ 'menu-active': classValue === '/VPNchannel' }">
             <span slot="title">{{ $t("menu.title11") }}</span>
           </el-menu-item>
-          <el-menu-item index="/networkIP" @click="_class" :class="{ active: classValue == 'networkIP' }">
+          <el-menu-item index="/networkIP"  :class="{ 'menu-active': classValue === '/networkIP' }">
             <span slot="title">{{ $t("menu.title12") }}</span>
           </el-menu-item>
-          <el-menu-item index="/PrivateGateway" @click="_class" :class="{ active: classValue == 'PrivateGateway' }">
+          <el-menu-item index="/PrivateGateway"  :class="{ 'menu-active': classValue === '/PrivateGateway' }">
             <span slot="title">{{ $t("CVM.zxwg") }}</span>
           </el-menu-item>
         </el-menu-item-group>
@@ -115,10 +115,10 @@
           <span>{{ $t("menu.title13") }}</span>
         </template>
         <el-menu-item-group>
-          <el-menu-item index="/Physics" @click="_class" :class="{ active: classValue == 'Physics' }">
+          <el-menu-item index="/Physics"  :class="{ 'menu-active': classValue === '/Physics' }">
             <span slot="title">{{ $t("menu.title14") }}</span>
           </el-menu-item>
-          <el-menu-item index="/Private" @click="_class" :class="{ active: classValue == 'Private' }">
+          <el-menu-item index="/Private"  :class="{ 'menu-active': classValue === '/Private' }">
             <span slot="title">{{ $t("menu.title15") }}</span>
           </el-menu-item>
         </el-menu-item-group>
@@ -128,7 +128,7 @@
         <span slot="title">對等連接</span>
       </el-menu-item>-->
 
-      <el-menu-item index="/objectStorage" @click="_class" :class="{ active: classValue == 'objectStorage' }">
+      <el-menu-item index="/objectStorage"  :class="{ 'menu-active': classValue === '/objectStorage' }">
         <span slot="title">{{ $t("menu.title16") }}</span>
       </el-menu-item>
     </el-menu>
@@ -141,7 +141,7 @@
       return {
         activeIndex: "1",
         routeName: "",
-        classValue: ""
+        classValue: localStorage.getItem('classValue') ? localStorage.getItem('classValue') : 'overview'       // 默认选中的菜单
       };
     },
     watch: {
@@ -153,8 +153,9 @@
       this.classValue = this.$route.name;
     },
     methods: {
-      _class(key) {
-        this.classValue = key.index;
+      // 选中菜单点击事件
+      handleSelect(key, keyPath) {
+        this.classValue = key
       },
       handleOpen(key, keyPath) {
         // console.log(key, keyPath)
@@ -214,7 +215,7 @@
       font-size: 14px;
     }
 
-    .active {
+    .menu-active {
       background-color: #20222c !important;
       color: white;
     }

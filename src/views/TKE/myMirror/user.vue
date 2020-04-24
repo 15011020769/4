@@ -440,11 +440,13 @@ export default {
       }
       this.axios.post(TKE_MIRROR_LIST, param).then(res => {
         if (res.code === 0 && res.Error == undefined) {
+          this.tableData = [];
           this.tableData = res.data.repoInfo
           this.tableServer = res.data.server
           this.TotalCount = res.data.totalCount
           this.loadShow = false
         } else {
+          this.tableData = [];
           if(ErrorTips[res.codeDesc]){
             this.$message({
                 message: ErrorTips[res.codeDesc],

@@ -23,7 +23,7 @@
       return {
         activeIndex: "1",
         activeIndex2: "1",
-        classValue: '',
+        classValue: localStorage.getItem('classValue') ? localStorage.getItem('classValue') : 'CloudAudit'       // 默认选中的菜单
       };
     },
     created() {
