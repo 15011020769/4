@@ -524,7 +524,6 @@ export default {
       var timeId = setInterval(() => {
         if (this.status != "running") {
           this.getFlag(timeId);
-          // console.log(timeId)
           // clearInterval(timeId);
           // || this.status == "failed"
         }
@@ -600,7 +599,6 @@ export default {
           this.tableData = JSON.parse(res.Response.ResponseBody).releases;
           this.loadShow = false;
           this.flagSE = false;
-          console.log(this.$route)
           // clearInterval(timeId)
           // this.flag = false
         } else {

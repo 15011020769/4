@@ -29,9 +29,20 @@
               <a
                 style="cursor:pointer;"
                 @click="getJump(scope.row)"
-                v-if="scope.$index!=3"
+                v-if="scope.row.type == 'Service' || 
+                      scope.row.type == 'Deployment' || 
+                      scope.row.type == 'StatefulSet' || 
+                      scope.row.type == 'DaemonSet' || 
+                      scope.row.type == 'Job' || 
+                      scope.row.type == 'CronJob' || 
+                      scope.row.type == 'Ingress' || 
+                      scope.row.type == 'ConfigMap' || 
+                      scope.row.type == 'Secret' || 
+                      scope.row.type == 'PersistentVolume' || 
+                      scope.row.type == 'PersistentVolumeClaim' || 
+                      scope.row.type == 'StorageClass'"
               >{{scope.row.resource}}</a>
-              <p v-if="scope.$index==3">{{scope.row.resource}}</p>
+              <p v-else>{{scope.row.resource}}</p>
             </template>
           </el-table-column>
           <el-table-column prop="type" :label="$t('TKE.overview.lx')" max-width="33%"></el-table-column>
@@ -53,7 +64,7 @@
               v-for="(item,index) in count"
               :key="index"
               style="color:white"
-            >{{index+1}}&nbsp{{item}}</p>
+            >{{index+1}}    {{item}}</p>
           </div>
         </div>
       </el-card>
@@ -88,6 +99,7 @@
 <script>
 import { ErrorTips } from "@/components/ErrorTips";
 import { POINT_REQUEST } from "@/constants";
+import * as JsYAML from 'js-yaml';
 import "codemirror/lib/codemirror.css";
 import { codemirror } from "vue-codemirror";
 require("codemirror/mode/python/python.js");
@@ -212,9 +224,6 @@ export default {
           this.resources = JSON.parse(
             res.Response.ResponseBody
           ).info.status.resources;
-          // console.log("resources1111",JSON.parse(
-          //   res.Response.ResponseBody
-          // ).info.status.resources);
         } else {
           let ErrTips = {};
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -245,9 +254,6 @@ export default {
           this.resources = JSON.parse(
             res.Response.ResponseBody
           ).info.status.resources;
-          // console.log("resources222222222",JSON.parse(
-          //   res.Response.ResponseBody
-          // ).info.status.resources);
         } else {
           let ErrTips = {};
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -276,31 +282,15 @@ export default {
       this.axios.post(POINT_REQUEST, param).then(res => {
         if (res.Response.Error == undefined) {
           this.Data = JSON.parse(res.Response.ResponseBody).release;
-          console.log("this.Data", this.Data);
-          var conYaml = this.Data.manifest.split("#");
-          console.log("conYaml",conYaml);
-          this.tableDate.push(
-            {
-              resource: this.Data.name + "-zookeeper-headless",
-              type: "Service",
-              yaml: conYaml[1]
-            },
-            {
-              resource: this.Data.name + "-zookeeper",
-              type: "Service",
-              yaml: conYaml[2]
-            },
-            {
-              resource: this.Data.name + "-zookeeper",
-              type: "StatefulSet",
-              yaml: conYaml[3]
-            },
-            {
-              resource: this.Data.name + "-zookeeper",
-              type: "PodDisruptionBudget",
-              yaml: conYaml[4]
-            }
-          );
+          let yamls = this.Data.manifest.split('---').slice(1);
+          this.tableDate = yamls.map(item => {
+            let json = JsYAML.safeLoad(item);
+            return {
+              resource: json.metadata.name,
+              type: json.kind,
+              yaml: item
+            };
+          });
           this.raw = JSON.parse(res.Response.ResponseBody).release.config.raw;
           // 判断自定义参数列表是否存在
           if (this.raw == undefined || this.raw == "") {

@@ -13,10 +13,11 @@ import Router from 'vue-router'
 // import UnblockingRecord from './unBlocking/UnblockingRecord'
 // import choose from './buy/choose'
 // import pay from './buy/pay'
-
+import VueCookie from 'vue-cookie'
+import { clearLoginInfo } from '@/utils'
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   // mode: 'history',
   base: process.env.BASE_URL,
   redirect: {
@@ -159,3 +160,17 @@ export default new Router({
     }
   ]
 })
+router.beforeEach((to, from, next) => {
+  // Message.closeAll()      // 关闭所有的alert
+  // 如果没有uuid说明用户没有登录 则需要跳转到登录界面
+  if(VueCookie.get('uuid') === '' || VueCookie.get('uuid') === undefined || VueCookie.get('uuid') === null){
+    clearLoginInfo()
+    window.location.href = process.env.VUE_APP_loginUrl
+  }else{
+    next()
+  }
+
+
+})
+
+export default router

@@ -1,5 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import VueCookie from 'vue-cookie'
+import { clearLoginInfo } from '@/utils'
 Vue.use(Router)
 
 import overView from './overView/overView.vue'
@@ -8,8 +10,7 @@ import createFun from './FuncServe/createFun.vue'
 import createFunStep from './FuncServe/createFunStep.vue'
 import funSeverDetail from './FuncServe/funSeverDetail.vue'
 
-
-export default new Router({
+const router =  new Router({
   base: process.env.BASE_URL,
   redirect: {
     name: 'overView'
@@ -72,3 +73,18 @@ export default new Router({
 
   ]
 })
+
+router.beforeEach((to, from, next) => {
+  // Message.closeAll()      // 关闭所有的alert
+  // 如果没有uuid说明用户没有登录 则需要跳转到登录界面
+  if(VueCookie.get('uuid') === '' || VueCookie.get('uuid') === undefined || VueCookie.get('uuid') === null){
+    clearLoginInfo()
+    window.location.href = process.env.VUE_APP_loginUrl
+  }else{
+    next()
+  }
+
+
+})
+
+export default router

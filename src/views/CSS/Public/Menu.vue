@@ -6,18 +6,19 @@
       class="el-menu-vertical-demo"
       @open="handleOpen"
       @close="handleClose"
+      @select="handleSelect"
       background-color="#292b36"
       text-color="#fff"
       active-text-color="#fff"
       :router="true"
     >
-      <el-menu-item index="/overview">
+      <el-menu-item index="/overview" :class="{'menu-active': activeMenu === '/overview'}">
         <span slot="title">{{$t('CSS.leftSide.0')}}</span>
       </el-menu-item>
-      <el-menu-item index="/domainManagement">
+      <el-menu-item index="/domainManagement" :class="{'menu-active': activeMenu === '/domainManagement'}">
         <span slot="title">{{$t('CSS.leftSide.1')}}</span>
       </el-menu-item>
-      <el-menu-item index="/streamManagement">
+      <el-menu-item index="/streamManagement" :class="{'menu-active': activeMenu === '/streamManagement'}">
         <span slot="title">{{$t('CSS.leftSide.2')}}</span>
       </el-menu-item>
       <el-submenu index="1">
@@ -25,19 +26,19 @@
           <span>{{$t('CSS.leftSide.3')}}</span>
         </template>
         <el-menu-item-group>
-          <el-menu-item index="/transcribe">
+          <el-menu-item index="/transcribe" :class="{'menu-active': activeMenu === '/transcribe'}">
             <span slot="title">{{$t('CSS.leftSide.4')}}</span>
           </el-menu-item>
-          <el-menu-item index="/transcoding">
+          <el-menu-item index="/transcoding" :class="{'menu-active': activeMenu === '/transcoding'}">
             <span slot="title">{{$t('CSS.leftSide.5')}}</span>
           </el-menu-item>
-          <el-menu-item index="/screenshot">
+          <el-menu-item index="/screenshot" :class="{'menu-active': activeMenu === '/screenshot'}">
             <span slot="title">截圖配置</span>
           </el-menu-item>
-          <el-menu-item index="/watermark">
+          <el-menu-item index="/watermark" :class="{'menu-active': activeMenu === '/watermark'}">
             <span slot="title">{{$t('CSS.leftSide.7')}}</span>
           </el-menu-item>
-          <el-menu-item index="/callback">
+          <el-menu-item index="/callback" :class="{'menu-active': activeMenu === '/callback'}">
             <span slot="title">{{$t('CSS.leftSide.8')}}</span>
           </el-menu-item>
         </el-menu-item-group>
@@ -47,13 +48,13 @@
           <span>{{$t('CSS.leftSide.9')}}</span>
         </template>
         <el-menu-item-group>
-          <el-menu-item index="/appreciation">
+          <el-menu-item index="/appreciation" :class="{'menu-active': activeMenu === '/appreciation'}">
             <span slot="title">{{$t('CSS.leftSide.10')}}</span>
           </el-menu-item>
-          <el-menu-item index="/streamlookup">
+          <el-menu-item index="/streamlookup" :class="{'menu-active': activeMenu === '/streamlookup'}">
             <span slot="title">{{$t('CSS.leftSide.11')}}</span>
           </el-menu-item>
-          <el-menu-item index="/operation">
+          <el-menu-item index="/operation" :class="{'menu-active': activeMenu === '/operation'}">
             <span slot="title">{{$t('CSS.leftSide.12')}}</span>
           </el-menu-item>
         </el-menu-item-group>
@@ -101,13 +102,13 @@
           <span>慢直播</span>
         </template>
         <el-menu-item-group>
-          <el-menu-item index="/slow/domains">
+          <el-menu-item index="/slow/domains" :class="{'menu-active': activeMenu === '/slow/domains'}">
             <span slot="title">域名管理</span>
           </el-menu-item>
-          <el-menu-item index="/slow/templates">
+          <el-menu-item index="/slow/templates" :class="{'menu-active': activeMenu === '/slow/templates'}">
             <span slot="title">範本配置</span>
           </el-menu-item>
-          <el-menu-item index="/slow/stat">
+          <el-menu-item index="/slow/stat" :class="{'menu-active': activeMenu === '/slow/stat'}">
             <span slot="title">統計分析</span>
           </el-menu-item>
         </el-menu-item-group>
@@ -117,10 +118,10 @@
           <span>{{$t('CSS.leftSide.22')}}</span>
         </template>
         <el-menu-item-group>
-          <el-menu-item index="/cutout">
+          <el-menu-item index="/cutout" :class="{'menu-active': activeMenu === '/cutout'}">
             <span slot="title">{{$t('CSS.leftSide.23')}}</span>
           </el-menu-item>
-          <el-menu-item index="/builder">
+          <el-menu-item index="/builder" :class="{'menu-active': activeMenu === '/builder'}">
             <span slot="title">{{$t('CSS.leftSide.24')}}</span>
           </el-menu-item>
         </el-menu-item-group>
@@ -137,7 +138,9 @@ export default {
       activeName1: "",
       activeName2: "",
       activeIndex: "1",
-      activeIndex2: "1"
+      activeIndex2: "1",
+      activeMenu: localStorage.getItem('activeMenu') ? localStorage.getItem('activeMenu') : 'overview'       // 默认选中的菜单
+
     };
   },
   methods: {
@@ -146,6 +149,11 @@ export default {
     },
     handleClose(key, keyPath) {
       // console.log(key, keyPath)
+    },
+    // 选中菜单点击事件
+    handleSelect(key, keyPath) {
+      this.activeMenu = key
+      localStorage.setItem('activeMenu', key)
     }
   }
 };
@@ -196,6 +204,10 @@ export default {
     display: flex;
     align-items: center;
     font-size: 14px;
+  }
+  .menu-active {
+    background-color: #20222c !important;
+    color: white;
   }
 }
 </style>
