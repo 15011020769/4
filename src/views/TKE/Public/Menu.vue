@@ -61,7 +61,7 @@ export default {
       activeName2: "",
       activeIndex: "1",
       activeIndex2: "1",
-      classValue: '',
+      classValue: localStorage.getItem('classValue') ? localStorage.getItem('classValue') : '/overview',
     };
   },
   created() {

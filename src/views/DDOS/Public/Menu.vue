@@ -12,15 +12,16 @@
       class="el-menu-vertical-demo"
       @open="handleOpen"
       @close="handleClose"
+      @select="handleSelect"
       background-color="#292b36"
       text-color="#fff"
       active-text-color="#fff"
       :router="true"
     >
-      <el-menu-item index="ProtectOverview">
+      <el-menu-item index="ProtectOverview" :class="{'menu-active': ddosMenu === 'ProtectOverview'}">
         <span slot="title">防護概覽</span>
       </el-menu-item>
-      <el-menu-item index="basicProtection">
+      <el-menu-item index="basicProtection" :class="{'menu-active': ddosMenu === 'basicProtection'}">
         <span slot="title">基礎防護</span>
       </el-menu-item>
       <el-submenu index="IpProfessional">
@@ -28,10 +29,10 @@
           <span>DDoS 高防IP專業版</span>
         </template>
         <el-menu-item-group>
-          <el-menu-item class="selectMenu" index="IpProfessional">統計報表</el-menu-item>
-          <el-menu-item class="selectMenu" index="ProtectionConfig">防護配置</el-menu-item>
-          <el-menu-item class="selectMenu" index="AccessConfig">接入配置</el-menu-item>
-          <el-menu-item class="selectMenu" index="AssetList">資產清單</el-menu-item>
+          <el-menu-item class="selectMenu" index="IpProfessional" :class="{'menu-active': ddosMenu === 'IpProfessional'}">統計報表</el-menu-item>
+          <el-menu-item class="selectMenu" index="ProtectionConfig" :class="{'menu-active': ddosMenu === 'ProtectionConfig'}">防護配置</el-menu-item>
+          <el-menu-item class="selectMenu" index="AccessConfig" :class="{'menu-active': ddosMenu === 'AccessConfig'}">接入配置</el-menu-item>
+          <el-menu-item class="selectMenu" index="AssetList" :class="{'menu-active': ddosMenu === 'AssetList'}">資產清單</el-menu-item>
         </el-menu-item-group>
       </el-submenu>
       <el-submenu index="unBlocking">
@@ -39,8 +40,8 @@
           <span>自助解封</span>
         </template>
         <el-menu-item-group>
-          <el-menu-item class="selectMenu" index="unBlocking">解封操作</el-menu-item>
-          <el-menu-item class="selectMenu" index="UnblockingRecord">解封操作記錄</el-menu-item>
+          <el-menu-item class="selectMenu" index="unBlocking" :class="{'menu-active': ddosMenu === 'unBlocking'}">解封操作</el-menu-item>
+          <el-menu-item class="selectMenu" index="UnblockingRecord" :class="{'menu-active': ddosMenu === 'UnblockingRecord'}">解封操作記錄</el-menu-item>
         </el-menu-item-group>
       </el-submenu>
     </el-menu>
@@ -51,11 +52,15 @@
 export default {
   data() {
     return {
-      activeIndex: "1",
-      activeIndex2: "1"
+      ddosMenu: localStorage.getItem('ddosMenu') ? localStorage.getItem('ddosMenu') : 'ProtectOverview'       // 默认选中的菜单
     };
   },
   methods: {
+    // 选中菜单点击事件
+    handleSelect(key, keyPath) {
+      this.ddosMenu = key
+      localStorage.setItem('ddosMenu', key)
+    },
     handleOpen(key, keyPath) {
       console.log(key, keyPath);
     },
@@ -93,6 +98,10 @@ export default {
     display: flex;
     align-items: center;
     font-size: 14px;
+  }
+  .menu-active {
+    background-color: #20222c !important;
+    color: white;
   }
 }
 .selectMenu {
