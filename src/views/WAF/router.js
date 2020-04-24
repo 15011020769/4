@@ -2,6 +2,8 @@ import Vue from "vue";
 import Router from "vue-router";
 import { DESCRIBE_USER_EDITION, DESCRIBE_USER_INFO } from "@/constants";
 import { CLB_PACKAGE_CFG_TYPES } from "./constants";
+import VueCookie from 'vue-cookie'
+import { clearLoginInfo } from '@/utils'
 
 Vue.use(Router);
 
@@ -362,6 +364,15 @@ router.beforeEach((to, from, next) => {
   } else {
     waf = 1;
     next();
+  }
+
+  // Message.closeAll()      // 关闭所有的alert
+  // 如果没有uuid说明用户没有登录 则需要跳转到登录界面
+  if(VueCookie.get('uuid') === '' || VueCookie.get('uuid') === undefined || VueCookie.get('uuid') === null){
+    clearLoginInfo()
+    window.location.href = process.env.VUE_APP_loginUrl
+  }else{
+    next()
   }
 });
 

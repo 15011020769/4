@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-
+import VueCookie from 'vue-cookie'
+import { clearLoginInfo } from '@/utils'
 Vue.use(Router)
 
 const router = new Router({
@@ -285,7 +286,16 @@ const slowIntercept = (to, from, next) => {
     next();
   }
 }
-
+router.beforeEach((to, from, next) => {
+  // Message.closeAll()      // 关闭所有的alert
+  // 如果没有uuid说明用户没有登录 则需要跳转到登录界面
+  if(VueCookie.get('uuid') === '' || VueCookie.get('uuid') === undefined || VueCookie.get('uuid') === null){
+    clearLoginInfo()
+    window.location.href = process.env.VUE_APP_loginUrl
+  }else{
+    next()
+  }
+})
 // let open = -1; // 0 未开通 1 已开通
 // router.beforeEach((to, from, next) => {
 //   if (to.meta.interceptBuy === false) {
