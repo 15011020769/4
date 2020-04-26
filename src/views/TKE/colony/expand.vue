@@ -66,9 +66,9 @@
           <div class="tke-second-tips" style="border: 0px;margin:0px;padding:0px;">
             <p>{{$t('TKE.colony.jfms')}}<i class="el-icon-info"></i></p>
             <div class="tke-second-radio-btn tke-second-icon-btn">
-              <el-radio-group v-model="nodeForm.instanceChargeType" @change="SecondCharging();costPrice()">
+              <el-radio-group v-model="nodeForm.instanceChargeType" @change="changeType();SecondCharging();costPrice()">
                 <el-radio-button label="POSTPAID_BY_HOUR">{{$t('TKE.colony.aljf')}}</el-radio-button>
-                <!-- <el-radio-button label="PREPAID">包年包月</el-radio-button> -->
+                <el-radio-button label="PREPAID">包年包月</el-radio-button>
               </el-radio-group>
               <!-- <a href="#">详细对比</a> -->
             </div>
@@ -170,7 +170,7 @@
                     <span class="text-orange" style="color:#ff7800;"
                       v-if="nodeForm.instanceChargeType === 'POSTPAID_BY_HOUR'">NT$ {{ scope.row.cost }}</span>
                     <span class="text-orange" style="color:#ff7800;"
-                      v-else>NT${{ scope.row.Price.DiscountPrice }}</span>
+                      v-else>NT${{ scope.row.costTwo }}</span>
                     {{nodeForm.instanceChargeType === 'POSTPAID_BY_HOUR' ? '每小時' : '月'}}
                   </template>
                 </el-table-column>
@@ -297,8 +297,10 @@
             <p>{{$t('TKE.colony.gwdk')}}<i class="el-icon-info"></i></p>
             <div class="tke-second-radio-btn tke-third-radio-btn">
               <el-radio-group v-model="nodeForm.internetChargeType" @change="changeInternetType">
-                <el-radio-button label="BANDWIDTH_POSTPAID_BY_HOUR">{{$t('TKE.colony.adkjf')}}</el-radio-button>
-                <el-radio-button label="TRAFFIC_POSTPAID_BY_HOUR">按使用流量</el-radio-button>
+                <el-radio-button v-if="this.nodeForm.instanceChargeType === 'POSTPAID_BY_HOUR'" label="BANDWIDTH_POSTPAID_BY_HOUR">{{$t('TKE.colony.adkjf')}}</el-radio-button>
+                <el-radio-button v-if="this.nodeForm.instanceChargeType === 'PREPAID'" label="BANDWIDTH_PREPAID">{{$t('TKE.colony.adkjf')}}</el-radio-button>
+                <!-- <el-radio-button label="BANDWIDTH_POSTPAID_BY_HOUR">{{$t('TKE.colony.adkjf')}}</el-radio-button>
+                <el-radio-button label="TRAFFIC_POSTPAID_BY_HOUR">按使用流量</el-radio-button> -->
               </el-radio-group>
               <div style="overflow:hidden;margin-left:120px;">
                 <div class="block">
@@ -544,7 +546,7 @@
                 <el-radio-button label="1">1{{$t('TKE.colony.gy')}}</el-radio-button>
                 <el-radio-button label="2">2{{$t('TKE.colony.gy')}}</el-radio-button>
                 <el-radio-button label="3">3{{$t('TKE.colony.gy')}}</el-radio-button>
-                <el-radio-button label="4">6{{$t('TKE.colony.gy')}}</el-radio-button>
+                <el-radio-button label="6">6{{$t('TKE.colony.gy')}}</el-radio-button>
                 <el-radio-button label="12">1年</el-radio-button>
                 <el-radio-button label="24">2年</el-radio-button>
                 <el-radio-button label="36">3年</el-radio-button>
@@ -558,7 +560,14 @@
           </el-form-item>
           <el-form-item :label="$t('TKE.colony.zjfy')" v-if="nodeForm.instanceChargeType === 'PREPAID'">
             <div class="tke-second-cost">
-              <span class="tke-second-cost-num">{{nodeForm.totalPrice}}</span><span class="tke-second-cost-h">元</span>
+              <!-- <span class="tke-second-cost-num">{{nodeForm.totalPrice}}</span><span class="tke-second-cost-h">元</span> -->
+              <span class="tke-second-cost-num">NT${{nodeForm.allocationCost}}</span
+              >
+              <span class="tke-second-cost-h">每个月</span>
+              <span v-if="nodeForm.internetChargeType=='TRAFFIC_POSTPAID_BY_HOUR'">|</span>
+              <span v-if="nodeForm.internetChargeType=='TRAFFIC_POSTPAID_BY_HOUR'" class="tke-second-cost-num">NT${{nodeForm.networkCost}}</span
+              >
+              <span v-if="nodeForm.internetChargeType=='TRAFFIC_POSTPAID_BY_HOUR'" class="tke-second-cost-h">GB</span>
 
             </div>
           </el-form-item>
@@ -577,7 +586,7 @@
         <!-- 底部 -->
         <div class="tke-formpanel-footer">
           <el-button size="small" @click="fourthPrev">上一步</el-button>
-          <el-button size="small" type="primary" @click="submitOk()">完成</el-button>
+          <el-button size="small" type="primary" @click="submit()">完成</el-button>
         </div>
       </div>
     </div>
@@ -712,6 +721,8 @@
           exampleType: 'all', //实例类型
           zoneInfoFilters: [], //机型过滤数据列表
           isShowZoneInfoFilterData: false, //列表是否显示过滤数据
+          Alias:"", // 机型系统
+          VpcId:"", // vpcID
           AllCPU: [{
               label: "全部CPU",
               value: "all"
@@ -866,7 +877,8 @@
         num: 1,
         checked: true,
         input: "",
-        value1: 0
+        value1: 0,
+        params:""
       };
     },
     components: {
@@ -895,6 +907,17 @@
       // 高級設置
       AdvancedSettingBtn() {
         this.nodeForm.advancedSettingShow = !this.nodeForm.advancedSettingShow;
+      },
+      setRenew(val){
+        // console.log(val)
+        this.costPrice()
+      },
+      changeType(){
+        if(this.nodeForm.instanceChargeType==='POSTPAID_BY_HOUR'){
+            this.nodeForm.internetChargeType = 'BANDWIDTH_POSTPAID_BY_HOUR';
+        } else {
+            this.nodeForm.internetChargeType = 'BANDWIDTH_PREPAID'
+        }
       },
       //获取镜像
       async getImagesList() {
@@ -937,6 +960,7 @@
                 for (let i = 0; i < images.length; i++) {
                   let image = images[i];
                   if (response.ClusterOs === image.OsName) {
+                    this.nodeForm.Alias = image.Alias
                     this.nodeForm.imageId = image.ImageId;
                     continue;
                   }
@@ -972,6 +996,7 @@
                   if (res1.Response.Error === undefined) {
                     this.nodeForm.subNetList = res1.Response.SubnetSet;
                     this.nodeForm.subnetId = res1.Response.SubnetSet[0].SubnetId;
+                    this.nodeForm.VpcId = res1.Response.SubnetSet[0].VpcId;
                     this.loadShow = false;
                   } else {
                     this.loadShow = false;
@@ -1038,11 +1063,17 @@
         let taRate = localStorage.getItem('taRate'); // 税率
         await this.axios.post(DESCRIBE_ZONE_INFO, param).then(res => {
           if (res.Response.Error === undefined) {
-            if (res.Response.InstanceTypeQuotaSet.length > 0) {
-              for (let i = 0; i < res.Response.InstanceTypeQuotaSet.length; i++) {
-                res.Response.InstanceTypeQuotaSet[i].cost = (res.Response.InstanceTypeQuotaSet[i].Price
-                  .UnitPrice * usdRate * tpdRate * taRate).toFixed(8);
+            if(res.Response.InstanceTypeQuotaSet.length > 0) {
+              if(this.nodeForm.instanceChargeType === 'POSTPAID_BY_HOUR'){
+                for(let i = 0; i < res.Response.InstanceTypeQuotaSet.length; i++) {
+                  res.Response.InstanceTypeQuotaSet[i].cost = (res.Response.InstanceTypeQuotaSet[i].Price.UnitPrice * usdRate * tpdRate * taRate).toFixed(8);
+                }
+              } else {
+                for(let i = 0; i < res.Response.InstanceTypeQuotaSet.length; i++) {
+                  res.Response.InstanceTypeQuotaSet[i].costTwo = (res.Response.InstanceTypeQuotaSet[i].Price.DiscountPrice * usdRate * tpdRate * taRate).toFixed(8);
+                }
               }
+              
             }
             this.nodeForm.zoneInfoList = res.Response.InstanceTypeQuotaSet;
             this.nodeForm.modelType = res.Response.InstanceTypeQuotaSet[0];
@@ -1553,6 +1584,46 @@
         }
         this.costPrice();
       },
+      // 提交完成
+      submit(){
+        if(this.nodeForm.instanceChargeType === 'POSTPAID_BY_HOUR'){
+          this.submitOk()
+        } else {
+          if(this.nodeForm.networkCost){
+            this.submitOk()
+            if(this.params){
+              let param = {
+                  name:"新购云服务器",
+                  meta:{
+                    local:"台湾台北",
+                    login:"台北一区",
+                    seriesCpu:this.nodeForm.modelType.Cpu,
+                    seriesMemory:this.nodeForm.modelType.Memory,
+                    mirror:this.nodeForm.Alias ,
+                    internetChargeType:this.nodeForm.internetChargeType,
+                    internetMaxBandwidthOut:this.nodeForm.internetMaxBandwidthOut,
+                    groupVps:this.nodeForm.groupVps,//vpcID
+                    subnetId:this.nodeForm.subnetId,
+                    systemDiskType:this.nodeForm.systemDiskType,
+                    systemSize:this.nodeForm.systemSize,
+                    name:this.nodeForm.instanceName,
+                    clusterId:this.clusterId
+                  },
+                  money:this.nodeForm.allocationCost,
+                  period:Number(this.nodeForm.buyTime),
+                  moneyMonth:(Number(this.nodeForm.allocationCost)/Number(this.nodeForm.buyTime)/Number(this.nodeForm.instanceCount)),
+                  instanceCount:this.nodeForm.instanceCount,// 数量
+                  renew:this.nodeForm.renew,
+                  params:this.params
+              }
+              localStorage.setItem('info', JSON.stringify(param));
+              this.$router.push({
+                name:'postMoney'
+              })
+          }
+          }
+        }
+      },
       //新建节点
       async submitOk() {
         this.loadShow = true;
@@ -1670,57 +1741,63 @@
           }
         }
 
-        await this.axios.post(TKE_ADD_NODE, param).then(res => {
-          if (res.Response.Error === undefined) {
-            this.$message({
-              message: "創建成功",
-              type: "success",
-              showClose: true,
-              duration: 0
-            });
-            this.goBack();
-            this.loadShow = false;
-          } else {
-            this.loadShow = false;
-            let ErrTips = {
-              "FailedOperation": "操作失敗",
-              "InternalError": "内部錯誤",
-              "InternalError.CvmCommon": "cvm配額不足,請釋放部分資源後再創建",
-              "InternalError.CvmNotFound": "cvm不存在。",
-              "InternalError.Db": "db錯誤。",
-              "InternalError.DbAffectivedRows": "DB錯誤",
-              "InternalError.DbRecordNotFound": "記錄未找到。",
-              "InternalError.ImageIdNotFound": "映像未找到。",
-              "InternalError.OsNotSupport": "映像OS不支持。",
-              "InternalError.Param": "Param。",
-              "InternalError.QuotaMaxClsLimit": "超過配額限制。",
-              "InternalError.QuotaMaxNodLimit": "超過配額限制。",
-              "InternalError.QuotaMaxRtLimit": "超過配額限制。",
-              "InternalError.UnexceptedInternal": "内部錯誤",
-              "InternalError.VpcCommon": "VPC報錯。",
-              "InternalError.VpcPeerNotFound": "對等連接不存在。",
-              "InternalError.VpcRecodrNotFound": "未發現vpc記錄。",
-              "InvalidParameter": "參數錯誤",
-              "MissingParameter": "缺少參數錯誤",
-              "ResourceInUse": "資源被佔用",
-              "ResourceNotFound": "資源不存在",
-              "ResourceUnavailable": "資源不可用",
-              "UnauthorizedOperation": "未授權操作",
-              "UnknownParameter": "未知參數錯誤",
-              "UnsupportedOperation": "操作不支持"
-            };
-            let ErrOr = Object.assign(ErrorTips, ErrTips);
-            this.$message({
-              message: ErrOr[res.Response.Error.Code],
-              type: "error",
-              showClose: true,
-              duration: 0
-            });
-          }
-        });
+        if(this.nodeForm.instanceChargeType==='POSTPAID_BY_HOUR'){
+          await this.axios.post(TKE_ADD_NODE, param).then(res => {
+            if (res.Response.Error === undefined) {
+              this.$message({
+                message: "創建成功",
+                type: "success",
+                showClose: true,
+                duration: 0
+              });
+              this.goBack();
+              this.loadShow = false;
+            } else {
+              this.loadShow = false;
+              let ErrTips = {
+                "FailedOperation": "操作失敗",
+                "InternalError": "内部錯誤",
+                "InternalError.CvmCommon": "cvm配額不足,請釋放部分資源後再創建",
+                "InternalError.CvmNotFound": "cvm不存在。",
+                "InternalError.Db": "db錯誤。",
+                "InternalError.DbAffectivedRows": "DB錯誤",
+                "InternalError.DbRecordNotFound": "記錄未找到。",
+                "InternalError.ImageIdNotFound": "映像未找到。",
+                "InternalError.OsNotSupport": "映像OS不支持。",
+                "InternalError.Param": "Param。",
+                "InternalError.QuotaMaxClsLimit": "超過配額限制。",
+                "InternalError.QuotaMaxNodLimit": "超過配額限制。",
+                "InternalError.QuotaMaxRtLimit": "超過配額限制。",
+                "InternalError.UnexceptedInternal": "内部錯誤",
+                "InternalError.VpcCommon": "VPC報錯。",
+                "InternalError.VpcPeerNotFound": "對等連接不存在。",
+                "InternalError.VpcRecodrNotFound": "未發現vpc記錄。",
+                "InvalidParameter": "參數錯誤",
+                "MissingParameter": "缺少參數錯誤",
+                "ResourceInUse": "資源被佔用",
+                "ResourceNotFound": "資源不存在",
+                "ResourceUnavailable": "資源不可用",
+                "UnauthorizedOperation": "未授權操作",
+                "UnknownParameter": "未知參數錯誤",
+                "UnsupportedOperation": "操作不支持"
+              };
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+            }
+          });
+        } else {
+          this.params = param
+        }
       },
       //计算价格
       async costPrice() {
+        this.nodeForm.networkCost = ""
+        this.nodeForm.allocationCost = ""
         this.loadShow = true;
         let param = {
           // DataDisks:dataDisks,
@@ -1751,7 +1828,9 @@
           param["EnhancedService.SecurityService.Enabled"] = this.nodeForm.securityService;
           param["EnhancedService.MonitorService.Enabled"] = this.nodeForm.monitorService;
           param["InstanceChargePrepaid.Period"] = Number(this.nodeForm.buyTime);
-          param["InstanceChargePrepaid.RenewFlag"] = "NOTIFY_AND_MANUAL_RENEW";
+          if(this.nodeForm.renew){
+            param["InstanceChargePrepaid.RenewFlag"] = "NOTIFY_AND_MANUAL_RENEW";
+          }
           param["InstanceChargePrepaid.TimeUnit"] = "MONTH";
         }
         if (this.nodeForm.instanceChargeType === "POSTPAID_BY_HOUR") {
@@ -1793,6 +1872,9 @@
         } else {
           await this.axios.post(TKE_PRICE, param).then(res => {
             if (res.Response.Error === undefined) {
+              let price = res.Response.Price;
+              this.nodeForm.allocationCost= price.InstancePrice.UnitPrice.toFixed(2);
+              this.nodeForm.networkCost = price.BandwidthPrice.UnitPrice.toFixed(2);
               // let price = res.Response.Price;
               // this.nodeForm.networkCost = price.InstancePrice.UnitPrice.toFixed(2);
               this.loadShow = false;

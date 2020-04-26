@@ -89,7 +89,6 @@
     created(){
       this.param = JSON.parse(localStorage.getItem('clusterParam'));
       this.tableData = JSON.parse(localStorage.getItem("colonyCostList"));
-      console.log("tableData",this.tableData);
       this.clusterOs = localStorage.getItem("clusterOs");
       this.vpcId = localStorage.getItem("vpcId");
       this.buyTime = localStorage.getItem("buyTime");

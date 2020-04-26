@@ -90,10 +90,7 @@ export default {
     }
   },
   created(){
-    console.log(JSON.parse(localStorage.getItem('info')))
     this.param.push(JSON.parse(localStorage.getItem('info')))
-    console.log(this.param)
-    // console.log(JSON.parse(this.param[0].params.RunInstancePara))
   },
   methods:{
     async submitOk() {
