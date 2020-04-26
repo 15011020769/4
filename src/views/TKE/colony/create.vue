@@ -4620,12 +4620,10 @@ export default {
             this.colonySecond.tableList = [];
             this.colonySecond.masterTableList = [];
             this.colonySecond.tableList = res.Response.InstanceTypeQuotaSet;
-            console.log(this.colonySecond.tableList);
             for (let i in this.colonySecond.tableList) {
               this.colonySecond.tableList[i]["tableDisShow"] = false;
               this.colonySecond.tableList[i]["index"] = Number(i);
             }
-            // console.log(this.colonySecond.tableList);
             for (var i in this.colonySecond.workerOneList) {
               this.colonySecond.workerOneList[
                 i
@@ -5637,6 +5635,7 @@ export default {
             if (res.Response.Error === undefined) {
               let _data = res.Response.Price;
               this.costAll2.push(_data);
+              
             } else {
               let ErrTips = {
                 AccountQualificationRestrictions: "該請求帳戶未通過資格審計。",
