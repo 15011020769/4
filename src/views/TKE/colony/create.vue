@@ -672,7 +672,7 @@
                     >{{ $t("TKE.colony.aljf") }}
                   </el-radio-button>
 
-                  <!-- <el-radio-button label="2">包年包月</el-radio-button> -->
+                  <el-radio-button label="2">包年包月</el-radio-button>
                 </el-radio-group>
 
                 <!-- <a href="#">详细对比</a> -->
@@ -1065,7 +1065,12 @@
                                       {{
                                         scope.row.Price.UnitPrice | HuiLv
                                       }}</span
-                                    >每小時
+                                    >
+                                    {{
+                                      colonySecond.charging === 1
+                                        ? "每小時"
+                                        : "月"
+                                    }}
                                   </template>
                                 </el-table-column>
                               </el-table>
@@ -1134,7 +1139,12 @@
                                       {{
                                         scope.row.Price.UnitPrice | HuiLv
                                       }}</span
-                                    >每小時
+                                    >
+                                    {{
+                                      colonySecond.charging === 1
+                                        ? "每小時"
+                                        : "月"
+                                    }}
                                   </template>
                                 </el-table-column>
                               </el-table>
@@ -1322,11 +1332,25 @@
                             <div class="tke-second-worker-popover-disk">
                               <div>
                                 <el-select
+                                v-if="Number(colonySecond.charging) === 1"
                                   v-model="item.broadbandVal"
                                   :placeholder="$t('TKE.overview.qxz')"
                                 >
                                   <el-option
                                     v-for="item in colonySecond.broadbandOptions"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value"
+                                  >
+                                  </el-option>
+                                </el-select>
+                                <el-select
+                                  v-if="Number(colonySecond.charging) === 2"
+                                  v-model="item.broadbandVal"
+                                  :placeholder="$t('TKE.overview.qxz')"
+                                >
+                                  <el-option
+                                    v-for="item in colonySecond.broadbandOptionsPaid"
                                     :key="item.value"
                                     :label="item.label"
                                     :value="item.value"
@@ -1877,7 +1901,12 @@
                                       {{
                                         scope.row.Price.UnitPrice | HuiLv
                                       }}</span
-                                    >每小時
+                                    >
+                                    {{
+                                      colonySecond.charging === 1
+                                        ? "每小時"
+                                        : "月"
+                                    }}
                                   </template>
                                 </el-table-column>
                               </el-table>
@@ -1949,7 +1978,12 @@
                                       {{
                                         scope.row.Price.UnitPrice | HuiLv
                                       }}</span
-                                    >每小時
+                                    >
+                                    {{
+                                      colonySecond.charging === 1
+                                        ? "每小時"
+                                        : "月"
+                                    }}
                                   </template>
                                 </el-table-column>
                               </el-table>
@@ -2076,7 +2110,7 @@
                                         </el-select>
                                         <el-input-number
                                           v-model="x.dataDiskNum"
-                                          :min="10"
+                                          :min="x.dataDiskMinNum"
                                           :max="16000"
                                           :step="10"
                                           class="input-number"
@@ -2187,11 +2221,25 @@
                             <div class="tke-second-worker-popover-disk">
                               <div>
                                 <el-select
+                                  v-if="Number(colonySecond.charging) === 1"
                                   v-model="item.broadbandVal"
                                   :placeholder="$t('TKE.overview.qxz')"
                                 >
                                   <el-option
                                     v-for="item in colonySecond.broadbandOptions"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value"
+                                  >
+                                  </el-option>
+                                </el-select>
+                                <el-select
+                                  v-if="Number(colonySecond.charging) === 2"
+                                  v-model="item.broadbandVal"
+                                  :placeholder="$t('TKE.overview.qxz')"
+                                >
+                                  <el-option
+                                    v-for="item in colonySecond.broadbandOptionsPaid"
                                     :key="item.value"
                                     :label="item.label"
                                     :value="item.value"
@@ -2971,7 +3019,8 @@ import {
   TKE_MISG,
   TKE_SSH,
   // 第四步
-  TKE_CREATW_CLUSTERS
+  TKE_CREATW_CLUSTERS,
+  TKE_PAY_MONEY
 } from "@/constants";
 export default {
   name: "create",
@@ -3174,7 +3223,7 @@ export default {
             radioIndex: null,
             modelShow: false,
             modelName: "",
-            modelType: "",
+            modelType: "S3.SMALL1",
             modelHe: "",
             modelGB: "",
             systemDiskShow: false,
@@ -3400,6 +3449,16 @@ export default {
             label: "按使用流量"
           }
         ],
+        broadbandOptionsPaid: [
+          {
+            value: "BANDWIDTH_PREPAID",
+            label: "按寬頻計費"
+          },
+          {
+            value: "TRAFFIC_POSTPAID_BY_HOUR",
+            label: "按使用流量"
+          }
+        ],
         // 总计费用
         costShow: true,
         // 配置费用
@@ -3489,7 +3548,8 @@ export default {
       textarea2: "",
       checkoutFs: false,
       advancedSettingArr: [],
-      dataShow: []
+      dataShow: [],
+      list: []
     };
   },
   components: {
@@ -3911,7 +3971,7 @@ export default {
       });
     },
     // 第一步 下一步
-    firstNext() {
+    async firstNext() {
       if (this.colony.name !== "" && this.colony.CIDRTips.IsConflict !== true) {
         this.firstBox = false;
         this.secondBox = true;
@@ -3960,7 +4020,7 @@ export default {
         }
         this.ChildNodes();
         // 机型 选择机型
-        this.getDescribeZoneInstanceConfigInfos();
+        await this.getDescribeZoneInstanceConfigInfos();
       }
       if (this.colony.name === "") {
         this.colony.nameWran = true;
@@ -4506,10 +4566,37 @@ export default {
     SecondCharging(val) {
       if (val === "2") {
         this.colonySecond.chargingShow = true;
+        this.colonySecond.workerOneList[0].broadbandVal = "BANDWIDTH_PREPAID";
+        this.colonySecond.masterOneList[0].broadbandVal = "BANDWIDTH_PREPAID";
+        let workerList = this.colonySecond.workerOneList;
+        let masterList = this.colonySecond.masterOneList;
+        workerList.forEach(elent => {
+          elent.broadbandVal = "BANDWIDTH_PREPAID";
+          elent.InstanceChargeType = "PREPAID";
+        });
+        masterList.forEach(elent => {
+          elent.broadbandVal = "BANDWIDTH_PREPAID";
+          elent.InstanceChargeType = "PREPAID";
+        });
       } else {
+        this.colonySecond.workerOneList[0].broadbandVal =
+          "BANDWIDTH_POSTPAID_BY_HOUR";
+        this.colonySecond.masterOneList[0].broadbandVal =
+          "BANDWIDTH_POSTPAID_BY_HOUR";
+        let workerList = this.colonySecond.workerOneList;
+        let masterList = this.colonySecond.masterOneList;
+        workerList.forEach(elent => {
+          elent.broadbandVal = "BANDWIDTH_POSTPAID_BY_HOUR";
+          elent.InstanceChargeType = "POSTPAID_BY_HOUR";
+        });
+        masterList.forEach(elent => {
+          elent.broadbandVal = "BANDWIDTH_POSTPAID_BY_HOUR";
+          elent.InstanceChargeType = "POSTPAID_BY_HOUR";
+        });
         this.colonySecond.chargingShow = false;
       }
       this.TotalCost();
+      this.getDescribeZoneInstanceConfigInfos();
     },
     // 购买时长
     BuyTime(val) {
@@ -4517,78 +4604,174 @@ export default {
     },
     // 机型  选择机型
     //获取可用区机型配置信息
-    getDescribeZoneInstanceConfigInfos() {
+    async getDescribeZoneInstanceConfigInfos() {
       let param = {
         Version: "2017-03-12"
       };
       param["Filters.0.Name"] = "instance-charge-type";
-      param["Filters.0.Values.0"] = "POSTPAID_BY_HOUR";
-      this.axios.post(DESCRIBE_ZONE_INFO, param).then(res => {
-        if (res.Response.Error === undefined) {
-          this.colonySecond.tableList = res.Response.InstanceTypeQuotaSet;
-          for (let i in this.colonySecond.tableList) {
-            this.colonySecond.tableList[i]["tableDisShow"] = false;
-            this.colonySecond.tableList[i]["index"] = Number(i);
-          }
-          for (var i in this.colonySecond.workerOneList) {
-            this.colonySecond.workerOneList[
-              i
-            ].modelName = this.colonySecond.tableList[i].InstanceType;
-            this.colonySecond.workerOneList[
-              i
-            ].radio1 = this.colonySecond.tableList[i].index;
-
-            this.colonySecond.workerOneList[
-              i
-            ].modelType = this.colonySecond.tableList[i].TypeName;
-
-            this.colonySecond.workerOneList[
-              i
-            ].modelHe = this.colonySecond.tableList[i].Cpu;
-            this.colonySecond.workerOneList[
-              i
-            ].modelGB = this.colonySecond.tableList[i].Memory;
-          }
-          for (let x in this.colonySecond.tableList) {
-            if (this.colonySecond.tableList[x].Cpu >= 4) {
-              this.colonySecond.masterTableList.push(
-                this.colonySecond.tableList[x]
-              );
+      if (Number(this.colonySecond.charging) === 1) {
+        param["Filters.0.Values.0"] = "POSTPAID_BY_HOUR";
+      } else {
+        param["Filters.0.Values.0"] = "PREPAID";
+      }
+      if (Number(this.colonySecond.charging) === 1) {
+        await this.axios.post(DESCRIBE_ZONE_INFO, param).then(res => {
+          if (res.Response.Error === undefined) {
+            this.colonySecond.tableList = [];
+            this.colonySecond.masterTableList = [];
+            this.colonySecond.tableList = res.Response.InstanceTypeQuotaSet;
+            console.log(this.colonySecond.tableList);
+            for (let i in this.colonySecond.tableList) {
+              this.colonySecond.tableList[i]["tableDisShow"] = false;
+              this.colonySecond.tableList[i]["index"] = Number(i);
             }
-          }
-          for (var i in this.colonySecond.masterOneList) {
-            this.colonySecond.masterOneList[
-              i
-            ].modelName = this.colonySecond.masterTableList[i].InstanceType;
-            this.colonySecond.masterOneList[
-              i
-            ].modelType = this.colonySecond.masterTableList[i].TypeName;
+            // console.log(this.colonySecond.tableList);
+            for (var i in this.colonySecond.workerOneList) {
+              this.colonySecond.workerOneList[
+                i
+              ].modelName = this.colonySecond.tableList[i].InstanceType;
+              this.colonySecond.workerOneList[
+                i
+              ].radio1 = this.colonySecond.tableList[i].index;
 
-            this.colonySecond.masterOneList[
-              i
-            ].modelHe = this.colonySecond.masterTableList[i].Cpu;
-            this.colonySecond.masterOneList[
-              i
-            ].modelGB = this.colonySecond.masterTableList[i].Memory;
-          }
+              this.colonySecond.workerOneList[
+                i
+              ].modelType = this.colonySecond.tableList[i].TypeName;
 
-          // 总计费用
-          this.TotalCost();
-        } else {
-          let ErrTips = {
-            "InvalidInstanceType.Malformed": "指定InstanceType參數格式不合法",
-            "InvalidRegion.NotFound": "未找到該區域",
-            "InvalidZone.MismatchRegion": "指定的zone不存在"
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-      });
+              this.colonySecond.workerOneList[
+                i
+              ].modelHe = this.colonySecond.tableList[i].Cpu;
+              this.colonySecond.workerOneList[
+                i
+              ].modelGB = this.colonySecond.tableList[i].Memory;
+            }
+            for (let x in this.colonySecond.tableList) {
+              if (this.colonySecond.tableList[x].Cpu >= 4) {
+                this.colonySecond.masterTableList.push(
+                  this.colonySecond.tableList[x]
+                );
+              }
+            }
+            for (var i in this.colonySecond.masterOneList) {
+              this.colonySecond.masterOneList[
+                i
+              ].modelName = this.colonySecond.masterTableList[i].InstanceType;
+              this.colonySecond.masterOneList[
+                i
+              ].modelType = this.colonySecond.masterTableList[i].TypeName;
+
+              this.colonySecond.masterOneList[
+                i
+              ].modelHe = this.colonySecond.masterTableList[i].Cpu;
+              this.colonySecond.masterOneList[
+                i
+              ].modelGB = this.colonySecond.masterTableList[i].Memory;
+            }
+            if (Number(this.colonySecond.charging) === 1) {
+              this.colonySecond.workerOneList[0].broadbandVal =
+                "BANDWIDTH_POSTPAID_BY_HOUR";
+            } else {
+              this.colonySecond.workerOneList[0].broadbandVal =
+                "BANDWIDTH_PREPAID";
+            }
+            // 总计费用
+            // this.TotalCost();
+          } else {
+            let ErrTips = {
+              "InvalidInstanceType.Malformed": "指定InstanceType參數格式不合法",
+              "InvalidRegion.NotFound": "未找到該區域",
+              "InvalidZone.MismatchRegion": "指定的zone不存在"
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
+      } else {
+        await this.axios.post(DESCRIBE_ZONE_INFO, param).then(res => {
+          if (res.Response.Error === undefined) {
+            this.colonySecond.tableList = [];
+            this.colonySecond.masterTableList = [];
+            this.colonySecond.tableList = res.Response.InstanceTypeQuotaSet;
+            for (let i in this.colonySecond.tableList) {
+              this.colonySecond.tableList[i]["tableDisShow"] = false;
+              this.colonySecond.tableList[
+                i
+              ].Price.UnitPrice = this.colonySecond.tableList[
+                i
+              ].Price.OriginalPrice;
+              this.colonySecond.tableList[i]["index"] = Number(i);
+            }
+            for (var i in this.colonySecond.workerOneList) {
+              this.colonySecond.workerOneList[
+                i
+              ].modelName = this.colonySecond.tableList[i].InstanceType;
+              this.colonySecond.workerOneList[
+                i
+              ].radio1 = this.colonySecond.tableList[i].index;
+
+              this.colonySecond.workerOneList[
+                i
+              ].modelType = this.colonySecond.tableList[i].TypeName;
+
+              this.colonySecond.workerOneList[
+                i
+              ].modelHe = this.colonySecond.tableList[i].Cpu;
+              this.colonySecond.workerOneList[
+                i
+              ].modelGB = this.colonySecond.tableList[i].Memory;
+            }
+            for (let x in this.colonySecond.tableList) {
+              if (this.colonySecond.tableList[x].Cpu >= 4) {
+                this.colonySecond.masterTableList.push(
+                  this.colonySecond.tableList[x]
+                );
+              }
+            }
+            for (var i in this.colonySecond.masterOneList) {
+              this.colonySecond.masterOneList[
+                i
+              ].modelName = this.colonySecond.masterTableList[i].InstanceType;
+              this.colonySecond.masterOneList[
+                i
+              ].modelType = this.colonySecond.masterTableList[i].TypeName;
+
+              this.colonySecond.masterOneList[
+                i
+              ].modelHe = this.colonySecond.masterTableList[i].Cpu;
+              this.colonySecond.masterOneList[
+                i
+              ].modelGB = this.colonySecond.masterTableList[i].Memory;
+            }
+            if (Number(this.colonySecond.charging) === 2) {
+              this.colonySecond.workerOneList[0].broadbandVal =
+                "BANDWIDTH_PREPAID";
+            } else {
+              this.colonySecond.workerOneList[0].broadbandVal =
+                "BANDWIDTH_POSTPAID_BY_HOUR";
+            }
+            // 总计费用
+            // this.TotalCost();
+          } else {
+            let ErrTips = {
+              "InvalidInstanceType.Malformed": "指定InstanceType參數格式不合法",
+              "InvalidRegion.NotFound": "未找到該區域",
+              "InvalidZone.MismatchRegion": "指定的zone不存在"
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
+      }
     },
     // 机型
     handleCurrentChange1(val) {
@@ -5000,44 +5183,88 @@ export default {
     // 添加机型
     OneAddModel() {
       this.colonySecond.index++;
-      this.colonySecond.workerOneList.push({
-        showText: false,
-        showEdit: true,
-        radio1: this.colonySecond.index,
-        radioIndex: null,
-        modelShow: false,
-        modelName: "",
-        modelType: "",
-        modelHe: "",
-        modelGB: "",
-        systemDiskShow: false,
-        dataDiskShow: false,
-        broadbandShow: false,
-        workerNodeNetworkValue: "",
-        systemDiskVal: "CLOUD_PREMIUM",
-        systemDiskValue: "高性能雲硬碟",
-        systemDiskNumber: "50",
-        // 数据盘
-        dataDiskValue: "暫不購買",
-        buyDataDisk: false,
-        dataDiskArr: [],
-        buyDataDiskArr: [],
-        dataDiskVal: "CLOUD_PREMIUM",
-        dataDiskNumber: "10",
-        dataDiskNum: "10",
-        dataDiskNum1: "100",
-        latticeSetVal: "ext3",
-        setValue: "/var/lib/docker",
-        broadbandValue: "按寬頻計費",
-        broadbandVal: "BANDWIDTH_POSTPAID_BY_HOUR",
-        broadbandNumber: "1",
-        formatMount: true,
-        dataNum: "1",
-        datanum:
-          this.colonySecond.workerOneList[
-            this.colonySecond.workerOneList.length - 1
-          ].datanum - 1
-      });
+      if (Number(this.colonySecond.charging) == 2) {
+        this.colonySecond.workerOneList.push({
+          showText: false,
+          showEdit: true,
+          radio1: this.colonySecond.index,
+          InstanceChargeType: "PREPAID",
+          radioIndex: null,
+          modelShow: false,
+          modelName: "",
+          modelType: "",
+          modelHe: "",
+          modelGB: "",
+          systemDiskShow: false,
+          dataDiskShow: false,
+          broadbandShow: false,
+          workerNodeNetworkValue: "",
+          systemDiskVal: "CLOUD_PREMIUM",
+          systemDiskValue: "高性能雲硬碟",
+          systemDiskNumber: "50",
+          // 数据盘
+          dataDiskValue: "暫不購買",
+          buyDataDisk: false,
+          dataDiskArr: [],
+          buyDataDiskArr: [],
+          dataDiskVal: "CLOUD_PREMIUM",
+          dataDiskNumber: "10",
+          dataDiskNum: "10",
+          dataDiskNum1: "100",
+          latticeSetVal: "ext3",
+          setValue: "/var/lib/docker",
+          broadbandValue: "按寬頻計費",
+          broadbandVal: "BANDWIDTH_PREPAID",
+          broadbandNumber: "1",
+          formatMount: true,
+          dataNum: "1",
+          datanum:
+            this.colonySecond.workerOneList[
+              this.colonySecond.workerOneList.length - 1
+            ].datanum - 1
+        });
+      } else {
+        this.colonySecond.workerOneList.push({
+          showText: false,
+          showEdit: true,
+          radio1: this.colonySecond.index,
+          InstanceChargeType: "POSTPAID_BY_HOUR",
+          radioIndex: null,
+          modelShow: false,
+          modelName: "",
+          modelType: "",
+          modelHe: "",
+          modelGB: "",
+          systemDiskShow: false,
+          dataDiskShow: false,
+          broadbandShow: false,
+          workerNodeNetworkValue: "",
+          systemDiskVal: "CLOUD_PREMIUM",
+          systemDiskValue: "高性能雲硬碟",
+          systemDiskNumber: "50",
+          // 数据盘
+          dataDiskValue: "暫不購買",
+          buyDataDisk: false,
+          dataDiskArr: [],
+          buyDataDiskArr: [],
+          dataDiskVal: "CLOUD_PREMIUM",
+          dataDiskNumber: "10",
+          dataDiskNum: "10",
+          dataDiskNum1: "100",
+          latticeSetVal: "ext3",
+          setValue: "/var/lib/docker",
+          broadbandValue: "按寬頻計費",
+          broadbandVal: "BANDWIDTH_POSTPAID_BY_HOUR",
+          broadbandNumber: "1",
+          formatMount: true,
+          dataNum: "1",
+          datanum:
+            this.colonySecond.workerOneList[
+              this.colonySecond.workerOneList.length - 1
+            ].datanum - 1
+        });
+      }
+
       let _workerOneList = this.colonySecond.workerOneList;
       let _length = this.colonySecond.workerOneList.length;
       _workerOneList[_length - 2].showText = true;
@@ -5070,43 +5297,87 @@ export default {
     // Master&Etcd 配置 添加机型
     MasterAddModel() {
       // this.colonySecond.masterIndex++;
-      this.colonySecond.masterOneList.push({
-        showText: false,
-        showEdit: true,
-        radio1: this.colonySecond.masterIndex,
-        modelShow: false,
-        modelName: "",
-        modelType: "",
-        modelHe: "",
-        modelGB: "",
-        systemDiskShow: false,
-        dataDiskShow: false,
-        broadbandShow: false,
-        workerNodeNetworkValue: "",
-        systemDiskVal: "CLOUD_PREMIUM",
-        systemDiskValue: "高性能雲硬碟",
-        systemDiskNumber: "50",
-        // 数据盘
-        dataDiskValue: "暫不購買",
-        buyDataDisk: false,
-        dataDiskArr: [],
-        buyDataDiskArr: [],
-        dataDiskVal: "CLOUD_PREMIUM",
-        dataDiskNumber: "10",
-        dataDiskNum: "10",
-        dataDiskNum1: "100",
-        latticeSetVal: "ext3",
-        setValue: "/var/lib/docker",
-        broadbandValue: "按寬頻計費",
-        broadbandVal: "BANDWIDTH_POSTPAID_BY_HOUR",
-        broadbandNumber: "1",
-        formatMount: true,
-        dataNum: "1",
-        datanum:
-          this.colonySecond.masterOneList[
-            this.colonySecond.masterOneList.length - 1
-          ].datanum - 1
-      });
+      if (Number(this.colonySecond.charging) == 2) {
+        this.colonySecond.masterOneList.push({
+          showText: false,
+          showEdit: true,
+          radio1: this.colonySecond.index,
+          InstanceChargeType: "PREPAID",
+          radioIndex: null,
+          modelShow: false,
+          modelName: "",
+          modelType: "",
+          modelHe: "",
+          modelGB: "",
+          systemDiskShow: false,
+          dataDiskShow: false,
+          broadbandShow: false,
+          workerNodeNetworkValue: "",
+          systemDiskVal: "CLOUD_PREMIUM",
+          systemDiskValue: "高性能雲硬碟",
+          systemDiskNumber: "50",
+          // 数据盘
+          dataDiskValue: "暫不購買",
+          buyDataDisk: false,
+          dataDiskArr: [],
+          buyDataDiskArr: [],
+          dataDiskVal: "CLOUD_PREMIUM",
+          dataDiskNumber: "10",
+          dataDiskNum: "10",
+          dataDiskNum1: "100",
+          latticeSetVal: "ext3",
+          setValue: "/var/lib/docker",
+          broadbandValue: "按寬頻計費",
+          broadbandVal: "BANDWIDTH_PREPAID",
+          broadbandNumber: "1",
+          formatMount: true,
+          dataNum: "1",
+          datanum:
+            this.colonySecond.workerOneList[
+              this.colonySecond.workerOneList.length - 1
+            ].datanum - 1
+        });
+      } else {
+        this.colonySecond.masterOneList.push({
+          showText: false,
+          showEdit: true,
+          radio1: this.colonySecond.index,
+          InstanceChargeType: "POSTPAID_BY_HOUR",
+          radioIndex: null,
+          modelShow: false,
+          modelName: "",
+          modelType: "",
+          modelHe: "",
+          modelGB: "",
+          systemDiskShow: false,
+          dataDiskShow: false,
+          broadbandShow: false,
+          workerNodeNetworkValue: "",
+          systemDiskVal: "CLOUD_PREMIUM",
+          systemDiskValue: "高性能雲硬碟",
+          systemDiskNumber: "50",
+          // 数据盘
+          dataDiskValue: "暫不購買",
+          buyDataDisk: false,
+          dataDiskArr: [],
+          buyDataDiskArr: [],
+          dataDiskVal: "CLOUD_PREMIUM",
+          dataDiskNumber: "10",
+          dataDiskNum: "10",
+          dataDiskNum1: "100",
+          latticeSetVal: "ext3",
+          setValue: "/var/lib/docker",
+          broadbandValue: "按寬頻計費",
+          broadbandVal: "BANDWIDTH_POSTPAID_BY_HOUR",
+          broadbandNumber: "1",
+          formatMount: true,
+          dataNum: "1",
+          datanum:
+            this.colonySecond.workerOneList[
+              this.colonySecond.workerOneList.length - 1
+            ].datanum - 1
+        });
+      }
       let _length = this.colonySecond.masterOneList.length;
       let _masterOneList = this.colonySecond.masterOneList;
       _masterOneList[_length - 2].showText = true;
@@ -5168,12 +5439,12 @@ export default {
               UserInstanceQuotaSet[i].InstanceChargeType === "POSTPAID_BY_HOUR"
             ) {
               if (UserInstanceQuotaSet[i].QuotaCurrent != 0) {
-                this.workerOneList[0].datanum = 100;
-                this.masterOneList[0].datanum = 100;
+                this.colonySecond.workerOneList[0].datanum = 100;
+                this.colonySecond.masterOneList[0].datanum = 100;
                 this.chargingShow = true;
               } else {
-                this.workerOneList[0].datanum = 1;
-                this.masterOneList[0].datanum = 1;
+                this.colonySecond.workerOneList[0].datanum = 1;
+                this.colonySecond.masterOneList[0].datanum = 1;
                 this.chargingShow = false;
               }
             }
@@ -5200,6 +5471,7 @@ export default {
         _netcost2 = "";
       var num = 0;
       var _workerOneList = this.colonySecond.workerOneList;
+      var masterList = this.colonySecond.masterOneList;
       this.costAll = [];
 
       for (var i in _workerOneList) {
@@ -5210,7 +5482,7 @@ export default {
           "Placement.ProjectId": Number(this.colony.projectValue),
           "Placement.Zone": "ap-taipei-1",
           // 机型
-          InstanceChargeType: _workerOneList[i].InstanceChargeType,
+          // InstanceChargeType: _workerOneList[i].InstanceChargeType,
           InstanceType: _workerOneList[i].modelName,
           // 数量
           InstanceCount: _workerOneList[i].dataNum,
@@ -5236,19 +5508,31 @@ export default {
         if (_workerOneList[i].broadbandNumber == 0) {
           param["InternetAccessible.PublicIpAssigned"] = false;
         } else {
-          param["InternetAccessible.PublicIpAssigned"] = true;
+          if (this.colonySecond.pubBroadbandShow) {
+            param["InternetAccessible.PublicIpAssigned"] = true;
+          } else {
+            param["InternetAccessible.PublicIpAssigned"] = false;
+          }
+          // param["InternetAccessible.PublicIpAssigned"] = true;
         }
-        if (this.colonySecond.charging == 2) {
+        if (Number(this.colonySecond.charging) == 2) {
           param[
             "EnhancedService.SecurityService.Enabled"
           ] = this.colonyThird.safetyChecked;
           param[
             "EnhancedService.MonitorService.Enabled"
           ] = this.colonyThird.cloudwatchChecked;
-          param["InstanceChargePrepaid.Period"] = this.colonySecond.buyTime;
-          // if (this.colonySecond.renew === true) {
-          param["InstanceChargePrepaid.RenewFlag"] = "NOTIFY_AND_AUTO_RENEW";
-          // }
+          param["InstanceChargePrepaid.Period"] = Number(this.colonySecond.buyTime);
+          param["InstanceChargePrepaid.TimeUnit"] = "MONTH";
+          if (this.colonySecond.renew === true) {
+            param["InstanceChargePrepaid.RenewFlag"] = "NOTIFY_AND_AUTO_RENEW";
+          } else {
+            param["InstanceChargePrepaid.RenewFlag"] =
+              "NOTIFY_AND_MANUAL_RENEW";
+          }
+          param["InstanceChargeType"] = "PREPAID";
+        } else {
+          param["InstanceChargeType"] = "POSTPAID_BY_HOUR";
         }
         await this.axios.post(TKE_PRICE, param).then(res => {
           if (res.Response.Error === undefined) {
@@ -5290,7 +5574,7 @@ export default {
           }
         });
       }
-      if (this.colonySecond.master == 2 && this.colonySecond.source == 1) {
+      if (this.colonySecond.master == 2) {
         var _masterOneList = this.colonySecond.masterOneList;
         this.costAll2 = [];
         for (var i in _masterOneList) {
@@ -5301,7 +5585,7 @@ export default {
             "Placement.ProjectId": Number(this.colony.projectValue),
             "Placement.Zone": "ap-taipei-1",
             // 机型
-            InstanceChargeType: _masterOneList[i].InstanceChargeType,
+            // InstanceChargeType: _masterOneList[i].InstanceChargeType,
             InstanceType: _masterOneList[i].modelName,
             // 数量
             InstanceCount: _masterOneList[i].dataNum,
@@ -5335,10 +5619,19 @@ export default {
               "EnhancedService.MonitorService.Enabled"
             ] = this.colonyThird.cloudwatchChecked;
 
-            params["InstanceChargePrepaid.Period"] = this.colonySecond.buyTime;
-            // if (this.colonySecond.renew === true) {
-            params["InstanceChargePrepaid.RenewFlag"] = "NOTIFY_AND_AUTO_RENEW";
-            // }
+            params["InstanceChargePrepaid.Period"] = Number(
+              this.colonySecond.buyTime
+            );
+            params["InstanceChargePrepaid.TimeUnit"] = "MONTH";
+            if (this.colonySecond.renew === true) {
+              params["InstanceChargePrepaid.RenewFlag"] = "NOTIFY_AND_AUTO_RENEW";
+            } else {
+              params["InstanceChargePrepaid.RenewFlag"] =
+                "NOTIFY_AND_MANUAL_RENEW";
+            }
+            params["InstanceChargeType"] = "PREPAID";
+          } else {
+            params["InstanceChargeType"] = "POSTPAID_BY_HOUR";
           }
           await this.axios.post(TKE_PRICE, params).then(res => {
             if (res.Response.Error === undefined) {
@@ -5906,6 +6199,318 @@ export default {
         this.colonyThird.confirmPasswordWran = false;
       }
     },
+
+    DataDiskList() {
+      // let list = [];
+      var workerOneListArr = this.colonySecond.workerOneList;
+      var masterOneListArr = this.colonySecond.masterOneList;
+      if (Number(this.colonySecond.master) === 2) {
+        if (masterOneListArr.length > 0) {
+          masterOneListArr.forEach(e => {
+            e.rowType = 1;
+            e.costMoney = 0;
+            e.singleMoney = 0;
+            this.list.push(e);
+            if (e.buyDataDisk) {
+              let datadisk = {
+                showText: false,
+                showEdit: true,
+                radio1: this.colonySecond.index,
+                InstanceChargeType: "PREPAID",
+                radioIndex: null,
+                modelShow: false,
+                modelName: "",
+                modelType: "",
+                modelHe: "",
+                modelGB: "",
+                systemDiskShow: false,
+                dataDiskShow: false,
+                broadbandShow: false,
+                workerNodeNetworkValue: "",
+                systemDiskVal: "",
+                systemDiskValue: "",
+                systemDiskNumber: "",
+                // 数据盘
+                dataDiskValue: "",
+                buyDataDisk: false,
+                dataDiskArr: [],
+                buyDataDiskArr: [],
+                dataDiskVal: e.dataDiskVal,
+                dataDiskNumber: "10",
+                dataDiskNum: e.dataDiskNum,
+                dataDiskNum1: "100",
+                latticeSetVal: "",
+                setValue: "",
+                broadbandValue: "",
+                broadbandVal: "",
+                broadbandNumber: "1",
+                formatMount: true,
+                dataNum: e.dataNum,
+                datanum: 0,
+                rowType: 2,
+                costMoney: 0,
+                singleMoney: 0
+              };
+              this.list.push(datadisk);
+            }
+          });
+        }
+        if (workerOneListArr.length > 0) {
+          workerOneListArr.forEach(e => {
+            e.rowType = 1;
+            e.costMoney = 0;
+            e.singleMoney = 0;
+            this.list.push(e);
+            if (e.dataDiskArr.length > 0) {
+              e.dataDiskArr.forEach(disk => {
+                let datadisk = {
+                  showText: false,
+                  showEdit: true,
+                  radio1: this.colonySecond.index,
+                  InstanceChargeType: "PREPAID",
+                  radioIndex: null,
+                  modelShow: false,
+                  modelName: "",
+                  modelType: "",
+                  modelHe: "",
+                  modelGB: "",
+                  systemDiskShow: false,
+                  dataDiskShow: false,
+                  broadbandShow: false,
+                  workerNodeNetworkValue: "",
+                  systemDiskVal: "",
+                  systemDiskValue: "",
+                  systemDiskNumber: "",
+                  // 数据盘
+                  dataDiskValue: "",
+                  buyDataDisk: false,
+                  dataDiskArr: [],
+                  buyDataDiskArr: [],
+                  dataDiskVal: disk.DiskType,
+                  dataDiskNumber: "10",
+                  dataDiskNum: disk.DiskSize,
+                  dataDiskNum1: "100",
+                  latticeSetVal: "",
+                  setValue: "",
+                  broadbandValue: "",
+                  broadbandVal: "",
+                  broadbandNumber: "1",
+                  formatMount: true,
+                  dataNum: e.dataNum,
+                  datanum: 0,
+                  rowType: 2,
+                  costMoney: 0,
+                  singleMoney: 0
+                };
+                this.list.push(datadisk);
+              });
+            }
+          });
+        }
+      } else {
+        if (workerOneListArr.length > 0) {
+          workerOneListArr.forEach(e => {
+            e.rowType = 1;
+            e.costMoney = 0;
+            e.singleMoney = 0;
+            this.list.push(e);
+            if (e.dataDiskArr.length > 0) {
+              e.dataDiskArr.forEach(disk => {
+                let datadisk = {
+                  showText: false,
+                  showEdit: true,
+                  radio1: this.colonySecond.index,
+                  InstanceChargeType: "PREPAID",
+                  radioIndex: null,
+                  modelShow: false,
+                  modelName: "",
+                  modelType: "",
+                  modelHe: "",
+                  modelGB: "",
+                  systemDiskShow: false,
+                  dataDiskShow: false,
+                  broadbandShow: false,
+                  workerNodeNetworkValue: "",
+                  systemDiskVal: "",
+                  systemDiskValue: "",
+                  systemDiskNumber: "",
+                  // 数据盘
+                  dataDiskValue: "",
+                  buyDataDisk: false,
+                  dataDiskArr: [],
+                  buyDataDiskArr: [],
+                  dataDiskVal: disk.DiskType,
+                  dataDiskNumber: "10",
+                  dataDiskNum: disk.DiskSize,
+                  dataDiskNum1: "100",
+                  latticeSetVal: "",
+                  setValue: "",
+                  broadbandValue: "",
+                  broadbandVal: "",
+                  broadbandNumber: "1",
+                  formatMount: true,
+                  dataNum: e.dataNum,
+                  datanum: 0,
+                  rowType: 2,
+                  costMoney: 0,
+                  singleMoney: 0
+                };
+                this.list.push(datadisk);
+              });
+            }
+          });
+        }
+      }
+      let ClusterOs = "";
+      for (let i in this.colony.OSoptions) {
+        if (this.colony.OSvalue === this.colony.OSoptions[i].ImageId) {
+          ClusterOs = this.colony.OSoptions[i].Alias;
+        }
+      }
+      this.list.forEach(async e => {
+        if (e.rowType === 1) {
+          let param = {
+            Version: "2017-03-12",
+            ImageId: "img-6yudrskj",
+            "Placement.ProjectId": Number(this.colony.projectValue),
+            "Placement.Zone": "ap-taipei-1",
+            // 机型
+            InstanceType: e.modelName,
+            // 数量
+            InstanceCount: Number(e.dataNum),
+            // 系统盘
+            "SystemDisk.DiskSize": Number(e.systemDiskNumber),
+            "SystemDisk.DiskType": e.systemDiskVal,
+            PurchaseSource: "MC"
+          };
+          // 公网带宽
+          param["InternetAccessible.InternetChargeType"] = e.broadbandVal;
+          param["InternetAccessible.InternetMaxBandwidthOut"] = Number(
+            e.broadbandNumber
+          );
+          if (Number(e.broadbandNumber) == 0) {
+            param["InternetAccessible.PublicIpAssigned"] = false;
+          } else {
+            if (this.colonySecond.pubBroadbandShow) {
+              param["InternetAccessible.PublicIpAssigned"] = true;
+            } else {
+              param["InternetAccessible.PublicIpAssigned"] = false;
+            }
+          }
+          //安全加固
+          param[
+            "EnhancedService.SecurityService.Enabled"
+          ] = this.colonyThird.safetyChecked;
+          //云监控
+          param[
+            "EnhancedService.MonitorService.Enabled"
+          ] = this.colonyThird.cloudwatchChecked;
+          //购买时长
+          param["InstanceChargePrepaid.Period"] = Number(
+            this.colonySecond.buyTime
+          );
+          param["InstanceChargePrepaid.TimeUnit"] = "MONTH";
+          //是否自动续费
+          if (this.colonySecond.renew === true) {
+            param["InstanceChargePrepaid.RenewFlag"] = "NOTIFY_AND_AUTO_RENEW";
+          } else {
+            param["InstanceChargePrepaid.RenewFlag"] =
+              "NOTIFY_AND_MANUAL_RENEW";
+          }
+          //计费类型
+          param["InstanceChargeType"] = "PREPAID";
+
+          await this.axios.post(TKE_PRICE, param).then(res => {
+            if (res.Response.Error === undefined) {
+              e.costMoney =
+                res.Response.Price.InstancePrice.UnitPrice +
+                res.Response.Price.BandwidthPrice.UnitPrice;
+              e.singleMoney =
+                (res.Response.Price.InstancePrice.UnitPrice +
+                  res.Response.Price.BandwidthPrice.UnitPrice) /
+                (Number(this.colonySecond.buyTime) * Number(e.dataNum));
+            } else {
+              let ErrTips = {
+                AccountQualificationRestrictions: "該請求帳戶未通過資格審計。",
+                InstancesQuotaLimitExceeded:
+                  "表示當前創建的實例個數超過了該帳戶允許購買的剩餘配額數。",
+                "InvalidClientToken.TooLong":
+                  "指定的ClientToken字元串長度超出限制，必須小於等於64位元組。",
+                "InvalidHostId.NotFound":
+                  "指定的HostId不存在，或不屬於該請求帳號所有。",
+                "InvalidInstanceName.TooLong":
+                  "指定的InstanceName字元串長度超出限制，必須小於等於60位元組。",
+                "InvalidInstanceType.Malformed":
+                  "指定InstanceType參數格式不合法。",
+                InvalidParameterCombination: "表示參陣列合不正確。",
+                InvalidParameterValue:
+                  "無效參數值。參數值格式錯誤或者參數值不被支持等。",
+                "InvalidParameterValue.Range":
+                  "無效參數值。參數值取值範圍不合法。",
+                InvalidPassword:
+                  "無效密碼。指定的密碼不符合密碼複雜度限制。例如密碼長度不符合限制等。",
+                InvalidPeriod:
+                  "無效時長。目前只支持時長：[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 24, 36]，單位：月。",
+                InvalidPermission: "帳戶不支持該操作。",
+                "InvalidZone.MismatchRegion": "指定的zone不存在。",
+                MissingParameter: "參數缺失。請求沒有帶必選參數。"
+              };
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+            }
+          });
+        } else {
+          let param = {
+            Version: "2017-03-12",
+            // ImageId: "img-6yudrskj",
+            ProjectId: Number(this.colony.projectValue),
+            Region: "ap-taipei",
+            // 数量
+            DiskCount: Number(e.dataNum),
+            // 系统盘
+            DiskType: e.dataDiskVal,
+            DiskSize: Number(e.dataDiskNum),
+            DiskChargeType: "PREPAID"
+          };
+          //购买时长
+          param["DiskChargePrepaid.Period"] = Number(this.colonySecond.buyTime);
+          // param["DiskChargePrepaid.TimeUnit"] = "MONTH";
+          //是否自动续费
+          if (this.colonySecond.renew === true) {
+            param["DiskChargePrepaid.RenewFlag"] = "NOTIFY_AND_AUTO_RENEW";
+          } else {
+            param["DiskChargePrepaid.RenewFlag"] = "NOTIFY_AND_MANUAL_RENEW";
+          }
+
+          await this.axios.post(TKE_PAY_MONEY, param).then(res => {
+            if (res.Response.Error === undefined) {
+              e.costMoney = res.Response.DiskPrice.OriginalPrice;
+              e.singleMoney =
+                res.Response.DiskPrice.OriginalPrice /
+                (Number(this.colonySecond.buyTime) * Number(e.dataNum));
+            } else {
+              let ErrTips = {
+                InvalidParameterValue:
+                  "无效参数值。参数值格式错误或者参数值不被支持等。",
+                MissingParameter: "參數缺失。請求沒有帶必選參數。"
+              };
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+            }
+          });
+        }
+      });
+    },
     // 第三步 下一步
     thirdNext() {
       //安全组非空验证(yhs)
@@ -5938,6 +6543,7 @@ export default {
       this.fourthBox = true;
 
       this.ValueParam();
+      this.DataDiskList();
     },
     // ----------------------------------------- 第四步 ---------------------------------------
     // 第四步 上一步
@@ -5948,7 +6554,7 @@ export default {
       this.fourthBox = false;
     },
     // 创建 完成
-    CreateFinish() {
+    async CreateFinish() {
       var workerOneListArr = this.colonySecond.workerOneList;
       var masterOneListArr = this.colonySecond.masterOneList;
       this.dataShow = [];
@@ -7155,51 +7761,79 @@ export default {
           }
         }
       }
-
-      this.axios.post(TKE_CREATW_CLUSTERS, param).then(res => {
-        if (res.Response.Error === undefined) {
-          this.$router.go(-1);
-        } else {
-          let ErrTips = {
-            InternalError: "内部錯誤",
-            "InternalError.AccountUserNotAuthenticated": "帳戶未通過認證。",
-            "InternalError.AsCommon": "伸縮組資源創建報錯。",
-            "InternalError.CidrConflictWithOtherCluster":
-              "CIDR和其他集群CIDR衝突。",
-            "InternalError.CidrConflictWithOtherRoute": "CIDR和其他路由衝突。",
-            "InternalError.CidrConflictWithVpcCidr": "CIDR和vpc衝突。",
-            "InternalError.CidrConflictWithVpcGlobalRoute":
-              "CIDR和全局路由衝突。",
-            "InternalError.CidrInvali": "CIDR無效。",
-            "InternalError.CidrMaskSizeOutOfRange": "CIDR掩碼無效。",
-            "InternalError.CreateMasterFailed": "創建集群失敗。",
-            "InternalError.CvmCommon": "cvm配額不足,請釋放部分資源後再創建",
-            "InternalError.Db": "db錯誤。",
-            "InternalError.DbAffectivedRows": "DB錯誤",
-            "InternalError.DfwGetUSGCount": "獲得當前安全組總數失敗。",
-            "InternalError.DfwGetUSGQuota": "獲得安全組配額失敗。",
-            "InternalError.InitMasterFailed": "初始化master失敗。",
-            "InternalError.InvalidPrivateNetworkCidr": "無效CIDR。",
-            "InternalError.Param": "Param。",
-            "InternalError.PublicClusterOpNotSupport": "集群不支持當前操作。",
-            "InternalError.QuotaMaxClsLimit": "超過配額限制。",
-            "InternalError.QuotaMaxNodLimit": "超過配額限制。",
-            "InternalError.QuotaUSGLimit": "安全組配額不足。",
-            "InternalError.UnexceptedInternal": "内部錯誤",
-            "InternalError.VpcCommon": "VPC報錯。",
-            "InternalError.VpcRecodrNotFound": "未發現vpc記錄。",
-            InvalidParameter: "參數錯誤",
-            LimitExceeded: "超過配額限制"
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
+      if (Number(this.colonySecond.charging) === 2) {
+        let ClusterOs = "";
+        for (let i in this.colony.OSoptions) {
+          if (this.colony.OSvalue === this.colony.OSoptions[i].ImageId) {
+            ClusterOs = this.colony.OSoptions[i].Alias;
+          }
         }
-      });
+        localStorage.setItem("colonyCostList", JSON.stringify(this.list));
+        localStorage.setItem("vpcId", this.colony.networkValue);
+        localStorage.setItem("clusterOs", ClusterOs);
+        localStorage.setItem("clusterParam", JSON.stringify(param));
+        localStorage.setItem("buyTime", this.colonySecond.buyTime);
+        localStorage.setItem(
+          "colonyMoney",
+          Number(this.colonySecond.allocationCost) +
+            Number(this.colonySecond.networkCost)
+        );
+        this.$router.push({
+          name: "colonyCostMoney"
+        });
+      } else {
+
+        this.axios.post(TKE_CREATW_CLUSTERS, param).then(res => {
+          if (res.Response.Error === undefined) {
+            this.$message({
+              message: "創建成功",
+              type: "success",
+              showClose: true,
+              duration: 0
+            });
+            this.$router.go(-1);
+          } else {
+            let ErrTips = {
+              InternalError: "内部錯誤",
+              "InternalError.AccountUserNotAuthenticated": "帳戶未通過認證。",
+              "InternalError.AsCommon": "伸縮組資源創建報錯。",
+              "InternalError.CidrConflictWithOtherCluster":
+                "CIDR和其他集群CIDR衝突。",
+              "InternalError.CidrConflictWithOtherRoute": "CIDR和其他路由衝突。",
+              "InternalError.CidrConflictWithVpcCidr": "CIDR和vpc衝突。",
+              "InternalError.CidrConflictWithVpcGlobalRoute":
+                "CIDR和全局路由衝突。",
+              "InternalError.CidrInvali": "CIDR無效。",
+              "InternalError.CidrMaskSizeOutOfRange": "CIDR掩碼無效。",
+              "InternalError.CreateMasterFailed": "創建集群失敗。",
+              "InternalError.CvmCommon": "cvm配額不足,請釋放部分資源後再創建",
+              "InternalError.Db": "db錯誤。",
+              "InternalError.DbAffectivedRows": "DB錯誤",
+              "InternalError.DfwGetUSGCount": "獲得當前安全組總數失敗。",
+              "InternalError.DfwGetUSGQuota": "獲得安全組配額失敗。",
+              "InternalError.InitMasterFailed": "初始化master失敗。",
+              "InternalError.InvalidPrivateNetworkCidr": "無效CIDR。",
+              "InternalError.Param": "Param。",
+              "InternalError.PublicClusterOpNotSupport": "集群不支持當前操作。",
+              "InternalError.QuotaMaxClsLimit": "超過配額限制。",
+              "InternalError.QuotaMaxNodLimit": "超過配額限制。",
+              "InternalError.QuotaUSGLimit": "安全組配額不足。",
+              "InternalError.UnexceptedInternal": "内部錯誤",
+              "InternalError.VpcCommon": "VPC報錯。",
+              "InternalError.VpcRecodrNotFound": "未發現vpc記錄。",
+              InvalidParameter: "參數錯誤",
+              LimitExceeded: "超過配額限制"
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
+      }  
     }
   },
   filters: {

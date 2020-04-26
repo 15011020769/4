@@ -31,6 +31,14 @@ const router =  new Router({
       }
     },
     {
+      path: '/colony/colonyCost', // 創建集群包年包月信息確認頁面
+      name: 'colonyCostMoney',
+      component: () => import('./colony/colonyPostMoney.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
       path: '/colonyMonitor', // 集群监控
       name: 'colonyMonitor',
       component: () => import('./colony/openMonitor.vue'),
