@@ -195,6 +195,7 @@
       },
       //获取基础指标详情
       _GetBase() {
+        this.tableData = []
         let parms = {
           Version: '2018-07-24',
           Region: localStorage.getItem('regionv2'),

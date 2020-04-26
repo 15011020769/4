@@ -339,40 +339,38 @@ const botIntercept = (to, from, next) => {
 
 let waf = -1; // 0 未购买 1 已购买
 router.beforeEach((to, from, next) => {
-  if (to.meta.interceptBuy === false) {
-    next();
-    return;
-  }
-  if (waf === -1) {
-    Vue.prototype.axios
-      .post(DESCRIBE_USER_EDITION, {
-        Version: "2018-01-25"
-      })
-      .then(resp => {
-        Vue.prototype.generalRespHandler(resp, ({ Data }) => {
-          if (!Data || !Data.includes("clb-waf")) {
-            waf = 0;
-            next("/toBuy");
-          } else {
-            waf = 1;
-            next();
-          }
-        });
-      });
-  } else if (waf === 0 && to.params.intercept !== false) {
-    next("/toBuy");
-  } else {
-    waf = 1;
-    next();
-  }
-
   // Message.closeAll()      // 关闭所有的alert
   // 如果没有uuid说明用户没有登录 则需要跳转到登录界面
   if(VueCookie.get('uuid') === '' || VueCookie.get('uuid') === undefined || VueCookie.get('uuid') === null){
     clearLoginInfo()
     window.location.href = process.env.VUE_APP_loginUrl
   }else{
-    next()
+    if (to.meta.interceptBuy === false) {
+      next();
+      return;
+    }
+    if (waf === -1) {
+      Vue.prototype.axios
+        .post(DESCRIBE_USER_EDITION, {
+          Version: "2018-01-25"
+        })
+        .then(resp => {
+          Vue.prototype.generalRespHandler(resp, ({ Data }) => {
+            if (!Data || !Data.includes("clb-waf")) {
+              waf = 0;
+              next("/toBuy");
+            } else {
+              waf = 1;
+              next();
+            }
+          });
+        });
+    } else if (waf === 0 && to.params.intercept !== false) {
+      next("/toBuy");
+    } else {
+      waf = 1;
+      next();
+    }
   }
 });
 

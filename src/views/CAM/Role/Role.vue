@@ -11,7 +11,9 @@
       </div>
       <div class="container_table">
         <div class="table">
-          <el-table :data="tableData.slice((currpage - 1) * pagesize, currpage * pagesize)" v-loading="loading" height="450" style="width: 100%" :row-style="{height:0}" :cell-style="{padding:'10px'}" :header-cell-style="{height:'20px',padding:'10px',fontSize:'12px'}">
+          <el-table :data="tableData.slice((currpage - 1) * pagesize, currpage * pagesize)" v-loading="loading"
+            height="450" style="width: 100%" :row-style="{height:0}" :cell-style="{padding:'10px'}"
+            :header-cell-style="{height:'20px',padding:'10px',fontSize:'12px'}">
             <el-table-column prop="RoleName" :label="$t('CAM.Role.roleName')" width="180">
               <template slot-scope="scope">
                 <el-button @click="handleClick(scope.row)" type="text" size="small">{{scope.row.RoleName}}</el-button>
@@ -22,9 +24,10 @@
                 {{scope.row.type === 'qcs' ? '雲帳號' : (scope.row.type === 'service' ? '產品服務' : '身份提供商')}}
                 <span>- {{scope.row.PolicyDocument.val}}</span>
                 <span v-show="scope.row.PolicyDocument.len > 0">
-                    以及
-                    <el-button @click.native.prevent="handleClick(scope.row)" type="text" size="small">其他{{scope.row.PolicyDocument.len}}{{$t('CAM.Role.item')}}</el-button>
-                  </span>
+                  以及
+                  <el-button @click.native.prevent="handleClick(scope.row)" type="text" size="small">
+                    其他{{scope.row.PolicyDocument.len}}{{$t('CAM.Role.item')}}</el-button>
+                </span>
               </template>
             </el-table-column>
             <el-table-column prop="Description" :label="$t('CAM.Role.roleDesc')" show-overflow-tooltip>
@@ -35,13 +38,16 @@
             </el-table-column>
             <el-table-column prop="oper" :label="$t('CAM.Role.colHandle')" width="100">
               <template slot-scope="scope">
-                <el-button @click="delete_Role(scope.row.RoleId)" type="text" size="small">{{$t('CAM.Role.delBtn')}}</el-button>
+                <el-button @click="delete_Role(scope.row.RoleId)" type="text" size="small">{{$t('CAM.Role.delBtn')}}
+                </el-button>
               </template>
             </el-table-column>
           </el-table>
           <div class="Right-style pagstyle" style="height:70px;display:flex;align-items:center;">
             <span class='pagtotal'>共&nbsp;{{TotalCount}}&nbsp;{{$t("CAM.strip")}}</span>
-            <el-pagination :page-size="pagesize" :pager-count="7" layout="prev, sizes, pager, next" :page-sizes="[10, 20, 30, 40, 50]" @current-change="handleCurrentChange" @size-change="handleSizeChange" :total="TotalCount">
+            <el-pagination :page-size="pagesize" :pager-count="7" layout="prev, sizes, pager, next"
+              :page-sizes="[10, 20, 30, 40, 50]" @current-change="handleCurrentChange" @size-change="handleSizeChange"
+              :total="TotalCount">
             </el-pagination>
           </div>
         </div>
@@ -68,343 +74,359 @@
   </div>
 </template>
 <script>
-import HeadCom from "../UserListNew/components/Head";
-import { DESCRIB_ROLE, DELETE_ROLE } from "@/constants";
-import { ErrorTips } from "@/components/ErrorTips";
-export default {
-  data() {
-    return {
-      loading: true,
-      tableData: [],
-      // 分页
-      Page: 1,
-      total: 0,
-      TotalCount: 0,
-      pagesize: 10,
-      currpage: 1,
-      create_dialogVisible: false,
-      value: ""
-    };
-  },
-  components: {
-    HeadCom
-  },
-  created() {
-    this.init();
-  },
-  methods: {
-    init() {
-      let params = {
-        Version: "2019-01-16",
-        Page: this.Page,
-        Rp: this.pagesize
+  import HeadCom from "../UserListNew/components/Head";
+  import {
+    DESCRIB_ROLE,
+    DELETE_ROLE
+  } from "@/constants";
+  import {
+    ErrorTips
+  } from "@/components/ErrorTips";
+  export default {
+    data() {
+      return {
+        loading: true,
+        tableData: [],
+        // 分页
+        Page: 1,
+        total: 0,
+        TotalCount: 0,
+        pagesize: 10,
+        currpage: 1,
+        create_dialogVisible: false,
+        value: ""
       };
-      if (this.searchValue != null && this.searchValue != "") {
-        params["keyword"] = this.searchValue;
-      }
-      this.axios
-        .post(DESCRIB_ROLE, params)
-        .then(data => {
-          if (data.Response.Error === undefined) {
-            if (
-              data === "" ||
-              data.Response.error == "undefined" ||
-              data.Response.List.length == 0
-            ) {
-              this.loading = false;
-            } else {
-              let resData = data.Response.List;
-              this.TotalCount = data.Response.TotalNum;
-              this.loading = false;
-              resData.forEach(item => {
-                let obj = {
-                  val: String,
-                  len: String
-                };
-                let policyObj = JSON.parse(item.PolicyDocument);
+    },
+    components: {
+      HeadCom
+    },
+    created() {
+      this.init();
+    },
+    methods: {
+      init() {
+        let params = {
+          Version: "2019-01-16",
+          Page: this.Page,
+          Rp: this.pagesize
+        };
+        if (this.searchValue != null && this.searchValue != "") {
+          params["keyword"] = this.searchValue;
+        }
+        this.axios
+          .post(DESCRIB_ROLE, params)
+          .then(data => {
+            if (data.Response.Error === undefined) {
+              if (
+                data === "" ||
+                data.Response.error == "undefined" ||
+                data.Response.List.length == 0
+              ) {
+                this.loading = false;
+              } else {
+                let resData = data.Response.List;
+                this.TotalCount = data.Response.TotalNum;
+                this.loading = false;
+                resData.forEach(item => {
+                  let obj = {
+                    val: String,
+                    len: String
+                  };
+                  let policyObj = JSON.parse(item.PolicyDocument);
 
-                if (policyObj.statement[0].principal.service) {
-                  // if (typeof policyObj.statement[0].principal.service === 'string') {
-                  //    policyObj.val = policyObj.statement[0].principal.service
-                  //    policyObj.len = 0
-                  // } else {
+                  if (policyObj.statement[0].principal.service) {
+                    // if (typeof policyObj.statement[0].principal.service === 'string') {
+                    //    policyObj.val = policyObj.statement[0].principal.service
+                    //    policyObj.len = 0
+                    // } else {
                     policyObj.val = policyObj.statement[0].principal.service[0];
                     policyObj.len = policyObj.statement[0].principal.service.length;
-                  // }
-                  item.type = 'service'
-                }
-                if (policyObj.statement[0].principal.qcs) {
-                  // if (typeof policyObj.statement[0].principal.qcs === 'string') {
-                  //    policyObj.val = policyObj.statement[0].principal.qcs
-                  //    policyObj.len = 0
-                  // } else {
+                    // }
+                    item.type = 'service'
+                  }
+                  if (policyObj.statement[0].principal.qcs) {
+                    // if (typeof policyObj.statement[0].principal.qcs === 'string') {
+                    //    policyObj.val = policyObj.statement[0].principal.qcs
+                    //    policyObj.len = 0
+                    // } else {
                     policyObj.val = policyObj.statement[0].principal.qcs[0];
                     policyObj.len += policyObj.statement[0].principal.qcs.length;
-                  // }
-                  item.type = 'qcs'
-                }
-                if (policyObj.statement[0].principal.federated) {
-                  policyObj.len = policyObj.statement.length
-                  if (typeof policyObj.statement[0].principal.federated === 'string') {
-                    policyObj.val = policyObj.statement[0].principal.federated
-                  } else {
-                    policyObj.val = policyObj.statement[0].principal.federated[0];
+                    // }
+                    item.type = 'qcs'
                   }
-                  item.type = 'federated'
-                }
-                policyObj.len -= 1
-                item.PolicyDocument = policyObj;
-              });
-              this.tableData = resData;
-              this.total = data.Response.TotalNum;
-              // var dataRole = JSON.parse(data.Response.List);
-            }
-          } else {
-            let ErrTips = {
-              "InternalError.SystemError": "內部錯誤",
-              "InvalidParameter.ParamError": "非法入參"
-            };
-            let ErrOr = Object.assign(ErrorTips, ErrTips);
-            this.$message({
-              message: ErrOr[data.Response.Error.Code],
-              type: "error",
-              showClose: true,
-              duration: 0
-            });
-          }
-        })
-        .catch(error => {
-          console.log(error);
-        });
-    },
-    // 删除角色
-    delete_Role(RoleId) {
-      this.$confirm(this.$t("CAM.Role.delHint"), this.$t("CAM.Role.delTitle"), {
-        confirmButtonText: this.$t("CAM.Role.delConfirmBtn"),
-        cancelButtonText: this.$t("CAM.Role.delCancelBtn"),
-        type: "warning"
-      })
-        .then(() => {
-          let params = {
-            Version: "2019-01-16",
-            RoleId: RoleId
-          };
-          this.axios
-            .post(DELETE_ROLE, params)
-            .then(data => {
-              if (data.Response.Error === undefined) {
-                if (data != null && data.Response.RequestId != "") {
-                  this.$message({
-                    type: "success",
-                    message: this.$t("CAM.Role.delInfo") + "!",
-                    duration: 0,
-                    showClose: true
-                  });
-                  this.init();
-                  this.loading = false;
-                }
-              } else {
-                let ErrTips = {
-                  "InternalError.SystemError": "內部錯誤",
-                  "InvalidParameter.ParamError": "非法入參",
-                  "InvalidParameter.RoleNotExist": "角色不存在"
-                };
-                let ErrOr = Object.assign(ErrorTips, ErrTips);
-                this.$message({
-                  message: ErrOr[data.Response.Error.Code],
-                  type: "error",
-                  showClose: true,
-                  duration: 0
+                  if (policyObj.statement[0].principal.federated) {
+                    policyObj.len = policyObj.statement.length
+                    if (typeof policyObj.statement[0].principal.federated === 'string') {
+                      policyObj.val = policyObj.statement[0].principal.federated
+                    } else {
+                      policyObj.val = policyObj.statement[0].principal.federated[0];
+                    }
+                    item.type = 'federated'
+                  }
+                  policyObj.len -= 1
+                  item.PolicyDocument = policyObj;
                 });
+                this.tableData = resData;
+
+                this.total = data.Response.TotalNum;
+                // var dataRole = JSON.parse(data.Response.List);
               }
-            })
-            .catch(error => {
+            } else {
+              let ErrTips = {
+                "InternalError.SystemError": "內部錯誤",
+                "InvalidParameter.ParamError": "非法入參"
+              };
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
               this.$message({
-                type: "success",
-                message: error,
-                duration: 0,
-                showClose: true
+                message: ErrOr[data.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
               });
-              console.log(error);
-            });
-        })
-        .catch(() => {
-          // this.$message({ type: 'info', message: '已取消删除' })
+            }
+          })
+          .catch(error => {
+            console.log(error);
+          });
+      },
+      // 删除角色
+      delete_Role(RoleId) {
+        this.$confirm(this.$t("CAM.Role.delHint"), this.$t("CAM.Role.delTitle"), {
+            confirmButtonText: this.$t("CAM.Role.delConfirmBtn"),
+            cancelButtonText: this.$t("CAM.Role.delCancelBtn"),
+            type: "warning"
+          })
+          .then(() => {
+            let params = {
+              Version: "2019-01-16",
+              RoleId: RoleId
+            };
+            this.axios
+              .post(DELETE_ROLE, params)
+              .then(data => {
+                if (data.Response.Error === undefined) {
+                  if (data != null && data.Response.RequestId != "") {
+                    this.$message({
+                      type: "success",
+                      message: this.$t("CAM.Role.delInfo") + "!",
+                      duration: 0,
+                      showClose: true
+                    });
+                    this.init();
+                    this.loading = false;
+                  }
+                } else {
+                  let ErrTips = {
+                    "InternalError.SystemError": "內部錯誤",
+                    "InvalidParameter.ParamError": "非法入參",
+                    "InvalidParameter.RoleNotExist": "角色不存在"
+                  };
+                  let ErrOr = Object.assign(ErrorTips, ErrTips);
+                  this.$message({
+                    message: ErrOr[data.Response.Error.Code],
+                    type: "error",
+                    showClose: true,
+                    duration: 0
+                  });
+                }
+              })
+              .catch(error => {
+                this.$message({
+                  type: "success",
+                  message: error,
+                  duration: 0,
+                  showClose: true
+                });
+                console.log(error);
+              });
+          })
+          .catch(() => {
+            // this.$message({ type: 'info', message: '已取消删除' })
+          });
+      },
+      // 打开新增角色页面
+      created_user() {
+        this.create_dialogVisible = true;
+      },
+      handleClose() {
+        (this.dialogVisible = false), (this.create_dialogVisible = false);
+      },
+      handleCommand(command) {},
+      handleClick(scope) {
+        this.$router.push({
+          path: "/RoleDetail",
+          query: {
+            RoleId: scope.RoleId,
+            type: scope.type
+          }
         });
-    },
-    // 打开新增角色页面
-    created_user() {
-      this.create_dialogVisible = true;
-    },
-    handleClose() {
-      (this.dialogVisible = false), (this.create_dialogVisible = false);
-    },
-    handleCommand(command) { },
-    handleClick(scope) {
-      this.$router.push({
-        path: "/RoleDetail",
-        query: {
-          RoleId: scope.RoleId
-        }
-      });
-    },
-    pageChange(e) {
-      this.page = e;
-      this.init();
-    },
-    sizeChange(e) {
-      this.size = e;
-      this.init();
-    },
-    handleClick_user() {
-      this.dialogVisible = true;
-    },
-    toServe() {
-      this.$router.push("/createServe");
-    },
-    handleCurrentChange(val) {
-      this.Page = val;
-      this.init();
-    },
-    handleSizeChange(val) {
-      this.pagesize = val
-      this.init()
-    },
-    toAccount() {
-      this.$router.push("/createAccount");
-    },
-    toProvider() {
-      this.$router.push("/createProvider");
+      },
+      pageChange(e) {
+        this.page = e;
+        this.init();
+      },
+      sizeChange(e) {
+        this.size = e;
+        this.init();
+      },
+      handleClick_user() {
+        this.dialogVisible = true;
+      },
+      toServe() {
+        this.$router.push("/createServe");
+      },
+      handleCurrentChange(val) {
+        this.Page = val;
+        this.init();
+      },
+      handleSizeChange(val) {
+        this.pagesize = val
+        this.init()
+      },
+      toAccount() {
+        this.$router.push("/createAccount");
+      },
+      toProvider() {
+        this.$router.push("/createProvider");
+      }
     }
-  }
-};
+  };
+
 </script>
 <style lang="scss" scoped>
-.wrap >>> .el-button,
-.wrap >>> .el-input__inner {
-  border-radius: 0;
-  height: 30px !important;
-  line-height: 30px;
-  padding-top: 0;
-  font-size: 12px;
-}
-.Right-style {
-  display: flex;
-  justify-content: flex-end;
-}
-.pagstyle {
-  padding: 5px;
-  .pagtotal {
-    font-size: 13px;
-    font-weight: 400;
-    color: #565656;
-    line-height: 32px;
-  }
-}
-.Cam {
-  .top {
-    color: #000;
-    padding: 20px;
-    background: #fff;
-    font-size: 16px;
-    font-weight: 700;
-    border-bottom: 1px solid #ddd;
+  .wrap>>>.el-button,
+  .wrap>>>.el-input__inner {
+    border-radius: 0;
+    height: 30px !important;
+    line-height: 30px;
+    padding-top: 0;
+    font-size: 12px;
   }
 
-  .container {
-    width: 100%;
+  .Right-style {
     display: flex;
-    margin: 0 auto;
-    padding: 20px;
-    flex-direction: column;
-    .container-text {
-      width: 100%;
-      margin: 0 auto;
-      font-size: 12px;
-      padding: 10px 30px 10px 20px;
-      vertical-align: middle;
-      color: #003b80;
-      border: 1px solid #97c7ff;
-      border-radius: 2px;
-      background: #e5f0ff;
-      position: relative;
-      box-sizing: border-box;
-      margin-bottom: 20px;
-    }
+    justify-content: flex-end;
+  }
 
-    .table {
-      background-color: #fff;
-      margin-top: 20px;
-    }
+  .pagstyle {
+    padding: 5px;
 
-    .strategy-icon {
-      position: absolute;
-      left: 20px;
-      top: 50%;
-      margin-top: -16px;
-      width: 32px;
-      height: 32px;
-    }
-
-    .createItem {
-      display: block;
-      position: relative;
-      margin-bottom: 20px;
-      box-sizing: border-box;
-      min-height: 90px;
-      padding: 22px 50px 20px 70px;
-      background-color: #f0f4f7;
-      font-size: 14px;
-      line-height: 1.6;
-      color: #999;
-      transition: background-color 0.2s;
-      cursor: pointer;
-    }
-
-    .createItem:hover {
-      background-color: #e8f4ff;
-      text-decoration: none;
-    }
-
-    .createItem:after {
-      content: "";
-      position: absolute;
-      right: 20px;
-      top: 50%;
-      margin-top: -8px;
-      width: 10px;
-      height: 17px;
-      background-repeat: no-repeat;
-      background-image: url(../../../assets/CAM/images/cam.png);
-      background-position: -114px -62px;
-    }
-
-    .ps {
-      background-image: url(../../../assets/CAM/images/cam.svg);
-      background-position: 0.36% 53.7%;
-      background-size: 956.25% 943.75%;
-      background-repeat: no-repeat;
-    }
-
-    .ca {
-      background-image: url(../../../assets/CAM/images/cam.svg);
-      background-position: 12.770000000000001% 53.7%;
-      background-size: 956.25% 943.75%;
-      background-repeat: no-repeat;
-    }
-
-    .sf {
-      background-image: url(../../../assets/CAM/images/cam.svg);
-      background-position: 57.50999999999999% 23.330000000000002%;
-      background-size: 927.2727272727274% 943.75%;
-      background-repeat: no-repeat;
+    .pagtotal {
+      font-size: 13px;
+      font-weight: 400;
+      color: #565656;
+      line-height: 32px;
     }
   }
-}
-.opration {
-  width: 100%;
-}
-.container_table {
-  width: 100%;
-}
+
+  .Cam {
+    .top {
+      color: #000;
+      padding: 20px;
+      background: #fff;
+      font-size: 16px;
+      font-weight: 700;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .container {
+      width: 100%;
+      display: flex;
+      margin: 0 auto;
+      padding: 20px;
+      flex-direction: column;
+
+      .container-text {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 12px;
+        padding: 10px 30px 10px 20px;
+        vertical-align: middle;
+        color: #003b80;
+        border: 1px solid #97c7ff;
+        border-radius: 2px;
+        background: #e5f0ff;
+        position: relative;
+        box-sizing: border-box;
+        margin-bottom: 20px;
+      }
+
+      .table {
+        background-color: #fff;
+        margin-top: 20px;
+      }
+
+      .strategy-icon {
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        margin-top: -16px;
+        width: 32px;
+        height: 32px;
+      }
+
+      .createItem {
+        display: block;
+        position: relative;
+        margin-bottom: 20px;
+        box-sizing: border-box;
+        min-height: 90px;
+        padding: 22px 50px 20px 70px;
+        background-color: #f0f4f7;
+        font-size: 14px;
+        line-height: 1.6;
+        color: #999;
+        transition: background-color 0.2s;
+        cursor: pointer;
+      }
+
+      .createItem:hover {
+        background-color: #e8f4ff;
+        text-decoration: none;
+      }
+
+      .createItem:after {
+        content: "";
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        margin-top: -8px;
+        width: 10px;
+        height: 17px;
+        background-repeat: no-repeat;
+        background-image: url(../../../assets/CAM/images/cam.png);
+        background-position: -114px -62px;
+      }
+
+      .ps {
+        background-image: url(../../../assets/CAM/images/cam.svg);
+        background-position: 0.36% 53.7%;
+        background-size: 956.25% 943.75%;
+        background-repeat: no-repeat;
+      }
+
+      .ca {
+        background-image: url(../../../assets/CAM/images/cam.svg);
+        background-position: 12.770000000000001% 53.7%;
+        background-size: 956.25% 943.75%;
+        background-repeat: no-repeat;
+      }
+
+      .sf {
+        background-image: url(../../../assets/CAM/images/cam.svg);
+        background-position: 57.50999999999999% 23.330000000000002%;
+        background-size: 927.2727272727274% 943.75%;
+        background-repeat: no-repeat;
+      }
+    }
+  }
+
+  .opration {
+    width: 100%;
+  }
+
+  .container_table {
+    width: 100%;
+  }
+
 </style>
