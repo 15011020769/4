@@ -4021,6 +4021,7 @@ export default {
         this.ChildNodes();
         // 机型 选择机型
         await this.getDescribeZoneInstanceConfigInfos();
+        this.TotalCost();
       }
       if (this.colony.name === "") {
         this.colony.nameWran = true;

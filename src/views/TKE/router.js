@@ -39,6 +39,14 @@ const router =  new Router({
       }
     },
     {
+      path: '/node/postMoney', // 創建节点包年包月信息確認頁面
+      name: 'postMoney',
+      component: () => import('./colony/postMoney.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
       path: '/colonyMonitor', // 集群监控
       name: 'colonyMonitor',
       component: () => import('./colony/openMonitor.vue'),
