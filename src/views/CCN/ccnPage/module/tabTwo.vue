@@ -100,7 +100,7 @@
     data() {
       return {
         TimeArr: [{
-            name: '实时',
+            name: '實時',
             Time: 'realTime',
             TimeGranularity: [{
                 value: '60',
@@ -113,7 +113,7 @@
             ]
           },
           {
-            name: '近24小时',
+            name: '近24小時',
             Time: 'Nearly_24_hours',
             TimeGranularity: [{
                 value: '60',
@@ -166,7 +166,7 @@
           'RegionInBandwidth'
         ], // 可用指标
         disName: {
-          'InBandwidth': '入带宽',
+          'InBandwidth': '入頻寬',
           'InPkg': '入包量',
           'OutBandwidth': '出頻寬',
           'OutPkg': '出包量',
@@ -186,10 +186,10 @@
           'RegionOutPkg': 'pps'
         },
         Tips: {
-          'InBandwidth': '地域间入带宽',
-          'InPkg': '地域间入包量',
-          'OutBandwidth': '地域间出頻寬',
-          'OutPkg': '地域间出包量',
+          'InBandwidth': '地域間入带宽',
+          'InPkg': '地域間入包量',
+          'OutBandwidth': '地域間出頻寬',
+          'OutPkg': '地域間出包量',
           'RegionInBandwidth': '地域總入頻寬',
           'RegionInPkg': '地域總入包量',
           'RegionOutBandwidth': '地域總出頻寬',
