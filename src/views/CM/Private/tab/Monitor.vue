@@ -188,6 +188,7 @@
     },
     watch: {
       MonitorData(val) {
+        this.tableData = []
         if (this.MonitorData) {
           this.MonitorData.forEach(element => {
             this.BaseListK.forEach(item => {
