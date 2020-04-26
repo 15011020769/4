@@ -291,6 +291,7 @@ export default {
               yaml: item
             };
           });
+          console,log("测试部署");
           this.raw = JSON.parse(res.Response.ResponseBody).release.config.raw;
           // 判断自定义参数列表是否存在
           if (this.raw == undefined || this.raw == "") {
