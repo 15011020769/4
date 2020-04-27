@@ -1187,7 +1187,7 @@
 
       .log-list {
         background-color: rgb(242, 242, 242);
-        height: 300px;
+        min-height: 300px;
         margin: 20px 0px 0px 320px;
         width: auto;
 

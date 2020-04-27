@@ -7,7 +7,7 @@ import axios from "axios";
 
 const conf = {
   baseURL: process.env.VUE_APP_serverUrl || "",
-  timeout: 60 * 1000,
+  timeout: 70 * 1000,
   loading: true,
   withCredentials: true,
   headers: {
