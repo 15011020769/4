@@ -22,8 +22,7 @@
             <span>{{formShowable.runMoentStep}}</span>
           </el-form-item>
           <el-form-item :label="$t('SCF.total.ms')" class="labelLeft">
-            <el-input class="decsIpt" type="textarea" v-model="formShowable.descStep"
-              :placeholder="$t('SCF.total.msmr')"></el-input>
+            <el-input class="decsIpt" type="textarea" v-model="formShowable.descStep" :placeholder="$t('SCF.total.msmr')"></el-input>
             <p class="tipContent">{{ $t('SCF.total.zc') }}</p>
           </el-form-item>
           <el-form-item :label="$t('SCF.total.yxjs')" :required="true" class="labelLeft">
@@ -54,12 +53,16 @@
           </el-form-item>
           <el-form-item :label="$t('SCF.total.tjff')" :required="true" class="labelLeft">
             <span slot="label">{{ $t('SCF.total.tjff') }}</span>
-            <el-select v-model="formShowable.tipFun" class="decsIptSelect" readonly="readonly">
+            <el-select disabled v-model="formShowable.tipFun" class="decsIptSelect" readonly="readonly">
               <el-option :label="$t('SCF.total.zxbj')" value="onlineEdit"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label>
-            <div class="codeContent">{{formShowable.codeContent}}</div>
+          <el-form-item style="margin-left: -100px;">
+            <!-- <div class="codeContent">{{formShowable.codeContent}}</div> -->
+            <!-- 编辑器的容器  v-loading="cslsLoading" -->
+            <div class="content">
+              <div id="container_editor_new" style="width: 100%; height: 500px; border: 1px solid #e7e7e7;"></div>
+            </div>
           </el-form-item>
         </el-form>
         <div>
@@ -108,8 +111,7 @@
                   </p>
                   <p>
                     <el-select v-model="Subnetvalue" :placeholder="$t('SCF.total.xzzw')">
-                      <el-option v-for="item in SubnetOptions" :key="item.SubnetId" :label="item.SubnetName"
-                        :value="item.SubnetId"></el-option>
+                      <el-option v-for="item in SubnetOptions" :key="item.SubnetId" :label="item.SubnetName" :value="item.SubnetId"></el-option>
                     </el-select>
                   </p>
                 </div>
@@ -124,163 +126,299 @@
   </div>
 </template>
 <script>
-  import {
-    ADD_FUNC,
-    TEMPLATE_DETAIL,
-    VPCS_LIST,
-    SUBNET_LIST,
-    DESCRIB_ROLE
-  } from "@/constants";
-  import {
-    ErrorTips
-  } from "@/components/ErrorTips";
-  export default {
-    data() {
-      return {
-        loading: true,
-        senior: true,
-        DemoId: "",
-        formShowable: {
-          funNameStep: "",
-          runMoentStep: "",
-          descStep: "",
-          runRole: "",
-          runFun: "",
-          tipFun: "在線編輯",
-          codeContent: ""
-        },
-        ScienceArr: [{}],
-        ScienceKey: "", //环境变量key
-        ScienceValue: "", //环境变量value
-        VpcOptions: [], //vpc列表
-        SubnetOptions: [], //子网列表
-        Vpcvalue: "", //vpc
-        Subnetvalue: "", //子网
-        RoleArr: [],
-        closeshow: false //删除按钮控制
-      };
-    },
-    computed: {
-      // 模糊搜索
-    },
-    created() {
-      this.formShowable.funNameStep = window.sessionStorage.getItem(
-        "funNameSess"
-      );
-      this.formShowable.runMoentStep = window.sessionStorage.getItem("runMoent");
-      this.DemoId = window.sessionStorage.getItem("DemoId");
-      if (this.DemoId) {
-        this.GetTemplateDetail();
+import {
+  ADD_FUNC,
+  TEMPLATE_DETAIL,
+  VPCS_LIST,
+  SUBNET_LIST,
+  DESCRIB_ROLE
+} from "@/constants";
+import {
+  ErrorTips
+} from "@/components/ErrorTips";
+export default {
+  data() {
+    return {
+      loading: true,
+      senior: true,
+      DemoId: "",
+      formShowable: {
+        funNameStep: "",
+        runMoentStep: "",
+        descStep: "",
+        runRole: "",
+        runFun: "",
+        tipFun: "在線編輯",
+        codeContent: ""
+      },
+      ScienceArr: [{}],
+      ScienceKey: "", //环境变量key
+      ScienceValue: "", //环境变量value
+      VpcOptions: [], //vpc列表
+      SubnetOptions: [], //子网列表
+      Vpcvalue: "", //vpc
+      Subnetvalue: "", //子网
+      RoleArr: [],
+      closeshow: false, //删除按钮控制
+      cslsSDK: new CloudStudioLiteFilesServiceSDK(), // 初始化编辑器
+      cslsLoading: false, // 编辑器加载动画
+      tempDetail: localStorage.getItem('tempDetail')    // 获取缓存的信息
+    };
+  },
+  computed: {
+    // 模糊搜索
+  },
+  created() {
+    this.formShowable.funNameStep = window.sessionStorage.getItem(
+      "funNameSess"
+    );
+    this.formShowable.runMoentStep = window.sessionStorage.getItem("runMoent");
+    this.DemoId = window.sessionStorage.getItem("DemoId");
+
+    this.formShowable.descStep = this.tempDetail.desc   // 描述
+    // if (this.DemoId) {
+    //   this.GetTemplateDetail();
+    // }
+    this.GetVpcList();
+    this._Getrole()
+  },
+  mounted (){
+    this.getCsLite()      // 初始化编辑器
+    console.log(this.tempDetail)
+  },
+  methods: {
+    //环境添加
+    AddScience() {
+      this.ScienceArr.push({});
+      if (this.ScienceArr.length > 1) {
+        this.closeshow = true;
+      } else {
+        this.closeshow = false;
       }
-      this.GetVpcList();
-      this._Getrole()
     },
-    methods: {
-      //环境添加
-      AddScience() {
-        this.ScienceArr.push({});
-        if (this.ScienceArr.length > 1) {
-          this.closeshow = true;
-        } else {
-          this.closeshow = false;
-        }
-      },
-      //环境删除
-      CloseScience(index) {
-        this.ScienceArr.splice(index, 1);
-        if (this.ScienceArr.length > 1) {
-          this.closeshow = true;
-        } else {
-          this.closeshow = false;
-        }
-      },
-      //回去上一页
-      backFunlist() {
-        this.$router.push({
-          path: "/FuncServe"
-        });
-      },
-      //上一步
-      prevStep() {
-        this.$router.push({
-          path: "/createFun"
-        });
-      },
-      _senior() {
-        this.senior = !this.senior;
-      },
-      GetTemplateDetail() {
-        //获取函数模板详情
-        let param = {
-          Region: localStorage.getItem('regionv2'),
-          Version: "2018-04-16",
-          DemoId: this.DemoId
-        };
-        this.axios.post(TEMPLATE_DETAIL, param).then(data => {
-          let DataBeginDetail = JSON.parse(data.Response.DemoConfig);
-          this.formShowable.runFun =
-            DataBeginDetail[
-              "serverless-cloud-function-application"
-            ].functions.handler;
-          this.formShowable.codeContent = data.Response.DemoCode;
-        });
-      },
-      //获取vpc列表
-      GetVpcList() {
-        let param = {
-          Region: localStorage.getItem('regionv2'),
-          Version: "2017-03-12"
-        };
-        this.axios.post(VPCS_LIST, param).then(data => {
-          this.VpcOptions = data.Response.VpcSet;
-        });
-      },
-      //选择vpc
-      changeVpc() {
-        this.GetSubnetList();
-      },
-      //获取子网列表
-      GetSubnetList() {
-        let param = {
-          Region: localStorage.getItem('regionv2'),
-          Version: "2017-03-12",
-          "Filters.0.Name": "vpc-id",
-          "Filters.0.Values.0": this.Vpcvalue
-        };
-        this.axios.post(SUBNET_LIST, param).then(data => {
-          this.SubnetOptions = data.Response.SubnetSet;
-        });
-      },
-      _Getrole() { //获取角色
-        let param = {
-          Region: localStorage.getItem('regionv2'),
-          Version: "2019-01-16",
-          Page: 1,
-          Rp: 200
-        };
-        this.axios.post(DESCRIB_ROLE, param).then(res => {
-          if (res.Response.Error === undefined) {
-            let List = res.Response.List
-            List.forEach(item => {
-              let strategyArr = JSON.parse(item.PolicyDocument)
-              let strategy = strategyArr.statement[0].principal.service
-              if (typeof strategy === 'object') {
-                strategy.forEach(i => {
-                  if (i.split(".")[0] === 'scf') {
-                    this.RoleArr.push(item)
-                  }
-                });
-              } else if (typeof strategy === "string") {
-                if (strategy.split(".")[0] === 'scf') {
+    //环境删除
+    CloseScience(index) {
+      this.ScienceArr.splice(index, 1);
+      if (this.ScienceArr.length > 1) {
+        this.closeshow = true;
+      } else {
+        this.closeshow = false;
+      }
+    },
+    //回去上一页
+    backFunlist() {
+      this.$router.push({
+        path: "/FuncServe"
+      });
+    },
+    //上一步
+    prevStep() {
+      this.$router.push({
+        path: "/createFun"
+      });
+    },
+    _senior() {
+      this.senior = !this.senior;
+    },
+    GetTemplateDetail() {
+      //获取函数模板详情
+      let param = {
+        Region: localStorage.getItem('regionv2'),
+        Version: "2018-04-16",
+        DemoId: this.DemoId
+      };
+      this.axios.post(TEMPLATE_DETAIL, param).then(data => {
+        let DataBeginDetail = JSON.parse(data.Response.DemoConfig);
+        this.formShowable.runFun =
+          DataBeginDetail[
+            "serverless-cloud-function-application"
+          ].functions.handler;
+        this.formShowable.codeContent = data.Response.DemoCode;
+      });
+    },
+    //获取vpc列表
+    GetVpcList() {
+      let param = {
+        Region: localStorage.getItem('regionv2'),
+        Version: "2017-03-12"
+      };
+      this.axios.post(VPCS_LIST, param).then(data => {
+        this.VpcOptions = data.Response.VpcSet;
+      });
+    },
+    //选择vpc
+    changeVpc() {
+      this.GetSubnetList();
+    },
+    //获取子网列表
+    GetSubnetList() {
+      let param = {
+        Region: localStorage.getItem('regionv2'),
+        Version: "2017-03-12",
+        "Filters.0.Name": "vpc-id",
+        "Filters.0.Values.0": this.Vpcvalue
+      };
+      this.axios.post(SUBNET_LIST, param).then(data => {
+        this.SubnetOptions = data.Response.SubnetSet;
+      });
+    },
+    _Getrole() { //获取角色
+      let param = {
+        Region: localStorage.getItem('regionv2'),
+        Version: "2019-01-16",
+        Page: 1,
+        Rp: 200
+      };
+      this.axios.post(DESCRIB_ROLE, param).then(res => {
+        if (res.Response.Error === undefined) {
+          let List = res.Response.List
+          List.forEach(item => {
+            let strategyArr = JSON.parse(item.PolicyDocument)
+            let strategy = strategyArr.statement[0].principal.service
+            if (typeof strategy === 'object') {
+              strategy.forEach(i => {
+                if (i.split(".")[0] === 'scf') {
                   this.RoleArr.push(item)
                 }
+              });
+            } else if (typeof strategy === "string") {
+              if (strategy.split(".")[0] === 'scf') {
+                this.RoleArr.push(item)
+              }
+            }
+          });
+          console.log(this.RoleArr)
+        } else {
+          let ErrTips = {
+            'InternalError.SystemError': 'InternalError.SystemError',
+            'InvalidParameter.ParamError': '非法入參'
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+
+    // 渲染编辑器
+    getCsLite() {
+      this.cslsSDK.init({
+        rootNode: document.querySelector('#container_editor_new'),
+        modeType: ModeTypeEnum.ZIP,
+        i18nType: "zh-tw"
+      });
+      // https://03-20-1300561189.cos.ap-taipei.myqcloud.com/dasd_LATEST.zip
+      let temp_url = 'https://7-1301459465.cos.ap-taipei.myqcloud.com/Nodejs6-1.zip?q-sign-algorithm=sha1&q-ak=AKIDxEMOTrbECttCe8K0OX4wytS6GRdaO4Fn&q-sign-time=1587953484;1587957084&q-key-time=1587953484;1587957084&q-header-list=&q-url-param-list=&q-signature=2b8b5d31611194678de1fbdc99a3dbdc333219dd&x-cos-security-token=8446db15f46ddafddaff382eba5d164fc8f325bd40001'
+      this.cslsSDK.addListener({
+        onRead: () => {
+          return new Promise(res => {
+            fetch(temp_url, {
+              headers: {
+                'content-type': 'application/zip'
+              },
+              method: 'GET'
+            })
+              .then(res => res.blob())
+              .then(blob => {
+                res({
+                  content: blob
+                })
+                this.cslsLoading = false // 关闭加载动画
+              })
+          })
+        }
+      })
+    },
+
+    // 完成按钮 添加子函数
+    compileSucc() {
+
+      this.loading = false;
+      let params = {
+        Version: "2018-04-16",
+        Region: localStorage.getItem('regionv2'),
+        FunctionName: this.formShowable.funNameStep,      // 函数名称
+        "Code.DemoId": this.DemoId,
+        Handler: this.formShowable.runFun, //执行方法
+        Runtime: this.formShowable.runMoentStep, //运行环境
+        Description: this.formShowable.descStep, //描述
+        Role: this.formShowable.runRole,
+        Namespace: this.$route.query.Namespace
+      };
+
+      if (this.Vpcvalue != "" && this.Subnetvalue != "") {
+        params["VpcConfig.VpcId"] = this.Vpcvalue;
+        params["VpcConfig.SubnetId"] = this.Subnetvalue;
+      }
+      for (let i in this.ScienceArr) {
+        (params["Environment.Variables." + i + ".Key"] = this.ScienceArr[
+          i
+        ].Key),
+          (params["Environment.Variables." + i + ".Value"] = this.ScienceArr[
+            i
+          ].Value);
+      }
+      if (this.formShowable.funNameStep && this.formShowable.runMoentStep) {
+        this.axios.post(ADD_FUNC, params).then(res => {
+          if (res.Response.Error === undefined) {
+            this.$message({
+              message: '创建成功',
+              type: "success",
+              showClose: true,
+              duration: 0
+            });
+            localStorage.removeItem('tempDetail')   // 创建完成 清除缓存中的模板详情
+            this.$router.push({
+              path: "/FuncServe",
+              query: {
+                Namespace: this.$route.query.Namespace
               }
             });
-            console.log(this.RoleArr)
           } else {
             let ErrTips = {
-              'InternalError.SystemError': 'InternalError.SystemError',
-              'InvalidParameter.ParamError': '非法入參'
+              'FailedOperation.CreateFunction': '操作失敗',
+              'FailedOperation.Namespace': 'Namespace已存在',
+              'InternalError': '內部錯誤',
+              'InternalError.System': '內部系統錯誤',
+              'InvalidParameter.Payload': '請求參數不合法',
+              'InvalidParameterValue': '參數取值錯誤',
+              'InvalidParameterValue.Code': 'Code傳入錯誤',
+              'InvalidParameterValue.CodeSecret': 'CodeSecret傳入錯誤',
+              'InvalidParameterValue.CodeSource': 'CodeSource傳入錯誤',
+              'InvalidParameterValue.Cos': 'Cos傳入錯誤',
+              'InvalidParameterValue.CosBucketName': 'CosBucketName不符合規範',
+              'InvalidParameterValue.CosObjectName': 'CosObjectName不符合規範',
+              'InvalidParameterValue.Description': 'Description傳入錯誤',
+              'InvalidParameterValue.EipConfig': 'EipConfig參數錯誤',
+              'InvalidParameterValue.Environment': 'Environment傳入錯誤',
+              'InvalidParameterValue.FunctionName': '函數不存在',
+              'InvalidParameterValue.Handler': 'Handler傳入錯誤',
+              'InvalidParameterValue.Layers': 'Layers參數傳入錯誤',
+              'InvalidParameterValue.MemorySize': 'MemorySize錯誤',
+              'InvalidParameterValue.Namespace': 'Namespace參數傳入錯誤',
+              'InvalidParameterValue.Runtime': 'Runtime傳入錯誤',
+              'InvalidParameterValue.TempCosObjectName': '非法的TempCosObjectName',
+              'InvalidParameterValue.Type': 'Type傳入錯誤',
+              'InvalidParameterValue.ZipFile': 'ZipFile非法',
+              'LimitExceeded.Function': '函數數量超出最大限制',
+              'LimitExceeded.Memory': '記憶體超出最大限制',
+              'LimitExceeded.Timeout': 'Timeout超出最大限制',
+              'MissingParameter.Code': 'Code沒有傳入',
+              'MissingParameter.Runtime': '缺失 Runtime 欄位',
+              'ResourceInUse.Function': '函數已存在',
+              'ResourceInUse.FunctionName': 'FunctionName已存在',
+              'ResourceNotFound.Demo': '不存在的Demo',
+              'ResourceNotFound.Role': '角色不存在',
+              'ResourceNotFound.Vpc': 'VPC或子網不存在',
+              'ResourceUnavailable.Namespace': 'Namespace不可用',
+              'UnauthorizedOperation.CAM': 'CAM鑒權失敗',
+              'UnauthorizedOperation.Region': 'Region錯誤',
+              'UnauthorizedOperation.Role': '沒有許可權訪問您的Cos資源',
+              'UnauthorizedOperation.TempCosAppid': 'TempCos的Appid和請求帳戶的Appid不一致'
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
@@ -291,350 +429,254 @@
             });
           }
         });
-      },
-      //添加子函数
-      compileSucc() {
-
-        this.loading = false;
-        let params = {
-          Version: "2018-04-16",
-          Region: localStorage.getItem('regionv2'),
-          FunctionName: this.formShowable.funNameStep,
-          "Code.DemoId": this.DemoId,
-          Handler: this.formShowable.runFun, //执行方法
-          Runtime: this.formShowable.runMoentStep, //运行环境
-          Description: this.formShowable.descStep, //描述
-          Role: this.formShowable.runRole,
-          Namespace: this.$route.query.Namespace
-        };
-
-        if (this.Vpcvalue != "" && this.Subnetvalue != "") {
-          params["VpcConfig.VpcId"] = this.Vpcvalue;
-          params["VpcConfig.SubnetId"] = this.Subnetvalue;
-        }
-        for (let i in this.ScienceArr) {
-          (params["Environment.Variables." + i + ".Key"] = this.ScienceArr[
-            i
-          ].Key),
-          (params["Environment.Variables." + i + ".Value"] = this.ScienceArr[
-            i
-          ].Value);
-        }
-        if (this.formShowable.funNameStep && this.formShowable.runMoentStep) {
-          this.axios.post(ADD_FUNC, params).then(res => {
-            if (res.Response.Error === undefined) {
-              this.$message({
-                message: '创建成功',
-                type: "success",
-                showClose: true,
-                duration: 0
-              });
-              this.$router.push({
-                path: "/FuncServe",
-                query: {
-                  Namespace: this.$route.query.Namespace
-                }
-              });
-            } else {
-              let ErrTips = {
-                'FailedOperation.CreateFunction': '操作失敗',
-                'FailedOperation.Namespace': 'Namespace已存在',
-                'InternalError': '內部錯誤',
-                'InternalError.System': '內部系統錯誤',
-                'InvalidParameter.Payload': '請求參數不合法',
-                'InvalidParameterValue': '參數取值錯誤',
-                'InvalidParameterValue.Code': 'Code傳入錯誤',
-                'InvalidParameterValue.CodeSecret': 'CodeSecret傳入錯誤',
-                'InvalidParameterValue.CodeSource': 'CodeSource傳入錯誤',
-                'InvalidParameterValue.Cos': 'Cos傳入錯誤',
-                'InvalidParameterValue.CosBucketName': 'CosBucketName不符合規範',
-                'InvalidParameterValue.CosObjectName': 'CosObjectName不符合規範',
-                'InvalidParameterValue.Description': 'Description傳入錯誤',
-                'InvalidParameterValue.EipConfig': 'EipConfig參數錯誤',
-                'InvalidParameterValue.Environment': 'Environment傳入錯誤',
-                'InvalidParameterValue.FunctionName': '函數不存在',
-                'InvalidParameterValue.Handler': 'Handler傳入錯誤',
-                'InvalidParameterValue.Layers': 'Layers參數傳入錯誤',
-                'InvalidParameterValue.MemorySize': 'MemorySize錯誤',
-                'InvalidParameterValue.Namespace': 'Namespace參數傳入錯誤',
-                'InvalidParameterValue.Runtime': 'Runtime傳入錯誤',
-                'InvalidParameterValue.TempCosObjectName': '非法的TempCosObjectName',
-                'InvalidParameterValue.Type': 'Type傳入錯誤',
-                'InvalidParameterValue.ZipFile': 'ZipFile非法',
-                'LimitExceeded.Function': '函數數量超出最大限制',
-                'LimitExceeded.Memory': '記憶體超出最大限制',
-                'LimitExceeded.Timeout': 'Timeout超出最大限制',
-                'MissingParameter.Code': 'Code沒有傳入',
-                'MissingParameter.Runtime': '缺失 Runtime 欄位',
-                'ResourceInUse.Function': '函數已存在',
-                'ResourceInUse.FunctionName': 'FunctionName已存在',
-                'ResourceNotFound.Demo': '不存在的Demo',
-                'ResourceNotFound.Role': '角色不存在',
-                'ResourceNotFound.Vpc': 'VPC或子網不存在',
-                'ResourceUnavailable.Namespace': 'Namespace不可用',
-                'UnauthorizedOperation.CAM': 'CAM鑒權失敗',
-                'UnauthorizedOperation.Region': 'Region錯誤',
-                'UnauthorizedOperation.Role': '沒有許可權訪問您的Cos資源',
-                'UnauthorizedOperation.TempCosAppid': 'TempCos的Appid和請求帳戶的Appid不一致'
-              };
-              let ErrOr = Object.assign(ErrorTips, ErrTips);
-              this.$message({
-                message: ErrOr[res.Response.Error.Code],
-                type: "error",
-                showClose: true,
-                duration: 0
-              });
-            }
-          });
-        }
-
       }
+
     }
-  };
+  }
+};
 
 </script>
 <style lang="scss" scoped>
-  .wrap>>>.el-input__inner,
-  .wrap>>>.el-button {
-    height: 30px;
-    line-height: 30px;
-    border-radius: 0;
-    padding-top: 0;
+.wrap >>> .el-input__inner,
+.wrap >>> .el-button {
+  height: 30px;
+  line-height: 30px;
+  border-radius: 0;
+  padding-top: 0;
+}
+
+.seniorbox {
+  display: flex;
+  margin: 20px;
+
+  ::v-deep .el-input {
+    width: 170px !important;
   }
 
-  .seniorbox {
+  .Science {
+    margin-left: 20px;
     display: flex;
-    margin: 20px;
+    width: 415px;
+    height: 40px;
+    border: 0.5px solid #ccc;
 
-    ::v-deep .el-input {
-      width: 170px !important;
-    }
-
-    .Science {
-      margin-left: 20px;
-      display: flex;
-      width: 415px;
-      height: 40px;
-      border: 0.5px solid #ccc;
-
-      p {
-        color: #ccc;
-        font-weight: bold;
-        flex: 1;
-        line-height: 40px;
-        padding-left: 15px;
-      }
-    }
-
-    .closeScience {
-      cursor: pointer;
-      font-size: 24px;
+    p {
+      color: #ccc;
+      font-weight: bold;
+      flex: 1;
       line-height: 40px;
-    }
-
-    .addScience {
-      cursor: pointer;
-    }
-
-    .borderNone {
-      border-bottom: none;
-
-      .Scienceinput {
-        width: 165px !important;
-      }
+      padding-left: 15px;
     }
   }
 
-  .senior {
-    color: #006eff;
+  .closeScience {
+    cursor: pointer;
+    font-size: 24px;
+    line-height: 40px;
+  }
+
+  .addScience {
     cursor: pointer;
   }
 
-  .allConStep>>>.el-input {
-    width: 200px;
-  }
+  .borderNone {
+    border-bottom: none;
 
-  .allConStep>>>.el-textarea__inner {
-    border-radius: 0;
-    height: 100px;
+    .Scienceinput {
+      width: 165px !important;
+    }
   }
+}
 
-  .allConStep>>>.el-input__inner {
-    height: 30px !important;
-    line-height: 30px !important;
-    border-radius: 0 !important;
-  }
+.senior {
+  color: #006eff;
+  cursor: pointer;
+}
 
-  .allConStep>>>.el-form-item__label {
-    text-align: left;
-    width: 120px;
-  }
+.allConStep >>> .el-input {
+  width: 200px;
+}
 
-  .newClear:after {
-    display: block;
-    content: "";
-    clear: both;
-  }
+.allConStep >>> .el-textarea__inner {
+  border-radius: 0;
+  height: 100px;
+}
 
-  .topCreateFunStep {
-    width: 100%;
-    height: 52px;
-    background-color: #fff;
+.allConStep >>> .el-input__inner {
+  height: 30px !important;
+  line-height: 30px !important;
+  border-radius: 0 !important;
+}
+
+.allConStep >>> .el-form-item__label {
+  text-align: left;
+  width: 120px;
+}
+
+.newClear:after {
+  display: block;
+  content: "";
+  clear: both;
+}
+
+.topCreateFunStep {
+  width: 100%;
+  height: 52px;
+  background-color: #fff;
+  line-height: 52px;
+  border-bottom: 1px solid #eee;
+  padding: 0 20px;
+
+  .createFunTit {
+    font-size: 16px;
+    font-weight: 600;
     line-height: 52px;
-    border-bottom: 1px solid #eee;
-    padding: 0 20px;
-
-    .createFunTit {
-      font-size: 16px;
-      font-weight: 600;
-      line-height: 52px;
-    }
-
-    .el-icon-back {
-      float: left;
-      margin-top: 17px;
-      font-size: 20px;
-      margin-right: 20px;
-    }
-
-    .docRight {
-      float: right;
-
-      a {
-        float: left;
-        margin-left: 12px;
-
-        .el-icon-share {
-          font-size: 20px;
-          margin-left: 5px;
-        }
-      }
-    }
   }
 
-  .mainContent {
-    margin: 20px;
-    padding: 20px;
-    background-color: #fff;
-    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
+  .el-icon-back {
+    float: left;
+    margin-top: 17px;
+    font-size: 20px;
+    margin-right: 20px;
   }
 
-  .stepOneTopTit {
-    line-height: 32px;
-    width: 100%;
-    margin-bottom: 15px;
-
-    span:nth-child(1) {
-      width: 30px;
-      float: left;
-      height: 30px;
-      line-height: 30px;
-      text-align: center;
-      background-color: #006eff;
-      color: #fff;
-      margin-right: 12px;
-      border-radius: 100%;
-    }
-
-    span:nth-child(2) {
-      float: left;
-      color: #000;
-      margin-right: 35px;
-      font-weight: 600;
-      font-size: 14px;
-    }
-
-    span:nth-child(3) {
-      font-size: 14px;
-      color: #000;
-      float: left;
-      margin-right: 35px;
-    }
-
-    span:nth-child(4) {
-      width: 30px;
-      float: left;
-      height: 30px;
-      line-height: 30px;
-      text-align: center;
-      background-color: #006eff;
-      color: #fff;
-      border-radius: 100%;
-      margin-right: 12px;
-    }
-
-    span:nth-child(5) {
-      float: left;
-      color: #000;
-      margin-right: 40px;
-      font-weight: 600;
-      font-size: 14px;
-    }
-  }
-
-  .prevStep {
-    margin-top: 12px !important;
-    margin-right: 12px;
-  }
-
-  .compileSucc {
-    margin-top: 12px !important;
-    color: #fff !important;
-    background-color: #006eff !important;
-  }
-
-  .allConStep {
-    width: 100%;
-    border-bottom: 1px solid #eaeaea;
-    padding-bottom: 20px;
-    font-size: 12px;
-
-    .decsIpt {
-      width: 200px;
-    }
-
-    .decsIptSelect {
-      width: 200px;
-      display: block;
-
-      div.el-input {
-        width: 200px;
-
-        input {
-          width: 200px;
-        }
-      }
-    }
-
-    .labelLeft .el-form-item__label {
-      text-align: left !important;
-      font-size: 12px;
-      color: #888;
-    }
-  }
-
-  .tipContent {
-    font-size: 12px;
-    color: #888;
-
-    span {
-      float: left;
-    }
+  .docRight {
+    float: right;
 
     a {
       float: left;
+      margin-left: 12px;
 
-      span.el-icon-share {
-        float: right;
-        margin: 14px 5px 0 0;
+      .el-icon-share {
+        font-size: 20px;
+        margin-left: 5px;
+      }
+    }
+  }
+}
+
+.mainContent {
+  margin: 20px;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
+}
+
+.stepOneTopTit {
+  line-height: 32px;
+  width: 100%;
+  margin-bottom: 15px;
+
+  span:nth-child(1) {
+    width: 30px;
+    float: left;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    background-color: #006eff;
+    color: #fff;
+    margin-right: 12px;
+    border-radius: 100%;
+  }
+
+  span:nth-child(2) {
+    float: left;
+    color: #000;
+    margin-right: 35px;
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  span:nth-child(3) {
+    font-size: 14px;
+    color: #000;
+    float: left;
+    margin-right: 35px;
+  }
+
+  span:nth-child(4) {
+    width: 30px;
+    float: left;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    background-color: #006eff;
+    color: #fff;
+    border-radius: 100%;
+    margin-right: 12px;
+  }
+
+  span:nth-child(5) {
+    float: left;
+    color: #000;
+    margin-right: 40px;
+    font-weight: 600;
+    font-size: 14px;
+  }
+}
+
+.prevStep {
+  margin-top: 12px !important;
+  margin-right: 12px;
+}
+
+.compileSucc {
+  margin-top: 12px !important;
+  color: #fff !important;
+  background-color: #006eff !important;
+}
+
+.allConStep {
+  width: 100%;
+  border-bottom: 1px solid #eaeaea;
+  padding-bottom: 20px;
+  font-size: 12px;
+
+  .decsIpt {
+    width: 200px;
+  }
+
+  .decsIptSelect {
+    width: 200px;
+    display: block;
+
+    div.el-input {
+      width: 200px;
+
+      input {
+        width: 200px;
       }
     }
   }
 
-  .codeContent {
-    width: 100%;
-    min-height: 500px;
-    background-color: #eaeaea;
+  .labelLeft .el-form-item__label {
+    text-align: left !important;
+    font-size: 12px;
+    color: #888;
+  }
+}
+
+.tipContent {
+  font-size: 12px;
+  color: #888;
+
+  span {
+    float: left;
   }
 
+  a {
+    float: left;
+
+    span.el-icon-share {
+      float: right;
+      margin: 14px 5px 0 0;
+    }
+  }
+}
+
+.codeContent {
+  width: 100%;
+  min-height: 500px;
+  background-color: #eaeaea;
+}
 </style>

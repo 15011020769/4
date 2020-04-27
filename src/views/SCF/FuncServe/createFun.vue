@@ -49,7 +49,7 @@
               <el-row>
                 <el-col :span="8" v-for="(item,index) in tableDataBegin1" :key="index">
                   <div class="allFunListBoxCon" :class="isactive==index ?'addBorderCla':''"
-                    @click="mouseHandel(index,item.DemoId)" style="display:flex;flex-direction:column;">
+                    @click="mouseHandel(index, item)" style="display:flex;flex-direction:column;">
                     <div class="funListBoxConTit newClear">
                       <span class="titNew">{{item.name}}</span>
                       <a class="lookDetail" @click="lookFunDetails(item)">{{ $t('SCF.total.ckxq') }}</a>
@@ -251,7 +251,8 @@
         flag: false,
         dialogVisible: false,
         fileArr: [],
-        details:{}
+        details:{},
+        tempDetail: ''        // 选中的模板详情
       };
     },
     computed: {
@@ -259,6 +260,10 @@
     },
     created() {
       this.GetTemplateList();
+      localStorage.removeItem('tempDetail')   // 先清除缓存中的模板详情 避免默认选中模板发生错乱
+    },
+    mounted(){
+      
     },
     methods: {
       UpTags(value) {
@@ -313,7 +318,7 @@
           if(li.type === this.createFunTable.runMoment) {
             this.tableDataBegin = li.detail;
             this.tableDataBegin1 = li.detail.slice(0, 6);
-            this.isactive = 0;
+            // this.isactive = 0;
             this.totalItems = li.detail.length;
             this.loading = false;
           }
@@ -341,9 +346,9 @@
             this.dialogVisible = true;
         // });
       },
-      mouseHandel(index, DemoId) {
+      mouseHandel(index, item) {
         this.isactive = index;
-        this.DemoId = DemoId;
+        this.tempDetail = localStorage.setItem('tempDetail', item)    // 点击的默认模板存到缓存  供第二步调用
       },
       //搜索
       doFilter() {
@@ -388,8 +393,9 @@
       //组件自带监控当前页码
       currentChangePage(list) {},
       nextStep() {
-        if (this.DemoId === "") {
+        if (this.tempDetail === "") {
           this.$message("請選擇函數模板");
+          return false;
         }
 
         if (this.createFunTable.funName == "") {

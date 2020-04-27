@@ -11,6 +11,7 @@ const Python2 = {
       outParams: '{}',
       notice: '無',
       certificate: '公開',
+      handler: 'index.main_handler',                                  // 执行方法
       url: 'Python2-1.zip'
     },
     {
