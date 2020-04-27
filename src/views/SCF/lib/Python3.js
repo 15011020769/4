@@ -11,6 +11,7 @@ const Python3 = {
       outParams: '{ "response": { "body": "res_text", "headers": { "Access-Control-Allow-Origin": "*", "Content-Type": "text" }, "isBase64Encoded": "False", "statusCode": 200 } }',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Python3-1.zip'                                  // cos的url
     },
     {
@@ -23,6 +24,7 @@ const Python3 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'api_service.main_handler',
       url: 'Python3-2.zip'                                  // cos的url
     },
     {
@@ -35,6 +37,7 @@ const Python3 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'Word_Recognition.main_handler',
       url: 'Python3-3.zip'                                  // cos的url
     },
     {
@@ -47,6 +50,7 @@ const Python3 = {
       outParams: '{ "response": { "body": "$content", "headers": { "Content-Type": "text/html" }, "isBase64Encoded": "False", "statusCode": 200 } }',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Python3-4.zip'                                  // cos的url
     },
     {
@@ -59,6 +63,7 @@ const Python3 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'Get_COS_Object.main_handler',
       url: 'Python3-5.zip'                                  // cos的url
     },
     {
@@ -71,6 +76,7 @@ const Python3 = {
       outParams: '{ "response": { "body": "res_text", "headers": { "Access-Control-Allow-Origin": "*", "Content-Type": "text" }, "isBase64Encoded": "False", "statusCode": 200 } }',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'Word_Recognition.main_handler',
       url: 'Python3-6.zip'                                  // cos的url
     },
     {
@@ -83,6 +89,7 @@ const Python3 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'sendemail.main_handler',
       url: 'Python3-7.zip'                                  // cos的url
     },
     {
@@ -95,6 +102,7 @@ const Python3 = {
       outParams: '{"response":{"body":"$content","headers":{"Content-Type":"text/html"},"isBase64Encoded":"False","statusCode":200}}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Python3-8.zip'                                  // cos的url
     }
   ]

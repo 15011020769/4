@@ -11,6 +11,7 @@ const Java8 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'example.Hello::mainHandler',
       url: 'Java8-1.zip'                                  // cos的url
     },
   ]

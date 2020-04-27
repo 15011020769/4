@@ -24,6 +24,7 @@ const Python2 = {
       outParams: '{ "response": { "body": "res_text", "headers": { "Access-Control-Allow-Origin": "*", "Content-Type": "text" }, "isBase64Encoded": "False", "statusCode": 200 } }',
       notice: '無',
       certificate: '公開',
+      handler: 'Word_Recognition.main_handler',
       url: 'Python2-2.zip'
     },
     {
@@ -36,6 +37,7 @@ const Python2 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'Ckafka_SCF_COS.main_handler',
       url: 'Python2-3.zip'                                  // cos的url
     },
     {
@@ -48,6 +50,7 @@ const Python2 = {
       outParams: '{ "response": { "body": "$content", "headers": { "Content-Type": "text/html" }, "isBase64Encoded": "False", "statusCode": 200 } }',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Python2-4.zip'                                  // cos的url
     },
     {
@@ -60,6 +63,7 @@ const Python2 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'Get_COS_Object.main_handler',
       url: 'Python2-5.zip'                                  // cos的url
     },
     {
@@ -72,6 +76,7 @@ const Python2 = {
       outParams: '{ "response": { "body": "API GW Test Success", "headers": { "Access-Control-Allow-Origin": "*", "Content-Type": "text" }, "isBase64Encoded": "False", "statusCode": 200 } }',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'api_gw_basic_demo.main_handler',
       url: 'Python2-6.zip'                                  // cos的url
     },
     {
@@ -84,6 +89,7 @@ const Python2 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'mysql_basic_demo.main_handler',
       url: 'Python2-7.zip'                                  // cos的url
     },
     {
@@ -96,6 +102,7 @@ const Python2 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'Thumbnail.main_handler',
       url: 'Python2-8.zip'                                  // cos的url
     },
     {
@@ -108,6 +115,7 @@ const Python2 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Python2-9.zip'                                  // cos的url
     },
     {
@@ -120,6 +128,7 @@ const Python2 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'websocket_transmission.main_handler',
       url: 'Python2-10.zip'                                  // cos的url
     },
     {
@@ -132,6 +141,7 @@ const Python2 = {
       outParams: '{ "response": { "body": "Upload to COS success", "headers": { "Access-Control-Allow-Origin": "*", "Content-Type": "text" }, "isBase64Encoded": "False", "statusCode": 200 } }',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'upload_file_to_COS_by_APIGW.main_handler',
       url: 'Python2-11.zip'                                  // cos的url
     },
     {
@@ -144,6 +154,7 @@ const Python2 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'unpack_to_cos.main_handler',
       url: 'Python2-12.zip'                                  // cos的url
     },
     {
@@ -156,6 +167,7 @@ const Python2 = {
       outParams: '{ "errNo": 0, "websocket": { "action": "connecting", "secWebSocketProtocol": "chat,binary", "secWebSocketExtensions": "extension1,extension2", "secConnectionID": "xawexasdfewezdfsdfeasdfffa==" }, "errMsg": "ok" }',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'websocket_register.main_handler',
       url: 'Python2-13.zip'                                  // cos的url
     },
     {
@@ -168,6 +180,7 @@ const Python2 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'unzip_to_cos.main_handler',
       url: 'Python2-14.zip'                                  // cos的url
     },
     {
@@ -180,6 +193,7 @@ const Python2 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Python2-15.zip'                                  // cos的url
     },
     {
@@ -192,6 +206,7 @@ const Python2 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'idcard_detection.main_handler',
       url: 'Python2-16.zip'                                  // cos的url
     },
     {
@@ -204,6 +219,7 @@ const Python2 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'Play_Check_By_Timer.main_handler',
       url: 'Python2-17.zip'                                  // cos的url
     },
     {
@@ -216,6 +232,7 @@ const Python2 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'websocket_delete.main_handler',
       url: 'Python2-18.zip'                                  // cos的url
     },
     {
@@ -228,6 +245,7 @@ const Python2 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'cdn_refresh.main_handler',
       url: 'Python2-19.zip'                                  // cos的url
     },
     {
@@ -240,6 +258,7 @@ const Python2 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'sendemail.main_handler',
       url: 'Python2-20.zip'                                  // cos的url
     },
     {
@@ -252,6 +271,7 @@ const Python2 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'mysql_backup_to_cos.main_handler',
       url: 'Python2-21.zip'                                  // cos的url
     },
     {
@@ -264,6 +284,7 @@ const Python2 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'log_analysis.main_handler',
       url: 'Python2-22.zip'                                  // cos的url
     },
     {
@@ -276,6 +297,7 @@ const Python2 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Python2-23.zip'                                  // cos的url
     },
     {
@@ -288,6 +310,7 @@ const Python2 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Python2-24.zip'                                  // cos的url
     },
     {
@@ -300,6 +323,7 @@ const Python2 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'map_function.main_handler',
       url: 'Python2-25.zip'                                  // cos的url
     },
     {
@@ -312,6 +336,7 @@ const Python2 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Python2-26.zip'                                  // cos的url
     },
     {
@@ -324,6 +349,7 @@ const Python2 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'reduce_function.main_handler',
       url: 'Python2-27.zip'                                  // cos的url
     },
     {
@@ -336,6 +362,7 @@ const Python2 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'kafka_to_cos_schedule.main_handler',
       url: 'Python2-28.zip'                                  // cos的url
     },
     {
@@ -348,6 +375,7 @@ const Python2 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Python2-29.zip'                                  // cos的url
     },
     {
@@ -360,6 +388,7 @@ const Python2 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'kafka_to_cos_consumer.main_handler',
       url: 'Python2-30.zip'                                  // cos的url
     },
   ]

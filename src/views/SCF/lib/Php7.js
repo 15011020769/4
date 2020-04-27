@@ -11,6 +11,7 @@ const Php7 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公开',                           // 证书
+      handler: 'index.main_handler',
       url: 'Php7-1.zip'                                  // cos的url
     },
     {
@@ -23,6 +24,7 @@ const Php7 = {
       outParams: '{"response":{"body":"$content","headers":{"Content-Type":"text/html"},"isBase64Encoded":"False","statusCode":200}}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Php7-2.zip'                                  // cos的url
     },
     {
@@ -35,6 +37,7 @@ const Php7 = {
       outParams: '{ "response": { "body": "$content", "headers": { "Content-Type": "text/html" }, "isBase64Encoded": false, "statusCode": 200 } }',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'apigw.main_handler',
       url: 'Php7-3.zip'                                  // cos的url
     },
     {
@@ -47,6 +50,7 @@ const Php7 = {
       outParams: '{"response":{"body":"$content","headers":{"Content-Type":"text/html"},"isBase64Encoded":"False","statusCode":200}}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Php7-4.zip'                                  // cos的url
     },
     {
@@ -59,6 +63,7 @@ const Php7 = {
       outParams: '{"response":{"body":"$content","headers":{"Content-Type":"text/html"},"isBase64Encoded":false,"statusCode":200}}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Php7-5.zip'                                  // cos的url
     },
     {
@@ -71,6 +76,7 @@ const Php7 = {
       outParams: '{"response":{"body":"$content","headers":{"Content-Type":"text/html"},"isBase64Encoded":"False","statusCode":200}}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Php7-6.zip'                                  // cos的url
     },
     {
@@ -83,6 +89,7 @@ const Php7 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'dial_url_by_timer.main_handler',
       url: 'Php7-7.zip'                                  // cos的url
     },
     {
@@ -95,6 +102,7 @@ const Php7 = {
       outParams: '{"response":{"body":"$content","headers":{"Content-Type":"text/html"},"isBase64Encoded":"False","statusCode":200}}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Php7-8.zip'                                  // cos的url
     },
     {
@@ -107,6 +115,7 @@ const Php7 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'cmq_email.main_handler',
       url: 'Php7-9.zip'                                  // cos的url
     },
     {
@@ -119,6 +128,7 @@ const Php7 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'sync_backup.main_handler',
       url: 'Php7-10.zip'                                  // cos的url
     },
     {
@@ -131,6 +141,7 @@ const Php7 = {
       outParams: '{"response":{"body":"$content","headers":{"Content-Type":"text/html"},"isBase64Encoded":false,"statusCode":200}}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Php7-11.zip'                                  // cos的url
     },
   ]

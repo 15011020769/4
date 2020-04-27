@@ -11,6 +11,7 @@ const Nodejs6 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Nodejs6-1.zip'                                  // cos的url
     },
     {
@@ -23,6 +24,7 @@ const Nodejs6 = {
       outParams: '{ "response": { "body": "$content", "headers": { "Content-Type": "text/html" }, "isBase64Encoded": false, "statusCode": 200 } }',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Nodejs6-2.zip'                                  // cos的url
     },
     {
@@ -35,6 +37,7 @@ const Nodejs6 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Nodejs6-3.zip'                                  // cos的url
     },
     {
@@ -47,6 +50,7 @@ const Nodejs6 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Nodejs6-4.zip'                                  // cos的url
     },
     {
@@ -59,6 +63,7 @@ const Nodejs6 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Nodejs6-5.zip'                                  // cos的url
     },
     {
@@ -71,6 +76,7 @@ const Nodejs6 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Nodejs6-6.zip'                                  // cos的url
     },
   ]

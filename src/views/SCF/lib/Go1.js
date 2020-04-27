@@ -11,6 +11,7 @@ const Go1 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'main',
       url: 'Go1-1.zip'                                  // cos的url
     },
   ]

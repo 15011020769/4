@@ -11,6 +11,7 @@ const Php5 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Php5-1.zip'                                  // cos的url
     },
   ]

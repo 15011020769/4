@@ -11,6 +11,7 @@ const Nodejs8 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Nodejs8-1.zip'                                  // cos的url
     },
     {
@@ -23,6 +24,7 @@ const Nodejs8 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Nodejs8-2.zip'                                  // cos的url
     },
     {
@@ -35,6 +37,7 @@ const Nodejs8 = {
       outParams: '{ "response": { "body": "$content", "headers": { "Content-Type": "text/html" }, "isBase64Encoded": false, "statusCode": 200 } }',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Nodejs8-3.zip'                                  // cos的url
     },
     {
@@ -47,6 +50,7 @@ const Nodejs8 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Nodejs8-4.zip'                                  // cos的url
     },
     {
@@ -59,6 +63,7 @@ const Nodejs8 = {
       outParams: '{ "response": { "body": "$content", "headers": { "Content-Type": "text/html" }, "isBase64Encoded": "False", "statusCode": 200 } }',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Nodejs8-5.zip'                                  // cos的url
     },
     {
@@ -71,6 +76,7 @@ const Nodejs8 = {
       outParams: '{ "response": { "body": "$content", "headers": { "Content-Type": "text/html" }, "isBase64Encoded": "False", "statusCode": 200 } }',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Nodejs8-6.zip'                                  // cos的url
     },
     {
@@ -83,6 +89,7 @@ const Nodejs8 = {
       outParams: '{ "response": { "body": "$content", "headers": { "Content-Type": "text/html" }, "isBase64Encoded": "False", "statusCode": 200 } }',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Nodejs8-7.zip'                                  // cos的url
     },
     {
@@ -95,6 +102,7 @@ const Nodejs8 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Nodejs8-8.zip'                                  // cos的url
     },
     {
@@ -107,6 +115,7 @@ const Nodejs8 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Nodejs8-9.zip'                                  // cos的url
     },
     {
@@ -119,6 +128,7 @@ const Nodejs8 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Nodejs8-10.zip'                                  // cos的url
     },
     {
@@ -131,6 +141,7 @@ const Nodejs8 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Nodejs8-11.zip'                                  // cos的url
     },
     {
@@ -143,6 +154,7 @@ const Nodejs8 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Nodejs8-12.zip'                                  // cos的url
     },
     {
@@ -155,6 +167,7 @@ const Nodejs8 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Nodejs8-13.zip'                                  // cos的url
     },
     {
@@ -167,6 +180,7 @@ const Nodejs8 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Nodejs8-14.zip'                                  // cos的url
     },
     {
@@ -179,6 +193,7 @@ const Nodejs8 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Nodejs8-15.zip'                                  // cos的url
     },
     {
@@ -191,6 +206,7 @@ const Nodejs8 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Nodejs8-16.zip'                                  // cos的url
     },
     {
@@ -203,6 +219,7 @@ const Nodejs8 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Nodejs8-17.zip'                                  // cos的url
     },
     {
@@ -215,6 +232,7 @@ const Nodejs8 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Nodejs8-18.zip'                                  // cos的url
     },
     {
@@ -227,6 +245,7 @@ const Nodejs8 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Nodejs8-19.zip'                                  // cos的url
     },
     {
@@ -239,6 +258,7 @@ const Nodejs8 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Nodejs8-20.zip'                                  // cos的url
     },
     {
@@ -251,6 +271,7 @@ const Nodejs8 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Nodejs8-21.zip'                                  // cos的url
     },
     {
@@ -263,6 +284,7 @@ const Nodejs8 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Nodejs8-22.zip'                                  // cos的url
     },
     {
@@ -275,6 +297,7 @@ const Nodejs8 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Nodejs8-23.zip'                                  // cos的url
     },
     {
@@ -287,6 +310,7 @@ const Nodejs8 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Nodejs8-24.zip'                                  // cos的url
     },
     {
@@ -299,6 +323,7 @@ const Nodejs8 = {
       outParams: '{}',    // 出参
       notice: '無',                                  // 注意
       certificate: '公開',                           // 证书
+      handler: 'index.main_handler',
       url: 'Nodejs8-25.zip'                                  // cos的url
     },
   ]
