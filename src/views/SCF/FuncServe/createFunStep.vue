@@ -60,7 +60,7 @@
           <el-form-item style="margin-left: -100px;">
             <!-- <div class="codeContent">{{formShowable.codeContent}}</div> -->
             <!-- 编辑器的容器  v-loading="cslsLoading" -->
-            <div class="content">
+            <div class="content" v-loading="cslsLoading">
               <div id="container_editor_new" style="width: 100%; height: 500px; border: 1px solid #e7e7e7;"></div>
             </div>
           </el-form-item>
@@ -139,7 +139,6 @@ import {
 export default {
   data() {
     return {
-      loading: true,
       senior: true,
       DemoId: "",
       formShowable: {
@@ -162,29 +161,32 @@ export default {
       closeshow: false, //删除按钮控制
       cslsSDK: new CloudStudioLiteFilesServiceSDK(), // 初始化编辑器
       cslsLoading: false, // 编辑器加载动画
-      tempDetail: localStorage.getItem('tempDetail')    // 获取缓存的信息
+      tempDetail: JSON.parse(localStorage.getItem('tempDetail'))    // 获取缓存的信息
     };
   },
   computed: {
     // 模糊搜索
   },
   created() {
+    // 函数名称
     this.formShowable.funNameStep = window.sessionStorage.getItem(
       "funNameSess"
     );
-    this.formShowable.runMoentStep = window.sessionStorage.getItem("runMoent");
-    this.DemoId = window.sessionStorage.getItem("DemoId");
+    this.formShowable.runMoentStep = window.sessionStorage.getItem("runMoent");  // 运行环境
+    // this.DemoId = window.sessionStorage.getItem("DemoId");
 
     this.formShowable.descStep = this.tempDetail.desc   // 描述
+    this.formShowable.runFun = this.tempDetail.handler  //执行方法
+    console.log(this.tempDetail.desc)
+
     // if (this.DemoId) {
     //   this.GetTemplateDetail();
     // }
     this.GetVpcList();
     this._Getrole()
   },
-  mounted (){
+  mounted() {
     this.getCsLite()      // 初始化编辑器
-    console.log(this.tempDetail)
   },
   methods: {
     //环境添加
@@ -220,22 +222,22 @@ export default {
     _senior() {
       this.senior = !this.senior;
     },
-    GetTemplateDetail() {
-      //获取函数模板详情
-      let param = {
-        Region: localStorage.getItem('regionv2'),
-        Version: "2018-04-16",
-        DemoId: this.DemoId
-      };
-      this.axios.post(TEMPLATE_DETAIL, param).then(data => {
-        let DataBeginDetail = JSON.parse(data.Response.DemoConfig);
-        this.formShowable.runFun =
-          DataBeginDetail[
-            "serverless-cloud-function-application"
-          ].functions.handler;
-        this.formShowable.codeContent = data.Response.DemoCode;
-      });
-    },
+    // GetTemplateDetail() {
+    //   //获取函数模板详情
+    //   let param = {
+    //     Region: localStorage.getItem('regionv2'),
+    //     Version: "2018-04-16",
+    //     DemoId: this.DemoId
+    //   };
+    //   this.axios.post(TEMPLATE_DETAIL, param).then(data => {
+    //     let DataBeginDetail = JSON.parse(data.Response.DemoConfig);
+    //     this.formShowable.runFun =
+    //       DataBeginDetail[
+    //         "serverless-cloud-function-application"
+    //       ].functions.handler;
+    //     this.formShowable.codeContent = data.Response.DemoCode;
+    //   });
+    // },
     //获取vpc列表
     GetVpcList() {
       let param = {
@@ -306,13 +308,13 @@ export default {
 
     // 渲染编辑器
     getCsLite() {
+      this.cslsLoading = true // 开启加载动画
       this.cslsSDK.init({
         rootNode: document.querySelector('#container_editor_new'),
         modeType: ModeTypeEnum.ZIP,
         i18nType: "zh-tw"
       });
-      // https://03-20-1300561189.cos.ap-taipei.myqcloud.com/dasd_LATEST.zip
-      let temp_url = 'https://7-1301459465.cos.ap-taipei.myqcloud.com/Nodejs6-1.zip?q-sign-algorithm=sha1&q-ak=AKIDxEMOTrbECttCe8K0OX4wytS6GRdaO4Fn&q-sign-time=1587953484;1587957084&q-key-time=1587953484;1587957084&q-header-list=&q-url-param-list=&q-signature=2b8b5d31611194678de1fbdc99a3dbdc333219dd&x-cos-security-token=8446db15f46ddafddaff382eba5d164fc8f325bd40001'
+      let temp_url = 'https://7-1301459465.cos.ap-taipei.myqcloud.com/Nodejs6-1.zip?q-sign-algorithm=sha1&q-ak=AKIDwXkfdD2dToXIroTyRYWFEZtxB7Gr8046&q-sign-time=1587958739;1587962339&q-key-time=1587958739;1587962339&q-header-list=&q-url-param-list=&q-signature=5ade6478f4a44d6c32d97ffed44b89f90f5c17f1&x-cos-security-token=bcdee169808986827035e08a02d314afe9af689640001'
       this.cslsSDK.addListener({
         onRead: () => {
           return new Promise(res => {
@@ -334,22 +336,51 @@ export default {
       })
     },
 
+    // 二进制转base64
+    blobToDataURI(blob, callback) {
+      var reader = new FileReader();
+      reader.readAsDataURL(blob);
+      reader.onload = function (e) {
+        callback(e.target.result);
+      }
+    },
+
     // 完成按钮 添加子函数
     compileSucc() {
-
-      this.loading = false;
       let params = {
         Version: "2018-04-16",
         Region: localStorage.getItem('regionv2'),
         FunctionName: this.formShowable.funNameStep,      // 函数名称
-        "Code.DemoId": this.DemoId,
-        Handler: this.formShowable.runFun, //执行方法
-        Runtime: this.formShowable.runMoentStep, //运行环境
-        Description: this.formShowable.descStep, //描述
-        Role: this.formShowable.runRole,
-        Namespace: this.$route.query.Namespace
+        // Handler: this.formShowable.runFun,                // 执行方法
+        Handler: 'index.main_handler',                // 执行方法
+        Runtime: this.formShowable.runMoentStep,          // 运行环境
+        Description: this.formShowable.descStep,          // 描述
+        Role: this.formShowable.runRole,                  // 角色
+        Namespace: this.$route.query.Namespace            // 命名空间
       };
+      this.cslsSDK.flush().then(() => {
+        this.cslsSDK.getBlob().then(blob => {
+          const blobSize = blob.size / 1024 / 1024
+          if (blobSize > 20 || blobSize === 20) {
+            this.$message({
+              message: '在線編輯最大能上傳20M，您的代碼包已超過20M，請使用COS方式上傳',
+              type: "warning",
+              showClose: true,
+              duration: 0
+            });
+          } else {
+            this.blobToDataURI(blob, data => { //blob格式再转换为base64格式
+              const base64url = data.replace(/^data:application\/\w+;base64,/, "")
+              params["Code.ZipFile"] = base64url;
+              this.completeFun(params) // 更新函数代码
+            })
+          }
+        })
+      })
+    },
 
+    // 完成方法
+    completeFun(params) {
       if (this.Vpcvalue != "" && this.Subnetvalue != "") {
         params["VpcConfig.VpcId"] = this.Vpcvalue;
         params["VpcConfig.SubnetId"] = this.Subnetvalue;
@@ -430,7 +461,6 @@ export default {
           }
         });
       }
-
     }
   }
 };

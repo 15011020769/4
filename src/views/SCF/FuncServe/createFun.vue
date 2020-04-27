@@ -348,7 +348,7 @@
       },
       mouseHandel(index, item) {
         this.isactive = index;
-        this.tempDetail = localStorage.setItem('tempDetail', item)    // 点击的默认模板存到缓存  供第二步调用
+        this.tempDetail = localStorage.setItem('tempDetail', JSON.stringify(item))    // 点击的默认模板存到缓存  供第二步调用
       },
       //搜索
       doFilter() {
