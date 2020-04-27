@@ -146,16 +146,16 @@ export default {
               ClusterName: this.clusterId
         }
         this.axios.post(TKE_COLONY_QUERY,params).then(res=>{
-           let response = JSON.parse(res.Response.ResponseBody);
-           let obj=response.items[0];
+          let response = JSON.parse(res.Response.ResponseBody);
+          let obj=response.items[0];
           this.type=obj.spec.updateStrategy.type;
-
-         if(this.type=='OnDelete'){
+          this.cl.timeInterval=obj.spec.minReadySeconds;
+          if(this.type=='OnDelete'){
             this.updateWay='2'//
-            // this.cl.timeInterval=obj.spec.minReadySeconds;
-           }else{
-           this.updateWay='1'//
-           this.cl.podNum=obj.spec.updateStrategy.rollingUpdate.maxUnavailable
+            this.cl.timeInterval=obj.spec.minReadySeconds;
+          }else{
+            this.updateWay='1'//
+            this.cl.podNum=obj.spec.updateStrategy.rollingUpdate.maxUnavailable
          }
 
         })

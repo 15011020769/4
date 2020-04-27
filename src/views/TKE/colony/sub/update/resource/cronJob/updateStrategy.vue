@@ -216,10 +216,11 @@ export default {
      this.clusterId=this.$route.query.clusterId;
      this.name=this.$route.query.name;
      this.spaceName=this.$route.query.spaceName;
-     this.workload=this.$route.query.workload
+     this.workload=this.$route.query.workload;
+     this.getdata(this.$route.query.row);
      this.findNodeData();
      this.findNode();
-     this.baseData()
+    //  this.baseData()
   },
   methods: {
     //返回上一层
@@ -232,26 +233,31 @@ export default {
         ContentType: "application/merge-patch+json",
         Method: "PATCH",
         Path:  "/apis/batch/v1beta1/namespaces/"+this.spaceName+"/cronjobs/"+this.name,
-        RequestBody:{
-          spec:{
-            jobTemplate:{
-              spec:{template:{spec: {affinity:''}}}
-            }
-        }},
+        // RequestBody:{
+        //   spec:{
+        //     jobTemplate:{
+        //       spec:{template:{spec: {affinity:''}}}
+        //     }
+        // }},
         Version: "2018-05-25",
       }
-      if(this.se.radio=='1'){
-        let jsonobj={
-              spec:{
-                jobTemplate:{
-                  spec:{template:{spec: {affinity:null}}}
-                 }
-              }
+      let spec = {
+        spec:{
+            jobTemplate:{
+              spec:{template:{spec: {affinity:null}}}
             }
-      params.RequestBody=JSON.stringify(jsonobj)
-
+        }
+      }
+      if(this.se.radio=='1'){
+        spec ={
+          spec:{
+            jobTemplate:{
+              spec:{template:{spec: {affinity:null}}}
+            }
+          }
+        }
       }else if(this.se.radio=='2'){
-        params.RequestBody.spec.jobTemplate.spec.template.spec.affinity={
+        spec.spec.jobTemplate.spec.template.spec.affinity={
 						"nodeAffinity": {
 							"requiredDuringSchedulingIgnoredDuringExecution": {
 								"nodeSelectorTerms": [{
@@ -266,15 +272,45 @@ export default {
 						}
 					}
       }else if(this.se.radio=='3'){
-         params.RequestBody.spec.jobTemplate.spec.template.spec.affinity={
+        if(this.muserDefinedData()) {
+          spec.spec.jobTemplate.spec.template.spec.affinity={
            "nodeAffinity":{
              "requiredDuringSchedulingIgnoredDuringExecution":{
                "nodeSelectorTerms":this.muserDefinedData()
               },
               "preferredDuringSchedulingIgnoredDuringExecution":this.nuserDefinedData()
             }
-         }
+          }
+        } else {
+          spec.spec.jobTemplate.spec.template.spec.affinity={
+           "nodeAffinity":{
+             "requiredDuringSchedulingIgnoredDuringExecution":this.muserDefinedData(),
+              "preferredDuringSchedulingIgnoredDuringExecution":this.nuserDefinedData()
+            }
+          }
+        }
       }
+      params.RequestBody = JSON.stringify(spec);
+    //  if(this.se.radio=='3'){
+    //    if(this.muserDefinedData()) {
+    //      params.RequestBody.spec.jobTemplate.spec.template.spec.affinity={
+    //        "nodeAffinity":{
+    //          "requiredDuringSchedulingIgnoredDuringExecution":{
+    //            "nodeSelectorTerms":this.muserDefinedData()
+    //           },
+    //           "preferredDuringSchedulingIgnoredDuringExecution":this.nuserDefinedData()
+    //         }
+    //       }
+    //    } else {
+    //     params.RequestBody.spec.jobTemplate.spec.template.spec.affinity={
+    //        "nodeAffinity":{
+    //          "requiredDuringSchedulingIgnoredDuringExecution":this.muserDefinedData(),
+    //           "preferredDuringSchedulingIgnoredDuringExecution":this.nuserDefinedData()
+    //         }
+    //       }
+    //    }
+         
+    //   }
       this.axios.post(TKE_COLONY_QUERY,params).then(res=>{
          if(res.Response.Error === undefined){
            this.$router.go(-1)
@@ -342,6 +378,81 @@ export default {
                });
           }
       })
+    },
+    getdata(row) {
+      if(row) {
+        if(row.spec.jobTemplate!=undefined){
+          if(row.spec.jobTemplate.spec.template.spec['affinity']==undefined){
+            this.se.radio='1';
+          } else if(row.spec.jobTemplate.spec.template.spec['affinity'].nodeAffinity['requiredDuringSchedulingIgnoredDuringExecution']) {
+            if(row.spec.jobTemplate.spec.template.spec['affinity'].nodeAffinity['requiredDuringSchedulingIgnoredDuringExecution'].nodeSelectorTerms[0].matchExpressions[0].key=='kubernetes.io/hostname') {
+              this.se.radio='2';
+              let nd=obj.spec.jobTemplate.spec.template.spec['affinity'].nodeAffinity['requiredDuringSchedulingIgnoredDuringExecution'].nodeSelectorTerms[0].matchExpressions[0].values;
+              this.appointNode=nd;
+            } else {
+              this.se.radio='3';
+              let nd2=row.spec.jobTemplate.spec.template.spec['affinity'].nodeAffinity;
+              let qzCondition=nd2['requiredDuringSchedulingIgnoredDuringExecution'].nodeSelectorTerms;
+              let jlCondition=nd2['preferredDuringSchedulingIgnoredDuringExecution'];
+              if(qzCondition){//强制条件还原
+                let arr=[];
+                qzCondition.forEach(element => {
+                  let obj={}
+                  obj.matchExpressions=element.matchExpressions
+                  for(let item of obj.matchExpressions){
+                      item.key=item.key;
+                      item.operator=item.operator;
+                      if(item.values){
+                        item.values=item.values[0]
+                      }
+                  }
+                  arr.push(obj)
+                });
+                this.mustCondition=arr
+              }
+
+              if(jlCondition){//尽量满足条件还原
+                let arr=[];
+                jlCondition.forEach(element=>{
+                  let obj={}
+                  obj.weight=element.weight;
+                  obj.preference=element.preference;
+                  for(let item of obj.preference.matchExpressions){
+                    item.key=item.key;
+                    item.operator=item.operator;
+                    if(item.values){
+                      item.values=item.values[0]
+                    }
+                  }
+                  arr.push(obj)
+                })
+                this.needCondition=arr
+              }
+            }
+          } else {
+            this.se.radio='3';
+            let nd2=row.spec.jobTemplate.spec.template.spec['affinity'].nodeAffinity;
+            let jlCondition=nd2['preferredDuringSchedulingIgnoredDuringExecution'];
+            if(jlCondition){//尽量满足条件还原
+              let arr=[];
+              jlCondition.forEach(element=>{
+                let obj={}
+                obj.weight=element.weight;
+                obj.preference=element.preference;
+                for(let item of obj.preference.matchExpressions){
+                  item.key=item.key;
+                  item.operator=item.operator;
+                  if(item.values){
+                    item.values=item.values[0]
+                  }
+                }
+                arr.push(obj)
+              })
+              this.needCondition=arr
+            }
+          }
+        }
+      }
     },
     baseData(){
 
