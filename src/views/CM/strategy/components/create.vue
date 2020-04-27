@@ -1387,7 +1387,7 @@
               };
             } else if (productValue === "dcchannel") {
               params[`Dimensions.${index}.Dimensions`] = {
-                directconnecttunnelid: item.DirectConnectTunnelId
+                directconnectconnid: item.DirectConnectTunnelId
               };
             } else if (productValue === "dcline") {
               params[`Dimensions.${index}.Dimensions`] = {

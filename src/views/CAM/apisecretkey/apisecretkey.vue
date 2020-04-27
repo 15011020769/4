@@ -3,7 +3,11 @@
     <Headcom title="API密鑰管理" :backShow="false" />
     <div class="apikey_table">
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column prop="secretKey" label="密钥">
+        <el-table-column label="密钥">
+          <template slot-scope="scope">
+            <p>secretId:{{scope.row.secretId}}</p>
+            <p>secretKey:{{scope.row.secretKey}}</p>
+          </template>
         </el-table-column>
         <el-table-column prop="createTime" label="创建时间">
         </el-table-column>
