@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import 'array-flat-polyfill'
 import App from './App.vue'
 import router from './router'
 import ElementUI from 'element-ui'

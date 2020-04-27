@@ -447,6 +447,7 @@ module.exports = {
       dcqbsxjg: '導出全部篩選結果',
       gxsj: '更新時間',
       bz: '備註',
+      jzz: '加載中',
       qrscsxym: '確定刪除當前所選域名？',
       qxgmaqrz: '請先購買安全日誌服務擴展包。',
       qrscgjlm: '確認刪除該記錄？',
