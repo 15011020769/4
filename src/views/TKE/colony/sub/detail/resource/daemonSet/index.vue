@@ -25,8 +25,8 @@
     <div class="tke-detial-nav">
       <router-link class="nav-item" :to="{name:'daemonSetDetailPod',query: {clusterId: clusterId,spaceName: spaceName,rowData: rowData}}">Pod管理</router-link>
       <router-link class="nav-item" :to="{name:'daemonSetDetailEvent',query: {clusterId: clusterId,spaceName: spaceName,rowData: rowData}}">事件</router-link>
-      <router-link class="nav-item" :to="{name:'daemonSetDetailLog',query: {clusterId: clusterId,spaceName: spaceName,rowData: rowData,statefulSetList: statefulSetList,potList: potList}}">日志</router-link>
-      <router-link class="nav-item" :to="{name:'daemonSetDetailInfo',query: {clusterId: clusterId,spaceName: spaceName,rowData: rowData}}">详情</router-link>
+      <router-link class="nav-item" :to="{name:'daemonSetDetailLog',query: {clusterId: clusterId,spaceName: spaceName,rowData: rowData,statefulSetList: statefulSetList,potList: potList}}">日誌</router-link>
+      <router-link class="nav-item" :to="{name:'daemonSetDetailInfo',query: {clusterId: clusterId,spaceName: spaceName,rowData: rowData}}">詳情</router-link>
       <router-link class="nav-item" :to="{name:'daemonSetDetailYaml',query: {clusterId: clusterId,spaceName: spaceName,rowData: rowData}}">YAML</router-link>
     </div> 
 

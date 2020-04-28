@@ -65,7 +65,10 @@
         <el-table-column label="操作" width="200">
           <template slot-scope="scope">
             <span class="tke-text-link" @click="editYaml(scope.row)">{{$t('TKE.overview.bj')}}YAML</span>
-            <span class="tke-text-link ml10" @click="deleteOne(scope.row)">{{$t('TKE.overview.sc')}}</span>
+            <el-button class="tke-text-link ml10" :disabled="scope.row.status.phase === 'Bound'?true:false" type="text" size="small" @click="deleteOne(scope.row)">
+              {{$t('TKE.overview.sc')}}
+            </el-button>
+            <!-- <span class="tke-text-link ml10" @click="deleteOne(scope.row)">{{$t('TKE.overview.sc')}}</span> -->
           </template>
         </el-table-column>
       </el-table>

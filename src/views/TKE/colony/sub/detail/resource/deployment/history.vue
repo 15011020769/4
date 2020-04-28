@@ -9,7 +9,7 @@
         v-loading="loadShow"
         style="width: 100%">
         <el-table-column
-          label="版本号"
+          label="版本號"
           >
           <template slot-scope="scope">
             <span>V{{scope.row.metadata.annotations['deployment.kubernetes.io/revision']}}</span>
@@ -17,7 +17,7 @@
         </el-table-column>
         <el-table-column
           prop=""
-          label="版本详情"
+          label="版本詳情"
           >
           <template slot-scope="scope">
             <span class="text-green">
@@ -27,16 +27,16 @@
         </el-table-column>
         <el-table-column
           prop=""
-          label="镜像"
+          label="映像"
           >
           <template slot-scope="scope">
-              <p>镜像: {{scope.row.spec && scope.row.spec.template && scope.row.spec.template.spec && scope.row.spec.template.spec.containers && scope.row.spec.template.spec.containers.length > 0 && scope.row.spec.template.spec.containers[0].image}}</p>
+              <p>映像: {{scope.row.spec && scope.row.spec.template && scope.row.spec.template.spec && scope.row.spec.template.spec.containers && scope.row.spec.template.spec.containers.length > 0 && scope.row.spec.template.spec.containers[0].image}}</p>
               <p>版本(tag) {{scope.row.spec && scope.row.spec.template && scope.row.spec.template.spec && scope.row.spec.template.spec.containers && scope.row.spec.template.spec.containers.length > 0 && scope.row.spec.template.spec.containers[0].Tag}}</p>
           </template>
         </el-table-column>
         <el-table-column
           prop=""
-          label="更新时间"
+          label="更新時間"
           >
           <template slot-scope="scope">
             <span>{{scope.row.addTime}}</span>
@@ -51,15 +51,15 @@
         </el-table-column> -->
       </el-table>
     </div>
-    <el-dialog title="版本详情" :visible.sync="isShowYamlModal" width="35%">
+    <el-dialog title="版本詳情" :visible.sync="isShowYamlModal" width="35%">
       <codemirror style="background-color: #444;"  ref="myCm"  v-model="yamlInfo"  :options="cmOptions" class="code" >
       </codemirror>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="isShowYamlModal = false">确 定</el-button>
       </span>
     </el-dialog>
-    <el-dialog title="回滚资源" :visible.sync="showRollBack" width="35%">
-      <span>您确定要回滚Deployment：{{this.rowData.metadata.name}} 至 版本v{{this.version}}吗？</span>
+    <el-dialog title="回滾資源" :visible.sync="showRollBack" width="35%">
+      <span>您確定要回滾Deployment：{{this.rowData.metadata.name}} 至 版本v{{this.version}}嗎？</span>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="rollBack">确 定</el-button>
         <el-button @click="showRollBack = false">取 消</el-button>
@@ -199,7 +199,7 @@ export default {
           this.getHistoryList();
           this.showRollBack = false;
           this.$message({
-            message: '回滚成功',
+            message: '回滾成功',
             type: "success",
             showClose: true,
             duration: 0

@@ -4,7 +4,7 @@
     <div class="tke-card tke-formpanel-wrap">
       <h4  class="tke-formpanel-title">基本信息</h4>
       <el-form  class="tke-form" label-position='left' label-width="120px" size="mini">
-        <el-form-item label="名称">
+        <el-form-item label="名稱">
           <div class="tke-form-item_text">{{rowData.metadata && rowData.metadata.name}}</div>
         </el-form-item>
         <el-form-item label="Namespace">
@@ -13,7 +13,7 @@
         <el-form-item label="描述">
           <div class="tke-form-item_text">{{rowData.metadata && rowData.metadata.annotations && rowData.metadata.annotations.description || '-'}}</div>
         </el-form-item>
-        <el-form-item label="创建时间">
+        <el-form-item label="創建時間">
           <div class="tke-form-item_text">{{rowData.metadata.creationTimestamp | creationTimestamp}}</div>
         </el-form-item>
         <el-form-item label="Labels">
@@ -28,10 +28,10 @@
         <el-form-item label="更新策略">
           <div class="tke-form-item_text">{{rowData.spec && rowData.spec.updateStrategy && rowData.spec.updateStrategy.type || '-'}}</div>
         </el-form-item>
-        <el-form-item label="副本数">
+        <el-form-item label="副本數">
           <div class="tke-form-item_text">{{rowData.spec && rowData.spec.replicas || '-'}}</div>
         </el-form-item>
-        <el-form-item label="运行副本数">
+        <el-form-item label="運行副本數">
           <div class="tke-form-item_text">{{rowData.status && rowData.status.replicas || '-'}}</div>
         </el-form-item>
         
@@ -53,13 +53,13 @@
       <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane v-for="(item, i) in rowData.spec.template.spec.containers" :key="i"  :label="item.name" :name="item.name">
           <el-form  class="tke-form" label-position='left' label-width="120px" size="mini">
-            <el-form-item label="容器名称">
+            <el-form-item label="容器名稱">
               <div class="tke-form-item_text">{{item.name}}</div>
             </el-form-item>
-            <el-form-item label="镜像">
+            <el-form-item label="映像">
               <div class="tke-form-item_text">{{item.image}}</div>
             </el-form-item>
-            <el-form-item label="运行命令" v-if="item.command">
+            <el-form-item label="運行命令" v-if="item.command">
               <div class="tke-form-item_text">{{item.command && item.command | command}}</div>
             </el-form-item>
             <el-form-item label="CPU Requested" v-if="item.resources.requests">
@@ -68,30 +68,30 @@
             <el-form-item label="CPU Limited" v-if="item.resources.limits">
               <div class="tke-form-item_text">{{item.resources && item.resources.limits && item.resources.limits.cpu || '-'}}</div>
             </el-form-item>
-            <el-form-item label="内存 Requested" v-if="item.resources.requests">
+            <el-form-item label="記憶體 Requested" v-if="item.resources.requests">
               <div class="tke-form-item_text">{{item.resources && item.resources.requests && item.resources.requests.memory || '-'}}</div>
             </el-form-item>
-            <el-form-item label="内存 Limited" v-if="item.resources.limits">
+            <el-form-item label="記憶體 Limited" v-if="item.resources.limits">
               <div class="tke-form-item_text">{{item.resources && item.resources.limits && item.resources.limits.memory || '-'}}</div>
             </el-form-item>
-            <el-form-item label="运行参数" v-if="item.args">
+            <el-form-item label="運行參數" v-if="item.args">
               <div class="tke-form-item_text">
                 {{item.args | args}}
               </div>
             </el-form-item>
-            <el-form-item label="环境变量" v-if="item.env">
+            <el-form-item label="環境變數" v-if="item.env">
               <div class="tke-form-item_text">{{item.env && item.env | environment}}</div>
               <!-- <div class="tke-form-item_text">{{item.env && item.env | environment1}}</div> -->
             </el-form-item>
-            <el-form-item label="挂载点" v-if="item.volumeMounts">
+            <el-form-item label="掛載點" v-if="item.volumeMounts">
               <div class="tke-form-item_text">
                 {{item.volumeMounts && item.volumeMounts | volumeMount}}
               </div>
             </el-form-item>
-            <el-form-item label="存活检查" v-if="item.livenessProbe">
+            <el-form-item label="存活檢查" v-if="item.livenessProbe">
               <div class="tke-form-item_text">{{item.livenessProbe && item.livenessProbe | livenessProbe}}</div>
             </el-form-item>
-            <el-form-item label="就绪检查" v-if="item.readinessProbe">
+            <el-form-item label="就緒檢查" v-if="item.readinessProbe">
               <div class="tke-form-item_text">{{item.readinessProbe && item.readinessProbe | readinessProbe}}</div>
             </el-form-item>
 
@@ -186,7 +186,7 @@ export default {
       if(value) {
         for(let i = 0; i < value.length; i++) {
           if(value[i].valueFrom) {
-            res += value[i].name + '=secretKeyRef' + "   名称：" +value[i].valueFrom.secretKeyRef.name + "Key：" + value[i].valueFrom.secretKeyRef.key+ ","
+            res += value[i].name + '=secretKeyRef' + "   名稱：" +value[i].valueFrom.secretKeyRef.name + "Key：" + value[i].valueFrom.secretKeyRef.key+ ","
           }
         }
         return res.substring(0,res.length - 1);
@@ -200,9 +200,9 @@ export default {
       if(value) {
         for(let i = 0; i < value.length; i++) {
           if(value[i].subPath) {
-            res += '数据卷名称:' + value[i].name + ' 目标路径:' + value[i].mountPath + ' 挂载子路径:' + value[i].subPath + ','
+            res += '數據卷名稱:' + value[i].name + ' 目標路徑:' + value[i].mountPath + ' 掛載子路徑:' + value[i].subPath + ','
           } else {
-            res += '数据卷名称:' + value[i].name + ' 目标路径:' + value[i].mountPath + ' 挂载子路径:未设置,默认全覆盖目标路径' + ','
+            res += '數據卷名稱:' + value[i].name + ' 目標路徑:' + value[i].mountPath + ' 掛載子路徑:未設置,默認全覆蓋目標路徑' + ','
           }
         }
         return res.substring(0,res.length - 1);
@@ -295,10 +295,10 @@ export default {
     volumes(value) {
       let res = '';
       if(value) {
-        res = value.name + "(数据卷)"
+        res = value.name + "(數據卷)"
         return res;
       } else {
-        res = '暂无数据卷';
+        res = '暫無數據卷';
       }
     },
     volumesName(value) {

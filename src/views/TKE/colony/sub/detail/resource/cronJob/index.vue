@@ -24,7 +24,7 @@
     <!-- 详情子菜单导航 -->
     <div class="tke-detial-nav">
       <router-link class="nav-item" :to="{name:'cronJobDetailEvent',query: {clusterId: clusterId,spaceName: spaceName,rowData: rowData}}">事件</router-link>
-      <router-link class="nav-item" :to="{name:'cronJobDetailInfo',query: {clusterId: clusterId,spaceName: spaceName,rowData: rowData}}">详情</router-link>
+      <router-link class="nav-item" :to="{name:'cronJobDetailInfo',query: {clusterId: clusterId,spaceName: spaceName,rowData: rowData}}">詳情</router-link>
       <router-link class="nav-item" :to="{name:'cronJobDetailYaml',query: {clusterId: clusterId,spaceName: spaceName,rowData: rowData}}">YAML</router-link>
     </div> 
 

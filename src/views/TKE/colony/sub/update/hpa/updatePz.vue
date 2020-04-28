@@ -18,38 +18,38 @@
 
        <div class="tke-card tke-formpanel-wrap mb60">
          <el-form ref="form"   class="tke-form" :model="hpa"  label-position='left' label-width="120px" size="mini">
-           <el-form-item label="名称" prop="name">
+           <el-form-item label="名稱" prop="name">
                {{hpa.name}}
            </el-form-item>
 
-           <el-form-item label="命名空间">
+           <el-form-item label="命名空間">
              {{hpa.np}}
            </el-form-item>
 
-           <el-form-item label="工作负载类型">
-             <el-select v-model="hpa.type" placeholder="请选择" size="mini" @change="changeWork">
+           <el-form-item label="工作負載類型">
+             <el-select v-model="hpa.type" placeholder="請選擇" size="mini" @change="changeWork">
                <el-option v-for="item in hpa.option2" :key="item" :label="item" :value="item">
                </el-option>
              </el-select>
            </el-form-item>
 
-           <el-form-item label="关联工作负载">
-             <el-select v-model="hpa.workload" placeholder="请选择" size="mini">
+           <el-form-item label="關聯工作負載">
+             <el-select v-model="hpa.workload" placeholder="請選擇" size="mini">
                <el-option v-for="item in hpa.option3" :key="item" :label="item" :value="item">
                </el-option>
              </el-select>
            </el-form-item>
 
-           <el-form-item label="解决策略">
+           <el-form-item label="解決策略">
              <div class='app-tke-fe-form w520'>
                <div class="form-input" v-for="(domain, index) in hpa.domains" :key="domain.key"
                  :prop="'domains.' + index + '.value'">
-                 <el-select   @change="changeOne(domain.value4,index)" v-model="domain.value4" placeholder="请选择" size="mini" class="w100">
+                 <el-select   @change="changeOne(domain.value4,index)" v-model="domain.value4" placeholder="請選擇" size="mini" class="w100">
                    <el-option v-for="item in domain.options" :key="item.label" :label="item.label" :value="item.value">
                    </el-option>
                  </el-select>
 
-                 <el-select v-model="domain.value5" placeholder="请选择" size="mini" class="w200">
+                 <el-select v-model="domain.value5" placeholder="請選擇" size="mini" class="w200">
                    <el-option v-for="item in domain.option1" :key="item.label" :label="item.label" :value="item.value"
                      v-if='domain.value4 == 1'>
                    </el-option>
@@ -65,30 +65,30 @@
                    </el-option>
                  </el-select>
 
-                 <el-input   v-model="domain.valueKey" size="mini" placeholder="变量值" class='w100'></el-input>
+                 <el-input   v-model="domain.valueKey" size="mini" placeholder="變數值" class='w100'></el-input>
                  <span v-if='domain.value5 == 1'>核</span>
-                  <el-tooltip v-if='domain.value5 == 2||domain.value5 == 3||domain.value5 == 4||domain.value5 == 7||domain.value5 == 8||domain.value5 == 9||domain.value5 == 10||domain.value5 == 11||domain.value5 == 12' class="item" effect="light" content="阙值范围0-100" placement="right">
+                  <el-tooltip v-if='domain.value5 == 2||domain.value5 == 3||domain.value5 == 4||domain.value5 == 7||domain.value5 == 8||domain.value5 == 9||domain.value5 == 10||domain.value5 == 11||domain.value5 == 12' class="item" effect="light" content="闕值範圍0-100" placement="right">
                      <span>%</span>
                    </el-tooltip>
                  <span v-if='domain.value5 == 5||domain.value5 == 6'>MiB</span>
                  <span v-if='domain.value5 == 13||domain.value5 == 14||domain.value5 == 19||domain.value5 == 20||domain.value4 == 3'>KB/s</span>
                  <span v-if='domain.value5 == 15||domain.value5 == 16'>次/s</span>
                  <span v-if='domain.value5 == 17||domain.value5 == 18||domain.value4 == 4'>Mbps</span>
-                 <span v-if='domain.value5 == 21||domain.value5 == 22'>个</span>
+                 <span v-if='domain.value5 == 21||domain.value5 == 22'>個</span>
 
-                 <el-tooltip class="item" effect="light" content="至少保留一个指标" placement="right">
+                 <el-tooltip class="item" effect="light" content="至少保留一個指標" placement="right">
                    <i class="el-icon-close" @click.prevent="removeDomain(hpa.domains,index)"></i>
                  </el-tooltip>
 
                </div>
-               <el-link type="primary" style="cursor: pointer;font-size:12px;" @click="addDomain">新增指标</el-link>
+               <el-link type="primary" style="cursor: pointer;font-size:12px;" @click="addDomain">新增指標</el-link>
              </div>
            </el-form-item>
-           <el-form-item label="实例范围">
+           <el-form-item label="實例範圍">
              <el-input class='w100' type='number' :min='1' v-model='hpa.vLeft'></el-input>
              <span class='w-span'>~</span>
              <el-input class='w100' type='number' :min='2' v-model='hpa.vRight'></el-input>
-             <p>在设定的实例范围内自动调节，不会超出该设定范围</p>
+             <p>在設定的實例範圍內自動調節，不會超出該設定範圍</p>
            </el-form-item>
          </el-form>
 
@@ -407,7 +407,7 @@
              }
          })
          if(this.hpa.workload==''||this.hpa.workload==undefined){
-             this.$message("关联工作负载不能为空");
+             this.$message("關聯工作負載不能為空");
             return 
          }
        
@@ -415,12 +415,12 @@
              return v.valueKey==''||v.valueKey==undefined
          })
          if(arr2.length!=0){
-             this.$message("变量值不能为空");
+             this.$message("變數值不能為空");
              return  false
          }
 
          if(this.hpa.vLeft>this.hpa.vRight||this.hpa.vLeft==this.hpa.vRight||this.hpa.vLeft==''||this.hpa.vLeft==''){
-             this.$message("最小副本数不能大于等于最大副本数");
+             this.$message("最小副本數不能大於等於最大副本數");
             return
          }
          var params={
@@ -460,10 +460,13 @@
       await this.axios.post(TKE_COLONY_QUERY, params).then(res=>{
         if (res.Response.Error == undefined) {
           var data = JSON.parse(res.Response.ResponseBody);
+          console.log(data);
           if(data.items){
             this.hpa.type=(data.items[0].spec.scaleTargetRef.kind).toLowerCase()
             this.hpa.workload=data.items[0].spec.scaleTargetRef.name
             let wd=data.items[0].spec.metrics;
+            this.hpa.vLeft = data.items[0].spec.minReplicas;
+            this.hpa.vRight = data.items[0].spec.maxReplicas;
             this.dataFilter(wd)
           }
         }
@@ -532,13 +535,13 @@
                label: 'CPU'
              }, {
                value: 2,
-               label: '内存'
+               label: '記憶體'
              }, {
                value: 3,
-               label: '硬盘'
+               label: '影碟'
              }, {
                value: 4,
-               label: '网络'
+               label: '網路'
              }],
 
              option1: [{
@@ -546,7 +549,7 @@
                label: 'CPU使用量'
              }, {
                value: 2,
-               label: 'CPU利用率(占节点)'
+               label: 'CPU利用率(占節點)'
              }, {
                value: 3,
                label: 'CPU利用率(占Request)'
@@ -557,62 +560,62 @@
 
              option2: [{
                value: 5,
-               label: '内存使用量'
+               label: '記憶體使用量'
              }, {
                value: 6,
-               label: '内存使用量(不含Cache)'
+               label: '記憶體使用量(不含Cache)'
              }, {
                value: 7,
-               label: '内存使用量(占节点)'
+               label: '記憶體使用量(占節點)'
              }, {
                value: 8,
-               label: '内存使用量(占节点、不含Cache)'
+               label: '記憶體使用量(占節點、不含Cache)'
              }, {
                value: 9,
-               label: '内存使用量(占Request)'
+               label: '記憶體使用量(占Request)'
              }, {
                value: 10,
-               label: '内存使用量(占Request、不含Cache)'
+               label: '記憶體使用量(占Request、不含Cache)'
              }, {
                value: 11,
-               label: '内存使用量(占Limit)'
+               label: '記憶體使用量(占Limit)'
              }, {
                value: 12,
-               label: '内存使用量(占Limit、不含Cache)'
+               label: '記憶體使用量(占Limit、不含Cache)'
              }],
 
              option3: [{
                value: 13,
-               label: '硬盘写流量'
+               label: '硬碟寫流量'
              }, {
                value: 14,
-               label: '硬盘读流量'
+               label: '硬碟讀流量'
              }, {
                value: 15,
-               label: '硬盘读IOPS'
+               label: '硬碟讀IOPS'
              }, {
                value: 16,
-               label: '硬盘写IOPS'
+               label: '硬碟寫IOPS'
              }],
 
              option4: [{
                value: 17,
-               label: '网络出带宽'
+               label: '網路出帶寬'
              }, {
                value: 18,
-               label: '网络入带宽'
+               label: '網路入帶寬'
              }, {
                value: 19,
-               label: '网络出流量'
+               label: '網路出流量'
              }, {
                value: 20,
-               label: '网络入流量'
+               label: '網路入流量'
              }, {
                value: 21,
-               label: '网络出包量'
+               label: '網路出包量'
              }, {
                value: 22,
-               label: '网络入包量'
+               label: '網路入包量'
              }],
              value4: x,
              value5: y,
@@ -670,13 +673,13 @@
              label: 'CPU'
            }, {
              value: 2,
-             label: '内存'
+             label: '記憶體'
            }, {
              value: 3,
-             label: '硬盘'
+             label: '影碟'
            }, {
              value: 4,
-             label: '网络'
+             label: '網路'
            }],
 
            option1: [{
@@ -684,7 +687,7 @@
              label: 'CPU使用量'
            }, {
              value: 2,
-             label: 'CPU利用率(占节点)'
+             label: 'CPU利用率(占節點)'
            }, {
              value: 3,
              label: 'CPU利用率(占Request)'
@@ -695,62 +698,62 @@
 
            option2: [{
              value: 5,
-             label: '内存使用量'
+             label: '記憶體使用量'
            }, {
              value: 6,
-             label: '内存使用量(不含Cache)'
+             label: '記憶體使用量(不含Cache)'
            }, {
              value: 7,
-             label: '内存使用量(占节点)'
+             label: '記憶體使用量(占節點)'
            }, {
              value: 8,
-             label: '内存使用量(占节点、不含Cache)'
+             label: '記憶體使用量(占節點、不含Cache)'
            }, {
              value: 9,
-             label: '内存使用量(占Request)'
+             label: '記憶體使用量(占Request)'
            }, {
              value: 10,
-             label: '内存使用量(占Request、不含Cache)'
+             label: '記憶體使用量(占Request、不含Cache)'
            }, {
              value: 11,
-             label: '内存使用量(占Limit)'
+             label: '記憶體使用量(占Limit)'
            }, {
              value: 12,
-             label: '内存使用量(占Limit、不含Cache)'
+             label: '記憶體使用量(占Limit、不含Cache)'
            }],
 
            option3: [{
              value: 13,
-             label: '硬盘写流量'
+             label: '硬碟寫流量'
            }, {
              value: 14,
-             label: '硬盘读流量'
+             label: '硬碟讀流量'
            }, {
              value: 15,
-             label: '硬盘读IOPS'
+             label: '硬碟讀IOPS'
            }, {
              value: 16,
-             label: '硬盘写IOPS'
+             label: '硬碟寫IOPS'
            }],
 
            option4: [{
              value: 17,
-             label: '网络出带宽'
+             label: '網路出帶寬'
            }, {
              value: 18,
-             label: '网络入带宽'
+             label: '網路入帶寬'
            }, {
              value: 19,
-             label: '网络出流量'
+             label: '網路出流量'
            }, {
              value: 20,
-             label: '网络入流量'
+             label: '網路入流量'
            }, {
              value: 21,
-             label: '网络出包量'
+             label: '網路出包量'
            }, {
              value: 22,
-             label: '网络入包量'
+             label: '網路入包量'
            }],
            value4: 1,//选择框1
            value5: 1,//选择框2

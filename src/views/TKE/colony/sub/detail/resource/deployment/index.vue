@@ -24,10 +24,10 @@
     <!-- 详情子菜单导航 -->
     <div class="tke-detial-nav">
       <router-link class="nav-item" :to="{name:'deploymentDetailPod',query: {clusterId: clusterId,spaceName: spaceName,rowData: rowData}}">Pod管理</router-link>
-      <router-link class="nav-item" :to="{name:'deploymentDetailHistory',query: {clusterId: clusterId,spaceName: spaceName,rowData: rowData}}">修订历史</router-link>
+      <router-link class="nav-item" :to="{name:'deploymentDetailHistory',query: {clusterId: clusterId,spaceName: spaceName,rowData: rowData}}">修訂歷史</router-link>
       <router-link class="nav-item" :to="{name:'deploymentDetailEvent',query: {clusterId: clusterId,spaceName: spaceName,rowData: rowData}}">事件</router-link>
-      <router-link class="nav-item" :to="{name:'deploymentDetailLog',query: {clusterId: clusterId,spaceName: spaceName,rowData: rowData,list:list}}">日志</router-link>
-      <router-link class="nav-item" :to="{name:'deploymentDetailInfo',query: {clusterId: clusterId,spaceName: spaceName,rowData: rowData}}">详情</router-link>
+      <router-link class="nav-item" :to="{name:'deploymentDetailLog',query: {clusterId: clusterId,spaceName: spaceName,rowData: rowData,list:list}}">日誌</router-link>
+      <router-link class="nav-item" :to="{name:'deploymentDetailInfo',query: {clusterId: clusterId,spaceName: spaceName,rowData: rowData}}">詳情</router-link>
       <router-link class="nav-item" :to="{name:'deploymentDetailYaml',query: {clusterId: clusterId,spaceName: spaceName,rowData: rowData}}">YAML</router-link>
     </div> 
 

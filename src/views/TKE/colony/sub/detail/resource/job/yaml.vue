@@ -4,7 +4,7 @@
     <div class="tke-grid ">
       <!-- 左侧 -->
       <div class="grid-left">
-        <el-button  size="small" type="primary" @click="goUpdateYAML()" :disabled="rowData.metadata.namespace === 'kube-system'?true:false">编辑YAML</el-button>
+        <el-button  size="small" type="primary" @click="goUpdateYAML()" :disabled="rowData.metadata.namespace === 'kube-system'?true:false">編輯YAML</el-button>
       </div>
     </div>
     

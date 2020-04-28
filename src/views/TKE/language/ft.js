@@ -529,7 +529,7 @@ module.exports = {
       ma: '嗎',
       nqdyscjxck: '您確定要刪除映像倉庫',
       gjxckxdsyjx: '該映像倉庫下的所有映像版本將一併銷毀，請提前備份好數據。',
-      nqdyycyxjxck: '您確定要移出以下映像倉庫么',
+      nqdyycyxjxck: '您確定要移出以下映像倉庫麽',
       qsrmm: '請輸入密碼',
       mmbxw: '密碼必須為8到16位',
       mmbxbh: '密碼必須包含數字、字母、特殊字元中至少兩項',

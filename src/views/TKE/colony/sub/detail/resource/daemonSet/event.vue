@@ -1,11 +1,11 @@
  <!-- deployment-事件 -->
 <template>
   <div class="colony-main">
-    <div class="tke-reminder">资源事件只保存最近1小时内发生的事件，请尽快查阅。</div>
+    <div class="tke-reminder">資源事件只保存最近1小時內發生的事件，請儘快查閱。</div>
     <div class="tke-grid ">
       <!-- 右侧 -->
       <div class="grid-right">
-        <span>自动重新整理</span><el-switch class="ml10" v-model="autoRefresh" @change="changeSwitch()" ></el-switch>
+        <span>自動重新整理</span><el-switch class="ml10" v-model="autoRefresh" @change="changeSwitch()" ></el-switch>
       </div>
     </div>
     
@@ -16,14 +16,14 @@
         v-loading="loadShow"
         style="width: 100%">
         <el-table-column
-          label="首次出现时间"
+          label="首次出現時間"
           >
           <template slot-scope="scope">
             <p>{{scope.row.firstTime}}</p>
           </template>
         </el-table-column>
         <el-table-column
-          label="最后出现时间"
+          label="最後出現時間"
           >
           <template slot-scope="scope">
             <p>{{scope.row.lastTime}}</p>
@@ -31,7 +31,7 @@
         </el-table-column>
         <el-table-column
           prop=""
-          label="级别"
+          label="級別"
           >
           <template slot-scope="scope">
               <span :class="[scope.row.type !== 'Normal'?'text-red':'']">{{scope.row.type}}</span>
@@ -39,7 +39,7 @@
         </el-table-column>
         <el-table-column
           prop=""
-          label="资源类型"
+          label="資源類型"
           >
           <template slot-scope="scope">
             <span>{{scope.row.involvedObject.kind}}</span>
@@ -48,7 +48,7 @@
         
         <el-table-column
           prop=""
-          label="资源名称"
+          label="資源名稱"
           >
           <template slot-scope="scope">
             <p>{{scope.row.metadata.name}}</p>
@@ -63,14 +63,14 @@
         </el-table-column>
         <el-table-column
           prop="nodeTotal"
-          label="详细描述">
+          label="詳細描述">
           <template slot-scope="scope">
             <p>{{scope.row.message}}</p>
           </template>
         </el-table-column>
         <el-table-column
           prop=""
-          label="出现次数">
+          label="出現次數">
           <template slot-scope="scope">
             <p>{{scope.row.count}}</p>
           </template>

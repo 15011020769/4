@@ -5,7 +5,7 @@
       <div class="tke-grid ">
         <!-- 右侧 -->
         <div class="grid-right">
-          <span>自动重新整理</span><el-switch class="ml10" v-model="autoRefresh" @change="changeSwitch(e)" ></el-switch>
+          <span>自動重新整理</span><el-switch class="ml10" v-model="autoRefresh" @change="changeSwitch(e)" ></el-switch>
         </div>
       </div>
       <el-card class='box-card'> 
@@ -63,13 +63,13 @@ export default {
     return {
       options: [
         {value: 100,
-        label: '显示100条'},
+        label: '顯示100條'},
         {value: 200,
-        label: '显示200条'},
+        label: '顯示200條'},
         {value: 500,
-        label: '显示500条'},
+        label: '顯示500條'},
         {value: 1000,
-        label: '显示1000条'},
+        label: '顯示1000條'},
       ],
       index: 100,//选中的条数
       statefulSetList: [],//statefulSet列表

@@ -19,7 +19,7 @@
         <el-table-column type="expand" prop="container">
           <template slot-scope="scope">
             <el-table border :data="scope.row.spec.containers" >
-                <el-table-column prop="" label="容器名称" >
+                <el-table-column prop="" label="容器名稱" >
                   <template slot-scope="scope">
                     <span>{{scope.row.name}}</span>
                   </template>
@@ -29,17 +29,17 @@
                     <span>{{scope.row.imageID || '-'}}</span>
                   </template>
                 </el-table-column>
-                <el-table-column prop="" label="镜像版本号" >
+                <el-table-column prop="" label="映像版本號" >
                   <template slot-scope="scope">
                     <span>{{scope.row.image || '-'}}</span>
                   </template>
                 </el-table-column>
-                <el-table-column prop="" label="重启次数" >
+                <el-table-column prop="" label="重啟次數" >
                   <template slot-scope="scope">
                     <span>{{scope.row.restartCount || 0}}次</span>
                   </template>
                 </el-table-column>
-                <el-table-column prop="" label="状态" >
+                <el-table-column prop="" label="狀態" >
                   <template slot-scope="scope">
                     <span class="text-green">{{Object.keys(scope.row.state || {})[0] || '-'}}</span>
                   </template>
@@ -52,7 +52,7 @@
           width="55">
         </el-table-column>
         <el-table-column
-          label="实例名称"
+          label="實例名稱"
           >
           <template slot-scope="scope">
             <span>{{scope.row.metadata && scope.row.metadata.name}}</span>
@@ -60,7 +60,7 @@
         </el-table-column>
         <el-table-column
           prop=""
-          label="状态"
+          label="狀態"
           >
           <template slot-scope="scope">
               <span :class="[scope.row.phase ==='Running'?'text-green':'']">{{scope.row.status && scope.row.status.phase}}</span>
@@ -68,7 +68,7 @@
         </el-table-column>
         <el-table-column
           prop=""
-          label="实例所在节点IP"
+          label="實例所在節點IP"
           >
           <template slot-scope="scope">
               <span>{{scope.row.status && scope.row.status.hostIP || '-'}}</span>
@@ -76,7 +76,7 @@
         </el-table-column>
         <el-table-column
           prop=""
-          label="实例IP"
+          label="實例IP"
           >
           <template slot-scope="scope">
             <span>{{scope.row.status && scope.row.status.podIP || '-'}}</span>
@@ -85,7 +85,7 @@
 
         <el-table-column
           prop=""
-          label="运行时间"
+          label="運行時間"
           >
           <template slot-scope="scope">
             <span>{{scope.row.status && scope.row.status.startTime | getDuration}}</span>
@@ -93,7 +93,7 @@
         </el-table-column>
         <el-table-column
           prop=""
-          label="创建时间"
+          label="創建時間"
           >
           <template slot-scope="scope">
             <p>{{scope.row.addTime}}</p>
@@ -101,7 +101,7 @@
         </el-table-column>
         <el-table-column
           prop=""
-          label="重启次数"
+          label="重啟次數"
           >
           <template slot-scope="scope">
             <span>{{scope.row.restart}}次</span>
@@ -111,33 +111,33 @@
           label="操作"
           >
           <template slot-scope="scope">
-            <span class="tke-text-link" @click="redeployment(scope.row)">销毁重建</span>
+            <span class="tke-text-link" @click="redeployment(scope.row)">銷毀重建</span>
             <!-- <span class="tke-text-link ml10" @click="remoteLogin(scope.row)">远程登录</span> -->
           </template>
         </el-table-column>
       </el-table>
     </div>
-    <el-dialog title="销毁实例" :visible.sync="isShowRedeployment" width="35%">
-      <p style="font-weight: bolder;color: #444;">您确定要销毁实例{{podName}}吗</p>
-      <p>实例销毁重建后将不可恢复，请提前备份好数据。</p>
+    <el-dialog title="銷毀實例" :visible.sync="isShowRedeployment" width="35%">
+      <p style="font-weight: bolder;color: #444;">您確定要銷毀實例{{podName}}嗎</p>
+      <p>實例銷毀重建後將不可恢復，請提前備份好數據。</p>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitRedeployment()">确 定</el-button>
+        <el-button type="primary" @click="submitRedeployment()">確 定</el-button>
         <el-button @click="isShowRedeployment = false">取 消</el-button>
       </span>
     </el-dialog>
-    <el-dialog title="容器登录" :visible.sync="showRemoteLoginModal" width="35%">
-      <div>该实例下共有<span style="color:#ff9d00;">{{this.podLoginList.length || 0}}个</span>容器</div>
+    <el-dialog title="容器登錄" :visible.sync="showRemoteLoginModal" width="35%">
+      <div>該實例下共有<span style="color:#ff9d00;">{{this.podLoginList.length || 0}}個</span>容器</div>
           <el-collapse-transition>
             <el-table :data="podLoginList" height="200">
-              <el-table-column property="name" label="容器名称" width="200"></el-table-column>
-              <el-table-column property="" label="状态" width="150"></el-table-column>
+              <el-table-column property="name" label="容器名稱" width="200"></el-table-column>
+              <el-table-column property="" label="狀態" width="150"></el-table-column>
               <el-table-column label="操作" width="150">
-                <a href="">登录</a>
+                <a href="">登錄</a>
               </el-table-column>
             </el-table>
           </el-collapse-transition>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="showRemoteLoginModal = false">关 闭</el-button>
+          <el-button @click="showRemoteLoginModal = false">關 閉</el-button>
         </span>
     </el-dialog>
   </div>
@@ -173,15 +173,15 @@ export default {
       searchOptions: [
         {
           value: "podname",
-          label: "Pod名称"
+          label: "Pod名稱"
         },
         {
           value: "status",
-          label: "状态"
+          label: "狀態"
         },
         {
           value: "namespace",
-          label: "命名空间"
+          label: "命名空間"
         }
       ],
       searchType: "", //下拉选中的值
