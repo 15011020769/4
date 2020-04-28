@@ -5,7 +5,7 @@
     </div>
     <div class="tea-content__body">
       <div>
-        <el-tooltip class="item" effect="light"  content="雲聯網最多只能創建5條數據" placement="right-end">
+        <el-tooltip class="item" effect="light" content="雲聯網最多只能創建5條數據" placement="right-end">
           <el-button type="primary" size="small" @click="newCreate" :disabled='newCreateshow'>
             {{$t('CCN.total.newCreate')}}
           </el-button>
@@ -161,7 +161,7 @@
           </el-radio-group>
           <br />
           <!-- <span  v-if="form.InstanceChargeType=='PREPAID'" class="hint trankHint">{{ $t('CCN.total.mode3') }}</span> -->
-          <span  v-if="form.InstanceChargeType=='POSTPAID'" class="hint trankHint">默認頻寬上限爲1Gbps，按當月實際使用頻寬</span>
+          <span v-if="form.InstanceChargeType=='POSTPAID'" class="hint trankHint">默認頻寬上限爲1Gbps，按當月實際使用頻寬</span>
         </el-form-item>
         <el-form-item :label="$t('CCN.total.new3')">
           <el-radio-group v-model="form.BandwidthLimitType">
@@ -199,7 +199,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button  :disabled="form.CcnName==''||form.instanceId==''" type="primary" @click="createClick(form)">{{$t('CCN.total.sure')}}</el-button>
+        <el-button :disabled="form.CcnName==''||form.instanceId==''" type="primary" @click="createClick(form)">
+          {{$t('CCN.total.sure')}}</el-button>
         <el-button @click="dialogFormVisible = false">{{$t('CCN.total.buttonQX')}}</el-button>
       </div>
     </el-dialog>
@@ -240,7 +241,7 @@
       <el-form :model="ccnPublic">
         <el-form-item :label="$t('CCN.total.eWay1')">
           <el-select v-model="ccnPublic.BandwidthLimitType" placeholder>
-            <el-option :label="$t('CCN.total.eWay2')" value="INTER_REGION_LIMIT"></el-option>
+            <!-- <el-option :label="$t('CCN.total.eWay2')" value="INTER_REGION_LIMIT"></el-option> -->
             <el-option :label="$t('CCN.total.eWay3')" value="OUTER_REGION_LIMIT"></el-option>
           </el-select>
           <p class="edit-p">
@@ -343,13 +344,13 @@
     },
     methods: {
 
-      newCreate(){
+      newCreate() {
         this.dialogFormVisible = true;
-        this.form.CcnName='';
-        this.form.instanceId=''
-        
+        this.form.CcnName = '';
+        this.form.instanceId = ''
+
       },
-     
+
       //取消修改姓名
       cancel1() {
         this.getData();
@@ -633,7 +634,7 @@
           if (res.Response.Error != undefined) {
             let ErrTips = {
               ResourceNotFound: "資源不存在",
-              "InvalidParameterValue.TooLong":'參數值長度不能大於 `60`'
+              "InvalidParameterValue.TooLong": '參數值長度不能大於 `60`'
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
@@ -692,7 +693,7 @@
         });
         this.updateBandwidthLimitTypeVisible = false;
       },
-       // 进入编辑标签模态窗
+      // 进入编辑标签模态窗
       modifyLabels(row) {
         this.dialogVisible = true;
         this.labelsInfo = {
@@ -877,9 +878,11 @@
       line-height: 32px;
     }
   }
-.w200{
-  width: 150px;
-}
+
+  .w200 {
+    width: 150px;
+  }
+
   .newDialog {
     .inputName {
       width: 370px;
