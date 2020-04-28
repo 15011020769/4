@@ -210,6 +210,7 @@ export default {
           clusterId: this.clusterId,
           name: rowData.metadata.name,
           spaceName:rowData.metadata.namespace,
+          row: rowData,
           workload:'cronjobs'
         }
       })

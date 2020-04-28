@@ -156,7 +156,7 @@ export default {
       }
     };
     var validatePass3 = (rule, value, callback) => {
-      const version = /^(?!_)(?!.*-$)[a-z0-9_]+$/;
+      const version = /^(?!-)(?!.*-$)[a-z0-9-]+$/;
       if (value === "") {
         callback(new Error("請輸入應用戶名"));
       } else if (!version.test(value)) {

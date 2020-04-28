@@ -5,7 +5,7 @@
       <h4  class="tke-formpanel-title">基本信息</h4>
       <el-form  class="tke-form" label-position='left' label-width="120px" size="mini">
         <el-form-item label="名称">
-          <div class="tke-form-item_text"><span class="tke-text-link">{{rowData.metadata && rowData.metadata.name}}</span></div>
+          <div class="tke-form-item_text">{{rowData.metadata && rowData.metadata.name}}</div>
         </el-form-item>
         <el-form-item label="Namespace">
           <div class="tke-form-item_text">{{rowData.metadata && rowData.metadata.namespace}}</div>
