@@ -420,7 +420,8 @@ export default {
           clusterId: this.clusterId,
           name: rowData.metadata.name,
           spaceName:rowData.metadata.namespace,
-           workload:'daemonsets'
+          row: rowData,
+          workload:'daemonsets'
         }
       })
     },
